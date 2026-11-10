@@ -31,7 +31,7 @@
 
       <div class="karte">
         <p class="karte-titel">Heute</p>
-        <p class="karte-text">Etwa 10 Minuten: erst fällige Vokabeln, dann ein kurzer Text oder ein Grammatik-Thema.</p>
+        <p class="karte-text" id="heute-text">Etwa 10 Minuten: erst fällige Vokabeln, dann ein kurzer Text oder ein Grammatik-Thema.</p>
       </div>
 
       <button class="knopf-los" id="knopf-los" type="button">Los</button>
@@ -63,20 +63,57 @@
       </div>
     </section>
 
-    <!-- Lernrunde (Platzhalter, kommt in einem späteren Schritt) -->
+    <!-- Vokabel-Abfrage -->
     <section class="screen" id="screen-runde" hidden>
+      <header class="kopf kopf-zeile">
+        <h2 class="kopf-klein">Vokabeln</h2>
+        <span class="stand" id="abfrage-stand"></span>
+      </header>
+
+      <div class="karte frage-karte">
+        <p class="frage-art" id="frage-art">Auf Italienisch?</p>
+        <p class="frage-wort" id="frage-wort" lang="de"></p>
+        <p class="loesung-neu" id="loesung-neu" lang="it" hidden></p>
+      </div>
+
+      <form class="eingabe" id="abfrage-form" autocomplete="off">
+        <input class="eingabe-feld" id="abfrage-eingabe" type="text" lang="it"
+               autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+               enterkeyhint="done" placeholder="Italienisch eintippen" aria-label="Antwort auf Italienisch">
+      </form>
+
+      <div class="rueckmeldung" id="rueckmeldung" role="status" hidden>
+        <p class="rueck-titel" id="rueck-titel"></p>
+        <p class="rueck-text" id="rueck-text"></p>
+      </div>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-pruefen" type="button">Prüfen</button>
+        <button class="knopf-leise" id="knopf-weiss-nicht" type="button">Weiß ich nicht</button>
+        <button class="knopf-zurueck" id="knopf-beenden" type="button">Runde beenden</button>
+      </div>
+    </section>
+
+    <!-- Ende der Runde -->
+    <section class="screen" id="screen-ende" hidden>
       <header class="kopf">
-        <h1>Lernrunde</h1>
+        <h1 id="ende-titel">Fertig für heute</h1>
       </header>
       <div class="karte">
-        <p class="karte-text">Hier kommt bald die Lernrunde hin.</p>
+        <p class="karte-text" id="ende-text"></p>
       </div>
-      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+      <div class="karte">
+        <p class="karte-titel">Wörter, die sitzen</p>
+        <p class="zahl-gross" id="ende-sicher">0</p>
+      </div>
+      <button class="knopf-zurueck" data-zurueck type="button">Zur Startseite</button>
     </section>
 
   </main>
 
   <script src="speicher.js"></script>
+  <script src="wortschatz.js"></script>
+  <script src="vokabeln.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

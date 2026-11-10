@@ -150,6 +150,83 @@ button {
 }
 .meldung.fehler { border-left-color: var(--fehler); }
 
+/* ---------- Vokabel-Abfrage ---------- */
+
+.kopf-zeile {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.kopf-klein {
+  margin: 0;
+  font-size: 22px;
+}
+.stand {
+  color: var(--text-leise);
+  font-size: 16px;
+}
+
+.frage-karte { padding: 24px 20px; }
+.frage-art {
+  margin: 0 0 8px;
+  color: var(--text-leise);
+  font-size: 16px;
+}
+.frage-wort {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.loesung-neu {
+  margin: 12px 0 0;
+  font-size: 28px;
+  color: var(--akzent);
+  font-weight: 600;
+}
+
+.eingabe { margin: 0; }
+.eingabe-feld {
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--rand);
+  border-radius: var(--radius);
+  background: var(--flaeche);
+  color: var(--text);
+  font: inherit;
+  font-size: 22px;        /* ab 16px zoomt das iPhone nicht ungefragt hinein */
+}
+.eingabe-feld:focus {
+  outline: none;
+  border-color: var(--akzent);
+}
+.eingabe-feld[readonly] { opacity: 0.8; }
+
+.rueckmeldung {
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  background: var(--flaeche);
+  border-left: 4px solid var(--akzent);
+}
+.rueckmeldung.falsch { border-left-color: var(--fehler); }
+.rueck-titel {
+  margin: 0;
+  font-weight: 600;
+}
+.rueck-text {
+  margin: 4px 0 0;
+  color: var(--text-leise);
+}
+.rueck-text strong { color: var(--text); }
+
+.zahl-gross {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--akzent);
+}
+
 .knopf-zurueck {
   margin-top: auto;
   width: 100%;

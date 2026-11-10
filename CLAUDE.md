@@ -6,8 +6,10 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Alles auf Deutsch, Nicole duzen.
 - Nicole ist Programmier-Anfängerin: kurz und einfach erklären, Fachwörter vermeiden oder kurz erklären.
 - Kleine Schritte. Größere Änderungen vorher abstimmen.
+- **Es dürfen keine Kosten entstehen.** Nur kostenlose Dienste, Bibliotheken und Daten verwenden (kein GitHub Pro, keine bezahlten APIs, Schriften oder Hosting).
 - Commit nur, wenn Nicole es sagt. Autor ist im Repo eingestellt (Zitronfalter, noreply-Adresse) – nicht ändern.
-- Nach jedem fertigen Schritt `ROADMAP.md` anpassen: Zeichen in der Tabelle (✅ / ⏳ / ⬜), Stand-Zeile und Balken (2 Blöcke █ pro Schritt).
+- Nach jedem fertigen Schritt `ROADMAP.md` anpassen: Zeichen in der Tabelle (✅ / ⏳ / ⬜), Stand-Zeile und Balken (2 Blöcke █ pro Schritt, 22 Blöcke gesamt).
+- Design: Richtung „Toskana, warm“ ist gewählt (Creme-Hintergrund, Terrakotta-Akzent, Olivgrün für richtig, Serifen-Überschriften). Umsetzung erst in Schritt 10 – bis dahin neue Seiten mit den vorhandenen Farb-Variablen bauen.
 - Alles, was Nicole selbst tun oder entscheiden muss, in `TODO.md` eintragen (einfach formuliert); Erledigtes dort abhaken.
 
 ## Technik
@@ -24,6 +26,9 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - `speicher.js` – Speichern, Sichern, Laden
 - `vokabeln.js` – Karteikasten (5 Fächer) und Prüfen der Antwort
 - `wortschatz.js` – Grundwortschatz (Themen, A1/A2)
+- `texte.js` – Lesetexte/Rezepte mit Wortbedeutungen und Fragen (erste Antwort = richtig)
+- `lesen.js` – Nachschlagen, Vorlesen (Web Speech API, it-IT), gelesene Texte
+- Neue Texte: jedes Wort muss eine Bedeutung haben (im Text, in `GRUNDWOERTER` oder im Wortschatz) – vor dem Fertigmelden mit einem kleinen Node-Skript prüfen.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner
 

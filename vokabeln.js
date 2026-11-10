@@ -27,7 +27,13 @@ const Vokabeln = (() => {
 
   function karten() { return Speicher.daten.karten; }
 
-  function wort(id) { return WORTSCHATZ.find((w) => w.id === id); }
+  // Wort aus dem Grundwortschatz – oder ein eigenes Wort (z. B. aus einem Text übernommen)
+  function wort(id) {
+    const w = WORTSCHATZ.find((x) => x.id === id);
+    if (w) return w;
+    const e = (Speicher.daten.eigeneWoerter || {})[id];
+    return e ? { id, it: e.it, de: e.de, auch: e.auch } : undefined;
+  }
 
   function faellige() {
     const h = heute();

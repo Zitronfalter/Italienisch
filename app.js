@@ -73,6 +73,7 @@ function zeigeStart() {
   document.getElementById('heute-text').textContent = teile.length
     ? teile.join(' und ') + '.'
     : 'Heute ist nichts fällig. Schön!';
+  zeigeLesenStand();
   zeige('start');
 }
 
@@ -212,8 +213,247 @@ el('abfrage-form').addEventListener('submit', (e) => {
 });
 el('knopf-beenden').addEventListener('click', beendeRunde);
 
+// ---------- Lesen ----------
+
+const lesen = { text: null, antworten: [], geprueft: false, gewaehltesWort: null, liestVor: false };
+
+function zeigeLesenStand() {
+  const n = Lesen.anzahlVerstanden();
+  el('lesen-stand').textContent = n
+    ? `${n} von ${LESETEXTE.length} Texten verstanden`
+    : `${LESETEXTE.length} Texte und Rezepte`;
+}
+
+function zeigeTextliste() {
+  const liste = el('text-liste');
+  liste.innerHTML = '';
+  for (const stufe of ['A1', 'A2']) {
+    const titel = document.createElement('p');
+    titel.className = 'stufe-titel';
+    titel.textContent = stufe === 'A1' ? 'Leicht (A1)' : 'Etwas schwerer (A2)';
+    liste.appendChild(titel);
+    for (const t of LESETEXTE.filter((x) => x.stufe === stufe)) {
+      const s = Lesen.stand(t.id);
+      const knopf = document.createElement('button');
+      knopf.type = 'button';
+      knopf.className = 'karte karte-knopf text-eintrag';
+      knopf.innerHTML = `
+        <span class="karte-titel" lang="it"></span>
+        <span class="karte-text"></span>
+        <span class="pfeil" aria-hidden="true">›</span>`;
+      knopf.querySelector('.karte-titel').textContent = t.titel;
+      knopf.querySelector('.karte-text').innerHTML = t.art
+        + (s && s.verstanden ? ' · <span class="haken">✓ verstanden</span>' : '');
+      knopf.addEventListener('click', () => oeffneText(t));
+      liste.appendChild(knopf);
+    }
+  }
+  zeige('texte');
+}
+
+// Zeile als HTML: jedes Wort wird antippbar
+function zeileAlsHtml(zeile) {
+  const frag = document.createDocumentFragment();
+  for (const teil of Lesen.stuecke(zeile)) {
+    if (teil.wort) {
+      const span = document.createElement('span');
+      span.className = 'wort';
+      span.textContent = teil.text;
+      frag.appendChild(span);
+    } else {
+      frag.appendChild(document.createTextNode(teil.text));
+    }
+  }
+  return frag;
+}
+
+function mischen(liste) {
+  const a = [...liste];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function oeffneText(t) {
+  lesen.text = t;
+  lesen.geprueft = false;
+  lesen.antworten = t.fragen.map(() => null);
+  vorlesenStopp();
+  schliesseWortBlatt();
+
+  el('lesen-meta').textContent = `${t.art} · ${t.stufe}`;
+  el('lesen-titel').textContent = t.titel;
+  el('knopf-vorlesen').hidden = !Lesen.kannSprechen;
+
+  // Text aufbauen
+  const artikel = el('lesen-text');
+  artikel.innerHTML = '';
+  let liste = null;
+  for (const b of Lesen.bloecke(t.text)) {
+    if (b.art === 'li') {
+      if (!liste) { liste = document.createElement('ul'); artikel.appendChild(liste); }
+      const li = document.createElement('li');
+      li.appendChild(zeileAlsHtml(b.zeile));
+      liste.appendChild(li);
+      continue;
+    }
+    liste = null;
+    const knoten = document.createElement(b.art === 'h' ? 'h3' : 'p');
+    knoten.appendChild(zeileAlsHtml(b.zeile));
+    artikel.appendChild(knoten);
+  }
+
+  // Fragen aufbauen (Antworten gemischt)
+  const fragen = el('lesen-fragen');
+  fragen.innerHTML = '';
+  t.fragen.forEach((f, nr) => {
+    const karte = document.createElement('div');
+    karte.className = 'karte frage';
+    const text = document.createElement('p');
+    text.className = 'frage-text';
+    text.textContent = f.frage;
+    karte.appendChild(text);
+    const box = document.createElement('div');
+    box.className = 'antworten';
+    mischen(f.antworten.map((a, i) => ({ a, i }))).forEach(({ a, i }) => {
+      const knopf = document.createElement('button');
+      knopf.type = 'button';
+      knopf.className = 'antwort';
+      knopf.textContent = a;
+      knopf.dataset.index = i;
+      knopf.addEventListener('click', () => waehleAntwort(nr, i, box));
+      box.appendChild(knopf);
+    });
+    karte.appendChild(box);
+    fragen.appendChild(karte);
+  });
+  el('fragen-ergebnis').hidden = true;
+  el('knopf-fragen-pruefen').textContent = 'Antworten prüfen';
+  zeige('lesen');
+}
+
+function waehleAntwort(nr, index, box) {
+  if (lesen.geprueft) return;
+  lesen.antworten[nr] = index;
+  box.querySelectorAll('.antwort').forEach((k) => {
+    k.classList.toggle('gewaehlt', Number(k.dataset.index) === index);
+  });
+}
+
+function fragenPruefen() {
+  const t = lesen.text;
+  if (lesen.geprueft) { oeffneText(t); return; }           // „Nochmal versuchen“
+  const ergebnis = el('fragen-ergebnis');
+  if (lesen.antworten.some((a) => a === null)) {
+    ergebnis.textContent = 'Bitte beantworte erst alle Fragen.';
+    ergebnis.classList.add('fehler');
+    ergebnis.hidden = false;
+    return;
+  }
+  lesen.geprueft = true;
+  let richtig = 0;
+  el('lesen-fragen').querySelectorAll('.antworten').forEach((box, nr) => {
+    box.querySelectorAll('.antwort').forEach((k) => {
+      const i = Number(k.dataset.index);
+      if (i === 0) k.classList.add('richtig');                    // erste Antwort ist die richtige
+      else if (i === lesen.antworten[nr]) k.classList.add('falsch');
+    });
+    if (lesen.antworten[nr] === 0) richtig += 1;
+  });
+  const von = t.fragen.length;
+  Lesen.ergebnisSpeichern(t.id, richtig, von);
+  ergebnis.classList.toggle('fehler', richtig < von);
+  ergebnis.textContent = richtig === von
+    ? `Alles richtig – Text verstanden. ✓`
+    : `${richtig} von ${von} richtig. Lies die Stelle noch einmal nach und versuch es erneut.`;
+  ergebnis.hidden = false;
+  el('knopf-fragen-pruefen').textContent = richtig === von ? 'Nochmal lesen' : 'Nochmal versuchen';
+}
+
+// Wort antippen
+el('lesen-text').addEventListener('click', (e) => {
+  const span = e.target.closest('.wort');
+  if (!span) return;
+  zeigeWortBlatt(span);
+});
+
+function zeigeWortBlatt(span) {
+  if (lesen.gewaehltesWort) lesen.gewaehltesWort.classList.remove('gewaehlt');
+  lesen.gewaehltesWort = span;
+  span.classList.add('gewaehlt');
+
+  const treffer = Lesen.nachschlagen(span.textContent, lesen.text);
+  lesen.treffer = treffer;
+  el('wort-form').textContent = span.textContent.replace(/['’]$/, '');
+  if (treffer) {
+    const zeigeGrund = treffer.grundform.toLowerCase() !== span.textContent.toLowerCase();
+    el('wort-grundform').textContent = zeigeGrund ? 'Grundform: ' + treffer.grundform : '';
+    el('wort-grundform').hidden = !zeigeGrund;
+    el('wort-bedeutung').textContent = treffer.bedeutung;
+  } else {
+    el('wort-grundform').hidden = true;
+    el('wort-bedeutung').textContent = 'Noch nicht im Wörterbuch. (Das Wörterbuch kommt in Schritt 7.)';
+  }
+  aktualisiereMerkenKnopf();
+  el('wort-anhoeren').hidden = !Lesen.kannSprechen;
+  el('wort-blatt').hidden = false;
+}
+
+function aktualisiereMerkenKnopf() {
+  const knopf = el('wort-merken');
+  const karte = lesen.treffer && lesen.treffer.karte;
+  knopf.hidden = !karte;
+  if (!karte) return;
+  const drin = Lesen.istInKarteikarten(karte.id);
+  knopf.disabled = drin;
+  knopf.textContent = drin ? '✓ In Karteikarten' : 'In Karteikarten';
+}
+
+function schliesseWortBlatt() {
+  el('wort-blatt').hidden = true;
+  if (lesen.gewaehltesWort) lesen.gewaehltesWort.classList.remove('gewaehlt');
+  lesen.gewaehltesWort = null;
+}
+
+el('wort-schliessen').addEventListener('click', schliesseWortBlatt);
+el('wort-anhoeren').addEventListener('click', () => {
+  if (lesen.gewaehltesWort) Lesen.sprich(lesen.gewaehltesWort.textContent);
+});
+el('wort-merken').addEventListener('click', () => {
+  if (lesen.treffer && lesen.treffer.karte) {
+    Lesen.inKarteikarten(lesen.treffer.karte);
+    aktualisiereMerkenKnopf();
+  }
+});
+
+// Ganzen Text vorlesen / anhalten
+function vorlesenStopp() {
+  Lesen.stopp();
+  lesen.liestVor = false;
+  el('knopf-vorlesen').textContent = '▶ Vorlesen';
+}
+el('knopf-vorlesen').addEventListener('click', () => {
+  if (lesen.liestVor) { vorlesenStopp(); return; }
+  lesen.liestVor = true;
+  el('knopf-vorlesen').textContent = '■ Anhalten';
+  Lesen.sprich(Lesen.vorleseText(lesen.text.text), () => {
+    lesen.liestVor = false;
+    el('knopf-vorlesen').textContent = '▶ Vorlesen';
+  });
+});
+
+el('knopf-fragen-pruefen').addEventListener('click', fragenPruefen);
+el('knopf-lesen-zurueck').addEventListener('click', () => {
+  vorlesenStopp();
+  schliesseWortBlatt();
+  zeigeTextliste();
+});
+
 // ---------- Knöpfe ----------
 
+el('knopf-lesen').addEventListener('click', zeigeTextliste);
 document.getElementById('knopf-los').addEventListener('click', starteRunde);
 document.getElementById('knopf-daten').addEventListener('click', oeffneDaten);
 document.querySelectorAll('[data-zurueck]').forEach((knopf) => {

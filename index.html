@@ -34,6 +34,12 @@
         <p class="karte-text" id="heute-text">Etwa 10 Minuten: erst fällige Vokabeln, dann ein kurzer Text oder ein Grammatik-Thema.</p>
       </div>
 
+      <button class="karte karte-knopf" id="knopf-lesen" type="button">
+        <span class="karte-titel">Lesen</span>
+        <span class="karte-text" id="lesen-stand">Texte und Rezepte</span>
+        <span class="pfeil" aria-hidden="true">›</span>
+      </button>
+
       <button class="knopf-los" id="knopf-los" type="button">Los</button>
       <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
     </section>
@@ -94,6 +100,39 @@
       </div>
     </section>
 
+    <!-- Liste der Lesetexte -->
+    <section class="screen" id="screen-texte" hidden>
+      <header class="kopf">
+        <h1>Lesen</h1>
+      </header>
+      <div class="text-liste" id="text-liste"></div>
+      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+    </section>
+
+    <!-- Einen Text lesen -->
+    <section class="screen" id="screen-lesen" hidden>
+      <header class="kopf">
+        <p class="gruss" id="lesen-meta"></p>
+        <h1 id="lesen-titel" lang="it"></h1>
+      </header>
+
+      <div class="lesen-werkzeuge">
+        <button class="knopf-klein" id="knopf-vorlesen" type="button">▶ Vorlesen</button>
+        <span class="hinweis">Tippe auf ein Wort.</span>
+      </div>
+
+      <article class="karte lesetext" id="lesen-text" lang="it"></article>
+
+      <h2 class="abschnitt">Hast du es verstanden?</h2>
+      <div id="lesen-fragen"></div>
+      <p class="meldung" id="fragen-ergebnis" role="status" hidden></p>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-fragen-pruefen" type="button">Antworten prüfen</button>
+        <button class="knopf-zurueck" id="knopf-lesen-zurueck" type="button">Zurück zu den Texten</button>
+      </div>
+    </section>
+
     <!-- Ende der Runde -->
     <section class="screen" id="screen-ende" hidden>
       <header class="kopf">
@@ -111,9 +150,25 @@
 
   </main>
 
+  <!-- Wort-Blatt: erscheint unten, wenn man auf ein Wort tippt -->
+  <div class="wort-blatt" id="wort-blatt" role="dialog" aria-label="Wortbedeutung" hidden>
+    <div class="wort-kopf">
+      <p class="wort-form" id="wort-form" lang="it"></p>
+      <button class="knopf-schliessen" id="wort-schliessen" type="button" aria-label="Schließen">✕</button>
+    </div>
+    <p class="wort-grundform" id="wort-grundform" lang="it"></p>
+    <p class="wort-bedeutung" id="wort-bedeutung"></p>
+    <div class="wort-knoepfe">
+      <button class="knopf-klein" id="wort-anhoeren" type="button">▶ Anhören</button>
+      <button class="knopf-klein knopf-klein-voll" id="wort-merken" type="button">In Karteikarten</button>
+    </div>
+  </div>
+
   <script src="speicher.js"></script>
   <script src="wortschatz.js"></script>
   <script src="vokabeln.js"></script>
+  <script src="texte.js"></script>
+  <script src="lesen.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

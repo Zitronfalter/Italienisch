@@ -13,24 +13,24 @@
 
 ---
 
-## 🟡 Bis Schritt 10 – entscheiden
+## 🟡 Bis Schritt 11 – entscheiden
 
-- [ ] **Wie kommt die App ins Netz?** Dein Repo ist privat. Drei Wege:
+- [ ] **Wie kommt die App ins Netz?** Dein Repo ist privat. Zwei kostenlose Wege:
 
-  | Weg | Kosten | Gut zu wissen |
-  |---|---|---|
-  | Repo öffentlich machen | kostenlos | Nur der Code ist sichtbar – nie dein Lernstand |
-  | GitHub Pro | ca. 4 $ / Monat | Repo bleibt privat |
-  | Netlify oder Cloudflare Pages | kostenlos | Eigenes Konto nötig, Repo bleibt privat |
+  | Weg | Gut zu wissen |
+  |---|---|
+  | Repo öffentlich machen + GitHub Pages | Nur der Code ist sichtbar – nie dein Lernstand |
+  | Netlify oder Cloudflare Pages | Eigenes Konto nötig, Repo bleibt privat |
 
 ---
 
-## 📱 Nach Schritt 10 – auf dem iPhone ausprobieren
+## 📱 Nach Schritt 11 – auf dem iPhone ausprobieren
 
 - [ ] In Safari öffnen → **Teilen** → **„Zum Home-Bildschirm“**
 - [ ] **Flugmodus an:** Startet die App trotzdem?
 - [ ] **„Sichern“** antippen → „In Dateien sichern“ → iCloud Drive
 - [ ] **Eintippen:** Zoomt die Seite ungefragt? Verdeckt die Tastatur etwas?
+- [ ] **Vorlesen:** Klingt die italienische Stimme gut? Falls nicht: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Italienisch → eine Stimme laden (z. B. „Alice“ in besserer Qualität, kostenlos)
 
 ---
 

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "italienisch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["werkzeuge/server.js"],
+      "port": 8080
+    }
+  ]
+}

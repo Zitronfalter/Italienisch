@@ -7,6 +7,7 @@
   --akzent: #2f6b4f;        /* ruhiges Olivgrün */
   --akzent-text: #ffffff;
   --rand: #e4ded4;
+  --fehler: #b5533c;
   --radius: 16px;
 }
 
@@ -19,6 +20,7 @@
     --akzent: #6fae8c;
     --akzent-text: #14231b;
     --rand: #3a3732;
+    --fehler: #e08a72;
   }
 }
 
@@ -99,6 +101,54 @@ button {
   font-weight: 600;
 }
 .knopf-los:active { opacity: 0.85; }
+
+.knopf-leise {
+  align-self: center;
+  margin-top: -8px;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  color: var(--text-leise);
+  font-size: 16px;
+}
+
+/* Knöpfe unten, untereinander */
+.knopf-gruppe {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.knopf-gruppe .knopf-zurueck { margin-top: 0; }
+
+.knopf-haupt,
+.knopf-zweit {
+  width: 100%;
+  min-height: 56px;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+.knopf-haupt {
+  border: none;
+  background: var(--akzent);
+  color: var(--akzent-text);
+}
+.knopf-zweit {
+  border: 1.5px solid var(--akzent);
+  background: transparent;
+  color: var(--akzent);
+}
+.knopf-haupt:active,
+.knopf-zweit:active { opacity: 0.85; }
+
+.meldung {
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  background: var(--flaeche);
+  border-left: 4px solid var(--akzent);
+}
+.meldung.fehler { border-left-color: var(--fehler); }
 
 .knopf-zurueck {
   margin-top: auto;

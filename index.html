@@ -35,6 +35,32 @@
       </div>
 
       <button class="knopf-los" id="knopf-los" type="button">Los</button>
+      <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
+    </section>
+
+    <!-- Sichern und Laden -->
+    <section class="screen" id="screen-daten" hidden>
+      <header class="kopf">
+        <h1>Sichern &amp; Laden</h1>
+      </header>
+
+      <div class="karte">
+        <p class="karte-text">Dein Lernstand liegt nur auf diesem iPhone. Mit „Sichern“ legst du eine Kopie als Datei ab, am besten in iCloud Drive. Mit „Laden“ holst du sie zurück, z. B. auf einem neuen iPhone.</p>
+      </div>
+
+      <div class="karte">
+        <p class="karte-titel">Zuletzt gesichert</p>
+        <p class="karte-text" id="zuletzt-gesichert">noch nie</p>
+      </div>
+
+      <p class="meldung" id="daten-meldung" role="status" hidden></p>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-sichern" type="button">Sichern</button>
+        <button class="knopf-zweit" id="knopf-laden" type="button">Laden</button>
+        <input type="file" id="datei-laden" accept=".json,application/json" hidden>
+        <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+      </div>
     </section>
 
     <!-- Lernrunde (Platzhalter, kommt in einem späteren Schritt) -->
@@ -45,11 +71,12 @@
       <div class="karte">
         <p class="karte-text">Hier kommt bald die Lernrunde hin.</p>
       </div>
-      <button class="knopf-zurueck" id="knopf-zurueck" type="button">Zurück</button>
+      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
     </section>
 
   </main>
 
+  <script src="speicher.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

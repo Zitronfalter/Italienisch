@@ -22,7 +22,7 @@
 | 8 | **Eigene Texte** | Rezept einfügen, Wort antippen, in Karteikarten übernehmen, eigene Bedeutung eintragen | ✅ |
 | 9 | **Runde & Fortschritt** | „Los“: Vokabeln, dann Text oder Grammatik; Seite Fortschritt mit Karteikasten; Niveau-Test (24 Fragen) A1/A2/B1 | ✅ |
 | 10 | **Design & Begleiter** | Aussehen „Toskana, warm“ ✅ – ruhiger Begleiter nach Nicoles Bild (Tipps, freut sich über echten Fortschritt, nie traurig, kein Druck) | ⏳ Begleiter wartet auf Bild |
-| 11 | **Aufs iPhone** | Veröffentlichen und „Zum Home-Bildschirm“ – vorerst pausiert, Repo bleibt privat (Empfehlung später: Cloudflare Pages, nur Zugriff auf dieses Repo) | ⏸️ |
+| 11 | **Aufs iPhone** | Online über GitHub Pages: https://zitronfalter.github.io/Italienisch/ – jetzt in Safari „Zum Home-Bildschirm“ | ⏳ Test auf dem iPhone |
 
 **Zeichen:** ✅ fertig · ⏳ in Arbeit / als Nächstes · ⏸️ pausiert · ⬜ noch offen
 

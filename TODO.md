@@ -22,7 +22,8 @@
 
 ## 🟡 Bis Schritt 11 – entscheiden
 
-- [ ] **Wie kommt die App ins Netz?** Entschieden am 14.11.2026: erst einmal nicht, das Repo bleibt privat. Wenn du so weit bist – zwei kostenlose Wege:
+- [x] **Wie kommt die App ins Netz?** Erledigt am 14.11.2026: Repo öffentlich, GitHub Pages an. Adresse: https://zitronfalter.github.io/Italienisch/
+  Zur Erinnerung, die zwei kostenlosen Wege waren:
 
   | Weg | Gut zu wissen |
   |---|---|
@@ -31,9 +32,9 @@
 
 ---
 
-## 📱 Nach Schritt 11 – auf dem iPhone ausprobieren
+## 📱 Jetzt möglich – auf dem iPhone ausprobieren
 
-- [ ] In Safari öffnen → **Teilen** → **„Zum Home-Bildschirm“**
+- [ ] **https://zitronfalter.github.io/Italienisch/** in Safari öffnen → **Teilen** → **„Zum Home-Bildschirm“**
 - [ ] **Flugmodus an:** Startet die App trotzdem?
 - [ ] **„Sichern“** antippen → „In Dateien sichern“ → iCloud Drive
 - [ ] **Eintippen:** Zoomt die Seite ungefragt? Verdeckt die Tastatur etwas?

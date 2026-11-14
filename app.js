@@ -346,6 +346,7 @@ function zeigeStart() {
 //
 // Eine Runde ist eine Liste von Schritten:
 //   { art: 'frage', id }          → Wort schreiben (nur Wörter, die du schon kennst)
+//   { art: 'deutsch', id }        → italienisches Wort sehen, deutsche Bedeutung aus Kacheln legen
 //   { art: 'neu', id }            → neues Wort zeigen und vorlesen
 //   { art: 'paare', ids }         → Wortpaare zuordnen
 //   { art: 'waehlen', id, modus } → richtiges Wort antippen: zum deutschen Wort ('de') oder nach Gehör ('hoeren')
@@ -375,7 +376,7 @@ function starteRunde() {
     return Lesen.kannSprechen && Math.floor(n / 2) % 2 === 1 ? 'hoeren' : 'de';
   };
   abfrage.schritte = [
-    ...wiederholen.map((id) => ({ art: 'frage', id })),
+    ...wiederholen.map((id) => ({ art: Vokabeln.richtungFuer(id) === 'de' ? 'deutsch' : 'frage', id })),
     ...neu.map((id) => ({ art: 'neu', id })),
     ...(ueben.length ? [{ art: 'paare', ids: mischen(ueben).slice(0, 5) }] : []),
     ...mischen(ueben).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
@@ -426,7 +427,9 @@ function zeigeSchritt() {
   el('runde-auswahl').hidden = true;
   el('runde-paare').hidden = true;
   el('runde-hoer').hidden = true;
+  el('runde-kacheln').hidden = true;
   el('frage-wort').hidden = false;
+  el('frage-wort').lang = 'de';
   const eingabe = el('abfrage-eingabe');
   eingabe.value = '';
   eingabe.readOnly = false;
@@ -449,6 +452,27 @@ function zeigeSchritt() {
     el('abfrage-form').hidden = false;
     el('knopf-weiss-nicht').hidden = false;
     eingabe.focus();
+  } else if (schritt.art === 'deutsch') {
+    const w = Vokabeln.wort(schritt.id);
+    el('frage-art').textContent = 'Was heißt das auf Deutsch?';
+    el('frage-wort').textContent = w.it;
+    el('frage-wort').lang = 'it';
+    el('runde-hoer').hidden = !Lesen.kannSprechen;
+    const ablage = el('runde-ablage');
+    const vorrat = el('runde-vorrat');
+    ablage.innerHTML = '';
+    ablage.classList.remove('fertig');
+    vorrat.innerHTML = '';
+    for (const wort of Vokabeln.deutschKacheln(w).kacheln) {
+      const k = document.createElement('button');
+      k.type = 'button';
+      k.className = 'kachel';
+      k.textContent = wort;
+      k.addEventListener('click', () => rundeKachelLegen(k));
+      vorrat.appendChild(k);
+    }
+    el('runde-kacheln').hidden = false;
+    el('knopf-weiss-nicht').hidden = false;
   } else if (schritt.art === 'waehlen') {
     const w = Vokabeln.wort(schritt.id);
     const box = el('runde-auswahl');
@@ -503,6 +527,51 @@ function zeigeSchritt() {
     el('runde-paare').hidden = false;
     el('knopf-pruefen').hidden = true;      // fertig, wenn alle Paare gefunden sind
   }
+}
+
+// Italienisch → Deutsch: Kachel antippen legt sie ab, nochmal antippen nimmt sie zurück
+function rundeKachelLegen(kachel) {
+  if (abfrage.geprueft || kachel.classList.contains('benutzt')) return;
+  kachel.classList.add('benutzt');
+  const gelegt = document.createElement('button');
+  gelegt.type = 'button';
+  gelegt.className = 'kachel';
+  gelegt.textContent = kachel.textContent;
+  gelegt.addEventListener('click', () => {
+    if (abfrage.geprueft) return;
+    gelegt.remove();
+    kachel.classList.remove('benutzt');
+  });
+  el('runde-ablage').appendChild(gelegt);
+}
+
+function pruefenDeutsch(weissNicht) {
+  const schritt = abfrage.schritte[abfrage.pos];
+  const w = Vokabeln.wort(schritt.id);
+  const gelegt = [...el('runde-ablage').querySelectorAll('.kachel')].map((k) => k.textContent);
+  if (!weissNicht && !gelegt.length) return;
+  const gewusst = !weissNicht && Vokabeln.pruefeDeutsch(gelegt, w);
+
+  if (!abfrage.gewertet.has(w.id)) {
+    abfrage.gewertet.add(w.id);
+    Vokabeln.eintragen(w.id, gewusst, 'de');
+    if (gewusst) abfrage.aufAnhieb += 1;
+  }
+  if (!gewusst) abfrage.schritte.push({ art: 'deutsch', id: w.id });
+
+  const loesung = Vokabeln.deutschZiel(w.de).join(' ');
+  el('rueckmeldung').classList.toggle('falsch', !gewusst);
+  el('rueck-titel').textContent = gewusst ? 'Richtig.' : weissNicht ? 'Das heißt:' : 'Noch nicht.';
+  el('rueck-text').textContent = gewusst
+    ? (w.de !== loesung ? w.de : '')
+    : `${weissNicht ? '' : 'Richtig ist: '}${loesung}. Kommt gleich noch einmal.`;
+  el('rueck-text').hidden = !el('rueck-text').textContent;
+  el('rueckmeldung').hidden = false;
+  el('runde-ablage').classList.add('fertig');
+  el('knopf-weiss-nicht').hidden = true;
+  el('knopf-pruefen').textContent = 'Weiter';
+  el('knopf-pruefen').focus();
+  abfrage.geprueft = true;
 }
 
 function waehlen(knopf, richtig, w) {
@@ -585,6 +654,7 @@ el('runde-langsam').addEventListener('click', () => {
 
 function pruefen(weissNicht = false) {
   const schritt = abfrage.schritte[abfrage.pos];
+  if (schritt.art === 'deutsch') return pruefenDeutsch(weissNicht);
   const w = Vokabeln.wort(schritt.id);
   const eingabe = el('abfrage-eingabe');
   const text = eingabe.value.trim();
@@ -596,7 +666,7 @@ function pruefen(weissNicht = false) {
   // Nur der erste Versuch zählt für den Karteikasten.
   if (!abfrage.gewertet.has(w.id)) {
     abfrage.gewertet.add(w.id);
-    Vokabeln.eintragen(w.id, gewusst);
+    Vokabeln.eintragen(w.id, gewusst, 'it');
     if (gewusst) abfrage.aufAnhieb += 1;
   }
   // Nicht gewusst: am Ende der Runde noch einmal fragen.

@@ -100,6 +100,12 @@ Marco mangia il cornetto e beve il caffè al banco. Poi paga: due euro e cinquan
       'buona': ['buono', 'gute(n)'],
       'giornata': ['la giornata', 'der Tag (wie er verläuft)', 'der Tag (Verlauf)'],
     },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Sono le otto di mattina.': 'Es ist acht Uhr morgens.',
+      'Marco è al bar.': 'Marco ist in der Bar.',
+      'Poi paga: due euro e cinquanta.': 'Dann zahlt er: zwei Euro fünfzig.',
+    },
     fragen: [
       { frage: 'Wann ist Marco in der Bar?', antworten: ['Um acht Uhr morgens', 'Am Abend', 'Am Mittag'] },
       { frage: 'Was isst Marco?', antworten: ['Ein Hörnchen mit Creme', 'Ein Brötchen mit Schinken', 'Ein Eis'] },
@@ -132,6 +138,18 @@ La domenica mangiamo sempre dai nonni. La nonna fa la pasta in casa.`,
       'scuola': ['la scuola', 'Schule', 'die Schule'],
       'domenica': ['domenica', 'Sonntag (la domenica = sonntags)'],
       'pasta': ['la pasta', 'Nudeln (la pasta in casa = selbst gemachte Nudeln)', 'die Nudeln; der Teig'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Mi chiamo Anna e abito a Bologna.': 'Ich heiße Anna und wohne in Bologna.',
+      'Ho trentadue anni e lavoro in una scuola.': 'Ich bin zweiunddreißig Jahre alt und arbeite in einer Schule.',
+      'La mia famiglia non è grande.': 'Meine Familie ist nicht groß.',
+      'Lui è cuoco e cucina molto bene.': 'Er ist Koch und kocht sehr gut.',
+      'Abbiamo una figlia, Sofia.': 'Wir haben eine Tochter, Sofia.',
+      'Sofia ha sei anni.': 'Sofia ist sechs Jahre alt.',
+      'Abbiamo anche un gatto, Micio.': 'Wir haben auch eine Katze, Micio.',
+      'La domenica mangiamo sempre dai nonni.': 'Sonntags essen wir immer bei den Großeltern.',
+      'La nonna fa la pasta in casa.': 'Die Oma macht die Nudeln selbst.',
     },
     fragen: [
       { frage: 'Wo wohnt Anna?', antworten: ['In Bologna', 'In Rom', 'In Neapel'] },
@@ -168,6 +186,14 @@ La sera guardano un film e mangiano una pizza. Domani è domenica: la famiglia v
       'mangiano': ['mangiare', 'essen'],
       'pizza': ['la pizza', 'Pizza', 'die Pizza'],
       'nonni': ['il nonno', 'Großeltern'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Oggi Luca non lavora.': 'Heute arbeitet Luca nicht.',
+      'La mattina gioca con il cane al parco.': 'Am Morgen spielt er mit dem Hund im Park.',
+      'Il pomeriggio Luca e Anna fanno una passeggiata.': 'Am Nachmittag gehen Luca und Anna spazieren.',
+      'La sera guardano un film e mangiano una pizza.': 'Am Abend sehen sie einen Film und essen eine Pizza.',
+      'Domani è domenica: la famiglia va dai nonni.': 'Morgen ist Sonntag: Die Familie geht zu den Großeltern.',
     },
     fragen: [
       { frage: 'Was macht Luca am Samstagmorgen?', antworten: ['Er spielt mit dem Hund im Park', 'Er arbeitet', 'Er schwimmt'] },
@@ -213,6 +239,12 @@ Metti i pomodori sul pane e servi subito.`,
       'metti': ['mettere', 'leg! gib!'],
       'servi': ['servire', 'serviere!'],
     },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      "Aggiungi il sale, l'olio e qualche foglia di basilico.": 'Gib das Salz, das Öl und ein paar Basilikumblätter dazu.',
+      "Strofina l'aglio sul pane caldo.": 'Reib den Knoblauch auf das warme Brot.',
+      'Metti i pomodori sul pane e servi subito.': 'Leg die Tomaten auf das Brot und servier sofort.',
+    },
     fragen: [
       { frage: 'Wie viele Tomaten braucht man?', antworten: ['Drei', 'Vier', 'Eine'] },
       { frage: 'Was macht man mit dem Knoblauch?', antworten: ['Man reibt ihn über das warme Brot', 'Man brät ihn in der Pfanne', 'Man gibt ihn zu den Tomaten'] },
@@ -251,6 +283,13 @@ Paola paga con la carta di credito e va al binario. Il treno è in ritardo di di
       'carta': ['la carta', 'die Karte (carta di credito = Kreditkarte)', 'die Karte'],
       'credito': ['il credito', 'Kredit (carta di credito = Kreditkarte)'],
     },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Paola è alla stazione di Firenze.': 'Paola ist am Bahnhof von Florenz.',
+      'Vuole andare a Roma.': 'Sie will nach Rom fahren.',
+      'Va alla biglietteria.': 'Sie geht zum Fahrkartenschalter.',
+      'Il treno è in ritardo di dieci minuti.': 'Der Zug hat zehn Minuten Verspätung.',
+    },
     fragen: [
       { frage: 'Wohin will Paola fahren?', antworten: ['Nach Rom', 'Nach Florenz', 'Nach Mailand'] },
       { frage: 'Von welchem Gleis fährt der Zug?', antworten: ['Von Gleis 6', 'Von Gleis 10', 'Von Gleis 15'] },
@@ -287,6 +326,15 @@ Alle sei torna a casa. La sera cucina qualcosa di semplice, legge un libro e all
       'semplice': ['semplice', 'einfach', 'einfach'],
       'legge': ['leggere', 'liest'],
       'letto': ['il letto', 'Bett (va a letto = geht ins Bett)'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Giulia si sveglia alle sette.': 'Giulia wacht um sieben Uhr auf.',
+      'Si alza subito, si lava e si veste.': 'Sie steht sofort auf, wäscht sich und zieht sich an.',
+      "Alle otto prende l'autobus per andare in ufficio.": 'Um acht nimmt sie den Bus, um ins Büro zu fahren.',
+      "Lavora fino all'una, poi pranza con una collega.": 'Sie arbeitet bis ein Uhr, dann isst sie mit einer Kollegin zu Mittag.',
+      'Il pomeriggio è lungo e Giulia è stanca.': 'Der Nachmittag ist lang und Giulia ist müde.',
+      'Alle sei torna a casa.': 'Um sechs kommt sie nach Hause.',
     },
     fragen: [
       { frage: 'Wie kommt Giulia zur Arbeit?', antworten: ['Mit dem Bus', 'Mit dem Auto', 'Zu Fuß'] },
@@ -339,6 +387,13 @@ Scola gli spaghetti e versali nella padella. Mescola bene, aggiungi il prezzemol
       'tritato': ['tritare', 'gehackt'],
       'servi': ['servire', 'serviere!'],
     },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Cuoci gli spaghetti per circa dieci minuti.': 'Koch die Spaghetti etwa zehn Minuten.',
+      'Aggiungi il peperoncino.': 'Gib die Chilischote dazu.',
+      'Scola gli spaghetti e versali nella padella.': 'Gieß die Spaghetti ab und gib sie in die Pfanne.',
+      'Mescola bene, aggiungi il prezzemolo tritato e servi subito.': 'Gut umrühren, die gehackte Petersilie dazugeben und sofort servieren.',
+    },
     fragen: [
       { frage: 'Wie lange kochen die Spaghetti?', antworten: ['Ungefähr zehn Minuten', 'Zwei Minuten', 'Zwanzig Minuten'] },
       { frage: 'Worauf muss man beim Knoblauch achten?', antworten: ['Er darf nicht dunkel werden', 'Er muss roh bleiben', 'Er muss sehr fein gehackt sein'] },
@@ -372,6 +427,16 @@ Domenica ha piovuto, così siamo tornate a casa presto. È stato un fine settima
       'piovuto': ['piovere', 'geregnet (ha piovuto = es hat geregnet)'],
       'tornate': ['tornare', 'zurückgekehrt'],
       'bellissimo': ['bello', 'wunderschön'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Siamo partite sabato mattina in macchina.': 'Wir sind am Samstagmorgen mit dem Auto losgefahren.',
+      'Il viaggio è durato due ore.': 'Die Fahrt hat zwei Stunden gedauert.',
+      'Al mare abbiamo fatto una lunga passeggiata sulla spiaggia.': 'Am Meer haben wir einen langen Spaziergang am Strand gemacht.',
+      "Il sole era caldo, ma l'acqua era ancora fredda.": 'Die Sonne war warm, aber das Wasser war noch kalt.',
+      'Il cameriere è stato molto gentile.': 'Der Kellner war sehr freundlich.',
+      'Domenica ha piovuto, così siamo tornate a casa presto.': 'Am Sonntag hat es geregnet, deshalb sind wir früh nach Hause gefahren.',
+      'È stato un fine settimana bellissimo!': 'Es war ein wunderschönes Wochenende!',
     },
     fragen: [
       { frage: 'Mit wem war die Erzählerin am Meer?', antworten: ['Mit ihrer Freundin Chiara', 'Mit ihrer Familie', 'Allein'] },
@@ -436,6 +501,15 @@ Metti il tiramisù in frigorifero per almeno quattro ore. Prima di servire, spol
       'almeno': ['almeno', 'mindestens', 'mindestens'],
       'prima': ['prima', 'vorher (prima di = vor)'],
       'spolvera': ['spolverare', 'bestäube!', 'bestäuben'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Separa i tuorli dagli albumi.': 'Trenn das Eigelb vom Eiweiß.',
+      'Aggiungi il mascarpone e mescola bene.': 'Gib den Mascarpone dazu und rühr gut um.',
+      'Copri con uno strato di crema.': 'Bedeck alles mit einer Schicht Creme.',
+      'Ripeti: savoiardi, crema.': 'Wiederhole: Löffelbiskuits, Creme.',
+      'Metti il tiramisù in frigorifero per almeno quattro ore.': 'Stell das Tiramisù mindestens vier Stunden in den Kühlschrank.',
+      'Prima di servire, spolvera con il cacao.': 'Vor dem Servieren mit Kakao bestäuben.',
     },
     fragen: [
       { frage: 'Wie lange muss das Tiramisù in den Kühlschrank?', antworten: ['Mindestens vier Stunden', 'Eine halbe Stunde', 'Einen ganzen Tag'] },

@@ -25,9 +25,9 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 ## Dateien
 - `app.js` – Bildschirme und Knöpfe
 - `speicher.js` – Speichern, Sichern, Laden
-- `vokabeln.js` – Karteikasten (5 Fächer) und Prüfen der Antwort. Neue Karten haben `kennen` (0…`KENNEN_FERTIG`=4): erst Kennenlernen (Zeigen+Hören, Wortpaare, Wählen nach Lesen/Hören), danach Schreiben ab dem nächsten Tag. Karten ohne `kennen` (alt) gelten als bekannt.
+- `vokabeln.js` – Karteikasten (5 Fächer) und Prüfen der Antwort. Neue Karten haben `kennen` (0…`KENNEN_FERTIG`=4): erst Kennenlernen (Zeigen+Hören, Wortpaare, Wählen nach Lesen/Hören), danach Schreiben ab dem nächsten Tag. Karten ohne `kennen` (alt) gelten als bekannt. Fällige Wörter ab Fach 2 kommen abwechselnd als Italienisch schreiben oder Italienisch → Deutsch mit Kacheln (`karte.richtung`, `richtungFuer`, `deutschKacheln`).
 - `wortschatz.js` – Grundwortschatz (Themen, A1/A2)
-- `texte.js` – Lesetexte/Rezepte mit Wortbedeutungen und Fragen (erste Antwort = richtig)
+- `texte.js` – Lesetexte/Rezepte mit Wortbedeutungen, Fragen (erste Antwort = richtig) und `uebersetzung` (deutsche Übersetzung jedes Hörsatzes; Test `werkzeuge/test/hoeren.test.js` prüft, dass keiner fehlt)
 - `lesen.js` – Nachschlagen, Vorlesen (Web Speech API, it-IT), gelesene Texte
 - `grammatik.js` – Kapitel (Regel, Tabelle, Übungen: Lücke/Kacheln), Fortschritt, Regel-Erkennung am Text (`kapitelFuerWort`)
 - Neue Texte: jedes Wort muss eine Bedeutung haben (im Text, in `GRUNDWOERTER` oder im Wortschatz) – vor dem Fertigmelden mit einem kleinen Node-Skript prüfen.

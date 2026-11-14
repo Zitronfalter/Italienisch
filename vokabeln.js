@@ -101,8 +101,66 @@ const Vokabeln = (() => {
     }
   }
 
+  // ---------- Abfrage Italienisch → Deutsch (mit Kacheln) ----------
+  //
+  // Fällige Wörter werden abwechselnd in beide Richtungen abgefragt (karte.richtung = zuletzt).
+  // Fach 1 und junge Wörter: immer Italienisch schreiben – das ist schwerer und festigt mehr.
+
+  function richtungFuer(id) {
+    const k = karten()[id];
+    if (!k || istJung(k) || k.fach <= 1) return 'it';
+    const w = wort(id);
+    if (!w || !deutschZiel(w.de).length) return 'it';     // z. B. Bedeutung „(Ausruf)“ – nicht legbar
+    return k.richtung === 'de' ? 'it' : 'de';
+  }
+
+  // "bitte (als Antwort auf danke)" → ["bitte"], "guten Morgen; guten Tag" → ["guten", "Morgen"]
+  function deutschZiel(de) {
+    return de.split(';')[0].split('/')[0]
+      .replace(/\([^)]*\)/g, ' ')
+      .replace(/[.,!?;:–]/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean);
+  }
+
+  function gemischt(liste) {
+    const a = [...liste];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Kacheln: die Wörter der Lösung + 2 falsche (bei nur einem Wort: 3), am liebsten aus demselben Thema
+  function deutschKacheln(w) {
+    const ziel = deutschZiel(w.de);
+    // Kein Wort aus irgendeiner Bedeutung dieses Wortes als falsche Kachel (sonst wäre „falsch“ eigentlich richtig)
+    const gesehen = new Set(w.de.replace(/[();/.,!?:–]/g, ' ').split(/\s+/).filter(Boolean).map((t) => t.toLowerCase()));
+    const anzahl = ziel.length === 1 ? 3 : 2;
+    const falsche = [];
+    const gleich = WORTSCHATZ.filter((x) => x.id !== w.id && w.thema && x.thema === w.thema);
+    const andere = WORTSCHATZ.filter((x) => x.id !== w.id);
+    for (const x of [...gemischt(gleich), ...gemischt(andere)]) {
+      if (falsche.length >= anzahl) break;
+      // am liebsten Inhaltswörter (nicht „der“, „die“ …), damit es nicht zu leicht wird
+      const kandidaten = gemischt(deutschZiel(x.de)).filter((t) => !gesehen.has(t.toLowerCase()));
+      const t = kandidaten.find((y) => y.length > 3) || kandidaten[0];
+      if (!t) continue;
+      gesehen.add(t.toLowerCase());
+      falsche.push(t);
+    }
+    return { ziel, kacheln: gemischt([...ziel, ...falsche]) };
+  }
+
+  function pruefeDeutsch(gelegt, w) {
+    const ziel = deutschZiel(w.de);
+    return gelegt.length === ziel.length && gelegt.every((t, i) => t.toLowerCase() === ziel[i].toLowerCase());
+  }
+
   // Ergebnis eintragen. Nur die erste Antwort pro Runde zählt für das Fach.
-  function eintragen(id, gewusst) {
+  // richtung: 'it' (Italienisch geschrieben) oder 'de' (Deutsch mit Kacheln gelegt)
+  function eintragen(id, gewusst, richtung = 'it') {
     const k = karten()[id] || { fach: 1, faellig: heute(), richtig: 0, falsch: 0 };
     if (gewusst) {
       k.fach = Math.min(5, k.fach + 1);
@@ -113,6 +171,7 @@ const Vokabeln = (() => {
     }
     k.faellig = inTagen(ABSTAND[k.fach]);
     k.zuletzt = heute();
+    k.richtung = richtung;
     karten()[id] = k;
     Speicher.speichern();
   }
@@ -218,5 +277,9 @@ const Vokabeln = (() => {
     pruefe,
     heute,
     inTagen,
+    richtungFuer,
+    deutschZiel,
+    deutschKacheln,
+    pruefeDeutsch,
   };
 })();

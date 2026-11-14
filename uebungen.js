@@ -40,7 +40,7 @@ const Uebungen = (() => {
         for (const s of teile) {
           const satz = s.replace(/^[–\s,]+/, '').replace(/,\s*$/, '.').trim();
           const n = woerter(satz);
-          if (n >= 3 && n <= 9 && /[.!?]$/.test(satz)) liste.push({ it: satz, de: '', quelle: t.titel, stufe: t.stufe });
+          if (n >= 3 && n <= 9 && /[.!?]$/.test(satz)) liste.push({ it: satz, de: (t.uebersetzung || {})[satz] || '', quelle: t.titel, stufe: t.stufe });
         }
       }
     }

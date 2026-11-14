@@ -52,4 +52,11 @@ var LEKTIONEN = [
     kapitel: ['verben-are', 'piacere'],
     texte: ['tempo-libero'],
   },
+  {
+    id: 'r1', nr: 4.5, titel: 'Wiederholung 1', situation: 'Lektion 1–4 gemischt', stufe: 'A1', art: 'ripasso',
+    lektionen: ['l01', 'l02', 'l03', 'l04'],
+    woerter: [],
+    kapitel: [],
+    texte: ['ripasso-1'],
+  },
 ];

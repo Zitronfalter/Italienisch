@@ -63,6 +63,8 @@ const KAPITEL = [
       { art: 'kacheln', de: 'Der Wein und das Brot', it: 'il vino e il pane', extra: ['la', 'lo'] },
       { art: 'luecke', de: 'die Häuser', satz: '___ case', loesung: 'le' },
       { art: 'luecke', de: 'die Freunde', satz: '___ amici', loesung: 'gli' },
+      { art: 'luecke', de: 'die Milch', satz: '___ latte', loesung: 'il' },
+      { art: 'kacheln', de: 'Das Frühstück und der Kaffee', it: 'la colazione e il caffè', extra: ['lo', 'le'] },
     ],
   },
 
@@ -92,6 +94,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Marco arbeitet in einer Bar.', satz: 'Marco ___ in un bar. (lavorare)', loesung: 'lavora' },
       { art: 'luecke', de: 'Wir essen die Nudeln.', satz: 'Noi ___ la pasta. (mangiare)', loesung: 'mangiamo' },
       { art: 'kacheln', de: 'Ihr sprecht gut.', it: 'Parlate bene', extra: ['parliamo', 'buono'] },
+      { art: 'luecke', de: 'Wir spielen am Sonntag.', satz: 'Noi ___ la domenica. (giocare)', loesung: 'giochiamo' },
+      { art: 'kacheln', de: 'Sie arbeiten am Samstag. (Mehrzahl)', it: 'Lavorano il sabato', extra: ['lavora', 'lavoriamo'] },
     ],
   },
 
@@ -120,6 +124,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Wir sind im Urlaub.', satz: 'Noi ___ in vacanza. (essere)', loesung: 'siamo' },
       { art: 'luecke', de: 'Hast du Hunger?', satz: 'Tu ___ fame? (avere)', loesung: 'hai' },
       { art: 'kacheln', de: 'Das Hotel ist teuer.', it: "L'albergo è caro", extra: ['ha', 'cara'] },
+      { art: 'luecke', de: 'Meine Schwester ist groß.', satz: 'Mia sorella ___ grande. (essere)', loesung: 'è' },
+      { art: 'luecke', de: 'Wir haben zwei Kinder.', satz: 'Noi ___ due figli. (avere)', loesung: 'abbiamo' },
     ],
   },
 
@@ -207,6 +213,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Verstehst du Italienisch?', satz: "Tu ___ l'italiano? (capire)", loesung: 'capisci' },
       { art: 'luecke', de: 'Sie schlafen bis neun. (Mehrzahl)', satz: 'Loro ___ fino alle nove. (dormire)', loesung: 'dormono' },
       { art: 'kacheln', de: 'Wir schreiben einen Brief.', it: 'Scriviamo una lettera', extra: ['scrivono', 'un'] },
+      { art: 'luecke', de: 'Was trinkst du?', satz: 'Che cosa ___? (bere)', loesung: 'bevi' },
+      { art: 'kacheln', de: 'Wir öffnen das Fenster.', it: 'Apriamo la finestra', extra: ['aprono', 'il'] },
     ],
   },
 
@@ -234,6 +242,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Gib die Pizza in den Ofen.', satz: 'Metti la pizza ___ forno. (in + il)', loesung: 'nel' },
       { art: 'luecke', de: 'Das Buch liegt auf dem Tisch.', satz: 'Il libro è ___ tavolo. (su + il)', loesung: 'sul' },
       { art: 'luecke', de: 'der Orangensaft', satz: "il succo ___ arancia (di + l')", loesung: "dell'" },
+      { art: 'luecke', de: 'Ich komme aus Deutschland.', satz: 'Vengo ___ Germania. (da + la)', loesung: 'dalla' },
+      { art: 'luecke', de: 'Ich gehe zum Bahnhof.', satz: 'Vado ___ stazione. (a + la)', loesung: 'alla' },
     ],
   },
 
@@ -262,6 +272,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Wir heißen Rossi.', satz: 'Noi ___ chiamiamo Rossi.', loesung: 'ci' },
       { art: 'luecke', de: 'Wie heißt du?', satz: 'Come ti ___? (chiamarsi)', loesung: 'chiami' },
       { art: 'kacheln', de: 'Er setzt sich.', it: 'Si siede', extra: ['mi', 'siedo'] },
+      { art: 'luecke', de: 'Wir ziehen uns an.', satz: '___ vestiamo.', loesung: 'ci' },
+      { art: 'kacheln', de: 'Ich wasche mich.', it: 'Mi lavo', extra: ['si', 'lava'] },
     ],
   },
 
@@ -291,6 +303,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Hast du gut geschlafen?', satz: 'Hai ___ bene? (dormire)', loesung: 'dormito' },
       { art: 'luecke', de: 'Marco hat die Rechnung bezahlt.', satz: 'Marco ha ___ il conto. (pagare)', loesung: 'pagato' },
       { art: 'kacheln', de: 'Was hast du gemacht?', it: 'Che cosa hai fatto?', extra: ['ha', 'fare'] },
+      { art: 'luecke', de: 'Ihr habt viel gearbeitet.', satz: 'Avete ___ molto. (lavorare)', loesung: 'lavorato' },
+      { art: 'kacheln', de: 'Sie haben einen Film gesehen. (Mehrzahl)', it: 'Hanno visto un film', extra: ['sono', 'vedere'] },
     ],
   },
 
@@ -319,6 +333,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Wir sind früh abgefahren.', satz: 'Noi ___ partiti presto. (essere)', loesung: 'siamo' },
       { art: 'luecke', de: 'Die Mädchen sind nach Hause gekommen.', satz: 'Le ragazze sono ___ a casa. (tornare)', loesung: 'tornate' },
       { art: 'kacheln', de: 'Wir sind ans Meer gefahren.', it: 'Siamo andati al mare', extra: ['abbiamo', 'andato'] },
+      { art: 'luecke', de: 'Sofia ist zu Hause geblieben.', satz: 'Sofia è ___ a casa. (restare)', loesung: 'restata' },
+      { art: 'kacheln', de: 'Wir sind spät angekommen. (Männer)', it: 'Siamo arrivati tardi', extra: ['abbiamo', 'arrivato'] },
     ],
   },
 
@@ -348,6 +364,8 @@ const KAPITEL = [
       { art: 'luecke', de: 'Rühre gut um.', satz: '___ bene. (mescolare)', loesung: 'mescola' },
       { art: 'luecke', de: 'Serviere sofort.', satz: '___ subito. (servire)', loesung: 'servi' },
       { art: 'kacheln', de: 'Gib die Tomaten in die Pfanne.', it: 'Metti i pomodori nella padella', extra: ['mettere', 'nel'] },
+      { art: 'luecke', de: 'Nimm das Brot!', satz: '___ il pane! (prendere)', loesung: 'prendi' },
+      { art: 'kacheln', de: 'Schneide die Zwiebel!', it: 'Taglia la cipolla', extra: ['tagli', 'il'] },
     ],
   },
 ];
@@ -397,12 +415,30 @@ const Grammatik = (() => {
     f.grammatik = f.grammatik || {};
     const alt = f.grammatik[id] || {};
     f.grammatik[id] = {
-      geuebt: alt.geuebt || richtig / von >= 0.8,    // ab 80 % richtig gilt das Kapitel als geübt
+      ...alt,                                          // z. B. geloest behalten
+      // geübt: ab 80 % richtig – oder wenn jede Übung schon einmal auf Anhieb gelöst wurde
+      geuebt: alt.geuebt || richtig / von >= 0.8 || ungeloeste(id).length === 0,
       richtig,
       von,
       datum: Vokabeln.heute(),
     };
     Speicher.speichern();
+  }
+
+  // Auf Anhieb gelöste Übungen merken (Nummern) – sie kommen beim nächsten Üben nicht wieder
+  function uebungGeloest(id, nr) {
+    const f = Speicher.daten.fortschritt;
+    f.grammatik = f.grammatik || {};
+    const st = (f.grammatik[id] = f.grammatik[id] || {});
+    st.geloest = st.geloest || [];
+    if (!st.geloest.includes(nr)) st.geloest.push(nr);
+    Speicher.speichern();
+  }
+
+  function ungeloeste(id) {
+    const k = kapitel(id);
+    const geloest = (stand(id) || {}).geloest || [];
+    return k ? k.uebungen.map((u, i) => i).filter((i) => !geloest.includes(i)) : [];
   }
 
   function anzahlGeuebt() {
@@ -437,5 +473,5 @@ const Grammatik = (() => {
     return kapitel('verben-ere-ire');
   }
 
-  return { kapitel, pruefeLuecke, pruefeKacheln, kacheln, stand, ergebnisSpeichern, anzahlGeuebt, kapitelFuerWort };
+  return { kapitel, pruefeLuecke, pruefeKacheln, kacheln, stand, ergebnisSpeichern, uebungGeloest, ungeloeste, anzahlGeuebt, kapitelFuerWort };
 })();

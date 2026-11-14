@@ -99,6 +99,8 @@
         <ul class="lektion-wortliste" id="lektion-wortliste"></ul>
       </div>
 
+      <div class="knopf-gruppe" id="lektion-extra"></div>
+
       <div class="knopf-gruppe">
         <button class="knopf-zurueck" data-zurueck type="button">Zur Startseite</button>
       </div>
@@ -279,6 +281,7 @@
       <div class="tabelle-rahmen">
         <table class="tabelle" id="kapitel-tabelle" lang="it"></table>
       </div>
+      <p class="karte-text" id="kapitel-uebungen-stand"></p>
       <div class="knopf-gruppe">
         <button class="knopf-haupt" id="knopf-ueben" type="button">Üben</button>
         <button class="knopf-zurueck" id="knopf-kapitel-zurueck" type="button">Zurück</button>
@@ -321,6 +324,47 @@
       <div class="knopf-gruppe">
         <button class="knopf-haupt" id="knopf-uebung" type="button">Prüfen</button>
         <button class="knopf-zurueck" id="knopf-uebung-beenden" type="button">Übung beenden</button>
+      </div>
+    </section>
+
+    <!-- Aufgabenrunde: „Kann ich schon“ und gemischte Übungen einer Wiederholung -->
+    <section class="screen" id="screen-aufgaben" hidden>
+      <header class="kopf kopf-zeile">
+        <h2 class="kopf-klein" id="aufgaben-titel"></h2>
+        <span class="stand" id="aufgaben-stand"></span>
+      </header>
+
+      <div class="karte frage-karte">
+        <p class="frage-art" id="aufgabe-art"></p>
+        <p class="frage-wort" id="aufgabe-text"></p>
+        <div class="hoer-knoepfe" id="aufgabe-hoer" hidden>
+          <button class="knopf-klein knopf-klein-voll" id="aufgabe-play" type="button">▶ Anhören</button>
+          <button class="knopf-klein" id="aufgabe-langsam" type="button">Langsam</button>
+        </div>
+      </div>
+
+      <div id="aufgabe-luecke" hidden>
+        <p class="luecke-satz" id="aufgabe-luecke-satz" lang="it"></p>
+        <form class="eingabe" id="aufgabe-luecke-form" autocomplete="off">
+          <input class="eingabe-feld" id="aufgabe-eingabe" type="text" lang="it"
+                 autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                 enterkeyhint="done" placeholder="Fehlendes Wort" aria-label="Fehlendes Wort">
+        </form>
+      </div>
+
+      <div id="aufgabe-kacheln" hidden>
+        <div class="kachel-ablage" id="aufgabe-ablage" aria-label="Deine Antwort"></div>
+        <div class="kachel-vorrat" id="aufgabe-vorrat" aria-label="Wörter"></div>
+      </div>
+
+      <div class="rueckmeldung" id="aufgabe-rueck" role="status" hidden>
+        <p class="rueck-titel" id="aufgabe-rueck-titel"></p>
+        <p class="rueck-text" id="aufgabe-rueck-text"></p>
+      </div>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-aufgabe" type="button">Prüfen</button>
+        <button class="knopf-zurueck" id="knopf-aufgaben-beenden" type="button">Beenden</button>
       </div>
     </section>
 

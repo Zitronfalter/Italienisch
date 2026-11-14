@@ -84,12 +84,17 @@ function naechsterInhalt() {
 
 // Nach den Vokabeln: der nächste Teil der aktuellen Lektion – oder, wenn dort nichts offen ist,
 // etwas aus „Frei üben“ (naechsterInhalt).
-const TEIL_NAMEN = { woerter: 'Wörter', kapitel: 'Grammatik', text: 'Text', hoeren: 'Hören & Üben' };
+const TEIL_NAMEN = { woerter: 'Wörter', kapitel: 'Grammatik', grammatik: 'Grammatik', text: 'Text', hoeren: 'Hören & Üben', uebungen: 'Übungen' };
+
+// „Lektion 3“ oder „Wiederholung“
+function lektionName(l) {
+  return l.art === 'ripasso' ? 'Wiederholung' : `Lektion ${l.nr}`;
+}
 
 function naechsterSchritt() {
   const t = Lektionen.naechsterTeil({ ohneWortCheck: true });
   if (t) {
-    return { ...t, name: `Lektion ${t.lektion.nr}, ${TEIL_NAMEN[t.art]}` };
+    return { ...t, name: `${lektionName(t.lektion)}, ${TEIL_NAMEN[t.art]}` };
   }
   return naechsterInhalt();
 }
@@ -100,6 +105,7 @@ function oeffneNaechstes(n) {
     Lektionen.beginnen(n.lektion.id);
     if (n.art === 'text') oeffneText(n.obj, 'lektion');
     else if (n.art === 'kapitel') oeffneKapitel(n.obj, 'lektion');
+    else if (n.art === 'uebungen') starteRipasso(n.lektion);
     else starteHoeren({ lektion: n.lektion });
     return;
   }
@@ -133,12 +139,8 @@ function teilZeichen(stand) {
 }
 
 function teileHtml(l) {
-  const t = Lektionen.teile(l);
-  return Object.keys(TEIL_NAMEN)
-    .map((art) => {
-      const s = art === 'kapitel' ? t.grammatik : art === 'woerter' ? t.woerter : t[art];
-      return `<span class="${s === 'fertig' ? 'teil-fertig' : ''}">${teilZeichen(s)} ${TEIL_NAMEN[art]}</span>`;
-    })
+  return Object.entries(Lektionen.teile(l))
+    .map(([art, s]) => `<span class="${s === 'fertig' ? 'teil-fertig' : ''}">${teilZeichen(s)} ${TEIL_NAMEN[art]}</span>`)
     .join('');
 }
 
@@ -152,7 +154,7 @@ function lektionKnopf(l, art) {
     <span class="karte-text"></span>
     <span class="pfeil" aria-hidden="true">›</span>`;
   knopf.querySelector('.lektion-nr').textContent =
-    `Lektion ${l.nr} · ${l.stufe}` + (art === 'jetzt' ? ' · jetzt dran' : '');
+    `${lektionName(l)} · ${l.stufe}` + (art === 'jetzt' ? ' · jetzt dran' : '');
   knopf.querySelector('.karte-titel').textContent = l.titel;
   knopf.querySelector('.karte-text').textContent = l.situation;
   if (art !== 'spaeter') {
@@ -162,7 +164,7 @@ function lektionKnopf(l, art) {
     knopf.appendChild(zeile);
   }
   knopf.addEventListener('click', () => {
-    if (art === 'spaeter' && !confirm(`Schon Lektion ${l.nr} „${l.titel}“ anfangen?`)) return;
+    if (art === 'spaeter' && !confirm(`Schon ${lektionName(l)} „${l.titel}“ anfangen?`)) return;
     oeffneLektion(l);
   });
   return knopf;
@@ -202,7 +204,7 @@ function wortStand(id) {
 function oeffneLektion(l) {
   lekt.offen = l;
   Lektionen.beginnen(l.id);
-  el('lektion-meta').textContent = `Lektion ${l.nr} · ${l.stufe}` + (Lektionen.istErledigt(l) ? ' · erledigt ✓' : '');
+  el('lektion-meta').textContent = `${lektionName(l)} · ${l.stufe}` + (Lektionen.istErledigt(l) ? ' · erledigt ✓' : '');
   el('lektion-titel').textContent = l.titel;
   el('lektion-situation').textContent = l.situation;
   el('begleiter-lektion').hidden = !geschafftZeigen(el('begleiter-lektion'));
@@ -224,6 +226,17 @@ function oeffneLektion(l) {
     teile.appendChild(knopf);
   };
 
+  if (l.art === 'ripasso') {
+    teil('Übungen', t.uebungen, 'Gemischt aus den Lektionen davor', () => starteRipasso(l));
+    for (const id of l.texte) {
+      const text = LESETEXTE.find((x) => x.id === id);
+      if (text) teil('Text', teilAus([Lesen.stand(id)], (s) => s.verstanden), text.titel, () => oeffneText(text, 'lektion'));
+    }
+    el('lektion-woerter').hidden = true;
+    el('lektion-extra').innerHTML = '';
+    zeige('lektion');
+    return;
+  }
   const n = l.wortIds.length;
   const gelernt = l.wortIds.filter((id) => wortStand(id) === 'gelernt').length;
   teil('Wörter', t.woerter, `${n} Wörter · ${gelernt} gelernt`, () => {
@@ -257,6 +270,20 @@ function oeffneLektion(l) {
     wl.appendChild(li);
   }
   el('lektion-woerter').hidden = true;
+
+  // Unten: „Kann ich schon“ (offene Lektion) oder „Wörter üben“ (erledigte Lektion)
+  const extra = el('lektion-extra');
+  extra.innerHTML = '';
+  const knopf = (text, aktion) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'knopf-zweit';
+    b.textContent = text;
+    b.addEventListener('click', aktion);
+    extra.appendChild(b);
+  };
+  if (Lektionen.istErledigt(l)) knopf('Wörter üben', () => starteRunde({ ids: l.wortIds }));
+  else knopf('Kann ich schon', () => starteKannIch(l));
   zeige('lektion');
 }
 
@@ -276,7 +303,7 @@ function zurueckZurLektion() {
 // --- Wörter: kenne ich / neu ---
 
 function zeigeWortCheck(l, danach) {
-  el('wortcheck-meta').textContent = `Lektion ${l.nr} · ${l.titel}`;
+  el('wortcheck-meta').textContent = `${lektionName(l)} · ${l.titel}`;
   const liste = el('wortcheck-liste');
   liste.innerHTML = '';
   const bekannt = new Set();
@@ -366,7 +393,23 @@ const abfrage = {
 
 const el = (id) => document.getElementById(id);
 
-function starteRunde() {
+// optionen.ids: nur diese Wörter üben (z. B. einer erledigten Lektion) – zählt nicht für den Karteikasten
+function starteRunde(optionen = {}) {
+  if (optionen.ids) {
+    abfrage.schritte = mischen(optionen.ids.filter((id) => Vokabeln.wort(id)))
+      .map((id) => ({ art: Math.random() < 0.5 ? 'deutsch' : 'frage', id }));
+    abfrage.ohneWertung = true;
+    abfrage.pos = 0;
+    abfrage.gewertet = new Set();
+    abfrage.aufAnhieb = 0;
+    abfrage.kennen = new Set();
+    abfrage.zweiterVersuch = new Set();
+    if (!abfrage.schritte.length) return;
+    zeige('runde');
+    zeigeSchritt();
+    return;
+  }
+  abfrage.ohneWertung = false;
   const { wiederholen, jung, neu } = Vokabeln.rundeZusammenstellen();
   const ueben = [...jung, ...neu];
   const modus = (id) => {
@@ -554,7 +597,7 @@ function pruefenDeutsch(weissNicht) {
 
   if (!abfrage.gewertet.has(w.id)) {
     abfrage.gewertet.add(w.id);
-    Vokabeln.eintragen(w.id, gewusst, 'de');
+    if (!abfrage.ohneWertung) Vokabeln.eintragen(w.id, gewusst, 'de');
     if (gewusst) abfrage.aufAnhieb += 1;
   }
   if (!gewusst) abfrage.schritte.push({ art: 'deutsch', id: w.id });
@@ -666,7 +709,7 @@ function pruefen(weissNicht = false) {
   // Nur der erste Versuch zählt für den Karteikasten.
   if (!abfrage.gewertet.has(w.id)) {
     abfrage.gewertet.add(w.id);
-    Vokabeln.eintragen(w.id, gewusst, 'it');
+    if (!abfrage.ohneWertung) Vokabeln.eintragen(w.id, gewusst, 'it');
     if (gewusst) abfrage.aufAnhieb += 1;
   }
   // Nicht gewusst: am Ende der Runde noch einmal fragen.
@@ -705,6 +748,20 @@ function weiter() {
 }
 
 function beendeRunde() {
+  // „Wörter üben“ einer erledigten Lektion: kurzer Abschluss, zurück zur Lektion
+  if (abfrage.ohneWertung) {
+    el('ende-titel').textContent = 'Fertig geübt';
+    el('ende-text').textContent = `${abfrage.gewertet.size} ${abfrage.gewertet.size === 1 ? 'Wort' : 'Wörter'} geübt, ${abfrage.aufAnhieb} davon auf Anhieb gewusst. Das zählt nicht für den Karteikasten.`;
+    el('ende-sicher').textContent = Vokabeln.anzahlSicher();
+    Begleiter.zeigen(el('begleiter-ende'), { stimmung: 'freut', text: 'Schön, dass du wiederholst!' });
+    el('ende-naechstes').hidden = true;
+    el('knopf-naechstes').hidden = false;
+    el('knopf-naechstes').textContent = 'Zurück zur Lektion';
+    el('knopf-naechstes').onclick = zurueckZurLektion;
+    el('knopf-ende-start').textContent = 'Zur Startseite';
+    zeige('ende');
+    return;
+  }
   const anzahl = abfrage.gewertet.size;
   const kennen = abfrage.kennen.size;
   if (anzahl === 0 && kennen === 0) {
@@ -735,7 +792,7 @@ function beendeRunde() {
   if (n) {
     if (anzahl > 0) el('ende-titel').textContent = 'Vokabeln geschafft';
     el('ende-naechstes-text').textContent = n.name;
-    el('knopf-naechstes').textContent = { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben' }[n.art];
+    el('knopf-naechstes').textContent = { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben', uebungen: 'Übungen' }[n.art];
     el('knopf-naechstes').onclick = () => oeffneNaechstes(n);
   }
   zeige('ende');
@@ -1183,7 +1240,7 @@ el('knopf-lesen-zurueck').addEventListener('click', () => {
 
 // ---------- Grammatik ----------
 
-const gram = { kapitel: null, zurueckZu: 'grammatik', nr: 0, richtig: 0, geprueft: false, fertig: false, gelegt: [] };
+const gram = { kapitel: null, zurueckZu: 'grammatik', liste: [], nr: 0, richtig: 0, geprueft: false, fertig: false, gelegt: [] };
 
 function zeigeGrammatikStand() {
   const n = Grammatik.anzahlGeuebt();
@@ -1248,6 +1305,12 @@ function oeffneKapitel(k, zurueckZu) {
     for (const zelle of zeile) tr.insertCell().textContent = zelle;
   }
 
+  const n = k.uebungen.length;
+  const offen = Grammatik.ungeloeste(k.id).length;
+  el('kapitel-uebungen-stand').textContent = !offen
+    ? 'Alle Übungen gelöst ✓'
+    : offen < n ? `${n - offen} von ${n} Übungen gelöst – jetzt kommen die anderen.` : `${n} Übungen`;
+  el('knopf-ueben').textContent = offen ? 'Üben' : 'Nochmal alle';
   el('knopf-kapitel-zurueck').textContent = { lesen: 'Zurück zum Text', lektion: 'Zurück zur Lektion' }[zurueckZu] || 'Zurück';
   zeige('kapitel');
 }
@@ -1260,7 +1323,11 @@ el('knopf-kapitel-zurueck').addEventListener('click', () => {
 
 // --- Übung ---
 
-function starteUebung() {
+// Übt nur die noch ungelösten Übungen; alle = true übt das ganze Kapitel noch einmal
+function starteUebung(alle = false) {
+  const k = gram.kapitel;
+  const offen = Grammatik.ungeloeste(k.id);
+  gram.liste = alle || !offen.length ? k.uebungen.map((u, i) => i) : offen;
   gram.nr = 0;
   gram.richtig = 0;
   gram.fertig = false;
@@ -1271,10 +1338,10 @@ function starteUebung() {
 
 function zeigeUebung() {
   const k = gram.kapitel;
-  const u = k.uebungen[gram.nr];
+  const u = k.uebungen[gram.liste[gram.nr]];
   gram.geprueft = false;
   gram.gelegt = [];
-  el('uebung-stand').textContent = `${gram.nr + 1} von ${k.uebungen.length}`;
+  el('uebung-stand').textContent = `${gram.nr + 1} von ${gram.liste.length}`;
   el('uebung-de').textContent = u.de;
   el('uebung-rueck').hidden = true;
   el('knopf-uebung').textContent = 'Prüfen';
@@ -1323,7 +1390,7 @@ function zeigeLueckenSatz(satz, eingabe) {
 }
 
 el('luecke-eingabe').addEventListener('input', (e) => {
-  const u = gram.kapitel.uebungen[gram.nr];
+  const u = gram.kapitel.uebungen[gram.liste[gram.nr]];
   zeigeLueckenSatz(u.satz, e.target.value);
 });
 
@@ -1343,7 +1410,7 @@ function kachelLegen(kachel) {
 }
 
 function uebungPruefen() {
-  const u = gram.kapitel.uebungen[gram.nr];
+  const u = gram.kapitel.uebungen[gram.liste[gram.nr]];
   let ergebnis;
   let loesungText;
   if (u.art === 'luecke') {
@@ -1360,7 +1427,10 @@ function uebungPruefen() {
     el('kachel-ablage').classList.add('fertig');
   }
   const gut = ergebnis.stufe !== 'falsch';
-  if (gut) gram.richtig += 1;
+  if (gut) {
+    gram.richtig += 1;
+    Grammatik.uebungGeloest(gram.kapitel.id, gram.liste[gram.nr]);
+  }
 
   el('uebung-rueck').classList.toggle('falsch', !gut);
   el('uebung-rueck-titel').textContent = ergebnis.stufe === 'richtig' ? 'Richtig.'
@@ -1389,10 +1459,10 @@ function uebungPruefen() {
 
 function uebungWeiter() {
   gram.nr += 1;
-  if (gram.nr < gram.kapitel.uebungen.length) { zeigeUebung(); return; }
+  if (gram.nr < gram.liste.length) { zeigeUebung(); return; }
   // Fertig
   const k = gram.kapitel;
-  const von = k.uebungen.length;
+  const von = gram.liste.length;
   Grammatik.ergebnisSpeichern(k.id, gram.richtig, von);
   lektionenPruefen();
   gram.fertig = true;
@@ -1419,7 +1489,7 @@ el('luecke-form').addEventListener('submit', (e) => {
   e.preventDefault();
   gram.geprueft ? uebungWeiter() : uebungPruefen();
 });
-el('knopf-ueben').addEventListener('click', starteUebung);
+el('knopf-ueben').addEventListener('click', () => starteUebung(!Grammatik.ungeloeste(gram.kapitel.id).length));
 el('knopf-uebung-beenden').addEventListener('click', () => oeffneKapitel(gram.kapitel, gram.zurueckZu));
 
 // Regel direkt am Text: Knopf im Wort-Blatt
@@ -1627,7 +1697,7 @@ function zeigeHoerenStand() {
 // optionen.lektion: Hör-Runde für diese Lektion (Ergebnis zählt für die Lektion)
 function starteHoeren(optionen = {}) {
   hoer.lektion = optionen.lektion || null;
-  hoer.aufgaben = Uebungen.runde();
+  hoer.aufgaben = Uebungen.runde({ lektion: hoer.lektion });
   hoer.nr = 0;
   hoer.richtig = 0;
   hoer.fertig = false;
@@ -1777,7 +1847,10 @@ function hoerPruefen() {
     gut = Uebungen.pruefeKacheln(woerter, a.satz.it);
     el('hoer-ablage').classList.add('fertig');
   }
-  if (gut) hoer.richtig += 1;
+  if (gut) {
+    hoer.richtig += 1;
+    Uebungen.satzGeloest(a.satz);
+  }
   hoer.geprueft = true;
 
   el('hoeren-rueck').classList.toggle('falsch', !gut);
@@ -1844,6 +1917,210 @@ el('knopf-hoeren-beenden').addEventListener('click', () => {
   else zeigeStart();
 });
 el('knopf-hoeren-start').addEventListener('click', () => starteHoeren());
+
+// ---------- Aufgabenrunde („Kann ich schon“, Wiederholung) ----------
+//
+// Aufgaben aus Lektionen.aufgabenFuer: deutsch (Kacheln), grammatik (Lücke oder Kacheln), hoeren (Kacheln).
+// fertig(richtig, von) gibt { titel, text, weiter } zurück: was nach der letzten Aufgabe passiert.
+
+const aufg = { liste: [], nr: 0, richtig: 0, geprueft: false, ende: null, fertig: null, abbruch: null };
+
+function starteAufgaben(liste, titel, fertig, abbruch) {
+  Object.assign(aufg, { liste, nr: 0, richtig: 0, geprueft: false, ende: null, fertig, abbruch });
+  el('aufgaben-titel').textContent = titel;
+  zeige('aufgaben');
+  zeigeAufgabe();
+}
+
+function aufgabeSprechen(langsam = false) {
+  const a = aufg.liste[aufg.nr];
+  if (!a) return;
+  const text = a.art === 'hoeren' ? a.satz.it : a.art === 'deutsch' ? Vokabeln.wort(a.id).it : '';
+  if (text) sprichWort(text, langsam);
+}
+
+function aufgabeKacheln(woerter, sprache) {
+  const ablage = el('aufgabe-ablage');
+  const vorrat = el('aufgabe-vorrat');
+  ablage.innerHTML = '';
+  vorrat.innerHTML = '';
+  ablage.lang = sprache;
+  vorrat.lang = sprache;
+  ablage.classList.remove('fertig');
+  for (const wort of woerter) {
+    const k = document.createElement('button');
+    k.type = 'button';
+    k.className = 'kachel';
+    k.textContent = wort;
+    k.addEventListener('click', () => {
+      if (aufg.geprueft || k.classList.contains('benutzt')) return;
+      k.classList.add('benutzt');
+      const gelegt = document.createElement('button');
+      gelegt.type = 'button';
+      gelegt.className = 'kachel';
+      gelegt.textContent = wort;
+      gelegt.addEventListener('click', () => {
+        if (aufg.geprueft) return;
+        gelegt.remove();
+        k.classList.remove('benutzt');
+      });
+      ablage.appendChild(gelegt);
+    });
+    vorrat.appendChild(k);
+  }
+  el('aufgabe-kacheln').hidden = false;
+}
+
+function zeigeAufgabe() {
+  const a = aufg.liste[aufg.nr];
+  aufg.geprueft = false;
+  el('aufgaben-stand').textContent = `${aufg.nr + 1} von ${aufg.liste.length}`;
+  el('aufgabe-rueck').hidden = true;
+  el('aufgabe-luecke').hidden = true;
+  el('aufgabe-kacheln').hidden = true;
+  el('aufgabe-hoer').hidden = true;
+  el('aufgabe-text').hidden = false;
+  el('aufgabe-text').lang = 'de';
+  el('knopf-aufgabe').textContent = 'Prüfen';
+  if (a.art === 'deutsch') {
+    const w = Vokabeln.wort(a.id);
+    el('aufgabe-art').textContent = 'Was heißt das auf Deutsch?';
+    el('aufgabe-text').textContent = w.it;
+    el('aufgabe-text').lang = 'it';
+    el('aufgabe-hoer').hidden = !Lesen.kannSprechen;
+    aufgabeKacheln(Vokabeln.deutschKacheln(w).kacheln, 'de');
+  } else if (a.art === 'grammatik') {
+    const u = Grammatik.kapitel(a.kapitel).uebungen[a.nr];
+    el('aufgabe-text').textContent = u.de;
+    if (u.art === 'luecke') {
+      el('aufgabe-art').textContent = 'Setze das fehlende Wort ein.';
+      el('aufgabe-luecke-satz').textContent = u.satz;
+      const feld = el('aufgabe-eingabe');
+      feld.value = '';
+      feld.readOnly = false;
+      el('aufgabe-luecke').hidden = false;
+      feld.focus();
+    } else {
+      el('aufgabe-art').textContent = 'Bau den Satz auf Italienisch.';
+      aufgabeKacheln(mischen(Grammatik.kacheln(u)), 'it');
+    }
+  } else {
+    el('aufgabe-art').textContent = 'Hör zu und leg den Satz.';
+    el('aufgabe-text').hidden = true;
+    el('aufgabe-hoer').hidden = false;
+    aufgabeKacheln(Uebungen.kacheln(a.satz.it), 'it');
+    aufgabeSprechen();
+  }
+}
+
+function aufgabePruefen() {
+  const a = aufg.liste[aufg.nr];
+  const gelegt = [...el('aufgabe-ablage').querySelectorAll('.kachel')].map((k) => k.textContent);
+  let gut;
+  let loesung;
+  if (a.art === 'deutsch') {
+    if (!gelegt.length) return;
+    const w = Vokabeln.wort(a.id);
+    gut = Vokabeln.pruefeDeutsch(gelegt, w);
+    loesung = Vokabeln.deutschZiel(w.de).join(' ');
+  } else if (a.art === 'grammatik') {
+    const u = Grammatik.kapitel(a.kapitel).uebungen[a.nr];
+    if (u.art === 'luecke') {
+      const text = el('aufgabe-eingabe').value.trim();
+      if (!text) { el('aufgabe-eingabe').focus(); return; }
+      gut = Grammatik.pruefeLuecke(text, u).stufe !== 'falsch';
+      loesung = u.satz.replace(/\s*\([^)]*\)\s*$/, '').replace('___', u.loesung);
+      el('aufgabe-eingabe').readOnly = true;
+    } else {
+      if (!gelegt.length) return;
+      gut = Grammatik.pruefeKacheln(gelegt, u).stufe !== 'falsch';
+      loesung = u.it;
+    }
+  } else {
+    if (!gelegt.length) return;
+    gut = Uebungen.pruefeKacheln(gelegt, a.satz.it);
+    loesung = a.satz.it + (a.satz.de ? ' – ' + a.satz.de : '');
+  }
+  if (gut) aufg.richtig += 1;
+  aufg.geprueft = true;
+  el('aufgabe-ablage').classList.add('fertig');
+  el('aufgabe-rueck').classList.toggle('falsch', !gut);
+  el('aufgabe-rueck-titel').textContent = gut ? 'Richtig.' : 'Noch nicht.';
+  el('aufgabe-rueck-text').textContent = gut ? (a.art === 'hoeren' && a.satz.de ? a.satz.de : '') : 'Richtig ist: ' + loesung;
+  el('aufgabe-rueck-text').hidden = !el('aufgabe-rueck-text').textContent;
+  el('aufgabe-rueck').hidden = false;
+  el('knopf-aufgabe').textContent = 'Weiter';
+  el('knopf-aufgabe').focus();
+}
+
+function aufgabeWeiter() {
+  aufg.nr += 1;
+  if (aufg.nr < aufg.liste.length) { zeigeAufgabe(); return; }
+  vorlesenStopp();
+  aufg.ende = aufg.fertig(aufg.richtig, aufg.liste.length);
+  el('aufgaben-stand').textContent = '';
+  el('aufgabe-art').textContent = `${aufg.richtig} von ${aufg.liste.length} richtig`;
+  el('aufgabe-text').hidden = true;
+  el('aufgabe-hoer').hidden = true;
+  el('aufgabe-luecke').hidden = true;
+  el('aufgabe-kacheln').hidden = true;
+  el('aufgabe-rueck').classList.toggle('falsch', !aufg.ende.gut);
+  el('aufgabe-rueck-titel').textContent = aufg.ende.titel;
+  el('aufgabe-rueck-text').textContent = aufg.ende.text;
+  el('aufgabe-rueck-text').hidden = !aufg.ende.text;
+  el('aufgabe-rueck').hidden = false;
+  el('knopf-aufgabe').textContent = 'Weiter';
+}
+
+el('knopf-aufgabe').addEventListener('click', () => {
+  if (aufg.ende) { aufg.ende.weiter(); return; }
+  aufg.geprueft ? aufgabeWeiter() : aufgabePruefen();
+});
+el('aufgabe-luecke-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  aufg.geprueft ? aufgabeWeiter() : aufgabePruefen();
+});
+el('aufgabe-play').addEventListener('click', () => aufgabeSprechen(false));
+el('aufgabe-langsam').addEventListener('click', () => aufgabeSprechen(true));
+el('knopf-aufgaben-beenden').addEventListener('click', () => {
+  vorlesenStopp();
+  if (aufg.abbruch) aufg.abbruch();
+  else zeigeStart();
+});
+
+// „Kann ich schon“: 8 Aufgaben, ab 7 richtig ist die Lektion erledigt
+function starteKannIch(l) {
+  starteAufgaben(Lektionen.aufgabenFuer(l, 8), 'Kann ich schon?', (richtig, von) => {
+    if (Lektionen.ueberspringen(l.id, richtig, von)) {
+      lektionenPruefen();
+      lekt.geschafft.push(l);
+      return { gut: true, titel: 'Lektion übersprungen ✓', text: 'Die Wörter kommen ab morgen ab und zu zum Wiederholen.', weiter: zeigeStart };
+    }
+    return {
+      gut: false,
+      titel: 'Ein paar Sachen sind neu',
+      text: 'Lass uns die Lektion zusammen anschauen.',
+      weiter: () => oeffneLektion(Lektionen.finde(l.id)),
+    };
+  }, () => oeffneLektion(Lektionen.finde(l.id)));
+}
+
+// Wiederholung: 10 gemischte Aufgaben aus den Lektionen davor
+function starteRipasso(l) {
+  lekt.offen = l;
+  Lektionen.beginnen(l.id);
+  starteAufgaben(Lektionen.aufgabenFuer(l, 10), l.titel, (richtig, von) => {
+    Lektionen.ripassoSpeichern(l.id, richtig, von);
+    lektionenPruefen();
+    const gut = richtig / von >= 0.8;
+    return {
+      gut,
+      titel: gut ? 'Gut wiederholt ✓' : 'Schon einiges sitzt',
+      text: gut ? '' : 'Ab 8 von 10 sind die Übungen geschafft. Versuch es gern noch einmal.',
+      weiter: () => oeffneLektion(Lektionen.finde(l.id)),
+    };
+  }, () => oeffneLektion(Lektionen.finde(l.id)));
+}
 
 // ---------- Begleiter ----------
 

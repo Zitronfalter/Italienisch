@@ -29,7 +29,7 @@ const Uebungen = (() => {
         const it = u.art === 'kacheln'
           ? u.it
           : u.satz.replace(/\s*\([^)]*\)\s*$/, '').replace('___', u.loesung);
-        if (woerter(it) >= 3) liste.push({ it: it.charAt(0).toUpperCase() + it.slice(1), de: u.de, stufe: k.stufe });
+        if (woerter(it) >= 3) liste.push({ it: it.charAt(0).toUpperCase() + it.slice(1), de: u.de, stufe: k.stufe, kapitel: k.id });
       }
     }
     // Aus den Lesetexten (keine Rezept-Listen): kurze Sätze mit 3 bis 9 Wörtern
@@ -40,7 +40,7 @@ const Uebungen = (() => {
         for (const s of teile) {
           const satz = s.replace(/^[–\s,]+/, '').replace(/,\s*$/, '.').trim();
           const n = woerter(satz);
-          if (n >= 3 && n <= 9 && /[.!?]$/.test(satz)) liste.push({ it: satz, de: (t.uebersetzung || {})[satz] || '', quelle: t.titel, stufe: t.stufe });
+          if (n >= 3 && n <= 9 && /[.!?]$/.test(satz)) liste.push({ it: satz, de: (t.uebersetzung || {})[satz] || '', quelle: t.titel, stufe: t.stufe, text: t.id });
         }
       }
     }
@@ -101,14 +101,15 @@ const Uebungen = (() => {
 
   // 5 Paare aus deinem Karteikasten (am liebsten Wörter, die noch nicht sicher sitzen).
   // Sind noch zu wenige Wörter drin, kommen die ersten Wörter des Grundwortschatzes dazu.
-  function paare(anzahl = 5) {
+  // ids: nur diese Wörter verwenden (z. B. die Wörter einer Lektion)
+  function paare(anzahl = 5, ids = null) {
     const kurzDe = (de) => de.replace(/\s*\([^)]*\)/g, '').split(';')[0].trim();
-    const karten = Object.entries(Speicher.daten.karten)
+    const karten = ids ? mischen(ids.map((id) => Vokabeln.wort(id)).filter(Boolean)) : Object.entries(Speicher.daten.karten)
       .map(([id, k]) => ({ w: Vokabeln.wort(id), fach: k.fach }))
       .filter((x) => x.w)
       .sort((a, b) => a.fach - b.fach || Math.random() - 0.5)
       .map((x) => x.w);
-    const kandidaten = [...mischen(karten.slice(0, 12)), ...WORTSCHATZ];
+    const kandidaten = ids ? karten : [...mischen(karten.slice(0, 12)), ...WORTSCHATZ];
     const liste = [];
     const deSchon = new Set();
     for (const w of kandidaten) {
@@ -123,11 +124,27 @@ const Uebungen = (() => {
 
   // ---------- Eine Runde zusammenstellen ----------
 
-  function runde() {
-    const pool = mischen(saetze());
-    const auswahl = pool.slice(0, 4);
+  // optionen.lektion: nur Sätze aus Kapiteln und Texten dieser und früherer Lektionen,
+  // Wortpaare aus den Wörtern der Lektion. Ungelöste Sätze kommen zuerst.
+  function runde(optionen = {}) {
+    let pool = saetze();
+    let paarListe = null;
+    const l = optionen.lektion;
+    if (l) {
+      const bis = Lektionen.alle().filter((x) => x.nr <= l.nr);
+      const kap = new Set(bis.flatMap((x) => x.kapitel));
+      const tx = new Set(bis.flatMap((x) => x.texte));
+      const passend = pool.filter((x) => kap.has(x.kapitel) || tx.has(x.text));
+      if (passend.length >= 4) pool = passend;
+      if (l.wortIds.length >= 3) paarListe = paare(5, l.wortIds);
+    }
+    const geloest = new Set(((Speicher.daten.fortschritt.hoeren || {}).geloest) || []);
+    const auswahl = [
+      ...mischen(pool.filter((x) => !geloest.has(sauber(x.it)))),
+      ...mischen(pool.filter((x) => geloest.has(sauber(x.it)))),
+    ].slice(0, 4);
     const aufgaben = [
-      { art: 'paare', paare: paare() },
+      { art: 'paare', paare: paarListe || paare() },
       { art: 'diktat', satz: auswahl[0] },
       { art: 'kacheln', satz: auswahl[1], kacheln: kacheln(auswahl[1].it) },
       { art: 'diktat', satz: auswahl[2] },
@@ -146,9 +163,19 @@ const Uebungen = (() => {
     Speicher.speichern();
   }
 
+  // Auf Anhieb richtig gehörter Satz: kommt in neuen Runden erst wieder, wenn alle anderen dran waren
+  function satzGeloest(satz) {
+    const f = Speicher.daten.fortschritt;
+    f.hoeren = f.hoeren || { runden: 0 };
+    f.hoeren.geloest = f.hoeren.geloest || [];
+    const kurz = sauber(satz.it);
+    if (!f.hoeren.geloest.includes(kurz)) f.hoeren.geloest.push(kurz);
+    Speicher.speichern();
+  }
+
   function anzahlRunden() {
     return (Speicher.daten.fortschritt.hoeren || {}).runden || 0;
   }
 
-  return { saetze, runde, pruefeDiktat, pruefeKacheln, kacheln, paare, sauber, ergebnisSpeichern, anzahlRunden };
+  return { saetze, runde, satzGeloest, pruefeDiktat, pruefeKacheln, kacheln, paare, sauber, ergebnisSpeichern, anzahlRunden };
 })();

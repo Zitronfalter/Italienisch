@@ -52,7 +52,17 @@ const Lektionen = (() => {
     return e.richtig / e.von >= HOEREN_FERTIG_AB ? 'fertig' : 'angefangen';
   }
 
+  function teilUebungen(l) {
+    const e = gespeichert(l.id).uebungen;
+    if (!e) return 'offen';
+    return e.richtig / e.von >= HOEREN_FERTIG_AB ? 'fertig' : 'angefangen';
+  }
+
+  // Lektion: Wörter, Grammatik, Text, Hören. Wiederholung: gemischte Übungen und Text.
   function teile(l) {
+    if (l.art === 'ripasso') {
+      return { uebungen: teilUebungen(l), text: teilAus(l.texte, Lesen.stand, (s) => s.verstanden) };
+    }
     return {
       woerter: teilWoerter(l),
       grammatik: teilAus(l.kapitel, Grammatik.stand, (s) => s.geuebt),
@@ -135,11 +145,12 @@ const Lektionen = (() => {
     const l = aktuelle();
     if (!l) return null;
     if (!optionen.ohneWortCheck && brauchtWortCheck(l)) return { art: 'woerter', lektion: l };
+    if (l.art === 'ripasso' && teilUebungen(l) !== 'fertig') return { art: 'uebungen', lektion: l };
     const kap = l.kapitel.map((id) => Grammatik.kapitel(id)).find((k) => k && !(Grammatik.stand(k.id) || {}).geuebt);
     if (kap) return { art: 'kapitel', lektion: l, obj: kap };
     const text = l.texte.map((id) => LESETEXTE.find((t) => t.id === id)).find((t) => t && !(Lesen.stand(t.id) || {}).verstanden);
     if (text) return { art: 'text', lektion: l, obj: text };
-    if (teilHoeren(l) !== 'fertig') return { art: 'hoeren', lektion: l };
+    if (l.art !== 'ripasso' && teilHoeren(l) !== 'fertig') return { art: 'hoeren', lektion: l };
     return null;
   }
 
@@ -151,6 +162,77 @@ const Lektionen = (() => {
     const alt = h.lektionen[id];
     if (!alt || richtig / von >= alt.richtig / alt.von) {
       h.lektionen[id] = { richtig, von, datum: Vokabeln.heute() };
+    }
+    Speicher.speichern();
+  }
+
+  // ---------- Aufgabenrunde: „Kann ich schon“ und Wiederholung ----------
+  //
+  // Aufgaben: { art: 'deutsch', id }            – Italienisch → Deutsch mit Kacheln
+  //           { art: 'grammatik', kapitel, nr }  – eine Grammatik-Übung
+  //           { art: 'hoeren', satz }            – Satz hören und aus Kacheln legen
+
+  function gemischt(liste) {
+    const a = [...liste];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Stoff einer Lektion – bei einer Wiederholung der Stoff ihrer Lektionen
+  function stoff(l) {
+    const quellen = l.art === 'ripasso' ? alle().filter((x) => (l.lektionen || []).includes(x.id)) : [l];
+    return {
+      wortIds: quellen.flatMap((x) => x.wortIds),
+      kapitel: quellen.flatMap((x) => x.kapitel),
+      texte: quellen.flatMap((x) => x.texte),
+    };
+  }
+
+  // anzahl 8: „Kann ich schon“ (4 Wörter, 3 Grammatik, 1 Hören); 10: Wiederholung (4, 4, 2).
+  // Fehlt eine Sorte, wird mit den anderen aufgefüllt.
+  function aufgabenFuer(l, anzahl) {
+    const s = stoff(l);
+    const kap = new Set(s.kapitel);
+    const tx = new Set(s.texte);
+    const vorrat = {
+      deutsch: gemischt(s.wortIds).map((id) => ({ art: 'deutsch', id })),
+      grammatik: gemischt(s.kapitel.flatMap((kid) => {
+        const k = Grammatik.kapitel(kid);
+        return k ? k.uebungen.map((u, nr) => ({ art: 'grammatik', kapitel: kid, nr })) : [];
+      })),
+      hoeren: gemischt(Uebungen.saetze().filter((x) => tx.has(x.text) || kap.has(x.kapitel)))
+        .map((satz) => ({ art: 'hoeren', satz })),
+    };
+    const ziel = anzahl === 8 ? { deutsch: 4, grammatik: 3, hoeren: 1 } : { deutsch: 4, grammatik: 4, hoeren: 2 };
+    const auswahl = [];
+    for (const art of Object.keys(ziel)) auswahl.push(...vorrat[art].splice(0, ziel[art]));
+    const rest = gemischt([...vorrat.grammatik, ...vorrat.deutsch, ...vorrat.hoeren]);
+    while (auswahl.length < anzahl && rest.length) auswahl.push(rest.shift());
+    return gemischt(auswahl);
+  }
+
+  // „Kann ich schon“: ab 7 von 8 ist die Lektion erledigt. Verändert keine Fächer im Karteikasten,
+  // nur Wörter ohne Karte bekommen eine Karte als „bekannt“.
+  function ueberspringen(id, richtig, von) {
+    if (richtig < von - 1) return false;
+    const l = finde(id);
+    woerterEinordnen(id, l.wortIds);
+    const s = stand(id);
+    s.begonnen = s.begonnen || Vokabeln.heute();
+    s.erledigt = Vokabeln.heute();
+    s.uebersprungen = true;
+    Speicher.speichern();
+    return true;
+  }
+
+  // Wiederholung: bestes Ergebnis der gemischten Übungen merken
+  function ripassoSpeichern(id, richtig, von) {
+    const s = stand(id);
+    if (!s.uebungen || richtig / von >= s.uebungen.richtig / s.uebungen.von) {
+      s.uebungen = { richtig, von, datum: Vokabeln.heute() };
     }
     Speicher.speichern();
   }
@@ -173,5 +255,6 @@ const Lektionen = (() => {
   return {
     alle, finde, teile, istErledigt, aktualisieren, aktuelle, beginnen,
     brauchtWortCheck, woerterEinordnen, neueWoerter, naechsterTeil, hoerenSpeichern, uebergang,
+    aufgabenFuer, ueberspringen, ripassoSpeichern,
   };
 })();

@@ -227,3 +227,72 @@ test('neuer leerer Stand hat Format 2', () => {
   const k = frisch();
   assert.strictEqual(k.Speicher.daten.format, 2);
 });
+
+// ---------- Kann ich schon / Wiederholung ----------
+
+const MIT_R = [
+  ...BEISPIEL.slice(0, 2),
+  { id: 'r1', nr: 2.5, titel: 'Wiederholung 1', situation: '', stufe: 'A1', art: 'ripasso',
+    lektionen: ['l01', 'l02'], woerter: [], kapitel: [], texte: [] },
+  BEISPIEL[2],
+];
+const mitR = () => laden(undefined, `LEKTIONEN = ${JSON.stringify(MIT_R)};`);
+
+test('aufgabenFuer: 8 Aufgaben für „Kann ich schon“ – Wörter, Grammatik, Hören', () => {
+  const k = frisch();
+  const a = k.Lektionen.aufgabenFuer(lek(k, 'l01'), 8);
+  assert.strictEqual(a.length, 8);
+  const arten = a.map((x) => x.art);
+  assert.strictEqual(arten.filter((x) => x === 'deutsch').length, 2);   // l01 hat nur 2 Wörter
+  assert.ok(arten.includes('grammatik') && arten.includes('hoeren'));
+  for (const x of a.filter((y) => y.art === 'grammatik')) assert.strictEqual(x.kapitel, 'artikel');
+  for (const x of a.filter((y) => y.art === 'deutsch')) assert.ok(lek(k, 'l01').wortIds.includes(x.id));
+});
+
+test('aufgabenFuer: Wiederholung mischt aus ihren Lektionen', () => {
+  const k = mitR();
+  const r = lek(k, 'r1');
+  const a = k.Lektionen.aufgabenFuer(r, 10);
+  assert.strictEqual(a.length, 10);
+  const erlaubt = new Set(['artikel', 'verben-are']);
+  for (const x of a.filter((y) => y.art === 'grammatik')) assert.ok(erlaubt.has(x.kapitel), x.kapitel);
+});
+
+test('ueberspringen: ab 7 von 8 erledigt, Wörter als bekannt, keine Fächer verändert', () => {
+  const k = frisch();
+  const alt = { fach: 3, faellig: '2026-02-02', richtig: 4, falsch: 1 };
+  k.Speicher.daten.karten[id(k, 'ciao')] = { ...alt };
+  assert.strictEqual(k.Lektionen.ueberspringen('l01', 6, 8), false);
+  assert.ok(!k.Lektionen.istErledigt(lek(k, 'l01')));
+  assert.strictEqual(k.Lektionen.ueberspringen('l01', 7, 8), true);
+  assert.ok(k.Lektionen.istErledigt(lek(k, 'l01')));
+  assert.strictEqual(k.Speicher.daten.fortschritt.lektionen.l01.uebersprungen, true);
+  assert.deepStrictEqual({ ...k.Speicher.daten.karten[id(k, 'ciao')] }, alt);
+  const neu = k.Speicher.daten.karten[id(k, 'grazie')];
+  assert.strictEqual(neu.fach, 1);
+  assert.ok(!('kennen' in neu));
+});
+
+test('Wiederholung: Teile sind Übungen und Text, kein Wortcheck', () => {
+  const k = mitR();
+  const r = lek(k, 'r1');
+  assert.deepStrictEqual({ ...k.Lektionen.teile(r) }, { uebungen: 'offen', text: 'fertig' });
+  assert.strictEqual(k.Lektionen.brauchtWortCheck(r), false);
+});
+
+test('Wiederholung: Übungen fertig ab 80 %, dann erledigt', () => {
+  const k = mitR();
+  const r = lek(k, 'r1');
+  k.Lektionen.ripassoSpeichern('r1', 7, 10);
+  assert.strictEqual(k.Lektionen.teile(r).uebungen, 'angefangen');
+  k.Lektionen.ripassoSpeichern('r1', 8, 10);
+  assert.strictEqual(k.Lektionen.teile(r).uebungen, 'fertig');
+  assert.ok(k.Lektionen.aktualisieren().some((l) => l.id === 'r1'));
+});
+
+test('Wiederholung: naechsterTeil sind die Übungen, keine neuen Wörter', () => {
+  const k = mitR();
+  k.Lektionen.beginnen('r1');
+  assert.strictEqual(k.Lektionen.naechsterTeil().art, 'uebungen');
+  assert.deepStrictEqual([...k.Vokabeln.neue()], []);
+});

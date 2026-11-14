@@ -35,6 +35,8 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Nachschlage-Reihenfolge (`Lesen.nachschlagen`): selbst eingetragene Bedeutung → Wörter im Text → `GRUNDWOERTER` → Grundwortschatz → eigene Wörter → Formen von Grundwortschatz-Wörtern → WikDict.
 - Eigene Texte: `Speicher.daten.eigeneTexte`; eigene Wörter: `Speicher.daten.eigeneWoerter` (`e-…`-IDs, mit `formen` und `selbst`).
 - `lektionen-inhalt.js` – Lektionen (`LEKTIONEN`): Wörter (italienisch wie in `wortschatz.js`), Kapitel-IDs, Text-IDs. Konzept: `docs/superpowers/specs/2026-11-14-lektionen-design.md`
+- Wiederholungen (`art: 'ripasso'`, `nr` z. B. 4.5, `lektionen: [...]`): Teile „Übungen“ (10 gemischte Aufgaben) und Text, keine neuen Wörter. Aufgabenrunde in `app.js` (`starteAufgaben`) auch für „Kann ich schon“ (8 Aufgaben, ab 7 richtig übersprungen).
+- Gelöste Übungen: `fortschritt.grammatik[id].geloest` (Nummern – neue Übungen nur hinten anhängen), `fortschritt.hoeren.geloest`.
 - `lektionen.js` – welche Lektion dran ist, Teile (Wörter/Grammatik/Text/Hören), erledigt, „kenne ich / neu“, Übergang vom alten Lernstand (`FORMAT` 2). Neue Wörter in der Runde kommen nur aus der aktuellen Lektion.
 - Neue Lektionstexte: `node werkzeuge/lektionen-pruefen.js` muss 0 Fehler melden (jedes Wort aus dieser oder früheren Lektion, `GRUNDWOERTER` oder höchstens 8 im Text erklärt).
 - `niveautest.js` – 24 Fragen (je 8 A1/A2/B1, erste Antwort = richtig), Stufe erreicht ab 6/8

@@ -203,6 +203,51 @@ La sera guardano un film e mangiano una pizza. Domani è domenica: la famiglia v
   },
 
   {
+    id: 'ripasso-1', titel: 'Una domenica in famiglia', art: 'Text', stufe: 'A1',
+    text: `Oggi è domenica. Sono le dieci di mattina. Sofia e suo fratello Marco sono al bar con il padre.
+
+«Buongiorno! Un caffè, un latte e due cornetti, per favore», dice il padre.
+
+Marco beve il latte. Sofia mangia un cornetto e beve un tè.
+
+Il pomeriggio la famiglia va dai nonni. La nonna è in casa con il gatto. Il nonno gioca con Marco e il cane. Sofia e la madre fanno una passeggiata.
+
+«Ti piace la domenica dai nonni?», chiede la madre. «Sì, mi piace molto!», dice Sofia.`,
+    woerter: {
+      'sofia': ['Sofia', 'Sofia (Vorname)'],
+      'marco': ['Marco', 'Marco (Vorname)'],
+      'suo': ['suo', 'ihr (suo fratello = ihr Bruder)', 'sein; ihr'],
+      'con': ['con', 'mit', 'mit'],
+      'cornetti': ['il cornetto', 'Hörnchen (Mehrzahl)'],
+      'dice': ['dire', 'sagt', 'sagen'],
+      'beve': ['bere', 'trinkt'],
+      'mangia': ['mangiare', 'isst'],
+      'nonni': ['il nonno', 'Großeltern'],
+      'gioca': ['giocare', 'spielt'],
+      'fanno': ['fare', 'machen (fare una passeggiata = spazieren gehen)', 'machen; tun'],
+      'ti': ['ti', 'dir'],
+      'piace': ['piacere', 'gefällt'],
+      'chiede': ['chiedere', 'fragt', 'fragen'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Oggi è domenica.': 'Heute ist Sonntag.',
+      'Sono le dieci di mattina.': 'Es ist zehn Uhr morgens.',
+      'Marco beve il latte.': 'Marco trinkt die Milch.',
+      'Sofia mangia un cornetto e beve un tè.': 'Sofia isst ein Hörnchen und trinkt einen Tee.',
+      'Il pomeriggio la famiglia va dai nonni.': 'Am Nachmittag geht die Familie zu den Großeltern.',
+      'La nonna è in casa con il gatto.': 'Die Oma ist mit der Katze zu Hause.',
+      'Il nonno gioca con Marco e il cane.': 'Der Opa spielt mit Marco und dem Hund.',
+      'Sofia e la madre fanno una passeggiata.': 'Sofia und die Mutter gehen spazieren.',
+    },
+    fragen: [
+      { frage: 'Wo sind Sofia, Marco und der Vater am Morgen?', antworten: ['In der Bar', 'Bei den Großeltern', 'Im Park'] },
+      { frage: 'Was trinkt Marco?', antworten: ['Milch', 'Kaffee', 'Tee'] },
+      { frage: 'Was machen Sofia und ihre Mutter am Nachmittag?', antworten: ['Sie gehen spazieren', 'Sie spielen mit dem Hund', 'Sie trinken Kaffee'] },
+    ],
+  },
+
+  {
     id: 'bruschetta', titel: 'Bruschetta al pomodoro', art: 'Rezept', stufe: 'A1',
     text: `## Ingredienti per 4 persone
 - 4 fette di pane

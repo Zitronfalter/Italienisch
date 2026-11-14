@@ -132,13 +132,33 @@
 
       <article class="karte lesetext" id="lesen-text" lang="it"></article>
 
-      <h2 class="abschnitt">Hast du es verstanden?</h2>
+      <h2 class="abschnitt" id="fragen-titel">Hast du es verstanden?</h2>
       <div id="lesen-fragen"></div>
       <p class="meldung" id="fragen-ergebnis" role="status" hidden></p>
 
       <div class="knopf-gruppe">
         <button class="knopf-haupt" id="knopf-fragen-pruefen" type="button">Antworten prüfen</button>
         <button class="knopf-zurueck" id="knopf-lesen-zurueck" type="button">Zurück zu den Texten</button>
+        <button class="knopf-leise knopf-gefahr" id="knopf-text-loeschen" type="button" hidden>Text löschen</button>
+      </div>
+    </section>
+
+    <!-- Eigenen Text einfügen -->
+    <section class="screen" id="screen-text-neu" hidden>
+      <header class="kopf">
+        <h1>Eigener Text</h1>
+      </header>
+      <p class="hinweis">Füge einen italienischen Text ein, z. B. ein Rezept. Danach kannst du auf jedes Wort tippen.</p>
+      <input class="eingabe-feld eingabe-titel" id="neu-titel" type="text" lang="it"
+             autocomplete="off" placeholder="Titel (freiwillig)" aria-label="Titel">
+      <textarea class="eingabe-feld eingabe-text" id="neu-text" lang="it" rows="10"
+                autocomplete="off" autocorrect="off" spellcheck="false"
+                placeholder="Text hier einfügen …" aria-label="Italienischer Text"></textarea>
+      <button class="knopf-klein" id="knopf-einfuegen" type="button">Aus Zwischenablage einfügen</button>
+      <p class="meldung fehler" id="neu-meldung" role="status" hidden></p>
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-text-speichern" type="button">Speichern und lesen</button>
+        <button class="knopf-zurueck" id="knopf-text-abbrechen" type="button">Abbrechen</button>
       </div>
     </section>
 
@@ -257,6 +277,16 @@
       <button class="knopf-klein knopf-klein-voll" id="wort-merken" type="button">In Karteikarten</button>
     </div>
     <button class="regel-link" id="wort-regel" type="button" hidden></button>
+    <button class="regel-link" id="wort-eigen-oeffnen" type="button">Eigene Bedeutung eintragen</button>
+    <form class="wort-eigen" id="wort-eigen" autocomplete="off" hidden>
+      <label class="feld-label" for="eigen-grundform">Grundform</label>
+      <input class="eingabe-feld eingabe-klein" id="eigen-grundform" type="text" lang="it"
+             autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+      <label class="feld-label" for="eigen-bedeutung">Bedeutung auf Deutsch</label>
+      <input class="eingabe-feld eingabe-klein" id="eigen-bedeutung" type="text" lang="de"
+             autocomplete="off" enterkeyhint="done">
+      <button class="knopf-klein knopf-klein-voll" type="submit">Speichern</button>
+    </form>
   </div>
 
   <script src="speicher.js"></script>

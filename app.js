@@ -225,9 +225,40 @@ function zeigeLesenStand() {
     : `${LESETEXTE.length} Texte und Rezepte`;
 }
 
+function textEintrag(t, unterzeile) {
+  const knopf = document.createElement('button');
+  knopf.type = 'button';
+  knopf.className = 'karte karte-knopf text-eintrag';
+  knopf.innerHTML = `
+    <span class="karte-titel" lang="it"></span>
+    <span class="karte-text"></span>
+    <span class="pfeil" aria-hidden="true">›</span>`;
+  knopf.querySelector('.karte-titel').textContent = t.titel;
+  knopf.querySelector('.karte-text').innerHTML = unterzeile;
+  knopf.addEventListener('click', () => oeffneText(t));
+  return knopf;
+}
+
 function zeigeTextliste() {
   const liste = el('text-liste');
   liste.innerHTML = '';
+
+  // Meine Texte
+  const meine = document.createElement('p');
+  meine.className = 'stufe-titel';
+  meine.textContent = 'Meine Texte';
+  liste.appendChild(meine);
+  const neu = document.createElement('button');
+  neu.type = 'button';
+  neu.className = 'knopf-neu';
+  neu.textContent = '+ Eigenen Text einfügen';
+  neu.addEventListener('click', oeffneTextNeu);
+  liste.appendChild(neu);
+  for (const t of Lesen.eigeneTexte()) {
+    const datum = new Date(t.datum + 'T12:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long' });
+    liste.appendChild(textEintrag(t, `eingefügt am ${datum}`));
+  }
+
   for (const stufe of ['A1', 'A2']) {
     const titel = document.createElement('p');
     titel.className = 'stufe-titel';
@@ -284,7 +315,14 @@ function oeffneText(t) {
   vorlesenStopp();
   schliesseWortBlatt();
 
-  el('lesen-meta').textContent = `${t.art} · ${t.stufe}`;
+  el('lesen-meta').textContent = t.stufe ? `${t.art} · ${t.stufe}` : t.art;
+
+  // Eigene Texte haben keine Fragen, dafür „Text löschen“
+  const mitFragen = t.fragen.length > 0;
+  el('fragen-titel').hidden = !mitFragen;
+  el('lesen-fragen').hidden = !mitFragen;
+  el('knopf-fragen-pruefen').hidden = !mitFragen;
+  el('knopf-text-loeschen').hidden = !t.eigen;
   el('lesen-titel').textContent = t.titel;
   el('knopf-vorlesen').hidden = !Lesen.kannSprechen;
 
@@ -373,6 +411,49 @@ function fragenPruefen() {
   el('knopf-fragen-pruefen').textContent = richtig === von ? 'Nochmal lesen' : 'Nochmal versuchen';
 }
 
+// --- Eigenen Text einfügen ---
+
+function oeffneTextNeu() {
+  el('neu-titel').value = '';
+  el('neu-text').value = '';
+  el('neu-meldung').hidden = true;
+  // „Aus Zwischenablage“ nur zeigen, wenn der Browser das kann
+  el('knopf-einfuegen').hidden = !(navigator.clipboard && navigator.clipboard.readText);
+  zeige('text-neu');
+}
+
+el('knopf-einfuegen').addEventListener('click', async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (text) el('neu-text').value = text;
+  } catch {
+    el('neu-meldung').textContent = 'Einfügen ging nicht. Tippe lange ins Textfeld und wähle „Einsetzen“.';
+    el('neu-meldung').hidden = false;
+  }
+});
+
+el('knopf-text-speichern').addEventListener('click', () => {
+  const text = el('neu-text').value;
+  if (!/\p{L}{2,}/u.test(text)) {
+    el('neu-meldung').textContent = 'Bitte füge erst einen Text ein.';
+    el('neu-meldung').hidden = false;
+    return;
+  }
+  const t = Lesen.textSpeichern(el('neu-titel').value, text);
+  oeffneText(t);
+});
+el('knopf-text-abbrechen').addEventListener('click', zeigeTextliste);
+
+el('knopf-text-loeschen').addEventListener('click', () => {
+  const t = lesen.text;
+  if (!t || !t.eigen) return;
+  if (!confirm(`„${t.titel}“ löschen? Die Wörter in deinen Karteikarten bleiben erhalten.`)) return;
+  vorlesenStopp();
+  schliesseWortBlatt();
+  Lesen.textLoeschen(t.id);
+  zeigeTextliste();
+});
+
 // Wort antippen
 el('lesen-text').addEventListener('click', (e) => {
   const span = e.target.closest('.wort');
@@ -390,10 +471,10 @@ function zeigeWortBlatt(span) {
   el('wort-form').textContent = span.textContent.replace(/['’]$/, '');
   if (treffer) {
     const zeigeGrund = treffer.grundform.toLowerCase() !== span.textContent.toLowerCase();
-    el('wort-grundform').textContent = zeigeGrund
-      ? 'Grundform: ' + treffer.grundform + (treffer.vermutlich ? ' (vermutlich)' : '')
-      : '';
-    el('wort-grundform').hidden = !zeigeGrund;
+    el('wort-grundform').textContent = treffer.selbst
+      ? 'Grundform: ' + treffer.grundform + ' (selbst eingetragen)'
+      : zeigeGrund ? 'Grundform: ' + treffer.grundform + (treffer.vermutlich ? ' (vermutlich)' : '') : '';
+    el('wort-grundform').hidden = !(zeigeGrund || treffer.selbst);
     el('wort-bedeutung').textContent = treffer.bedeutung;
     el('wort-quelle').hidden = treffer.quelle !== 'WikDict';
   } else {
@@ -417,8 +498,40 @@ function zeigeWortBlatt(span) {
   }
 
   el('wort-anhoeren').hidden = !Lesen.kannSprechen;
+
+  // Eigene Bedeutung: Formular gleich offen, wenn nichts gefunden wurde
+  el('eigen-grundform').value = treffer ? treffer.grundform.replace(/^(il|lo|la|i|gli|le) /, '') : span.textContent.toLowerCase().replace(/['’]$/, '');
+  el('eigen-bedeutung').value = '';
+  el('wort-eigen').hidden = Boolean(treffer);
+  el('wort-eigen-oeffnen').hidden = !treffer;
+  el('wort-eigen-oeffnen').textContent = 'Andere Bedeutung eintragen';
   el('wort-blatt').hidden = false;
 }
+
+el('wort-eigen-oeffnen').addEventListener('click', () => {
+  el('wort-eigen-oeffnen').hidden = true;
+  el('wort-eigen').hidden = false;
+  el('eigen-bedeutung').focus();
+});
+
+el('wort-eigen').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const grundform = el('eigen-grundform').value.trim();
+  const bedeutung = el('eigen-bedeutung').value.trim();
+  if (!grundform || !bedeutung) {
+    (grundform ? el('eigen-bedeutung') : el('eigen-grundform')).focus();
+    return;
+  }
+  const karte = Lesen.bedeutungSpeichern(lesen.gewaehltesWort.textContent, grundform, bedeutung);
+  lesen.treffer = { form: lesen.gewaehltesWort.textContent, grundform, bedeutung, karte };
+  el('wort-bedeutung').textContent = bedeutung;
+  el('wort-grundform').textContent = 'Grundform: ' + grundform + ' (selbst eingetragen)';
+  el('wort-grundform').hidden = false;
+  el('wort-quelle').hidden = true;
+  el('wort-eigen').hidden = true;
+  el('eigen-bedeutung').blur();
+  aktualisiereMerkenKnopf();
+});
 
 function aktualisiereMerkenKnopf() {
   const knopf = el('wort-merken');

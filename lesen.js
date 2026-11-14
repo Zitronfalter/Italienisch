@@ -56,15 +56,65 @@ const Lesen = (() => {
     });
   }
 
+  // Eigenes Wort: passt die Grundform oder eine gespeicherte Form (z. B. „tagliate“ zu „tagliare“)?
   function eigenes(form) {
     const eigene = Speicher.daten.eigeneWoerter || {};
-    return Object.entries(eigene).find(([, w]) => klein(w.it).replace(/^(il|lo|la|i|gli|le) /, '').replace(/^l'/, '') === form);
+    return Object.entries(eigene).find(([, w]) =>
+      klein(w.it).replace(/^(il|lo|la|i|gli|le) /, '').replace(/^l'/, '') === form
+      || (w.formen || []).includes(form));
+  }
+
+  // Bedeutung selbst eintragen. Gibt die Karte zurück.
+  function bedeutungSpeichern(form, grundform, bedeutung) {
+    const id = 'e-' + wortId(grundform);
+    const eigene = Speicher.daten.eigeneWoerter = Speicher.daten.eigeneWoerter || {};
+    const alt = eigene[id] || {};
+    const formen = new Set(alt.formen || []);
+    const f = klein(form).replace(/'$/, '');
+    if (f !== klein(grundform)) formen.add(f);
+    eigene[id] = { ...alt, it: grundform.trim(), de: bedeutung.trim(), formen: [...formen], selbst: true };
+    Speicher.speichern();
+    return { id, it: eigene[id].it, de: eigene[id].de, eigen: true };
+  }
+
+  // ---------- Eigene Texte ----------
+
+  function eigeneTexte() {
+    return (Speicher.daten.eigeneTexte || []).map((t) => ({
+      id: t.id, titel: t.titel, text: t.text, datum: t.datum,
+      art: 'Eigener Text', stufe: '', woerter: {}, fragen: [], eigen: true,
+    }));
+  }
+
+  function textSpeichern(titel, text) {
+    const sauberText = text.replace(/\r\n?/g, '\n').trim();
+    const t = {
+      id: 't-' + Date.now(),
+      titel: titel.trim() || sauberText.split('\n')[0].slice(0, 40),
+      text: sauberText,
+      datum: Vokabeln.heute(),
+    };
+    Speicher.daten.eigeneTexte = [t, ...(Speicher.daten.eigeneTexte || [])];
+    Speicher.speichern();
+    return eigeneTexte()[0];
+  }
+
+  function textLoeschen(id) {
+    Speicher.daten.eigeneTexte = (Speicher.daten.eigeneTexte || []).filter((t) => t.id !== id);
+    Speicher.speichern();
   }
 
   // Ergebnis: { form, grundform, bedeutung, karte: { id, it, de } | null } oder null
   function nachschlagen(wort, text) {
     const form = klein(wort);
     const ohneApostroph = form.replace(/'$/, '');
+
+    // Selbst eingetragene Bedeutungen haben Vorrang vor allem anderen
+    const selbst = eigenes(ohneApostroph);
+    if (selbst && selbst[1].selbst) {
+      return { form: wort, grundform: selbst[1].it, bedeutung: selbst[1].de, selbst: true,
+        karte: { id: selbst[0], it: selbst[1].it, de: selbst[1].de } };
+    }
     const imText = (text && (text.woerter[form] || text.woerter[ohneApostroph])) || null;
     const klein_ = GRUNDWOERTER[form] || GRUNDWOERTER[ohneApostroph] || null;
     const eintrag = imText || klein_;
@@ -89,6 +139,12 @@ const Lesen = (() => {
     const e = eigenes(form);
     if (e) return { form: wort, grundform: e[1].it, bedeutung: e[1].de, karte: { id: e[0], it: e[1].it, de: e[1].de } };
 
+    // Form eines Wortes aus dem Grundwortschatz? (trita → tritare, pomodori → pomodoro)
+    for (const k of Woerterbuch.kandidaten(ohneApostroph)) {
+      const ws3 = imWortschatz(k);
+      if (ws3) return { form: wort, grundform: ws3.it, bedeutung: ws3.de, vermutlich: true, karte: { id: ws3.id, it: ws3.it, de: ws3.de } };
+    }
+
     // Zuletzt: das große Wörterbuch (WikDict)
     const wb = Woerterbuch.suche(form);
     if (wb) {
@@ -109,7 +165,8 @@ const Lesen = (() => {
   function inKarteikarten(karte) {
     if (karte.eigen) {
       Speicher.daten.eigeneWoerter = Speicher.daten.eigeneWoerter || {};
-      Speicher.daten.eigeneWoerter[karte.id] = { it: karte.it, de: karte.de };
+      const alt = Speicher.daten.eigeneWoerter[karte.id] || {};
+      Speicher.daten.eigeneWoerter[karte.id] = { ...alt, it: karte.it, de: karte.de };
     }
     Vokabeln.aufnehmen(karte.id);
     Speicher.speichern();
@@ -180,7 +237,8 @@ const Lesen = (() => {
 
   return {
     stuecke, bloecke, vorleseText,
-    nachschlagen, inKarteikarten, istInKarteikarten,
+    nachschlagen, inKarteikarten, istInKarteikarten, bedeutungSpeichern,
+    eigeneTexte, textSpeichern, textLoeschen,
     kannSprechen, sprich, stopp,
     stand, ergebnisSpeichern, anzahlVerstanden,
   };

@@ -555,6 +555,43 @@ button {
 .wort-quelle { margin: -8px 0 14px; }
 .quelle a { color: inherit; }
 
+/* ---------- Eigene Texte ---------- */
+
+.eingabe-titel { font-size: 18px; }
+.eingabe-text {
+  min-height: 220px;
+  font-size: 18px;
+  line-height: 1.5;
+  resize: vertical;
+}
+#knopf-einfuegen { align-self: flex-start; }
+.knopf-neu {
+  min-height: 52px;
+  border: 1.5px dashed var(--akzent);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--akzent);
+  font-weight: 600;
+}
+.knopf-gefahr { color: var(--fehler); }
+
+.wort-eigen {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+.wort-eigen[hidden] { display: none; }
+.feld-label {
+  font-size: 14px;
+  color: var(--text-leise);
+}
+.eingabe-klein {
+  min-height: 44px;
+  font-size: 18px;
+}
+.wort-eigen .knopf-klein { align-self: flex-start; margin-top: 6px; }
+
 .knopf-zurueck {
   margin-top: auto;
   width: 100%;

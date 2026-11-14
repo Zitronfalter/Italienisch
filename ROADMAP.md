@@ -1,7 +1,7 @@
 # 🇮🇹 Roadmap – Italienisch-App
 
-> **Stand:** 9 von 11 Schritten fertig
-> `██████████████████░░░░` 82 %
+> **Stand:** 10 von 11 Schritten fertig – es fehlt nur noch die Zeichnung für den Begleiter
+> `████████████████████░░` 91 %
 >
 > Ein Schritt ist fertig, wenn er im Browser in iPhone-Größe funktioniert.
 > Was **du** tun oder entscheiden musst, steht in [TODO.md](TODO.md).
@@ -22,7 +22,7 @@
 | 8 | **Eigene Texte** | Rezept einfügen, Wort antippen, in Karteikarten übernehmen, eigene Bedeutung eintragen | ✅ |
 | 9 | **Runde & Fortschritt** | „Los“: Vokabeln, dann Text oder Grammatik; Seite Fortschritt mit Karteikasten; Niveau-Test (24 Fragen) A1/A2/B1 | ✅ |
 | 10 | **Design & Begleiter** | Aussehen „Toskana, warm“ ✅ – ruhiger Begleiter nach Nicoles Bild (Tipps, freut sich über echten Fortschritt, nie traurig, kein Druck) | ⏳ Begleiter wartet auf Bild |
-| 11 | **Aufs iPhone** | Online über GitHub Pages: https://zitronfalter.github.io/Italienisch/ – jetzt in Safari „Zum Home-Bildschirm“ | ⏳ Test auf dem iPhone |
+| 11 | **Aufs iPhone** | Online über GitHub Pages: https://zitronfalter.github.io/Italienisch/ – läuft auf Nicoles iPhone | ✅ |
 
 **Zeichen:** ✅ fertig · ⏳ in Arbeit / als Nächstes · ⏸️ pausiert · ⬜ noch offen
 

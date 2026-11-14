@@ -34,7 +34,7 @@
 
 ## 📱 Jetzt möglich – auf dem iPhone ausprobieren
 
-- [ ] **https://zitronfalter.github.io/Italienisch/** in Safari öffnen → **Teilen** → **„Zum Home-Bildschirm“**
+- [x] **https://zitronfalter.github.io/Italienisch/** in Safari öffnen → **Teilen** → **„Zum Home-Bildschirm“**
 - [ ] **Flugmodus an:** Startet die App trotzdem?
 - [ ] **„Sichern“** antippen → „In Dateien sichern“ → iCloud Drive
 - [ ] **Eintippen:** Zoomt die Seite ungefragt? Verdeckt die Tastatur etwas?

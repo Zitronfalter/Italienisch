@@ -10,7 +10,7 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Commit nur, wenn Nicole es sagt. Autor ist im Repo eingestellt (Zitronfalter, noreply-Adresse) – nicht ändern.
 - Nach jedem fertigen Schritt `ROADMAP.md` anpassen: Zeichen in der Tabelle (✅ / ⏳ / ⬜), Stand-Zeile und Balken (2 Blöcke █ pro Schritt, 22 Blöcke gesamt).
 - Design „Toskana, warm“ ist umgesetzt: Farben nur über Variablen in `style.css` (`--akzent` Terrakotta für Knöpfe, `--richtig` Olivgrün für richtig/geschafft, `--fehler` Ocker, `--serif` für Überschriften und Lesetexte). Keine Fremd-Schriften laden.
-- Begleiter: **keine Katze.** Nicole lädt ein eigenes Bild hoch; erst dann bauen.
+- Begleiter: kleiner Roboter (**keine Katze**) in `begleiter.js`. Bis Nicoles gezeichnete Bilder da sind: Platzhalter-SVG. Bilder später in `BEGLEITER_BILDER` eintragen (7 Stimmungen) und in `sw.js` aufnehmen. Danach App-Farben an den Roboter anpassen. Regeln: nie traurig, kein Druck, keine Punkte/XP, kein KI-Chat (kostet Geld).
 - Alles, was Nicole selbst tun oder entscheiden muss, in `TODO.md` eintragen (einfach formuliert); Erledigtes dort abhaken.
 
 ## Technik

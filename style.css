@@ -524,6 +524,90 @@ button {
   text-align: left;
 }
 
+/* ---------- Begleiter (Roboter mit Sprechblase) ---------- */
+
+:root {
+  --roboter-hell: #fffaf2;
+  --roboter-dunkel: #3a2e25;
+  --roboter-akzent: #b5583a;
+  --roboter-augen: #f2c48d;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --roboter-hell: #e9dfd0;
+    --roboter-dunkel: #1a1512;
+    --roboter-akzent: #e08a68;
+    --roboter-augen: #f2c48d;
+  }
+}
+
+.begleiter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: -4px 0 -6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+}
+.begleiter-bild {
+  flex: none;
+  width: 76px;
+  height: 76px;
+}
+.begleiter-bild .roboter {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.begleiter-blase {
+  position: relative;
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--rand);
+  border-radius: 16px;
+  background: var(--flaeche);
+  box-shadow: var(--schatten);
+  font-size: 16px;
+  line-height: 1.4;
+}
+/* kleine Spitze der Sprechblase zum Roboter hin */
+.begleiter-blase::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: var(--flaeche);
+  border-left: 1px solid var(--rand);
+  border-bottom: 1px solid var(--rand);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+/* Platzhalter-Roboter */
+.roboter .kopf, .roboter .koerper { fill: var(--roboter-hell); stroke: var(--roboter-dunkel); stroke-width: 2; }
+.roboter .visier { fill: var(--roboter-dunkel); }
+.roboter .augen { fill: none; stroke: var(--roboter-augen); stroke-width: 3; stroke-linecap: round; }
+.roboter .augen .voll { fill: var(--roboter-augen); stroke: none; }
+.roboter .linie { stroke: var(--roboter-dunkel); stroke-width: 2; }
+.roboter .antenne, .roboter .herz { fill: var(--roboter-akzent); }
+.roboter .arme { fill: none; stroke: var(--roboter-dunkel); stroke-width: 4; stroke-linecap: round; }
+.roboter .buch { fill: var(--richtig); }
+
+/* sanftes Hüpfen beim Jubeln – nur wenn das iPhone Bewegung erlaubt */
+@media (prefers-reduced-motion: no-preference) {
+  .begleiter[data-stimmung="jubelt"] .roboter { animation: huepfen 0.9s ease-in-out 2; }
+}
+@keyframes huepfen {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
 /* ---------- Fortschritt ---------- */
 
 .zahl-mittel {

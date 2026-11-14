@@ -98,6 +98,7 @@ function zeigeStart() {
     : 'Keine Vokabeln fällig.') + (n ? ` Danach: ${n.name}` : '');
   zeigeLesenStand();
   zeigeGrammatikStand();
+  Begleiter.zeigen(el('begleiter-start'), Begleiter.startNachricht());
   zeige('start');
 }
 
@@ -226,6 +227,7 @@ function beendeRunde() {
     el('ende-text').textContent = `${anzahl} ${anzahl === 1 ? 'Wort' : 'Wörter'} geübt, ${abfrage.aufAnhieb} davon auf Anhieb gewusst.`;
   }
   el('ende-sicher').textContent = Vokabeln.anzahlSicher();
+  Begleiter.zeigen(el('begleiter-ende'), Begleiter.endeNachricht(anzahl, abfrage.aufAnhieb));
 
   // Teil 2 der Runde: ein Text oder ein Grammatik-Thema
   const n = naechsterInhalt();
@@ -1044,6 +1046,13 @@ function testWeiter() {
 el('knopf-test').addEventListener('click', starteTest);
 el('knopf-test-weiter').addEventListener('click', testWeiter);
 el('knopf-test-ende').addEventListener('click', () => (test.fertig ? zeigeStart() : zeigeFortschritt()));
+
+// ---------- Begleiter ----------
+
+// Antippen: nächster Tipp
+el('begleiter-start').addEventListener('click', () => {
+  Begleiter.zeigen(el('begleiter-start'), Begleiter.tipp(true));
+});
 
 // ---------- Knöpfe ----------
 

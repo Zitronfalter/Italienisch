@@ -8,7 +8,13 @@
 
 ## 🟢 Jetzt
 
-- [ ] **Bild für den Begleiter hochladen** – dann baut Claude ihn ein (keine Katze).
+- [ ] **Begleiter-Roboter zeichnen lassen** und hier hochladen – bis dahin zeigt die App einen schlichten Platzhalter-Roboter.
+  Wünsche für die Zeichnung:
+  - Kleiner, freundlicher Roboter, gezeichnet (nicht KI-generiert), gern im Stil der Vorlage
+  - Farben frei – danach passen wir die Farben der App an den Roboter an
+  - Je ein Bild pro Stimmung: **winkt** (Begrüßung), **freut sich**, **denkt nach**, **ruhig**, **überrascht**, **liest ein Buch**, **jubelt** (Meilenstein)
+  - Format: PNG mit durchsichtigem Hintergrund (oder SVG), quadratisch, mindestens 512 × 512 Pixel
+  - Ohne Text, Sprechblasen, Punkte oder XP – die Sprüche macht die App selbst
 - [ ] **Wortliste durchsehen** – in [wortschatz.js](wortschatz.js), eine Zeile pro Wort.
       Fehlt dir ein Thema oder Wort? Claude Bescheid sagen.
 

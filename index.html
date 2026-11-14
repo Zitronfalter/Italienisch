@@ -29,6 +29,11 @@
         <h1>Italienisch</h1>
       </header>
 
+      <button class="begleiter" id="begleiter-start" type="button" aria-label="Begleiter: nächster Tipp">
+        <span class="begleiter-bild"></span>
+        <span class="begleiter-blase"><span class="begleiter-text"></span></span>
+      </button>
+
       <div class="karte">
         <p class="karte-titel">Heute</p>
         <p class="karte-text" id="heute-text">Etwa 10 Minuten: erst fällige Vokabeln, dann ein kurzer Text oder ein Grammatik-Thema.</p>
@@ -314,6 +319,10 @@
       <header class="kopf">
         <h1 id="ende-titel">Fertig für heute</h1>
       </header>
+      <div class="begleiter" id="begleiter-ende">
+        <span class="begleiter-bild"></span>
+        <span class="begleiter-blase"><span class="begleiter-text"></span></span>
+      </div>
       <div class="karte">
         <p class="karte-text" id="ende-text"></p>
       </div>
@@ -367,6 +376,7 @@
   <script src="grammatik.js"></script>
   <script src="woerterbuch.js"></script>
   <script src="niveautest.js"></script>
+  <script src="begleiter.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

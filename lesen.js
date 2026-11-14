@@ -192,19 +192,55 @@ const Lesen = (() => {
     speechSynthesis.addEventListener('voiceschanged', stimmeSuchen);
   }
 
+  // Wird aufgerufen, wenn das Vorlesen nach kurzer Zeit nicht startet
+  // (z. B. iPhone im Stumm-Modus). Die App zeigt dann einen Hinweis.
+  let beiStille = null;
+  function wennStill(fn) { beiStille = fn; }
+
   // Liest Text vor. fertig() wird aufgerufen, wenn das Vorlesen endet.
+  // Für das iPhone: Text in Sätze teilen (lange Texte brechen sonst manchmal ab)
+  // und nach cancel() kurz warten (sonst bleibt Safari manchmal stumm).
   function sprich(text, fertig) {
     if (!kannSprechen) return;
-    speechSynthesis.cancel();
-    const satz = new SpeechSynthesisUtterance(text);
-    satz.lang = 'it-IT';
-    if (stimme) satz.voice = stimme;
-    satz.rate = 0.9;                 // etwas langsamer als normal
-    if (fertig) {
-      satz.onend = fertig;
-      satz.onerror = fertig;
+    if (!stimme) stimmeSuchen();
+    const saetze = text.split(/(?<=[.!?»:])\s+/).map((s) => s.trim()).filter(Boolean);
+    if (!saetze.length) return;
+
+    let gestartet = false;
+    let erledigt = false;
+    const ende = () => { if (!erledigt) { erledigt = true; if (fertig) fertig(); } };
+
+    const los = () => {
+      speechSynthesis.resume();        // iOS: falls die Ausgabe „hängt“
+      saetze.forEach((s, i) => {
+        const satz = new SpeechSynthesisUtterance(s);
+        satz.lang = 'it-IT';
+        if (stimme) satz.voice = stimme;
+        satz.rate = 0.9;               // etwas langsamer als normal
+        satz.onstart = () => { gestartet = true; };
+        satz.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') ende(); };
+        if (i === saetze.length - 1) satz.onend = ende;
+        speechSynthesis.speak(satz);
+      });
+      setTimeout(() => {
+        if (!gestartet && !erledigt) {
+          if (beiStille) beiStille();
+          ende();
+        }
+      }, 2500);
+    };
+
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      speechSynthesis.cancel();
+      setTimeout(los, 120);
+    } else {
+      los();
     }
-    speechSynthesis.speak(satz);
+  }
+
+  function hatItalienischeStimme() {
+    if (!stimme) stimmeSuchen();
+    return Boolean(stimme);
   }
 
   function stopp() {
@@ -239,7 +275,7 @@ const Lesen = (() => {
     stuecke, bloecke, vorleseText,
     nachschlagen, inKarteikarten, istInKarteikarten, bedeutungSpeichern,
     eigeneTexte, textSpeichern, textLoeschen,
-    kannSprechen, sprich, stopp,
+    kannSprechen, sprich, stopp, wennStill, hatItalienischeStimme,
     stand, ergebnisSpeichern, anzahlVerstanden,
   };
 })();

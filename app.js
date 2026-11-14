@@ -362,6 +362,7 @@ function oeffneText(t) {
   el('knopf-text-loeschen').hidden = !t.eigen;
   el('lesen-titel').textContent = t.titel;
   el('knopf-vorlesen').hidden = !Lesen.kannSprechen;
+  el('vorlese-hinweis').hidden = true;
 
   // Text aufbauen
   const artikel = el('lesen-text');
@@ -597,6 +598,16 @@ el('wort-merken').addEventListener('click', () => {
   }
 });
 
+// Hinweis, wenn nichts zu hören ist (Stumm-Modus, Lautstärke, fehlende Stimme)
+function zeigeVorleseHinweis() {
+  const h = el('vorlese-hinweis');
+  h.textContent = Lesen.hatItalienischeStimme()
+    ? 'Nichts zu hören? Schalte den Stumm-Modus aus (Glocke im Kontrollzentrum) und dreh die Lautstärke hoch.'
+    : 'Keine italienische Stimme gefunden. Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Italienisch → eine Stimme laden. Und: Stumm-Modus aus, Lautstärke hoch.';
+  h.hidden = false;
+}
+Lesen.wennStill(zeigeVorleseHinweis);
+
 // Ganzen Text vorlesen / anhalten
 function vorlesenStopp() {
   Lesen.stopp();
@@ -607,6 +618,7 @@ el('knopf-vorlesen').addEventListener('click', () => {
   if (lesen.liestVor) { vorlesenStopp(); return; }
   lesen.liestVor = true;
   el('knopf-vorlesen').textContent = '■ Anhalten';
+  if (!Lesen.hatItalienischeStimme()) zeigeVorleseHinweis();
   Lesen.sprich(Lesen.vorleseText(lesen.text.text), () => {
     lesen.liestVor = false;
     el('knopf-vorlesen').textContent = '▶ Vorlesen';

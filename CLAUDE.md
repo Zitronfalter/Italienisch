@@ -9,7 +9,8 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - **Es dürfen keine Kosten entstehen.** Nur kostenlose Dienste, Bibliotheken und Daten verwenden (kein GitHub Pro, keine bezahlten APIs, Schriften oder Hosting).
 - Commit nur, wenn Nicole es sagt. Autor ist im Repo eingestellt (Zitronfalter, noreply-Adresse) – nicht ändern.
 - Nach jedem fertigen Schritt `ROADMAP.md` anpassen: Zeichen in der Tabelle (✅ / ⏳ / ⬜), Stand-Zeile und Balken (2 Blöcke █ pro Schritt, 22 Blöcke gesamt).
-- Design: Richtung „Toskana, warm“ ist gewählt (Creme-Hintergrund, Terrakotta-Akzent, Olivgrün für richtig, Serifen-Überschriften). Umsetzung erst in Schritt 10 – bis dahin neue Seiten mit den vorhandenen Farb-Variablen bauen.
+- Design „Toskana, warm“ ist umgesetzt: Farben nur über Variablen in `style.css` (`--akzent` Terrakotta für Knöpfe, `--richtig` Olivgrün für richtig/geschafft, `--fehler` Ocker, `--serif` für Überschriften und Lesetexte). Keine Fremd-Schriften laden.
+- Begleiter: **keine Katze.** Nicole lädt ein eigenes Bild hoch; erst dann bauen.
 - Alles, was Nicole selbst tun oder entscheiden muss, in `TODO.md` eintragen (einfach formuliert); Erledigtes dort abhaken.
 
 ## Technik

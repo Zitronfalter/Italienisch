@@ -1,26 +1,33 @@
-/* Farben: hell und dunkel, je nach iPhone-Einstellung */
+/* Design „Toskana, warm“: Creme, Terrakotta, Olivgrün – hell und dunkel, je nach iPhone-Einstellung */
 :root {
-  --hintergrund: #f6f3ee;
-  --flaeche: #ffffff;
-  --text: #2a2825;
-  --text-leise: #6f6a62;
-  --akzent: #2f6b4f;        /* ruhiges Olivgrün */
-  --akzent-text: #ffffff;
-  --rand: #e4ded4;
-  --fehler: #b5533c;
+  --hintergrund: #f5efe4;   /* Creme, wie Papier */
+  --flaeche: #fffaf2;
+  --text: #3a2e25;          /* dunkles Braun statt Schwarz */
+  --text-leise: #76675a;
+  --akzent: #b5583a;        /* Terrakotta: Knöpfe, Hervorhebungen */
+  --akzent-text: #fffaf2;
+  --richtig: #5b6b3a;       /* Olivgrün: richtig, geschafft */
+  --richtig-text: #fffaf2;
+  --fehler: #a8742a;        /* Ocker: sanft statt alarmrot */
+  --rand: #e6d9c4;
+  --schatten: 0 1px 2px rgba(90, 60, 30, 0.06), 0 4px 14px rgba(90, 60, 30, 0.06);
+  --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
   --radius: 16px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --hintergrund: #1c1b19;
-    --flaeche: #282623;
-    --text: #ece8e1;
-    --text-leise: #a49e94;
-    --akzent: #6fae8c;
-    --akzent-text: #14231b;
-    --rand: #3a3732;
-    --fehler: #e08a72;
+    --hintergrund: #1f1a16;
+    --flaeche: #2a241f;
+    --text: #efe6d8;
+    --text-leise: #b3a593;
+    --akzent: #e08a68;
+    --akzent-text: #2a1a12;
+    --richtig: #a3b66f;
+    --richtig-text: #1c2410;
+    --fehler: #e0b25a;
+    --rand: #3d342c;
+    --schatten: none;
   }
 }
 
@@ -59,9 +66,30 @@ html, body {
 
 .kopf h1 {
   margin: 0;
+  font-family: var(--serif);
   font-size: 34px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+/* feine Terrakotta-Linie unter der Überschrift */
+.kopf h1::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 2px;
+  margin-top: 10px;
+  background: var(--akzent);
+}
+.kopf-zeile h1::after { display: none; }
+.kopf-klein,
+.abschnitt,
+.frage-wort,
+.loesung-neu,
+.zahl-gross,
+.zahl-mittel,
+.wort-form {
+  font-family: var(--serif);
 }
 .gruss {
   margin: 0 0 4px;
@@ -73,6 +101,7 @@ html, body {
   border: 1px solid var(--rand);
   border-radius: var(--radius);
   padding: 18px 20px;
+  box-shadow: var(--schatten);
 }
 .karte-titel {
   margin: 0 0 6px;
@@ -146,7 +175,7 @@ button {
   padding: 14px 18px;
   border-radius: var(--radius);
   background: var(--flaeche);
-  border-left: 4px solid var(--akzent);
+  border-left: 4px solid var(--richtig);
 }
 .meldung.fehler { border-left-color: var(--fehler); }
 
@@ -207,7 +236,7 @@ button {
   padding: 14px 18px;
   border-radius: var(--radius);
   background: var(--flaeche);
-  border-left: 4px solid var(--akzent);
+  border-left: 4px solid var(--richtig);
 }
 .rueckmeldung.falsch { border-left-color: var(--fehler); }
 .rueck-titel {
@@ -223,8 +252,8 @@ button {
 .zahl-gross {
   margin: 0;
   font-size: 40px;
-  font-weight: 700;
-  color: var(--akzent);
+  font-weight: 600;
+  color: var(--richtig);
 }
 
 /* ---------- Lesen ---------- */
@@ -264,7 +293,7 @@ button {
 .text-eintrag { padding: 14px 44px 14px 18px; }
 .text-eintrag .karte-titel { margin: 0; }
 .text-eintrag .karte-text { font-size: 15px; }
-.haken { color: var(--akzent); }
+.haken { color: var(--richtig); }
 
 .lesen-werkzeuge {
   display: flex;
@@ -297,7 +326,8 @@ button {
 }
 
 .lesetext {
-  font-size: 19px;
+  font-family: var(--serif);
+  font-size: 20px;
   line-height: 1.7;
   padding: 20px;
 }
@@ -348,7 +378,7 @@ button {
 .antwort.gewaehlt { border-color: var(--akzent); }
 .antwort-leise { color: var(--text-leise); border-style: dashed; }
 .knopf-haupt:disabled { opacity: 0.45; }
-.antwort.richtig { border-color: var(--akzent); background: var(--akzent); color: var(--akzent-text); }
+.antwort.richtig { border-color: var(--richtig); background: var(--richtig); color: var(--richtig-text); }
 .antwort.falsch { border-color: var(--fehler); }
 
 /* Wort-Blatt unten */
@@ -499,8 +529,8 @@ button {
 .zahl-mittel {
   margin: 0;
   font-size: 28px;
-  font-weight: 700;
-  color: var(--akzent);
+  font-weight: 600;
+  color: var(--richtig);
 }
 .zahlen-reihe {
   display: grid;
@@ -535,7 +565,7 @@ button {
   display: block;
   height: 100%;
   border-radius: 6px;
-  background: var(--akzent);
+  background: var(--richtig);
 }
 .fach-zahl { text-align: right; }
 .fs-test-knopf { margin-top: 12px; }

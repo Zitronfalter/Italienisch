@@ -8,6 +8,7 @@
 
 ## 🟢 Jetzt
 
+- [ ] **Bild für den Begleiter hochladen** – dann baut Claude ihn ein (keine Katze).
 - [ ] **Wortliste durchsehen** – in [wortschatz.js](wortschatz.js), eine Zeile pro Wort.
       Fehlt dir ein Thema oder Wort? Claude Bescheid sagen.
 

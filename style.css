@@ -366,6 +366,7 @@ button {
   flex-direction: column;
   gap: 8px;
 }
+.antworten[hidden] { display: none; }
 .antwort {
   min-height: 48px;
   padding: 10px 14px;
@@ -721,6 +722,54 @@ button {
 }
 .wort-quelle { margin: -8px 0 14px; }
 .quelle a { color: inherit; }
+
+/* ---------- Hören & Üben ---------- */
+
+.hoer-knoepfe {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.hoer-knoepfe[hidden] { display: none; }
+.wort-falsch {
+  background: var(--fehler);
+  color: var(--flaeche);
+  border-radius: 4px;
+  padding: 0 3px;
+}
+
+.paare {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+.paare[hidden] { display: none; }
+.paare-spalte {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.paar {
+  min-height: 52px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--rand);
+  border-bottom-width: 3px;
+  border-radius: 12px;
+  background: var(--flaeche);
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.paar.gewaehlt { border-color: var(--akzent); }
+.paar.passt {
+  border-color: var(--richtig);
+  background: var(--richtig);
+  color: var(--richtig-text);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.paar.daneben { border-color: var(--fehler); }
 
 /* ---------- Stimme und Tempo ---------- */
 

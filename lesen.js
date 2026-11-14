@@ -256,7 +256,8 @@ const Lesen = (() => {
 
   // Liest Text vor. fertig() wird aufgerufen, wenn das Vorlesen endet.
   // Die Teile werden nacheinander gesprochen, dazwischen eine echte Pause.
-  function sprich(text, fertig) {
+  // optionen.tempo: anderes Tempo nur für diese Ausgabe (z. B. 0.6 für „langsam anhören“)
+  function sprich(text, fertig, optionen = {}) {
     if (!kannSprechen) return;
     if (!stimme) stimmeSuchen();
     const liste = teile(text);
@@ -274,7 +275,7 @@ const Lesen = (() => {
       const u = new SpeechSynthesisUtterance(liste[i].text);
       u.lang = 'it-IT';
       if (stimme) u.voice = stimme;
-      u.rate = tempo();                             // Standard: etwas langsamer als normal
+      u.rate = optionen.tempo || tempo();           // Standard: etwas langsamer als normal
       u.onstart = () => { gestartet = true; };
       u.onend = () => {
         if (meinLauf !== lauf) return;

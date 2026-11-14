@@ -25,7 +25,7 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 ## Dateien
 - `app.js` – Bildschirme und Knöpfe
 - `speicher.js` – Speichern, Sichern, Laden
-- `vokabeln.js` – Karteikasten (5 Fächer) und Prüfen der Antwort
+- `vokabeln.js` – Karteikasten (5 Fächer) und Prüfen der Antwort. Neue Karten haben `kennen` (0…`KENNEN_FERTIG`=4): erst Kennenlernen (Zeigen+Hören, Wortpaare, Wählen nach Lesen/Hören), danach Schreiben ab dem nächsten Tag. Karten ohne `kennen` (alt) gelten als bekannt.
 - `wortschatz.js` – Grundwortschatz (Themen, A1/A2)
 - `texte.js` – Lesetexte/Rezepte mit Wortbedeutungen und Fragen (erste Antwort = richtig)
 - `lesen.js` – Nachschlagen, Vorlesen (Web Speech API, it-IT), gelesene Texte
@@ -36,6 +36,7 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Eigene Texte: `Speicher.daten.eigeneTexte`; eigene Wörter: `Speicher.daten.eigeneWoerter` (`e-…`-IDs, mit `formen` und `selbst`).
 - `niveautest.js` – 24 Fragen (je 8 A1/A2/B1, erste Antwort = richtig), Stufe erreicht ab 6/8
 - Runde („Los“): Vokabeln, danach `naechsterInhalt()` in `app.js` – abwechselnd nächster unverstandener Text und nächstes ungeübtes Kapitel
+- `uebungen.js` – Hören & Üben: Wortpaare, Diktat, Hören+Kacheln; Hörsätze aus Grammatik-Übungen (mit Deutsch) und Lesetexten (ohne «»-Dialoge). Runde: Text → Grammatik → Hören im Wechsel.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner
 

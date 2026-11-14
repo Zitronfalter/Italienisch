@@ -51,18 +51,51 @@ const Vokabeln = (() => {
     return Object.values(karten()).filter((k) => k.fach >= SICHER_AB_FACH).length;
   }
 
-  // Liste für eine Runde: erst fällige Wörter, dann (wenn Platz) ein paar neue.
-  function rundeZusammenstellen() {
-    const wiederholen = faellige().slice(0, MAX_FAELLIG);
-    const platz = Math.max(0, MAX_NEU - Math.floor(wiederholen.length / 4));
-    const neu = neue().slice(0, platz);
-    return { wiederholen, neu };
+  // ---------- Kennenlernen ----------
+  //
+  // Neue Wörter werden nicht gleich zum Schreiben abgefragt. Erst lernst du sie
+  // kennen: lesen und hören, Wortpaare zuordnen, aus Kacheln wählen, nach Gehör wählen.
+  // Jede gelöste Aufgabe zählt 1 Punkt („kennen“). Ab KENNEN_FERTIG kommt das Wort
+  // ins Schreiben (Karteikasten Fach 1, ab dem nächsten Tag).
+  const KENNEN_FERTIG = 4;
+
+  // Karten ohne „kennen“ stammen aus der Zeit vor dieser Regel und gelten als bekannt.
+  function istJung(k) { return k && typeof k.kennen === 'number' && k.kennen < KENNEN_FERTIG; }
+
+  function jungeWoerter() {
+    return Object.entries(karten())
+      .filter(([id, k]) => istJung(k) && wort(id))
+      .map(([id]) => id);
   }
 
-  // Ein neues Wort kommt in Fach 1 und ist sofort fällig.
+  function kennenGelernt(id) {
+    const k = karten()[id];
+    if (!istJung(k)) return;
+    k.kennen += 1;
+    if (k.kennen >= KENNEN_FERTIG) {
+      k.fach = 1;
+      k.faellig = inTagen(1);           // geschrieben wird erst ab morgen
+    }
+    Speicher.speichern();
+  }
+
+  function anzahlJung() { return jungeWoerter().length; }
+
+  // Liste für eine Runde: fällige Wörter zum Schreiben, junge Wörter zum Kennenlernen,
+  // dann (wenn Platz) ein paar neue.
+  function rundeZusammenstellen() {
+    const h = heute();
+    const wiederholen = faellige().filter((id) => !istJung(karten()[id])).slice(0, MAX_FAELLIG);
+    const jung = jungeWoerter().slice(0, 10);
+    const platz = Math.max(0, MAX_NEU - Math.floor(wiederholen.length / 4) - Math.floor(jung.length / 2));
+    const neu = neue().slice(0, platz);
+    return { wiederholen, jung, neu, heute: h };
+  }
+
+  // Ein neues Wort kommt in den Karteikasten – erst zum Kennenlernen.
   function aufnehmen(id) {
     if (!karten()[id]) {
-      karten()[id] = { fach: 1, faellig: heute(), richtig: 0, falsch: 0 };
+      karten()[id] = { fach: 1, faellig: heute(), richtig: 0, falsch: 0, kennen: 0 };
       Speicher.speichern();
     }
   }
@@ -174,6 +207,10 @@ const Vokabeln = (() => {
     faellige,
     neue,
     anzahlSicher,
+    anzahlJung,
+    istJung,
+    kennenGelernt,
+    KENNEN_FERTIG,
     rundeZusammenstellen,
     aufnehmen,
     eintragen,

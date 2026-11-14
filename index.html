@@ -51,6 +51,12 @@
         <span class="pfeil" aria-hidden="true">›</span>
       </button>
 
+      <button class="karte karte-knopf" id="knopf-hoeren-start" type="button">
+        <span class="karte-titel">Hören &amp; Üben</span>
+        <span class="karte-text" id="hoeren-stand-start">Wortpaare, Hören und schreiben, Sätze legen</span>
+        <span class="pfeil" aria-hidden="true">›</span>
+      </button>
+
       <button class="knopf-los" id="knopf-los" type="button">Los</button>
       <div class="leise-zeile">
         <button class="knopf-leise" id="knopf-woerterbuch" type="button">Wörterbuch</button>
@@ -95,6 +101,19 @@
         <p class="frage-art" id="frage-art">Auf Italienisch?</p>
         <p class="frage-wort" id="frage-wort" lang="de"></p>
         <p class="loesung-neu" id="loesung-neu" lang="it" hidden></p>
+        <div class="hoer-knoepfe" id="runde-hoer" hidden>
+          <button class="knopf-klein knopf-klein-voll" id="runde-play" type="button">▶ Anhören</button>
+          <button class="knopf-klein" id="runde-langsam" type="button">Langsam</button>
+        </div>
+      </div>
+
+      <!-- Kennenlernen: Wort wählen -->
+      <div class="antworten" id="runde-auswahl" lang="it" hidden></div>
+
+      <!-- Kennenlernen: Wortpaare -->
+      <div class="paare" id="runde-paare" hidden>
+        <div class="paare-spalte" id="runde-paare-it" lang="it"></div>
+        <div class="paare-spalte" id="runde-paare-de" lang="de"></div>
       </div>
 
       <form class="eingabe" id="abfrage-form" autocomplete="off">
@@ -280,7 +299,7 @@
       <div class="karte">
         <p class="karte-titel">Dein Karteikasten</p>
         <div class="faecher" id="fs-faecher"></div>
-        <p class="karte-text klein">Fach 1 = neu oder vergessen, Fach 5 = sitzt lange.</p>
+        <p class="karte-text klein">Neu = wird gerade kennengelernt (ansehen, hören, zuordnen). Fach 1 = wird geschrieben, Fach 5 = sitzt lange.</p>
       </div>
 
       <div class="zahlen-reihe">
@@ -324,6 +343,52 @@
       <div class="knopf-gruppe">
         <button class="knopf-haupt" id="knopf-test-weiter" type="button">Weiter</button>
         <button class="knopf-zurueck" id="knopf-test-ende" type="button">Test abbrechen</button>
+      </div>
+    </section>
+
+    <!-- Hören & Üben -->
+    <section class="screen" id="screen-hoeren" hidden>
+      <header class="kopf kopf-zeile">
+        <h2 class="kopf-klein" id="hoeren-titel">Hören &amp; Üben</h2>
+        <span class="stand" id="hoeren-stand"></span>
+      </header>
+
+      <div class="karte frage-karte">
+        <p class="frage-art" id="hoeren-art"></p>
+        <div class="hoer-knoepfe" id="hoer-knoepfe">
+          <button class="knopf-klein knopf-klein-voll" id="knopf-hoeren-play" type="button">▶ Anhören</button>
+          <button class="knopf-klein" id="knopf-hoeren-langsam" type="button">Langsam</button>
+        </div>
+        <p class="frage-wort" id="hoeren-ergebnis-titel" hidden></p>
+      </div>
+
+      <!-- Diktat -->
+      <form class="eingabe" id="diktat-form" autocomplete="off">
+        <input class="eingabe-feld" id="diktat-eingabe" type="text" lang="it"
+               autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false"
+               enterkeyhint="done" placeholder="Schreib, was du hörst" aria-label="Gehörter Satz">
+      </form>
+
+      <!-- Kacheln -->
+      <div id="hoer-kacheln">
+        <div class="kachel-ablage" id="hoer-ablage" lang="it" aria-label="Dein Satz"></div>
+        <div class="kachel-vorrat" id="hoer-vorrat" lang="it" aria-label="Wörter"></div>
+      </div>
+
+      <!-- Wortpaare -->
+      <div class="paare" id="paare">
+        <div class="paare-spalte" id="paare-it" lang="it"></div>
+        <div class="paare-spalte" id="paare-de" lang="de"></div>
+      </div>
+
+      <div class="rueckmeldung" id="hoeren-rueck" role="status" hidden>
+        <p class="rueck-titel" id="hoeren-rueck-titel"></p>
+        <p class="rueck-text" id="hoeren-rueck-text"></p>
+      </div>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-hoeren" type="button">Prüfen</button>
+        <button class="knopf-zurueck" id="knopf-hoeren-beenden" type="button">Übung beenden</button>
       </div>
     </section>
 
@@ -391,6 +456,7 @@
   <script src="woerterbuch.js"></script>
   <script src="niveautest.js"></script>
   <script src="begleiter.js"></script>
+  <script src="uebungen.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

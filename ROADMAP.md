@@ -24,6 +24,14 @@
 | 10 | **Design & Begleiter** | Aussehen „Toskana, warm“ ✅ – ruhiger Begleiter nach Nicoles Bild (Tipps, freut sich über echten Fortschritt, nie traurig, kein Druck) | ⏳ Begleiter wartet auf Bild |
 | 11 | **Aufs iPhone** | Online über GitHub Pages: https://zitronfalter.github.io/Italienisch/ – läuft auf Nicoles iPhone | ✅ |
 
+### Dazugekommen
+
+| Was | Was du davon hast | Stand |
+|---|---|:---:|
+| **Vorlesen verbessert** | Pausen nach Sätzen und Kommas, Fragen am Stück, Tempo und Stimme wählbar, „▶ Satz“ | ✅ |
+| **Hören & Üben** | Wortpaare zuordnen, Hören und eintippen, Hören und Kacheln legen – auch in der 10-Minuten-Runde | ✅ |
+| **Neue Wörter erst kennenlernen** | Ansehen und hören, Wortpaare, aus 4 Wörtern wählen (lesen oder hören) – geschrieben wird erst nach 4 gelösten Aufgaben, ab dem nächsten Tag | ✅ |
+
 **Zeichen:** ✅ fertig · ⏳ in Arbeit / als Nächstes · ⏸️ pausiert · ⬜ noch offen
 
 ---

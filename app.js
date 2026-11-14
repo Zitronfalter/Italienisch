@@ -74,30 +74,36 @@ function naechsterInhalt() {
   const letzte = (Speicher.daten.fortschritt.runde || {}).art;
   const text = texte[0] && { art: 'text', obj: texte[0], name: `Text „${texte[0].titel}“` };
   const kap = kapitel[0] && { art: 'kapitel', obj: kapitel[0], name: `Grammatik „${kapitel[0].titel}“` };
-  if (text && kap) return letzte === 'text' ? kap : text;
-  return text || kap || null;
+  const hoeren = { art: 'hoeren', name: 'Hören & Üben' };
+  // Reihenfolge: Text → Grammatik → Hören → Text …; was fertig ist, fällt weg
+  const kreis = [text, kap, hoeren].filter(Boolean);
+  const i = kreis.findIndex((x) => x.art === letzte);
+  return kreis[(i + 1) % kreis.length];
 }
 
 function oeffneNaechstes(n) {
   Speicher.daten.fortschritt.runde = { art: n.art, datum: Vokabeln.heute() };
   Speicher.speichern();
   if (n.art === 'text') oeffneText(n.obj);
-  else oeffneKapitel(n.obj, 'grammatik');
+  else if (n.art === 'kapitel') oeffneKapitel(n.obj, 'grammatik');
+  else starteHoeren();
 }
 
 // ---------- Startseite ----------
 
 function zeigeStart() {
-  const { wiederholen, neu } = Vokabeln.rundeZusammenstellen();
+  const { wiederholen, jung, neu } = Vokabeln.rundeZusammenstellen();
   const teile = [];
   if (wiederholen.length) teile.push(`${wiederholen.length} ${wiederholen.length === 1 ? 'Vokabel' : 'Vokabeln'} zum Wiederholen`);
+  if (jung.length) teile.push(`${jung.length} zum Kennenlernen`);
   if (neu.length) teile.push(`${neu.length} neue ${neu.length === 1 ? 'Wort' : 'Wörter'}`);
   const n = naechsterInhalt();
   document.getElementById('heute-text').textContent = (teile.length
-    ? teile.join(' und ') + '.'
+    ? teile.join(', ') + '.'
     : 'Keine Vokabeln fällig.') + (n ? ` Danach: ${n.name}` : '');
   zeigeLesenStand();
   zeigeGrammatikStand();
+  zeigeHoerenStand();
   Begleiter.zeigen(el('begleiter-start'), Begleiter.startNachricht());
   zeige('start');
 }
@@ -105,8 +111,11 @@ function zeigeStart() {
 // ---------- Vokabel-Abfrage ----------
 //
 // Eine Runde ist eine Liste von Schritten:
-//   { art: 'neu', id }    → neues Wort zeigen
-//   { art: 'frage', id }  → Wort abfragen
+//   { art: 'frage', id }          → Wort schreiben (nur Wörter, die du schon kennst)
+//   { art: 'neu', id }            → neues Wort zeigen und vorlesen
+//   { art: 'paare', ids }         → Wortpaare zuordnen
+//   { art: 'waehlen', id, modus } → richtiges Wort antippen: zum deutschen Wort ('de') oder nach Gehör ('hoeren')
+// Neue Wörter werden erst geschrieben, wenn du sie ein paar Mal so geübt hast (siehe vokabeln.js).
 
 const abfrage = {
   schritte: [],
@@ -114,57 +123,231 @@ const abfrage = {
   geprueft: false,      // wurde die aktuelle Antwort schon geprüft?
   gewertet: new Set(),  // diese Wörter haben schon ihr Ergebnis für den Karteikasten
   aufAnhieb: 0,
+  kennen: new Set(),    // diese Wörter hast du heute kennengelernt
+  zweiterVersuch: new Set(),
+  gewaehlt: null,
+  paarFehler: new Set(),
 };
 
 const el = (id) => document.getElementById(id);
 
 function starteRunde() {
-  const { wiederholen, neu } = Vokabeln.rundeZusammenstellen();
+  const { wiederholen, jung, neu } = Vokabeln.rundeZusammenstellen();
+  const ueben = [...jung, ...neu];
+  const modus = (id) => {
+    const k = Speicher.daten.karten[id];
+    const n = (k && k.kennen) || 0;
+    // Pro Runde kommen meist 2 Punkte dazu → abwechselnd: erst lesen, nächstes Mal hören
+    return Lesen.kannSprechen && Math.floor(n / 2) % 2 === 1 ? 'hoeren' : 'de';
+  };
   abfrage.schritte = [
     ...wiederholen.map((id) => ({ art: 'frage', id })),
     ...neu.map((id) => ({ art: 'neu', id })),
-    ...neu.map((id) => ({ art: 'frage', id })),
+    ...(ueben.length ? [{ art: 'paare', ids: mischen(ueben).slice(0, 5) }] : []),
+    ...mischen(ueben).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
   ];
   abfrage.pos = 0;
   abfrage.gewertet = new Set();
   abfrage.aufAnhieb = 0;
+  abfrage.kennen = new Set();
+  abfrage.zweiterVersuch = new Set();
   if (!abfrage.schritte.length) return beendeRunde();
   zeige('runde');
   zeigeSchritt();
 }
 
+// Antwort-Möglichkeiten zum Wählen: das richtige Wort + 3 andere (am liebsten gleiches Thema)
+function auswahlFuer(w) {
+  const gleich = WORTSCHATZ.filter((x) => x.id !== w.id && x.thema && x.thema === w.thema);
+  const andere = WORTSCHATZ.filter((x) => x.id !== w.id);
+  const falsche = [];
+  for (const x of [...mischen(gleich), ...mischen(andere)]) {
+    if (falsche.length === 3) break;
+    if (x.it !== w.it && !falsche.some((f) => f.it === x.it)) falsche.push(x);
+  }
+  return mischen([w, ...falsche]);
+}
+
+function sprichWort(text, langsam = false) {
+  if (!Lesen.kannSprechen) return;
+  vorlesenStopp();
+  Lesen.sprich(text, null, langsam ? { tempo: 0.6 } : {});
+}
+
 function zeigeSchritt() {
   const schritt = abfrage.schritte[abfrage.pos];
-  const w = Vokabeln.wort(schritt.id);
-  const fragen = abfrage.schritte.filter((s) => s.art === 'frage').length;
-  const erledigt = abfrage.schritte.slice(0, abfrage.pos).filter((s) => s.art === 'frage').length;
-  el('abfrage-stand').textContent = schritt.art === 'frage' ? `${erledigt + 1} von ${fragen}` : '';
+  const zaehlt = (s) => s.art !== 'neu';
+  const gesamt = abfrage.schritte.filter(zaehlt).length;
+  const erledigt = abfrage.schritte.slice(0, abfrage.pos).filter(zaehlt).length;
+  el('abfrage-stand').textContent = zaehlt(schritt) ? `${erledigt + 1} von ${gesamt}` : '';
 
   abfrage.geprueft = false;
-  el('frage-wort').textContent = w.de;
+  abfrage.gewaehlt = null;
   el('rueckmeldung').hidden = true;
   el('knopf-pruefen').textContent = 'Prüfen';
+  el('knopf-pruefen').hidden = false;
+  el('loesung-neu').hidden = true;
+  el('abfrage-form').hidden = true;
+  el('knopf-weiss-nicht').hidden = true;
+  el('runde-auswahl').hidden = true;
+  el('runde-paare').hidden = true;
+  el('runde-hoer').hidden = true;
+  el('frage-wort').hidden = false;
   const eingabe = el('abfrage-eingabe');
   eingabe.value = '';
   eingabe.readOnly = false;
 
   if (schritt.art === 'neu') {
+    const w = Vokabeln.wort(schritt.id);
     Vokabeln.aufnehmen(w.id);
-    el('frage-art').textContent = 'Neues Wort';
+    el('frage-art').textContent = 'Neues Wort – erst einmal nur ansehen und anhören';
+    el('frage-wort').textContent = w.de;
     el('loesung-neu').textContent = w.it;
     el('loesung-neu').hidden = false;
-    el('abfrage-form').hidden = true;
-    el('knopf-weiss-nicht').hidden = true;
-    el('knopf-pruefen').textContent = 'Gemerkt';
-    abfrage.geprueft = true;          // „Gemerkt“ geht direkt weiter
-  } else {
+    el('runde-hoer').hidden = !Lesen.kannSprechen;
+    el('knopf-pruefen').textContent = 'Weiter';
+    abfrage.geprueft = true;          // „Weiter“ geht direkt weiter
+    sprichWort(w.it);
+  } else if (schritt.art === 'frage') {
+    const w = Vokabeln.wort(schritt.id);
     el('frage-art').textContent = 'Auf Italienisch?';
-    el('loesung-neu').hidden = true;
+    el('frage-wort').textContent = w.de;
     el('abfrage-form').hidden = false;
     el('knopf-weiss-nicht').hidden = false;
     eingabe.focus();
+  } else if (schritt.art === 'waehlen') {
+    const w = Vokabeln.wort(schritt.id);
+    const box = el('runde-auswahl');
+    box.innerHTML = '';
+    if (schritt.modus === 'hoeren') {
+      el('frage-art').textContent = 'Hör zu: Welches Wort ist es?';
+      el('frage-wort').hidden = true;
+      el('runde-hoer').hidden = false;
+      sprichWort(w.it);
+    } else {
+      el('frage-art').textContent = 'Welches Wort passt?';
+      el('frage-wort').textContent = w.de;
+    }
+    for (const x of auswahlFuer(w)) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'antwort';
+      b.textContent = x.it;
+      b.addEventListener('click', () => waehlen(b, x.id === w.id, w));
+      box.appendChild(b);
+    }
+    box.hidden = false;
+    el('knopf-pruefen').hidden = true;      // Antippen genügt
+  } else {
+    // Wortpaare
+    el('frage-art').textContent = 'Finde die Paare: erst links, dann rechts antippen.';
+    el('frage-wort').hidden = true;
+    abfrage.paarFehler = new Set();
+    const links = el('runde-paare-it');
+    const rechts = el('runde-paare-de');
+    links.innerHTML = '';
+    rechts.innerHTML = '';
+    const woerter = schritt.ids.map((id) => Vokabeln.wort(id));
+    // Bei weniger als 3 Wörtern ein paar bekannte dazunehmen, damit es ein Spiel wird
+    for (const x of WORTSCHATZ) {
+      if (woerter.length >= 3) break;
+      if (!woerter.some((y) => y.id === x.id)) woerter.push(x);
+    }
+    const kurz = (de) => de.replace(/\s*\([^)]*\)/g, '').split(';')[0].trim();
+    const knopf = (text, id, seite) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'paar';
+      b.textContent = text;
+      b.dataset.id = id;
+      b.dataset.seite = seite;
+      b.addEventListener('click', () => rundePaarTippen(b));
+      return b;
+    };
+    mischen(woerter).forEach((x) => links.appendChild(knopf(x.it, x.id, 'it')));
+    mischen(woerter).forEach((x) => rechts.appendChild(knopf(kurz(x.de), x.id, 'de')));
+    el('runde-paare').hidden = false;
+    el('knopf-pruefen').hidden = true;      // fertig, wenn alle Paare gefunden sind
   }
 }
+
+function waehlen(knopf, richtig, w) {
+  if (abfrage.geprueft) return;
+  abfrage.geprueft = true;
+  el('runde-auswahl').querySelectorAll('.antwort').forEach((b) => {
+    if (b.textContent === w.it) b.classList.add('richtig');
+  });
+  if (!richtig) knopf.classList.add('falsch');
+  if (richtig) {
+    Vokabeln.kennenGelernt(w.id);
+    abfrage.kennen.add(w.id);
+  } else if (!abfrage.zweiterVersuch.has(w.id)) {
+    // Nicht schlimm: später in der Runde noch einmal, ohne Wertung
+    abfrage.zweiterVersuch.add(w.id);
+    const s = abfrage.schritte[abfrage.pos];
+    abfrage.schritte.push({ art: 'waehlen', id: w.id, modus: s.modus });
+  }
+  const box = el('rueckmeldung');
+  box.classList.toggle('falsch', !richtig);
+  el('rueck-titel').textContent = richtig ? 'Richtig.' : 'Das war es nicht.';
+  el('rueck-text').textContent = `${w.it} = ${w.de}`;
+  el('rueck-text').hidden = false;
+  box.hidden = false;
+  sprichWort(w.it);
+  el('knopf-pruefen').textContent = 'Weiter';
+  el('knopf-pruefen').hidden = false;
+  el('knopf-pruefen').focus();
+}
+
+function rundePaarTippen(b) {
+  const vorher = abfrage.gewaehlt;
+  if (!vorher || vorher.dataset.seite === b.dataset.seite) {
+    if (vorher) vorher.classList.remove('gewaehlt');
+    abfrage.gewaehlt = b;
+    b.classList.add('gewaehlt');
+    if (b.dataset.seite === 'it') sprichWort(b.textContent);
+    return;
+  }
+  vorher.classList.remove('gewaehlt');
+  abfrage.gewaehlt = null;
+  if (vorher.dataset.id === b.dataset.id) {
+    vorher.classList.add('passt');
+    b.classList.add('passt');
+    if (!document.querySelector('#runde-paare .paar:not(.passt)')) rundePaareFertig();
+  } else {
+    abfrage.paarFehler.add(vorher.dataset.id);
+    abfrage.paarFehler.add(b.dataset.id);
+    for (const x of [vorher, b]) {
+      x.classList.add('daneben');
+      setTimeout(() => x.classList.remove('daneben'), 600);
+    }
+  }
+}
+
+function rundePaareFertig() {
+  const schritt = abfrage.schritte[abfrage.pos];
+  // Wörter, die ohne Fehler zugeordnet wurden, zählen fürs Kennenlernen
+  for (const id of schritt.ids) {
+    if (!abfrage.paarFehler.has(id)) { Vokabeln.kennenGelernt(id); abfrage.kennen.add(id); }
+  }
+  abfrage.geprueft = true;
+  const box = el('rueckmeldung');
+  box.classList.remove('falsch');
+  el('rueck-titel').textContent = 'Alle Paare gefunden.';
+  el('rueck-text').hidden = true;
+  box.hidden = false;
+  el('knopf-pruefen').textContent = 'Weiter';
+  el('knopf-pruefen').hidden = false;
+}
+
+el('runde-play').addEventListener('click', () => {
+  const s = abfrage.schritte[abfrage.pos];
+  if (s && s.id) sprichWort(Vokabeln.wort(s.id).it);
+});
+el('runde-langsam').addEventListener('click', () => {
+  const s = abfrage.schritte[abfrage.pos];
+  if (s && s.id) sprichWort(Vokabeln.wort(s.id).it, true);
+});
 
 function pruefen(weissNicht = false) {
   const schritt = abfrage.schritte[abfrage.pos];
@@ -219,15 +402,23 @@ function weiter() {
 
 function beendeRunde() {
   const anzahl = abfrage.gewertet.size;
-  if (anzahl === 0) {
+  const kennen = abfrage.kennen.size;
+  if (anzahl === 0 && kennen === 0) {
     el('ende-titel').textContent = 'Alles erledigt';
     el('ende-text').textContent = 'Heute ist keine Vokabel fällig. Morgen geht es weiter.';
   } else {
     el('ende-titel').textContent = 'Fertig für heute';
-    el('ende-text').textContent = `${anzahl} ${anzahl === 1 ? 'Wort' : 'Wörter'} geübt, ${abfrage.aufAnhieb} davon auf Anhieb gewusst.`;
+    const teile = [];
+    if (anzahl) teile.push(`${anzahl} ${anzahl === 1 ? 'Wort' : 'Wörter'} geschrieben, ${abfrage.aufAnhieb} davon auf Anhieb gewusst`);
+    if (kennen) teile.push(`${kennen} ${kennen === 1 ? 'Wort' : 'Wörter'} weiter kennengelernt`);
+    el('ende-text').textContent = teile.join('. ') + '.';
   }
   el('ende-sicher').textContent = Vokabeln.anzahlSicher();
-  Begleiter.zeigen(el('begleiter-ende'), Begleiter.endeNachricht(anzahl, abfrage.aufAnhieb));
+  Begleiter.zeigen(el('begleiter-ende'), anzahl
+    ? Begleiter.endeNachricht(anzahl, abfrage.aufAnhieb)
+    : kennen
+      ? { stimmung: 'freut', text: 'Schön! Neue Wörter erst kennenlernen – geschrieben wird später.' }
+      : Begleiter.endeNachricht(0, 0));
 
   // Teil 2 der Runde: ein Text oder ein Grammatik-Thema
   const n = naechsterInhalt();
@@ -237,7 +428,7 @@ function beendeRunde() {
   if (n) {
     if (anzahl > 0) el('ende-titel').textContent = 'Vokabeln geschafft';
     el('ende-naechstes-text').textContent = n.name;
-    el('knopf-naechstes').textContent = n.art === 'text' ? 'Text lesen' : 'Grammatik ansehen';
+    el('knopf-naechstes').textContent = { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben' }[n.art];
     el('knopf-naechstes').onclick = () => oeffneNaechstes(n);
   }
   zeige('ende');
@@ -1014,8 +1205,11 @@ function zeigeFortschritt() {
 
   const faecher = el('fs-faecher');
   faecher.innerHTML = '';
-  const proFach = [1, 2, 3, 4, 5].map((f) => karten.filter((k) => k.fach === f).length);
-  const max = Math.max(1, ...proFach);
+  // „Neu“ = Wörter, die du gerade kennenlernst (noch nicht geschrieben)
+  const jung = karten.filter((k) => Vokabeln.istJung(k)).length;
+  const proFach = [1, 2, 3, 4, 5].map((f) => karten.filter((k) => k.fach === f && !Vokabeln.istJung(k)).length);
+  const max = Math.max(1, jung, ...proFach);
+  balken(faecher, 'Neu', jung, max);
   proFach.forEach((zahl, i) => balken(faecher, `Fach ${i + 1}`, zahl, max));
 
   const eingebaute = LESETEXTE.length;
@@ -1104,6 +1298,230 @@ function testWeiter() {
 el('knopf-test').addEventListener('click', starteTest);
 el('knopf-test-weiter').addEventListener('click', testWeiter);
 el('knopf-test-ende').addEventListener('click', () => (test.fertig ? zeigeStart() : zeigeFortschritt()));
+
+// ---------- Hören & Üben ----------
+
+const hoer = { aufgaben: [], nr: 0, richtig: 0, geprueft: false, fertig: false, gewaehlt: null, fehler: 0 };
+
+function zeigeHoerenStand() {
+  const n = Uebungen.anzahlRunden();
+  el('hoeren-stand-start').textContent = n
+    ? `${n} ${n === 1 ? 'Runde' : 'Runden'} geübt`
+    : 'Wortpaare, Hören und schreiben, Sätze legen';
+}
+
+function starteHoeren() {
+  hoer.aufgaben = Uebungen.runde();
+  hoer.nr = 0;
+  hoer.richtig = 0;
+  hoer.fertig = false;
+  el('hoeren-titel').textContent = 'Hören & Üben';
+  el('knopf-hoeren-beenden').textContent = 'Übung beenden';
+  zeige('hoeren');
+  zeigeHoerAufgabe();
+}
+
+function hoerVorlesen(langsam = false) {
+  const a = hoer.aufgaben[hoer.nr];
+  if (!a || !a.satz) return;
+  vorlesenStopp();
+  Lesen.sprich(a.satz.it, null, langsam ? { tempo: 0.6 } : {});
+}
+
+function zeigeHoerAufgabe() {
+  const a = hoer.aufgaben[hoer.nr];
+  hoer.geprueft = false;
+  hoer.gewaehlt = null;
+  hoer.fehler = 0;
+  el('hoeren-stand').textContent = `${hoer.nr + 1} von ${hoer.aufgaben.length}`;
+  el('hoeren-rueck').hidden = true;
+  el('hoeren-ergebnis-titel').hidden = true;
+  el('knopf-hoeren').textContent = 'Prüfen';
+  el('knopf-hoeren').hidden = false;
+
+  el('diktat-form').hidden = a.art !== 'diktat';
+  el('hoer-kacheln').hidden = a.art !== 'kacheln';
+  el('paare').hidden = a.art !== 'paare';
+  el('hoer-knoepfe').hidden = a.art === 'paare' || !Lesen.kannSprechen;
+
+  if (a.art === 'diktat') {
+    el('hoeren-art').textContent = 'Hör zu und schreib den Satz auf.';
+    const feld = el('diktat-eingabe');
+    feld.value = '';
+    feld.readOnly = false;
+    hoerVorlesen();
+    feld.focus();
+  } else if (a.art === 'kacheln') {
+    el('hoeren-art').textContent = 'Hör zu und leg den Satz mit den Wörtern.';
+    const ablage = el('hoer-ablage');
+    const vorrat = el('hoer-vorrat');
+    ablage.innerHTML = '';
+    ablage.classList.remove('fertig');
+    vorrat.innerHTML = '';
+    for (const wort of a.kacheln) {
+      const k = document.createElement('button');
+      k.type = 'button';
+      k.className = 'kachel';
+      k.textContent = wort;
+      k.addEventListener('click', () => hoerKachelLegen(k));
+      vorrat.appendChild(k);
+    }
+    hoerVorlesen();
+  } else {
+    el('hoeren-art').textContent = 'Finde die Paare: erst links, dann rechts antippen.';
+    el('knopf-hoeren').hidden = true;      // fertig, sobald alle Paare gefunden sind
+    const links = el('paare-it');
+    const rechts = el('paare-de');
+    links.innerHTML = '';
+    rechts.innerHTML = '';
+    const knopf = (text, id, seite) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'paar';
+      b.textContent = text;
+      b.dataset.id = id;
+      b.dataset.seite = seite;
+      b.addEventListener('click', () => paarTippen(b));
+      return b;
+    };
+    mischen(a.paare).forEach((p) => links.appendChild(knopf(p.it, p.id, 'it')));
+    mischen(a.paare).forEach((p) => rechts.appendChild(knopf(p.de, p.id, 'de')));
+  }
+}
+
+function hoerKachelLegen(kachel) {
+  if (hoer.geprueft) return;
+  kachel.classList.add('benutzt');
+  const gelegt = document.createElement('button');
+  gelegt.type = 'button';
+  gelegt.className = 'kachel';
+  gelegt.textContent = kachel.textContent;
+  gelegt.addEventListener('click', () => {
+    if (hoer.geprueft) return;
+    gelegt.remove();
+    kachel.classList.remove('benutzt');
+  });
+  el('hoer-ablage').appendChild(gelegt);
+}
+
+// Wortpaare: erst ein Wort wählen, dann das passende auf der anderen Seite
+function paarTippen(b) {
+  const vorher = hoer.gewaehlt;
+  if (!vorher || vorher.dataset.seite === b.dataset.seite) {
+    if (vorher) vorher.classList.remove('gewaehlt');
+    hoer.gewaehlt = b;
+    b.classList.add('gewaehlt');
+    if (b.dataset.seite === 'it' && Lesen.kannSprechen) Lesen.sprich(b.textContent);
+    return;
+  }
+  vorher.classList.remove('gewaehlt');
+  hoer.gewaehlt = null;
+  if (vorher.dataset.id === b.dataset.id) {
+    vorher.classList.add('passt');
+    b.classList.add('passt');
+    if (!document.querySelector('#paare .paar:not(.passt)')) paareFertig();
+  } else {
+    hoer.fehler += 1;
+    for (const x of [vorher, b]) {
+      x.classList.add('daneben');
+      setTimeout(() => x.classList.remove('daneben'), 600);
+    }
+  }
+}
+
+function paareFertig() {
+  hoer.geprueft = true;
+  if (hoer.fehler === 0) hoer.richtig += 1;
+  el('hoeren-rueck').classList.toggle('falsch', hoer.fehler > 0);
+  el('hoeren-rueck-titel').textContent = hoer.fehler === 0 ? 'Alle Paare auf Anhieb.' : 'Alle Paare gefunden.';
+  el('hoeren-rueck-text').textContent = hoer.fehler ? `${hoer.fehler}× daneben getippt – macht nichts.` : '';
+  el('hoeren-rueck-text').hidden = !hoer.fehler;
+  el('hoeren-rueck').hidden = false;
+  el('knopf-hoeren').textContent = 'Weiter';
+  el('knopf-hoeren').hidden = false;
+}
+
+function hoerPruefen() {
+  const a = hoer.aufgaben[hoer.nr];
+  let gut;
+  let hinweis = '';
+  let falscheStellen = [];
+  if (a.art === 'diktat') {
+    const text = el('diktat-eingabe').value.trim();
+    if (!text) { el('diktat-eingabe').focus(); return; }
+    const r = Uebungen.pruefeDiktat(text, a.satz.it);
+    gut = r.stufe !== 'falsch';
+    hinweis = r.hinweis || '';
+    falscheStellen = r.falscheStellen;
+    el('diktat-eingabe').readOnly = true;
+    el('diktat-eingabe').blur();
+  } else {
+    const woerter = [...el('hoer-ablage').children].map((k) => k.textContent);
+    if (!woerter.length) return;
+    gut = Uebungen.pruefeKacheln(woerter, a.satz.it);
+    el('hoer-ablage').classList.add('fertig');
+  }
+  if (gut) hoer.richtig += 1;
+  hoer.geprueft = true;
+
+  el('hoeren-rueck').classList.toggle('falsch', !gut);
+  el('hoeren-rueck-titel').textContent = gut ? (hinweis ? 'Fast richtig – zählt.' : 'Richtig.') : 'Noch nicht ganz.';
+  // Richtigen Satz zeigen, falsche Wörter markiert, dazu die deutsche Bedeutung
+  const text = el('hoeren-rueck-text');
+  text.innerHTML = '';
+  if (hinweis) text.append(hinweis + ' ');
+  const satz = document.createElement('strong');
+  satz.lang = 'it';
+  a.satz.it.split(' ').forEach((w, i) => {
+    if (i) satz.append(' ');
+    if (falscheStellen.includes(i)) {
+      const m = document.createElement('span');
+      m.className = 'wort-falsch';
+      m.textContent = w;
+      satz.append(m);
+    } else satz.append(w);
+  });
+  text.append(satz);
+  if (a.satz.de) text.append(document.createElement('br'), a.satz.de);
+  else if (a.satz.quelle) text.append(document.createElement('br'), `aus „${a.satz.quelle}“`);
+  text.hidden = false;
+  el('hoeren-rueck').hidden = false;
+  el('knopf-hoeren').textContent = 'Weiter';
+  el('knopf-hoeren').focus();
+}
+
+function hoerWeiter() {
+  hoer.nr += 1;
+  if (hoer.nr < hoer.aufgaben.length) { zeigeHoerAufgabe(); return; }
+  vorlesenStopp();
+  Uebungen.ergebnisSpeichern(hoer.richtig, hoer.aufgaben.length);
+  hoer.fertig = true;
+  el('hoeren-titel').textContent = 'Fertig';
+  el('hoeren-stand').textContent = '';
+  el('hoeren-art').textContent = 'Hören & Üben';
+  el('hoer-knoepfe').hidden = true;
+  el('diktat-form').hidden = true;
+  el('hoer-kacheln').hidden = true;
+  el('paare').hidden = true;
+  el('hoeren-ergebnis-titel').textContent = `${hoer.richtig} von ${hoer.aufgaben.length} gut gelöst`;
+  el('hoeren-ergebnis-titel').hidden = false;
+  el('hoeren-rueck').hidden = true;
+  el('knopf-hoeren').textContent = 'Noch eine Runde';
+  el('knopf-hoeren-beenden').textContent = 'Zur Startseite';
+}
+
+el('knopf-hoeren').addEventListener('click', () => {
+  if (hoer.fertig) { starteHoeren(); return; }
+  hoer.geprueft ? hoerWeiter() : hoerPruefen();
+});
+el('diktat-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  hoer.geprueft ? hoerWeiter() : hoerPruefen();
+});
+el('knopf-hoeren-play').addEventListener('click', () => hoerVorlesen(false));
+el('knopf-hoeren-langsam').addEventListener('click', () => hoerVorlesen(true));
+el('knopf-hoeren-beenden').addEventListener('click', () => { vorlesenStopp(); zeigeStart(); });
+el('knopf-hoeren-start').addEventListener('click', starteHoeren);
 
 // ---------- Begleiter ----------
 

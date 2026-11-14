@@ -492,6 +492,69 @@ button {
   text-align: left;
 }
 
+/* ---------- Wörterbuch ---------- */
+
+.leise-zeile {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: -8px;
+}
+.leise-zeile .knopf-leise { margin-top: 0; }
+
+.treffer-liste {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+  background: var(--flaeche);
+  overflow: hidden;
+}
+.treffer-liste:empty { display: none; }
+.treffer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--rand);
+}
+.treffer:last-child { border-bottom: none; }
+.treffer-text { flex: 1; min-width: 0; }
+.treffer-it {
+  margin: 0;
+  font-weight: 600;
+}
+.treffer-de {
+  margin: 2px 0 0;
+  color: var(--text-leise);
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+.knopf-plus {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--akzent);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--akzent);
+  font-size: 20px;
+  line-height: 1;
+}
+.knopf-plus:disabled {
+  border-color: var(--rand);
+  color: var(--text-leise);
+}
+
+.quelle,
+.wort-quelle {
+  margin: 0;
+  color: var(--text-leise);
+  font-size: 14px;
+}
+.wort-quelle { margin: -8px 0 14px; }
+.quelle a { color: inherit; }
+
 .knopf-zurueck {
   margin-top: auto;
   width: 100%;

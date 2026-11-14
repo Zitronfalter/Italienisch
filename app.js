@@ -390,12 +390,18 @@ function zeigeWortBlatt(span) {
   el('wort-form').textContent = span.textContent.replace(/['’]$/, '');
   if (treffer) {
     const zeigeGrund = treffer.grundform.toLowerCase() !== span.textContent.toLowerCase();
-    el('wort-grundform').textContent = zeigeGrund ? 'Grundform: ' + treffer.grundform : '';
+    el('wort-grundform').textContent = zeigeGrund
+      ? 'Grundform: ' + treffer.grundform + (treffer.vermutlich ? ' (vermutlich)' : '')
+      : '';
     el('wort-grundform').hidden = !zeigeGrund;
     el('wort-bedeutung').textContent = treffer.bedeutung;
+    el('wort-quelle').hidden = treffer.quelle !== 'WikDict';
   } else {
     el('wort-grundform').hidden = true;
-    el('wort-bedeutung').textContent = 'Noch nicht im Wörterbuch. (Das Wörterbuch kommt in Schritt 7.)';
+    el('wort-quelle').hidden = true;
+    el('wort-bedeutung').textContent = Woerterbuch.bereit()
+      ? 'Nicht im Wörterbuch gefunden.'
+      : 'Das Wörterbuch lädt noch – gleich noch einmal antippen.';
   }
   aktualisiereMerkenKnopf();
 
@@ -712,8 +718,75 @@ el('wort-regel').addEventListener('click', () => {
   oeffneKapitel(k, 'lesen');
 });
 
+// ---------- Wörterbuch ----------
+
+function oeffneWoerterbuch() {
+  el('suche-eingabe').value = '';
+  el('treffer-liste').innerHTML = '';
+  zeigeSuchHinweis();
+  zeige('woerterbuch');
+  el('suche-eingabe').focus();
+}
+
+function zeigeSuchHinweis(text) {
+  el('suche-hinweis').hidden = false;
+  el('suche-hinweis').textContent = text || (Woerterbuch.bereit()
+    ? `${Woerterbuch.anzahl().toLocaleString('de-DE')} Wörter, auch ohne Internet.`
+    : 'Wörterbuch lädt …');
+}
+
+let sucheZeit = null;
+function suchen() {
+  const text = el('suche-eingabe').value;
+  const liste = el('treffer-liste');
+  liste.innerHTML = '';
+  if (text.trim().length < 2) { zeigeSuchHinweis(); return; }
+  if (!Woerterbuch.bereit()) { zeigeSuchHinweis('Wörterbuch lädt noch – einen Moment.'); return; }
+  const treffer = Woerterbuch.finde(text);
+  zeigeSuchHinweis('Nichts gefunden.');
+  el('suche-hinweis').hidden = treffer.length > 0;
+  for (const t of treffer) {
+    const zeile = document.createElement('div');
+    zeile.className = 'treffer';
+    zeile.innerHTML = `
+      <div class="treffer-text">
+        <p class="treffer-it" lang="it"></p>
+        <p class="treffer-de"></p>
+      </div>
+      <button class="knopf-plus" type="button" aria-label="In Karteikarten">+</button>`;
+    zeile.querySelector('.treffer-it').textContent = t.it;
+    zeile.querySelector('.treffer-de').textContent = t.de;
+    const knopf = zeile.querySelector('.knopf-plus');
+    // Grundwortschatz-Karte bevorzugen, sonst eigenes Wort
+    const ws = WORTSCHATZ.find((w) => w.it.toLowerCase().replace(/^(il|lo|la|i|gli|le) /, '').replace(/^l'/, '') === t.it);
+    const karte = ws
+      ? { id: ws.id, it: ws.it, de: ws.de }
+      : { id: 'e-' + wortId(t.it), it: t.it, de: t.de.split('; ').slice(0, 2).join('; '), eigen: true };
+    const markieren = () => {
+      const drin = Lesen.istInKarteikarten(karte.id);
+      knopf.disabled = drin;
+      knopf.textContent = drin ? '✓' : '+';
+      knopf.setAttribute('aria-label', drin ? 'Schon in Karteikarten' : 'In Karteikarten');
+    };
+    knopf.addEventListener('click', () => { Lesen.inKarteikarten(karte); markieren(); });
+    markieren();
+    liste.appendChild(zeile);
+  }
+}
+
+el('suche-eingabe').addEventListener('input', () => {
+  clearTimeout(sucheZeit);
+  sucheZeit = setTimeout(suchen, 200);      // erst suchen, wenn kurz nicht getippt wird
+});
+el('suche-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  el('suche-eingabe').blur();               // Tastatur schließen
+  suchen();
+});
+
 // ---------- Knöpfe ----------
 
+el('knopf-woerterbuch').addEventListener('click', oeffneWoerterbuch);
 el('knopf-grammatik').addEventListener('click', zeigeKapitelliste);
 el('knopf-lesen').addEventListener('click', zeigeTextliste);
 document.getElementById('knopf-los').addEventListener('click', starteRunde);
@@ -724,6 +797,9 @@ document.querySelectorAll('[data-zurueck]').forEach((knopf) => {
 
 setzeGruss();
 zeigeStart();
+Woerterbuch.laden().then(() => {
+  if (!el('screen-woerterbuch').hidden) { zeigeSuchHinweis(); suchen(); }
+});
 Speicher.dauerhaftAnfragen();
 
 // Service Worker anmelden: damit läuft die App auch ohne Internet.

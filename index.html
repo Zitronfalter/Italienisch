@@ -47,7 +47,10 @@
       </button>
 
       <button class="knopf-los" id="knopf-los" type="button">Los</button>
-      <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
+      <div class="leise-zeile">
+        <button class="knopf-leise" id="knopf-woerterbuch" type="button">Wörterbuch</button>
+        <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
+      </div>
     </section>
 
     <!-- Sichern und Laden -->
@@ -203,6 +206,26 @@
       </div>
     </section>
 
+    <!-- Wörterbuch -->
+    <section class="screen" id="screen-woerterbuch" hidden>
+      <header class="kopf">
+        <h1>Wörterbuch</h1>
+      </header>
+      <form class="eingabe" id="suche-form" autocomplete="off" role="search">
+        <input class="eingabe-feld" id="suche-eingabe" type="search"
+               autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+               enterkeyhint="search" placeholder="Italienisch oder Deutsch" aria-label="Wort suchen">
+      </form>
+      <p class="hinweis" id="suche-hinweis"></p>
+      <div class="treffer-liste" id="treffer-liste"></div>
+      <p class="quelle">
+        Wörterbuch: <a href="https://www.wikdict.com" target="_blank" rel="noopener">WikDict</a>,
+        Daten aus <a href="https://de.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a>,
+        Lizenz <a href="https://www.wikdict.com/page/about" target="_blank" rel="noopener">CC BY-SA</a>.
+      </p>
+      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+    </section>
+
     <!-- Ende der Runde -->
     <section class="screen" id="screen-ende" hidden>
       <header class="kopf">
@@ -228,6 +251,7 @@
     </div>
     <p class="wort-grundform" id="wort-grundform" lang="it"></p>
     <p class="wort-bedeutung" id="wort-bedeutung"></p>
+    <p class="wort-quelle" id="wort-quelle" hidden>aus dem Wörterbuch WikDict</p>
     <div class="wort-knoepfe">
       <button class="knopf-klein" id="wort-anhoeren" type="button">▶ Anhören</button>
       <button class="knopf-klein knopf-klein-voll" id="wort-merken" type="button">In Karteikarten</button>
@@ -241,6 +265,7 @@
   <script src="texte.js"></script>
   <script src="lesen.js"></script>
   <script src="grammatik.js"></script>
+  <script src="woerterbuch.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

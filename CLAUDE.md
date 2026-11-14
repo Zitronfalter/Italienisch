@@ -30,6 +30,8 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - `lesen.js` – Nachschlagen, Vorlesen (Web Speech API, it-IT), gelesene Texte
 - `grammatik.js` – Kapitel (Regel, Tabelle, Übungen: Lücke/Kacheln), Fortschritt, Regel-Erkennung am Text (`kapitelFuerWort`)
 - Neue Texte: jedes Wort muss eine Bedeutung haben (im Text, in `GRUNDWOERTER` oder im Wortschatz) – vor dem Fertigmelden mit einem kleinen Node-Skript prüfen.
+- `woerterbuch.js` + `woerterbuch.json` – großes Wörterbuch (WikDict, CC BY-SA, Quelle in `LIZENZEN.md` und in der App nennen); Formen-Erkennung in `kandidaten()`. Neu bauen mit `werkzeuge/woerterbuch-bauen.js`.
+- Nachschlage-Reihenfolge (`Lesen.nachschlagen`): Wörter im Text → `GRUNDWOERTER` → Grundwortschatz → eigene Wörter → WikDict.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner
 

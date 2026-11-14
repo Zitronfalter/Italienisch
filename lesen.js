@@ -89,6 +89,19 @@ const Lesen = (() => {
     const e = eigenes(form);
     if (e) return { form: wort, grundform: e[1].it, bedeutung: e[1].de, karte: { id: e[0], it: e[1].it, de: e[1].de } };
 
+    // Zuletzt: das große Wörterbuch (WikDict)
+    const wb = Woerterbuch.suche(form);
+    if (wb) {
+      // Gibt es die Grundform im Grundwortschatz? Dann lieber diese Bedeutung.
+      const ws2 = imWortschatz(wb.grundform);
+      if (ws2) return { form: wort, grundform: ws2.it, bedeutung: ws2.de, vermutlich: wb.vermutlich, karte: { id: ws2.id, it: ws2.it, de: ws2.de } };
+      const kurz = wb.bedeutung.split('; ').slice(0, 2).join('; ');
+      return {
+        form: wort, grundform: wb.grundform, bedeutung: wb.bedeutung, vermutlich: wb.vermutlich, quelle: 'WikDict',
+        karte: { id: 'e-' + wortId(wb.grundform), it: wb.grundform, de: kurz, eigen: true },
+      };
+    }
+
     return null;
   }
 

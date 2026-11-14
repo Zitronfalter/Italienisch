@@ -4,7 +4,7 @@
 const Speicher = (() => {
   const SCHLUESSEL = 'italienisch-daten';
   const KENNUNG = 'italienisch-app';   // steht in jeder Sicherungsdatei
-  const FORMAT = 1;                     // erhöhen, wenn sich der Aufbau ändert
+  const FORMAT = 2;                     // erhöhen, wenn sich der Aufbau ändert (2: Lektionen)
 
   function leer() {
     return {

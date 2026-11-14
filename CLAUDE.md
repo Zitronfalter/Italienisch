@@ -34,13 +34,17 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - `woerterbuch.js` + `woerterbuch.json` – großes Wörterbuch (WikDict, CC BY-SA, Quelle in `LIZENZEN.md` und in der App nennen); Formen-Erkennung in `kandidaten()`. Neu bauen mit `werkzeuge/woerterbuch-bauen.js`.
 - Nachschlage-Reihenfolge (`Lesen.nachschlagen`): selbst eingetragene Bedeutung → Wörter im Text → `GRUNDWOERTER` → Grundwortschatz → eigene Wörter → Formen von Grundwortschatz-Wörtern → WikDict.
 - Eigene Texte: `Speicher.daten.eigeneTexte`; eigene Wörter: `Speicher.daten.eigeneWoerter` (`e-…`-IDs, mit `formen` und `selbst`).
+- `lektionen-inhalt.js` – Lektionen (`LEKTIONEN`): Wörter (italienisch wie in `wortschatz.js`), Kapitel-IDs, Text-IDs. Konzept: `docs/superpowers/specs/2026-11-14-lektionen-design.md`
+- `lektionen.js` – welche Lektion dran ist, Teile (Wörter/Grammatik/Text/Hören), erledigt, „kenne ich / neu“, Übergang vom alten Lernstand (`FORMAT` 2). Neue Wörter in der Runde kommen nur aus der aktuellen Lektion.
+- Neue Lektionstexte: `node werkzeuge/lektionen-pruefen.js` muss 0 Fehler melden (jedes Wort aus dieser oder früheren Lektion, `GRUNDWOERTER` oder höchstens 8 im Text erklärt).
 - `niveautest.js` – 24 Fragen (je 8 A1/A2/B1, erste Antwort = richtig), Stufe erreicht ab 6/8
-- Runde („Los“): Vokabeln, danach `naechsterInhalt()` in `app.js` – abwechselnd nächster unverstandener Text und nächstes ungeübtes Kapitel
+- Runde („Los“): erst „kenne ich / neu“ (falls nötig), Vokabeln, danach `naechsterSchritt()` in `app.js` – nächster Teil der aktuellen Lektion; ist dort nichts offen, `naechsterInhalt()` (Frei üben)
 - `uebungen.js` – Hören & Üben: Wortpaare, Diktat, Hören+Kacheln; Hörsätze aus Grammatik-Übungen (mit Deutsch) und Lesetexten (ohne «»-Dialoge). Runde: Text → Grammatik → Hören im Wechsel.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner
 
 ## Testen
+- Logik: `node --test "werkzeuge/test/*.test.js"` (lädt die App-Dateien ohne Browser, siehe `werkzeuge/test/laden.js`).
 - Lokal: `node werkzeuge/server.js`, dann http://localhost:8080 (im Browser-Pane: Konfiguration `italienisch` in `.claude/launch.json`).
 - Immer in iPhone-Größe prüfen (393 × 852), hell und dunkel.
 - Nach Änderungen Service Worker neu laden (Seite zweimal neu laden), sonst sieht man die alte Version.

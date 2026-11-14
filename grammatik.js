@@ -8,6 +8,37 @@
 
 const KAPITEL = [
   {
+    id: 'essere-un', titel: 'Ich bin …: essere und un, una', stufe: 'A1',
+    regel: [
+      'essere heißt „sein“. Das Wort für „ich, du …“ kann man weglassen: Sono Anna = Ich bin Anna.',
+      'Verneinen ist leicht: non kommt vor das Verb. Non sono Marco = Ich bin nicht Marco.',
+      "Ein / eine: un vor männlichen Wörtern, una vor weiblichen, un' vor weiblichen mit Vokal am Anfang, uno vor s + Konsonant und vor z.",
+    ],
+    tabelle: {
+      kopf: ['Person', 'essere', 'ein / eine'],
+      zeilen: [
+        ['io', 'sono', 'un libro'],
+        ['tu', 'sei', 'una parola'],
+        ['lui / lei', 'è', "un'amica"],
+        ['noi', 'siamo', 'uno studente'],
+        ['voi', 'siete', ''],
+        ['loro', 'sono', ''],
+      ],
+    },
+    kurz: "essere: sono, sei, è, siamo, siete, sono. Ein/eine: un (m), una (w), un' (w + Vokal), uno (s + Konsonant, z).",
+    uebungen: [
+      { art: 'luecke', de: 'Ich bin Anna.', satz: 'Io ___ Anna. (essere)', loesung: 'sono' },
+      { art: 'luecke', de: 'Du bist Marco.', satz: 'Tu ___ Marco. (essere)', loesung: 'sei' },
+      { art: 'kacheln', de: 'Hallo, ich bin Luca.', it: 'Ciao, sono Luca', extra: ['sei', 'è'] },
+      { art: 'luecke', de: 'Sie ist Sofia.', satz: 'Lei ___ Sofia. (essere)', loesung: 'è' },
+      { art: 'luecke', de: 'Wir sind Anna und Luca.', satz: '___ Anna e Luca. (essere)', loesung: 'siamo' },
+      { art: 'luecke', de: 'ein Buch', satz: '___ libro', loesung: 'un' },
+      { art: 'luecke', de: 'eine Freundin', satz: '___amica', loesung: "un'" },
+      { art: 'kacheln', de: 'Ich bin nicht Marco.', it: 'Non sono Marco', extra: ['sei', 'no'] },
+    ],
+  },
+
+  {
     id: 'artikel', titel: 'Der Artikel: il, lo, la …', stufe: 'A1',
     regel: [
       'Jedes Nomen ist männlich oder weiblich. Der Artikel hängt vom Geschlecht und vom ersten Buchstaben ab.',
@@ -85,10 +116,69 @@ const KAPITEL = [
     uebungen: [
       { art: 'luecke', de: 'Ich bin Deutsche.', satz: 'Io ___ tedesca. (essere)', loesung: 'sono' },
       { art: 'luecke', de: 'Anna ist 32 Jahre alt.', satz: 'Anna ___ trentadue anni. (avere)', loesung: 'ha' },
-      { art: 'kacheln', de: 'Sie haben einen Hund. (Mehrzahl)', it: 'Hanno un cane', extra: ['sono', 'una'] },
+      { art: 'kacheln', de: 'Sie haben eine Katze. (Mehrzahl)', it: 'Hanno un gatto', extra: ['sono', 'una'] },
       { art: 'luecke', de: 'Wir sind im Urlaub.', satz: 'Noi ___ in vacanza. (essere)', loesung: 'siamo' },
       { art: 'luecke', de: 'Hast du Hunger?', satz: 'Tu ___ fame? (avere)', loesung: 'hai' },
       { art: 'kacheln', de: 'Das Hotel ist teuer.', it: "L'albergo è caro", extra: ['ha', 'cara'] },
+    ],
+  },
+
+  {
+    id: 'possessiv', titel: 'Mein, dein: mio, tuo …', stufe: 'A1',
+    regel: [
+      'Mein, dein … stehen auf Italienisch meist mit Artikel: il mio libro, la mia casa.',
+      'Bei Familienmitgliedern in der Einzahl fällt der Artikel weg: mio padre, mia sorella. In der Mehrzahl steht er wieder: i miei fratelli.',
+      'Die Endung richtet sich nach dem, was jemandem gehört: la mia casa (weiblich), il mio gatto (männlich).',
+    ],
+    tabelle: {
+      kopf: ['', 'männlich', 'weiblich'],
+      zeilen: [
+        ['mein', 'il mio · i miei', 'la mia · le mie'],
+        ['dein', 'il tuo · i tuoi', 'la tua · le tue'],
+        ['sein, ihr', 'il suo · i suoi', 'la sua · le sue'],
+        ['unser', 'il nostro · i nostri', 'la nostra · le nostre'],
+      ],
+    },
+    kurz: 'mio/mia, tuo/tua … mit Artikel – nur nicht bei einem Familienmitglied (mio padre, aber i miei fratelli).',
+    uebungen: [
+      { art: 'luecke', de: 'mein Vater', satz: '___ padre', loesung: 'mio' },
+      { art: 'luecke', de: 'meine Mutter', satz: '___ madre', loesung: 'mia' },
+      { art: 'luecke', de: 'mein Haus', satz: 'la ___ casa', loesung: 'mia' },
+      { art: 'luecke', de: 'meine Brüder', satz: 'i ___ fratelli', loesung: 'miei' },
+      { art: 'luecke', de: 'deine Schwester', satz: '___ sorella', loesung: 'tua' },
+      { art: 'luecke', de: 'deine Familie', satz: 'la ___ famiglia', loesung: 'tua' },
+      { art: 'kacheln', de: 'Mein Mann heißt Luca.', it: 'Mio marito si chiama Luca', extra: ['mia', 'il'] },
+      { art: 'kacheln', de: 'Meine Großeltern haben eine Katze.', it: 'I miei nonni hanno un gatto', extra: ['mie', 'mio'] },
+    ],
+  },
+
+  {
+    id: 'piacere', titel: 'Mi piace: was dir gefällt', stufe: 'A1',
+    regel: [
+      '„Ich mag …“ sagt man mit „gefallen“: Mi piace il caffè = Mir gefällt der Kaffee.',
+      'Gefallen mehrere Dinge, heißt es piacciono: Mi piacciono i gatti.',
+      'Mit einem Verb bleibt es bei piace: Mi piace nuotare = Ich schwimme gern.',
+      'Mir, dir, ihm, ihr: mi, ti, gli, le. Verneinung: Non mi piace.',
+    ],
+    tabelle: {
+      kopf: ['wem?', 'eine Sache, ein Verb', 'mehrere Sachen'],
+      zeilen: [
+        ['mir', 'mi piace', 'mi piacciono'],
+        ['dir', 'ti piace', 'ti piacciono'],
+        ['ihm', 'gli piace', 'gli piacciono'],
+        ['ihr, Ihnen', 'le piace', 'le piacciono'],
+      ],
+    },
+    kurz: 'Eine Sache oder ein Verb: mi piace. Mehrere Sachen: mi piacciono.',
+    uebungen: [
+      { art: 'luecke', de: 'Mir gefällt der Kaffee.', satz: 'Mi ___ il caffè.', loesung: 'piace' },
+      { art: 'luecke', de: 'Ich mag Katzen.', satz: 'Mi ___ i gatti.', loesung: 'piacciono' },
+      { art: 'luecke', de: 'Schwimmst du gern?', satz: '___ piace nuotare?', loesung: 'ti' },
+      { art: 'luecke', de: 'Ihm schmeckt das Bier nicht.', satz: 'Non ___ piace la birra.', loesung: 'gli' },
+      { art: 'kacheln', de: 'Ich gehe gern spazieren.', it: 'Mi piace fare una passeggiata', extra: ['piacciono', 'ti'] },
+      { art: 'luecke', de: 'Magst du Hunde?', satz: 'Ti ___ i cani?', loesung: 'piacciono' },
+      { art: 'kacheln', de: 'Ihr gefällt der Sonntag.', it: 'Le piace la domenica', extra: ['gli', 'piacciono'] },
+      { art: 'luecke', de: 'Mir gefällt das Wochenende nicht.', satz: 'Non mi ___ il fine settimana.', loesung: 'piace' },
     ],
   },
 

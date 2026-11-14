@@ -835,3 +835,90 @@ button {
   background: var(--flaeche);
   color: var(--text);
 }
+
+/* ---------- Lektionen ---------- */
+
+.knopf-los.knopf-los-oben { margin-top: 0; }
+
+.lektionen-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lektion-eintrag.jetzt { border: 1.5px solid var(--akzent); }
+.lektion-eintrag.spaeter { opacity: 0.55; }
+.lektion-nr {
+  display: block;
+  color: var(--text-leise);
+  font-size: 14px;
+}
+.lektion-eintrag .karte-titel { font-family: var(--serif); font-size: 19px; }
+.teil-zeile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+  color: var(--text-leise);
+  font-size: 15px;
+}
+.teil-fertig { color: var(--richtig); }
+
+.lektionen-erledigt summary {
+  padding: 8px 0;
+  color: var(--text-leise);
+  cursor: pointer;
+}
+.lektionen-erledigt[open] summary { margin-bottom: 8px; }
+
+.lektion-wortliste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lektion-wortliste li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--rand);
+}
+.lektion-wortliste .wort-it { font-family: var(--serif); }
+.lektion-wortliste .wort-stand { color: var(--text-leise); font-size: 14px; white-space: nowrap; }
+
+.wortcheck-liste {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+  background: var(--flaeche);
+  overflow: hidden;
+}
+.wortcheck-zeile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--rand);
+}
+.wortcheck-zeile:first-child { border-top: none; }
+.wortcheck-wort { min-width: 0; }
+.wortcheck-wort .wort-it { display: block; font-family: var(--serif); font-size: 18px; }
+.wortcheck-wort .wort-de { display: block; color: var(--text-leise); font-size: 15px; }
+.wortcheck-wahl { display: flex; gap: 6px; flex-shrink: 0; }
+.wortcheck-wahl button {
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 1.5px solid var(--rand);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-leise);
+  font-size: 15px;
+}
+.wortcheck-wahl button.gewaehlt {
+  border-color: var(--richtig);
+  background: var(--richtig);
+  color: var(--richtig-text);
+}
+
+.begleiter[hidden] { display: none; }

@@ -43,8 +43,9 @@ const Vokabeln = (() => {
       .map(([id]) => id);
   }
 
+  // Neue Wörter kommen nur aus der aktuellen Lektion (siehe lektionen.js)
   function neue() {
-    return WORTSCHATZ.filter((w) => !karten()[w.id]).map((w) => w.id);
+    return Lektionen.neueWoerter();
   }
 
   function anzahlSicher() {
@@ -216,5 +217,6 @@ const Vokabeln = (() => {
     eintragen,
     pruefe,
     heute,
+    inTagen,
   };
 })();

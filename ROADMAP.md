@@ -31,6 +31,12 @@
 | **Vorlesen verbessert** | Pausen nach Sätzen und Kommas, Fragen am Stück, Tempo und Stimme wählbar, „▶ Satz“ | ✅ |
 | **Hören & Üben** | Wortpaare zuordnen, Hören und eintippen, Hören und Kacheln legen – auch in der 10-Minuten-Runde | ✅ |
 | **Neue Wörter erst kennenlernen** | Ansehen und hören, Wortpaare, aus 4 Wörtern wählen (lesen oder hören) – geschrieben wird erst nach 4 gelösten Aufgaben, ab dem nächsten Tag | ✅ |
+| **Lektionen, Schritt 1** | Lernweg in Lektionen: Wörter, Grammatik, Text und Hören passen zusammen. Startseite mit Lektionen und „Frei üben“, „kenne ich / neu“, erledigte Lektionen eingeklappt. Inhalt: Lektion 1–4 | ✅ |
+| **Lektionen, Schritt 2** | Abfrage Italienisch → Deutsch mit Kacheln | ⏳ |
+| **Lektionen, Schritt 3** | Gelöste Übungen kommen nicht immer wieder, Hören passend zur Lektion, „Kann ich schon“ (überspringen), Wiederholungs-Lektion 1 | ⬜ |
+| **Lektionen, Schritt 4–6** | Inhalt: Lektion 5–8 (A1 fertig), dann A2 (9–18), dann B1 (19–28) | ⬜ |
+
+Konzept: [docs/superpowers/specs/2026-11-14-lektionen-design.md](docs/superpowers/specs/2026-11-14-lektionen-design.md)
 
 **Zeichen:** ✅ fertig · ⏳ in Arbeit / als Nächstes · ⏸️ pausiert · ⬜ noch offen
 
@@ -38,7 +44,6 @@
 
 ## 💡 Ideen für später
 
-- 🔁 Abfrage auch Italienisch → Deutsch (hilft beim Lesen)
 - 📋 Wortliste ansehen, nach Thema filtern
 - ✏️ Tippfehler-Nachsicht verfeinern (z. B. zählt „grazia“ gerade als „grazie“)
 - 📰 Mehr Wortschatz für B1 und Zeitung

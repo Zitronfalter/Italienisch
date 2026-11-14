@@ -27,7 +27,7 @@ const GRUNDWOERTER = {
   'mi': ['mi', 'mich; mir'], 'si': ['si', 'sich'], 'mio': ['mio', 'mein'], 'mia': ['mia', 'meine'],
   'lui': ['lui', 'er'], 'lei': ['lei', 'sie; Sie'], 'loro': ['loro', 'sie; ihr, ihre (Mehrzahl)'],
   'che': ['che', 'dass; der/die/das (welcher); was'], 'più': ['più', 'mehr'], 'meno': ['meno', 'weniger'],
-  'però': ['però', 'aber; jedoch'], 'qualche': ['qualche', 'einige; ein paar'],
+  'però': ['però', 'aber; jedoch'], 'poi': ['poi', 'dann; danach'], 'qualche': ['qualche', 'einige; ein paar'],
   'anni': ["l'anno", 'Jahre'], 'ore': ["l'ora", 'Stunden; Uhr'], 'minuti': ['il minuto', 'Minuten'],
   'euro': ["l'euro", 'Euro', 'der Euro'],
 };
@@ -35,8 +35,46 @@ const GRUNDWOERTER = {
 const LESETEXTE = [
   // ---------------------------------------------------------------- A1
   {
+    id: 'ciao', titel: 'Ciao!', art: 'Text', stufe: 'A1',
+    text: `«Buongiorno! Io sono Marco. E tu, come ti chiami?»
+
+«Buongiorno, Marco. Mi chiamo Giulia.»
+
+«Piacere, Giulia! Sei italiana?»
+
+«No, non sono italiana. Sono tedesca. E tu?»
+
+«Io sono di Roma. Come stai?»
+
+«Bene, grazie!»
+
+«Giulia, il mio numero è tre, quattro, due, cinque, uno.»
+
+«Grazie, Marco. Ciao, a presto!»`,
+    woerter: {
+      'marco': ['Marco', 'Marco (Vorname)'],
+      'giulia': ['Giulia', 'Giulia (Vorname)'],
+      'roma': ['Roma', 'Rom (Stadt)'],
+      'ti': ['ti', 'dich; dir (come ti chiami? = wie heißt du?)'],
+      'chiami': ['chiamarsi', 'du heißt (ti chiami)', 'heißen'],
+      'piacere': ['piacere', 'freut mich (beim Kennenlernen)', 'gefallen; (piacere! = freut mich)'],
+      'sei': ['essere', 'du bist'],
+      'stai': ['stare', 'es geht dir (come stai? = wie geht es dir?)', 'sein; sich befinden; bleiben'],
+      'italiana': ['italiano', 'Italienerin; italienisch', 'italienisch; Italiener'],
+      'tedesca': ['tedesco', 'Deutsche; deutsch', 'deutsch; Deutscher'],
+      'numero': ['il numero', 'Nummer (Telefonnummer)', 'die Nummer; die Zahl'],
+      'presto': ['a presto', 'bis bald (a presto)', 'bis bald'],
+    },
+    fragen: [
+      { frage: 'Wie heißt die Frau?', antworten: ['Giulia', 'Anna', 'Sofia'] },
+      { frage: 'Woher kommt Giulia?', antworten: ['Aus Deutschland', 'Aus Italien', 'Aus Rom'] },
+      { frage: 'Woher kommt Marco?', antworten: ['Aus Rom', 'Aus Berlin', 'Aus Bologna'] },
+    ],
+  },
+
+  {
     id: 'al-bar', titel: 'Al bar', art: 'Text', stufe: 'A1',
-    text: `Sono le otto di mattina. Marco entra in un bar vicino alla stazione.
+    text: `Sono le otto di mattina. Marco è al bar.
 
 «Buongiorno! Un caffè, per favore», dice Marco.
 
@@ -49,12 +87,9 @@ Marco mangia il cornetto e beve il caffè al banco. Poi paga: due euro e cinquan
 «Grazie e buona giornata!» – «Arrivederci!»`,
     woerter: {
       'marco': ['Marco', 'Marco (Vorname)'],
-      'entra': ['entrare', 'geht hinein'],
-      'bar': ['il bar', 'die Bar; das Café', 'die Bar; das Café'],
-      'vicino': ['vicino', 'in der Nähe (vicino a = nahe bei)'],
       'favore': ['per favore', 'bitte (per favore)'],
       'dice': ['dire', 'sagt'],
-      'cornetto': ['il cornetto', 'das Hörnchen; der Croissant', 'das Hörnchen (Croissant)'],
+      'cinquanta': ['cinquanta', 'fünfzig (due euro e cinquanta = 2,50 €)'],
       'chiede': ['chiedere', 'fragt'],
       'barista': ['il barista', 'der Barkeeper', 'der Barkeeper (im Café)'],
       'crema': ['la crema', 'die Creme; der Pudding', 'die Creme'],
@@ -76,9 +111,9 @@ Marco mangia il cornetto e beve il caffè al banco. Poi paga: due euro e cinquan
     id: 'famiglia', titel: 'La mia famiglia', art: 'Text', stufe: 'A1',
     text: `Mi chiamo Anna e abito a Bologna. Ho trentadue anni e lavoro in una scuola.
 
-La mia famiglia non è grande. Mio marito si chiama Luca. Lui è cuoco e cucina molto bene. Abbiamo una figlia, Sofia. Sofia ha sei anni e ama gli animali. Abbiamo anche un gatto nero, Micio.
+La mia famiglia non è grande. Mio marito si chiama Luca. Lui è cuoco e cucina molto bene. Abbiamo una figlia, Sofia. Sofia ha sei anni. Abbiamo anche un gatto, Micio.
 
-La domenica mangiamo sempre dai nonni. La nonna prepara la pasta fatta in casa.`,
+La domenica mangiamo sempre dai nonni. La nonna fa la pasta in casa.`,
     woerter: {
       'chiamo': ['chiamarsi', 'ich heiße (mi chiamo)', 'heißen'],
       'chiama': ['chiamarsi', 'heißt (si chiama)', 'heißen'],
@@ -91,18 +126,53 @@ La domenica mangiamo sempre dai nonni. La nonna prepara la pasta fatta in casa.`
       'cuoco': ['il cuoco', 'Koch', 'der Koch'],
       'cucina': ['cucinare', 'kocht'],
       'sofia': ['Sofia', 'Sofia (Vorname)'],
-      'ama': ['amare', 'liebt'],
-      'animali': ["l'animale", 'Tiere'],
       'micio': ['Micio', 'Micio (Name; heißt etwa „Mieze“)'],
       'mangiamo': ['mangiare', 'wir essen'],
       'nonni': ['il nonno', 'Großeltern'],
-      'prepara': ['preparare', 'bereitet zu; macht', 'zubereiten'],
-      'fatta': ['fare', 'gemacht (fatta in casa = hausgemacht)'],
+      'scuola': ['la scuola', 'Schule', 'die Schule'],
+      'domenica': ['domenica', 'Sonntag (la domenica = sonntags)'],
+      'pasta': ['la pasta', 'Nudeln (la pasta in casa = selbst gemachte Nudeln)', 'die Nudeln; der Teig'],
     },
     fragen: [
       { frage: 'Wo wohnt Anna?', antworten: ['In Bologna', 'In Rom', 'In Neapel'] },
       { frage: 'Was ist Luca von Beruf?', antworten: ['Koch', 'Lehrer', 'Kellner'] },
       { frage: 'Was macht die Familie am Sonntag?', antworten: ['Sie isst bei den Großeltern', 'Sie geht ins Kino', 'Sie arbeitet'] },
+    ],
+  },
+
+  {
+    id: 'tempo-libero', titel: 'Il fine settimana di Luca', art: 'Text', stufe: 'A1',
+    text: `È sabato. Oggi Luca non lavora. La mattina gioca con il cane al parco. Il pomeriggio Luca e Anna fanno una passeggiata. Sofia nuota.
+
+«Ti piace il fine settimana?», chiede Anna.
+
+«Sì, mi piace molto!», dice Luca.
+
+La sera guardano un film e mangiano una pizza. Domani è domenica: la famiglia va dai nonni.`,
+    woerter: {
+      'luca': ['Luca', 'Luca (Vorname)'],
+      'anna': ['Anna', 'Anna (Vorname)'],
+      'sofia': ['Sofia', 'Sofia (Vorname)'],
+      'lavora': ['lavorare', 'arbeitet'],
+      'gioca': ['giocare', 'spielt'],
+      'con': ['con', 'mit', 'mit'],
+      'parco': ['il parco', 'Park', 'der Park'],
+      'fanno': ['fare', 'machen (fare una passeggiata = spazieren gehen)', 'machen; tun'],
+      'nuota': ['nuotare', 'schwimmt'],
+      'ti': ['ti', 'dir'],
+      'piace': ['piacere', 'gefällt'],
+      'chiede': ['chiedere', 'fragt'],
+      'dice': ['dire', 'sagt'],
+      'guardano': ['guardare', 'sehen an (guardare un film = einen Film sehen)'],
+      'film': ['il film', 'Film', 'der Film'],
+      'mangiano': ['mangiare', 'essen'],
+      'pizza': ['la pizza', 'Pizza', 'die Pizza'],
+      'nonni': ['il nonno', 'Großeltern'],
+    },
+    fragen: [
+      { frage: 'Was macht Luca am Samstagmorgen?', antworten: ['Er spielt mit dem Hund im Park', 'Er arbeitet', 'Er schwimmt'] },
+      { frage: 'Wer schwimmt?', antworten: ['Sofia', 'Anna', 'Luca'] },
+      { frage: 'Was macht die Familie am Sonntag?', antworten: ['Sie geht zu den Großeltern', 'Sie geht ins Kino', 'Sie bleibt zu Hause'] },
     ],
   },
 

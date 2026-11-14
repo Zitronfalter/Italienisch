@@ -583,6 +583,18 @@ const WORTSCHATZ_THEMEN = [
     ['aumentare', 'steigen; erhöhen'],
     ['diminuire', 'sinken; verringern'],
   ]},
+
+  // ==================== Für die Lektionen ergänzt ====================
+  { thema: 'Lektion 1–4', stufe: 'A1', woerter: [
+    ['io', 'ich'],
+    ['tu', 'du'],
+    ['noi', 'wir'],
+    ['voi', 'ihr'],
+    ['il bar', 'die Bar; das Café'],
+    ['il cornetto', 'das Hörnchen (Croissant)'],
+    ['mio', 'mein'],
+    ['tuo', 'dein'],
+  ]},
 ];
 
 // ---------- Ab hier: Liste für die App bauen ----------

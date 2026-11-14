@@ -147,5 +147,10 @@ const Begleiter = (() => {
     element.dataset.stimmung = nachricht.stimmung;
   }
 
-  return { startNachricht, endeNachricht, tipp, zeigen };
+  // Eine Lektion ist geschafft
+  function lektionGeschafft(titel) {
+    return { stimmung: 'jubelt', text: `Lektion „${titel}“ geschafft! Ottimo lavoro. Die nächste wartet, wann du magst.` };
+  }
+
+  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft };
 })();

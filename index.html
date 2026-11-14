@@ -36,9 +36,19 @@
 
       <div class="karte">
         <p class="karte-titel">Heute</p>
-        <p class="karte-text" id="heute-text">Etwa 10 Minuten: erst fällige Vokabeln, dann ein kurzer Text oder ein Grammatik-Thema.</p>
+        <p class="karte-text" id="heute-text">Etwa 10 Minuten: erst fällige Vokabeln, dann der nächste Teil deiner Lektion.</p>
       </div>
 
+      <button class="knopf-los knopf-los-oben" id="knopf-los" type="button">Los</button>
+
+      <h2 class="abschnitt">Deine Lektionen</h2>
+      <div class="lektionen-liste" id="lektionen-liste"></div>
+      <details class="lektionen-erledigt" id="lektionen-erledigt" hidden>
+        <summary id="lektionen-erledigt-titel">Erledigt – zum Wiederholen</summary>
+        <div class="lektionen-liste" id="lektionen-erledigt-liste"></div>
+      </details>
+
+      <h2 class="abschnitt">Frei üben</h2>
       <button class="karte karte-knopf" id="knopf-lesen" type="button">
         <span class="karte-titel">Lesen</span>
         <span class="karte-text" id="lesen-stand">Texte und Rezepte</span>
@@ -57,11 +67,55 @@
         <span class="pfeil" aria-hidden="true">›</span>
       </button>
 
-      <button class="knopf-los" id="knopf-los" type="button">Los</button>
+      <button class="karte karte-knopf" id="knopf-woerterbuch" type="button">
+        <span class="karte-titel">Wörterbuch</span>
+        <span class="karte-text">Italienisch – Deutsch, offline</span>
+        <span class="pfeil" aria-hidden="true">›</span>
+      </button>
+
       <div class="leise-zeile">
-        <button class="knopf-leise" id="knopf-woerterbuch" type="button">Wörterbuch</button>
         <button class="knopf-leise" id="knopf-fortschritt" type="button">Fortschritt</button>
         <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
+      </div>
+    </section>
+
+    <!-- Eine Lektion -->
+    <section class="screen" id="screen-lektion" hidden>
+      <header class="kopf">
+        <p class="gruss" id="lektion-meta"></p>
+        <h1 id="lektion-titel" lang="it"></h1>
+      </header>
+      <p class="karte-text" id="lektion-situation"></p>
+
+      <div class="begleiter" id="begleiter-lektion" hidden>
+        <span class="begleiter-bild"></span>
+        <span class="begleiter-blase"><span class="begleiter-text"></span></span>
+      </div>
+
+      <div class="lektionen-liste" id="lektion-teile"></div>
+
+      <div class="karte" id="lektion-woerter" hidden>
+        <p class="karte-titel">Wörter dieser Lektion</p>
+        <ul class="lektion-wortliste" id="lektion-wortliste"></ul>
+      </div>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-zurueck" data-zurueck type="button">Zur Startseite</button>
+      </div>
+    </section>
+
+    <!-- Wörter einer Lektion: kenne ich / neu -->
+    <section class="screen" id="screen-wortcheck" hidden>
+      <header class="kopf">
+        <p class="gruss" id="wortcheck-meta"></p>
+        <h1>Kennst du die schon?</h1>
+      </header>
+      <p class="karte-text">Tipp an, was du schon kennst. Alles andere lernst du in den nächsten Runden kennen.</p>
+
+      <div class="wortcheck-liste" id="wortcheck-liste"></div>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-wortcheck-fertig" type="button">Fertig</button>
       </div>
     </section>
 
@@ -457,6 +511,8 @@
   <script src="niveautest.js"></script>
   <script src="begleiter.js"></script>
   <script src="uebungen.js"></script>
+  <script src="lektionen-inhalt.js"></script>
+  <script src="lektionen.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

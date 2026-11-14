@@ -22,7 +22,7 @@
 
 ## 🟡 Bis Schritt 11 – entscheiden
 
-- [ ] **Wie kommt die App ins Netz?** Dein Repo ist privat. Zwei kostenlose Wege:
+- [ ] **Wie kommt die App ins Netz?** Entschieden am 14.11.2026: erst einmal nicht, das Repo bleibt privat. Wenn du so weit bist – zwei kostenlose Wege:
 
   | Weg | Gut zu wissen |
   |---|---|

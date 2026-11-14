@@ -40,6 +40,12 @@
         <span class="pfeil" aria-hidden="true">›</span>
       </button>
 
+      <button class="karte karte-knopf" id="knopf-grammatik" type="button">
+        <span class="karte-titel">Grammatik</span>
+        <span class="karte-text" id="grammatik-stand">Regeln und Übungen</span>
+        <span class="pfeil" aria-hidden="true">›</span>
+      </button>
+
       <button class="knopf-los" id="knopf-los" type="button">Los</button>
       <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
     </section>
@@ -133,6 +139,70 @@
       </div>
     </section>
 
+    <!-- Liste der Grammatik-Kapitel -->
+    <section class="screen" id="screen-grammatik" hidden>
+      <header class="kopf">
+        <h1>Grammatik</h1>
+      </header>
+      <div class="text-liste" id="kapitel-liste"></div>
+      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+    </section>
+
+    <!-- Ein Kapitel: Regel und Tabelle -->
+    <section class="screen" id="screen-kapitel" hidden>
+      <header class="kopf">
+        <p class="gruss" id="kapitel-meta"></p>
+        <h1 id="kapitel-titel"></h1>
+      </header>
+      <div class="karte regel" id="kapitel-regel"></div>
+      <div class="tabelle-rahmen">
+        <table class="tabelle" id="kapitel-tabelle" lang="it"></table>
+      </div>
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-ueben" type="button">Üben</button>
+        <button class="knopf-zurueck" id="knopf-kapitel-zurueck" type="button">Zurück</button>
+      </div>
+    </section>
+
+    <!-- Übung: Lücke oder Kacheln -->
+    <section class="screen" id="screen-uebung" hidden>
+      <header class="kopf kopf-zeile">
+        <h2 class="kopf-klein" id="uebung-titel">Übung</h2>
+        <span class="stand" id="uebung-stand"></span>
+      </header>
+
+      <div class="karte frage-karte">
+        <p class="frage-art" id="uebung-art"></p>
+        <p class="frage-wort uebung-de" id="uebung-de"></p>
+      </div>
+
+      <!-- Lücke -->
+      <div id="uebung-luecke">
+        <p class="luecke-satz" id="luecke-satz" lang="it"></p>
+        <form class="eingabe" id="luecke-form" autocomplete="off">
+          <input class="eingabe-feld" id="luecke-eingabe" type="text" lang="it"
+                 autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                 enterkeyhint="done" placeholder="Fehlendes Wort" aria-label="Fehlendes Wort">
+        </form>
+      </div>
+
+      <!-- Kacheln -->
+      <div id="uebung-kacheln">
+        <div class="kachel-ablage" id="kachel-ablage" lang="it" aria-label="Dein Satz"></div>
+        <div class="kachel-vorrat" id="kachel-vorrat" lang="it" aria-label="Wörter"></div>
+      </div>
+
+      <div class="rueckmeldung" id="uebung-rueck" role="status" hidden>
+        <p class="rueck-titel" id="uebung-rueck-titel"></p>
+        <p class="rueck-text" id="uebung-rueck-text"></p>
+      </div>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-uebung" type="button">Prüfen</button>
+        <button class="knopf-zurueck" id="knopf-uebung-beenden" type="button">Übung beenden</button>
+      </div>
+    </section>
+
     <!-- Ende der Runde -->
     <section class="screen" id="screen-ende" hidden>
       <header class="kopf">
@@ -162,6 +232,7 @@
       <button class="knopf-klein" id="wort-anhoeren" type="button">▶ Anhören</button>
       <button class="knopf-klein knopf-klein-voll" id="wort-merken" type="button">In Karteikarten</button>
     </div>
+    <button class="regel-link" id="wort-regel" type="button" hidden></button>
   </div>
 
   <script src="speicher.js"></script>
@@ -169,6 +240,7 @@
   <script src="vokabeln.js"></script>
   <script src="texte.js"></script>
   <script src="lesen.js"></script>
+  <script src="grammatik.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

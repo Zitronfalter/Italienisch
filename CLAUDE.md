@@ -28,6 +28,7 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - `wortschatz.js` – Grundwortschatz (Themen, A1/A2)
 - `texte.js` – Lesetexte/Rezepte mit Wortbedeutungen und Fragen (erste Antwort = richtig)
 - `lesen.js` – Nachschlagen, Vorlesen (Web Speech API, it-IT), gelesene Texte
+- `grammatik.js` – Kapitel (Regel, Tabelle, Übungen: Lücke/Kacheln), Fortschritt, Regel-Erkennung am Text (`kapitelFuerWort`)
 - Neue Texte: jedes Wort muss eine Bedeutung haben (im Text, in `GRUNDWOERTER` oder im Wortschatz) – vor dem Fertigmelden mit einem kleinen Node-Skript prüfen.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner

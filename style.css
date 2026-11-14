@@ -400,6 +400,98 @@ button {
   flex-wrap: wrap;
 }
 
+/* ---------- Grammatik ---------- */
+
+.regel p { margin: 0 0 10px; }
+.regel p:last-child { margin-bottom: 0; }
+
+.tabelle-rahmen {
+  overflow-x: auto;
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+  background: var(--flaeche);
+}
+.tabelle {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+.tabelle th,
+.tabelle td {
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--rand);
+}
+.tabelle tr:last-child td { border-bottom: none; }
+.tabelle th {
+  color: var(--text-leise);
+  font-weight: 600;
+  font-size: 14px;
+}
+.tabelle td:first-child {
+  color: var(--text-leise);
+  font-size: 15px;
+}
+
+.uebung-de { font-size: 22px; }
+.luecke-satz {
+  margin: 0 0 12px;
+  font-size: 22px;
+}
+.luecke-satz .luecke {
+  display: inline-block;
+  min-width: 70px;
+  border-bottom: 2px solid var(--akzent);
+  color: var(--akzent);
+  text-align: center;
+}
+
+.kachel-ablage {
+  min-height: 64px;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 2px solid var(--rand);
+  margin-bottom: 16px;
+}
+.kachel-vorrat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.kachel {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--rand);
+  border-bottom-width: 3px;
+  border-radius: 12px;
+  background: var(--flaeche);
+  color: var(--text);
+  font-size: 19px;
+}
+.kachel:active { transform: translateY(1px); }
+/* Benutzte Kachel bleibt als graue Lücke stehen, damit nichts verrutscht */
+.kachel.benutzt {
+  color: transparent;
+  background: var(--rand);
+  border-color: var(--rand);
+  pointer-events: none;
+}
+.kachel-ablage.fertig .kachel { pointer-events: none; }
+
+.regel-link {
+  margin-top: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--akzent);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+}
+
 .knopf-zurueck {
   margin-top: auto;
   width: 100%;

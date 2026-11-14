@@ -129,7 +129,8 @@ const Vokabeln = (() => {
 
   // Ergebnis: { stufe: 'richtig' | 'fast' | 'falsch', hinweis }
   // „fast“ zählt als gewusst, zeigt aber die genaue Schreibweise.
-  function pruefeEine(eingabe, loesung) {
+  // streng: kein Tippfehler-Bonus und kein „Artikel vergessen“ (für Grammatik-Übungen)
+  function pruefeEine(eingabe, loesung, streng = false) {
     const e = sauber(eingabe);
     const l = sauber(loesung);
     if (!e) return { stufe: 'falsch', hinweis: '' };
@@ -138,6 +139,7 @@ const Vokabeln = (() => {
     const eo = ohneAkzente(e);
     const lo = ohneAkzente(l);
     if (eo === lo) return { stufe: 'fast', hinweis: 'Achte auf den Akzent.' };
+    if (streng) return { stufe: 'falsch', hinweis: '' };
 
     const ez = zerlegen(eo);
     const lz = zerlegen(lo);
@@ -156,12 +158,12 @@ const Vokabeln = (() => {
     return { stufe: 'falsch', hinweis: '' };
   }
 
-  function pruefe(eingabe, w) {
+  function pruefe(eingabe, w, optionen = {}) {
     const loesungen = [w.it, ...(w.auch || [])];
     const rang = { richtig: 0, fast: 1, falsch: 2 };
     let bestes = { stufe: 'falsch', hinweis: '' };
     for (const l of loesungen) {
-      const r = pruefeEine(eingabe, l);
+      const r = pruefeEine(eingabe, l, optionen.streng);
       if (rang[r.stufe] < rang[bestes.stufe] || (r.stufe === bestes.stufe && !bestes.hinweis)) bestes = r;
     }
     return bestes;

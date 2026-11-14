@@ -34,7 +34,8 @@
 | **Lektionen, Schritt 1** | Lernweg in Lektionen: Wörter, Grammatik, Text und Hören passen zusammen. Startseite mit Lektionen und „Frei üben“, „kenne ich / neu“, erledigte Lektionen eingeklappt. Inhalt: Lektion 1–4 | ✅ |
 | **Lektionen, Schritt 2** | Abfrage Italienisch → Deutsch mit Kacheln: fällige Wörter ab Fach 2 abwechselnd in beide Richtungen | ✅ |
 | **Lektionen, Schritt 3** | Gelöste Übungen kommen nicht immer wieder, Hören passend zur Lektion, „Kann ich schon“ (überspringen), Wiederholung 1 mit eigenem Text, „Wörter üben“ für erledigte Lektionen; jedes Kapitel hat 8 Übungen | ✅ |
-| **Lektionen, Schritt 4–6** | Inhalt: Lektion 5–8 (A1 fertig), dann A2 (9–18), dann B1 (19–28) | ⏳ |
+| **Lektionen, Schritt 4** | Inhalt Lektion 5–8 und Wiederholung 2 – A1 fertig. Neu: Kapitel „Ich will, ich kann, ich muss – c’è“, Texte „In albergo“ und „Un fine settimana a Roma“ | ✅ |
+| **Lektionen, Schritt 5–6** | Inhalt A2 (Lektion 9–18), dann B1 (19–28) | ⏳ |
 
 Konzept: [docs/superpowers/specs/2026-11-14-lektionen-design.md](docs/superpowers/specs/2026-11-14-lektionen-design.md)
 

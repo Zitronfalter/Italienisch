@@ -313,6 +313,7 @@ Metti i pomodori sul pane e servi subito.`,
 
 Paola paga con la carta di credito e va al binario. Il treno è in ritardo di dieci minuti.`,
     woerter: {
+      'cinquanta': ['cinquanta', 'fünfzig'],
       'paola': ['Paola', 'Paola (Vorname)'],
       'firenze': ['Firenze', 'Florenz'],
       'roma': ['Roma', 'Rom'],
@@ -343,6 +344,57 @@ Paola paga con la carta di credito e va al binario. Il treno è in ritardo di di
   },
 
   // ---------------------------------------------------------------- A2
+  {
+    id: 'albergo', titel: 'In albergo', art: 'Text', stufe: 'A1',
+    text: `Paola arriva in albergo alle otto di sera.
+
+«Buonasera! Vorrei una camera per due notti, per favore.»
+
+«Sì, abbiamo una camera libera al terzo piano. Ecco la chiave.»
+
+«Grazie. C'è un ascensore?»
+
+«Sì, è qui a destra.»
+
+«E dov'è il bagno?»
+
+«Nella camera c'è il bagno con la doccia. Gli asciugamani sono sul letto.»
+
+«Posso fare colazione domani mattina?»
+
+«Certo, la colazione è dalle sette alle dieci.»
+
+Paola prende la valigia e va in camera. È molto contenta.`,
+    woerter: {
+      'paola': ['Paola', 'Paola (Vorname)'],
+      'arriva': ['arrivare', 'kommt an'],
+      'notti': ['la notte', 'Nächte'],
+      'libera': ['libero', 'frei'],
+      'terzo': ['terzo', 'dritte(r)', 'dritte(r)'],
+      'destra': ['a destra', 'rechts (a destra)', 'rechts'],
+      "c'": ['ci', "da (c'è = es gibt; da ist)", 'da; dort'],
+      "dov'": ['dove', "wo (dov'è = wo ist)"],
+      'asciugamani': ["l'asciugamano", 'Handtücher'],
+      'posso': ['potere', 'ich kann; darf ich'],
+      'fare': ['fare', 'machen (fare colazione = frühstücken)', 'machen; tun'],
+      'certo': ['certo', 'sicher; natürlich', 'sicher; natürlich'],
+      'dalle': ['da + le', 'von (dalle sette = ab sieben Uhr)'],
+      'prende': ['prendere', 'nimmt'],
+      'contenta': ['contento', 'zufrieden; froh', 'zufrieden; froh'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Paola arriva in albergo alle otto di sera.': 'Paola kommt um acht Uhr abends im Hotel an.',
+      'Paola prende la valigia e va in camera.': 'Paola nimmt den Koffer und geht ins Zimmer.',
+      'È molto contenta.': 'Sie ist sehr zufrieden.',
+    },
+    fragen: [
+      { frage: 'Wie viele Nächte bleibt Paola?', antworten: ['Zwei', 'Eine', 'Drei'] },
+      { frage: 'Wo ist das Zimmer?', antworten: ['Im dritten Stock', 'Im Erdgeschoss', 'Im zweiten Stock'] },
+      { frage: 'Wann gibt es Frühstück?', antworten: ['Von sieben bis zehn Uhr', 'Von acht bis elf Uhr', 'Nur um sieben Uhr'] },
+    ],
+  },
+
   {
     id: 'giornata-giulia', titel: 'Una giornata di Giulia', art: 'Text', stufe: 'A2',
     text: `Giulia si sveglia alle sette. Si alza subito, si lava e si veste. Fa colazione con un cappuccino e una fetta di torta.
@@ -385,6 +437,48 @@ Alle sei torna a casa. La sera cucina qualcosa di semplice, legge un libro e all
       { frage: 'Wie kommt Giulia zur Arbeit?', antworten: ['Mit dem Bus', 'Mit dem Auto', 'Zu Fuß'] },
       { frage: 'Mit wem isst sie zu Mittag?', antworten: ['Mit einer Kollegin', 'Mit ihrem Mann', 'Allein'] },
       { frage: 'Was macht sie am Abend?', antworten: ['Sie kocht etwas Einfaches und liest', 'Sie geht ins Restaurant', 'Sie macht Sport'] },
+    ],
+  },
+
+  {
+    id: 'ripasso-2', titel: 'Un fine settimana a Roma', art: 'Text', stufe: 'A1',
+    text: `Sabato Paola parte per Roma. Il treno parte alle nove dal binario cinque, ma ha un ritardo di dieci minuti.
+
+A Roma Paola va in albergo con l'autobus. La camera è piccola, ma il letto è grande e la doccia è nuova.
+
+La sera Paola è stanca. Mangia una bruschetta: pane caldo, pomodori freschi, aglio, sale e basilico.
+
+Domenica si sveglia presto, si lava e si veste. Dopo la colazione esce e guarda la città.`,
+    woerter: {
+      'paola': ['Paola', 'Paola (Vorname)'],
+      'roma': ['Roma', 'Rom (Stadt)'],
+      'parte': ['partire', 'fährt ab'],
+      'ma': ['ma', 'aber', 'aber'],
+      'piccola': ['piccolo', 'klein', 'klein'],
+      'nuova': ['nuovo', 'neu', 'neu'],
+      'stanca': ['stanco', 'müde'],
+      'mangia': ['mangiare', 'isst'],
+      'bruschetta': ['la bruschetta', 'Bruschetta (geröstetes Brot mit Tomaten)', 'die Bruschetta'],
+      'pomodori': ['il pomodoro', 'Tomaten'],
+      'freschi': ['fresco', 'frisch'],
+      'sveglia': ['svegliarsi', 'wacht auf (si sveglia)'],
+      'lava': ['lavare', 'wäscht (si lava = wäscht sich)'],
+      'veste': ['vestirsi', 'zieht an (si veste = zieht sich an)', 'sich anziehen'],
+      'esce': ['uscire', 'geht hinaus'],
+      'guarda': ['guardare', 'sieht an'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Sabato Paola parte per Roma.': 'Am Samstag fährt Paola nach Rom.',
+      "A Roma Paola va in albergo con l'autobus.": 'In Rom fährt Paola mit dem Bus ins Hotel.',
+      'La sera Paola è stanca.': 'Am Abend ist Paola müde.',
+      'Domenica si sveglia presto, si lava e si veste.': 'Am Sonntag wacht sie früh auf, wäscht sich und zieht sich an.',
+      'Dopo la colazione esce e guarda la città.': 'Nach dem Frühstück geht sie hinaus und sieht sich die Stadt an.',
+    },
+    fragen: [
+      { frage: 'Warum fährt der Zug später ab?', antworten: ['Er hat zehn Minuten Verspätung', 'Er fährt erst am Sonntag', 'Paola hat keine Fahrkarte'] },
+      { frage: 'Wie ist das Bett im Hotel?', antworten: ['Groß', 'Klein', 'Alt'] },
+      { frage: 'Was isst Paola am Abend?', antworten: ['Eine Bruschetta', 'Eine Pizza', 'Spaghetti'] },
     ],
   },
 

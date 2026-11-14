@@ -15,7 +15,7 @@
   - Je ein Bild pro Stimmung: **winkt** (Begrüßung), **freut sich**, **denkt nach**, **ruhig**, **überrascht**, **liest ein Buch**, **jubelt** (Meilenstein)
   - Format: PNG mit durchsichtigem Hintergrund (oder SVG), quadratisch, mindestens 512 × 512 Pixel
   - Ohne Text, Sprechblasen, Punkte oder XP – die Sprüche macht die App selbst
-- [ ] **Lektion 1–4 ausprobieren:** Passt die neue Startseite? Ist „kenne ich / neu“ angenehm? Sind die Texte zu leicht oder zu schwer?
+- [ ] **Lektion 1–8 ausprobieren:** Passt die neue Startseite? Ist „kenne ich / neu“ angenehm? Sind die Texte zu leicht oder zu schwer?
 - [ ] **Wortliste durchsehen** – in [wortschatz.js](wortschatz.js), eine Zeile pro Wort.
       Fehlt dir ein Thema oder Wort? Claude Bescheid sagen.
 

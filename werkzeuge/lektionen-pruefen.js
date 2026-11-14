@@ -39,8 +39,10 @@ function pruefeLektionen(k) {
       }
       besitzer.set(id, l.id);
       // auch jedes Teilwort: "come stai?" → "come", "stai"
-      const teile = woerterIn(k, it);
-      for (const form of [ohneArtikel(it), klein(it), ...(teile.length > 1 ? teile : [])]) {
+      // (Artikel und andere Grundwörter nicht: „gli ingredienti“ macht „gli“ nicht zum Lektionswort)
+      const alleTeile = woerterIn(k, it);
+      const teile = alleTeile.length > 1 ? alleTeile.filter((t) => !k.GRUNDWOERTER[t]) : [];
+      for (const form of [ohneArtikel(it), klein(it), ...teile]) {
         if (!lektionVon.has(form)) lektionVon.set(form, l.nr);
       }
     }

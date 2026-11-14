@@ -59,4 +59,50 @@ var LEKTIONEN = [
     kapitel: [],
     texte: ['ripasso-1'],
   },
+  {
+    id: 'l05', nr: 5, titel: 'Alla stazione', situation: 'Fahrkarte kaufen, Zug nehmen', stufe: 'A1', art: 'lektion',
+    woerter: [
+      'la stazione', 'il treno', 'il biglietto', 'il binario', 'la partenza', "l'arrivo", 'il ritardo',
+      'partire', 'arrivare', 'andare', 'venire', 'tornare', 'prendere', "l'autobus", 'la città', 'il minuto',
+      'prossimo', 'solo', 'undici', 'quindici', 'o', 'con',
+    ],
+    kapitel: ['verben-ere-ire'],
+    texte: ['stazione'],
+  },
+  {
+    id: 'l06', nr: 6, titel: 'Bruschetta', situation: 'Ein einfaches Rezept', stufe: 'A1', art: 'lektion',
+    woerter: [
+      'il pane', 'il pomodoro', "l'aglio", 'il sale', 'il basilico', 'la fetta', 'il forno', 'la ciotola',
+      'il pezzo', 'tagliare', 'mettere', 'aggiungere', 'mescolare', 'scaldare', 'servire', 'caldo', 'fresco', "l'olio", 'la persona', 'subito',
+      'la ricetta', 'gli ingredienti',
+    ],
+    kapitel: ['praepositionen'],
+    texte: ['bruschetta'],
+  },
+  {
+    id: 'l07', nr: 7, titel: 'In albergo', situation: 'Im Hotel einchecken und fragen', stufe: 'A1', art: 'lektion',
+    woerter: [
+      "l'albergo", 'la camera', 'la chiave', 'il letto', 'la doccia', 'il bagno', "l'asciugamano", 'il piano',
+      "l'ascensore", 'libero', 'occupato', 'volere', 'potere', 'dovere', 'la notte', 'la valigia',
+      'il passaporto', 'vorrei', 'a destra', 'a sinistra', 'la prenotazione', 'qui', 'dove',
+    ],
+    kapitel: ['modalverben'],
+    texte: ['albergo'],
+  },
+  {
+    id: 'l08', nr: 8, titel: 'Una giornata di Giulia', situation: 'Der Tagesablauf', stufe: 'A1', art: 'lektion',
+    woerter: [
+      'svegliarsi', 'alzarsi', 'lavare', 'il lavoro', 'la torta', 'il giorno', 'presto', 'tardi', 'stanco',
+      'lungo', 'dormire', 'leggere', 'il libro', 'cucinare', 'uscire', 'cominciare', 'finire', 'dopo', 'qualcosa',
+    ],
+    kapitel: ['reflexiv'],
+    texte: ['giornata-giulia'],
+  },
+  {
+    id: 'r2', nr: 8.5, titel: 'Wiederholung 2', situation: 'Lektion 5–8 gemischt – A1 geschafft', stufe: 'A1', art: 'ripasso',
+    lektionen: ['l05', 'l06', 'l07', 'l08'],
+    woerter: [],
+    kapitel: [],
+    texte: ['ripasso-2'],
+  },
 ];

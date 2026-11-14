@@ -107,6 +107,14 @@ test('Lektionswörter aus mehreren Wörtern machen jedes Teilwort bekannt', () =
   assert.deepStrictEqual(pruefeLektionen(k).fehler, []);
 });
 
+test('Artikel in Lektionswörtern gehören zu keiner Lektion', () => {
+  const l1 = lektion('l01', 1, ['ciao']);
+  l1.kapitel = ['artikel'];                    // enthält „gli amici“
+  const k = mitBeispiel([l1, lektion('l02', 2, ['gli ingredienti'])]);
+  const { hinweise } = pruefeLektionen(k);
+  assert.ok(!hinweise.some((h) => h.includes('„gli“')), hinweise.join('\n'));
+});
+
 test('echte Daten', () => {
   const { fehler } = pruefeLektionen(laden());
   assert.deepStrictEqual(fehler, []);

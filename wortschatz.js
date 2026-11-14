@@ -595,6 +595,11 @@ const WORTSCHATZ_THEMEN = [
     ['mio', 'mein'],
     ['tuo', 'dein'],
   ]},
+
+  { thema: 'Lektion 5–8', stufe: 'A1', woerter: [
+    ["l'olio", 'das Öl'],
+    ['la persona', 'die Person'],
+  ]},
 ];
 
 // ---------- Ab hier: Liste für die App bauen ----------

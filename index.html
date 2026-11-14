@@ -135,6 +135,18 @@
         <button class="knopf-klein" id="knopf-vorlesen" type="button">▶ Vorlesen</button>
         <span class="hinweis">Tippe auf ein Wort.</span>
       </div>
+      <details class="stimm-einstellung" id="stimm-einstellung">
+        <summary>Stimme und Tempo</summary>
+        <label class="feld-label" for="tempo-wahl">Tempo</label>
+        <select class="eingabe-feld eingabe-klein" id="tempo-wahl">
+          <option value="0.7">langsam</option>
+          <option value="0.8">etwas langsamer</option>
+          <option value="0.9">fast normal</option>
+        </select>
+        <label class="feld-label" for="stimme-wahl" id="stimme-label">Stimme</label>
+        <select class="eingabe-feld eingabe-klein" id="stimme-wahl"></select>
+        <p class="karte-text klein">Bessere Stimmen: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Italienisch → eine „Premium“- oder „Verbessert“-Stimme laden. Sie betonen Fragen deutlicher.</p>
+      </details>
       <p class="meldung fehler" id="vorlese-hinweis" role="status" hidden></p>
 
       <article class="karte lesetext" id="lesen-text" lang="it"></article>
@@ -353,7 +365,8 @@
     <p class="wort-bedeutung" id="wort-bedeutung"></p>
     <p class="wort-quelle" id="wort-quelle" hidden>aus dem Wörterbuch WikDict</p>
     <div class="wort-knoepfe">
-      <button class="knopf-klein" id="wort-anhoeren" type="button">▶ Anhören</button>
+      <button class="knopf-klein" id="wort-anhoeren" type="button">▶ Wort</button>
+      <button class="knopf-klein" id="satz-anhoeren" type="button">▶ Satz</button>
       <button class="knopf-klein knopf-klein-voll" id="wort-merken" type="button">In Karteikarten</button>
     </div>
     <button class="regel-link" id="wort-regel" type="button" hidden></button>

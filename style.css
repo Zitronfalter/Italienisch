@@ -722,6 +722,24 @@ button {
 .wort-quelle { margin: -8px 0 14px; }
 .quelle a { color: inherit; }
 
+/* ---------- Stimme und Tempo ---------- */
+
+.stimm-einstellung {
+  margin-top: -8px;
+  font-size: 16px;
+  color: var(--text-leise);
+}
+.stimm-einstellung summary {
+  cursor: pointer;
+  padding: 4px 0;
+}
+.stimm-einstellung[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stimm-einstellung select { color: var(--text); }
+
 /* ---------- Eigene Texte ---------- */
 
 .eingabe-titel { font-size: 18px; }

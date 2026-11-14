@@ -362,7 +362,9 @@ function oeffneText(t) {
   el('knopf-text-loeschen').hidden = !t.eigen;
   el('lesen-titel').textContent = t.titel;
   el('knopf-vorlesen').hidden = !Lesen.kannSprechen;
+  el('stimm-einstellung').hidden = !Lesen.kannSprechen;
   el('vorlese-hinweis').hidden = true;
+  fuelleStimmWahl();
 
   // Text aufbauen
   const artikel = el('lesen-text');
@@ -536,6 +538,7 @@ function zeigeWortBlatt(span) {
   }
 
   el('wort-anhoeren').hidden = !Lesen.kannSprechen;
+  el('satz-anhoeren').hidden = !Lesen.kannSprechen;
 
   // Eigene Bedeutung: Formular gleich offen, wenn nichts gefunden wurde
   el('eigen-grundform').value = treffer ? treffer.grundform.replace(/^(il|lo|la|i|gli|le) /, '') : span.textContent.toLowerCase().replace(/['’]$/, '');
@@ -591,6 +594,20 @@ el('wort-schliessen').addEventListener('click', schliesseWortBlatt);
 el('wort-anhoeren').addEventListener('click', () => {
   if (lesen.gewaehltesWort) Lesen.sprich(lesen.gewaehltesWort.textContent);
 });
+
+// Den ganzen Satz anhören, in dem das Wort steht (gut für die Betonung von Fragen)
+el('satz-anhoeren').addEventListener('click', () => {
+  const span = lesen.gewaehltesWort;
+  if (!span) return;
+  const block = span.closest('p, li, h3');
+  if (!block) return;
+  // Stelle des Wortes im Absatz bestimmen
+  let position = 0;
+  const lauf = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+  while (lauf.nextNode() && !span.contains(lauf.currentNode)) position += lauf.currentNode.length;
+  vorlesenStopp();
+  Lesen.sprich(Lesen.satzMit(block.textContent, position));
+});
 el('wort-merken').addEventListener('click', () => {
   if (lesen.treffer && lesen.treffer.karte) {
     Lesen.inKarteikarten(lesen.treffer.karte);
@@ -607,6 +624,35 @@ function zeigeVorleseHinweis() {
   h.hidden = false;
 }
 Lesen.wennStill(zeigeVorleseHinweis);
+
+// Stimme und Tempo auswählen
+function fuelleStimmWahl() {
+  el('tempo-wahl').value = String(Lesen.tempo());
+  const wahl = el('stimme-wahl');
+  const stimmen = Lesen.italienischeStimmen();
+  wahl.innerHTML = '';
+  for (const s of stimmen) {
+    const o = document.createElement('option');
+    o.value = s.name;
+    o.textContent = s.name;
+    wahl.appendChild(o);
+  }
+  wahl.value = Lesen.stimmeName();
+  // Auswahl nur zeigen, wenn es mehr als eine italienische Stimme gibt
+  wahl.hidden = stimmen.length < 2;
+  el('stimme-label').hidden = stimmen.length < 2;
+}
+el('tempo-wahl').addEventListener('change', (e) => {
+  Lesen.tempoWaehlen(e.target.value);
+  vorlesenStopp();
+  Lesen.sprich('Ciao! Così parlo adesso.');           // kurze Hörprobe
+});
+el('stimme-wahl').addEventListener('change', (e) => {
+  Lesen.stimmeWaehlen(e.target.value);
+  vorlesenStopp();
+  Lesen.sprich('Ciao! Questa è la mia voce. Ti piace?');
+});
+if (Lesen.kannSprechen) speechSynthesis.addEventListener('voiceschanged', fuelleStimmWahl);
 
 // Ganzen Text vorlesen / anhalten
 function vorlesenStopp() {

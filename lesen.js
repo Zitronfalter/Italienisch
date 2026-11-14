@@ -181,15 +181,39 @@ const Lesen = (() => {
   const kannSprechen = 'speechSynthesis' in window;
   let stimme = null;
 
+  // Italienische Stimmen, die beste zuerst (Premium > Verbessert > Standard)
+  function italienischeStimmen() {
+    if (!kannSprechen) return [];
+    const guete = (s) => (/premium/i.test(s.name) ? 3 : /enhanced|verbessert|erweitert|siri/i.test(s.name) ? 2 : 1)
+      + (s.localService ? 0.5 : 0);
+    return speechSynthesis.getVoices()
+      .filter((s) => s.lang && s.lang.replace('_', '-').toLowerCase().startsWith('it'))
+      .sort((a, b) => guete(b) - guete(a));
+  }
+
   function stimmeSuchen() {
-    if (!kannSprechen) return;
-    const stimmen = speechSynthesis.getVoices();
-    stimme = stimmen.find((s) => s.lang === 'it-IT' && s.localService)
-      || stimmen.find((s) => s.lang && s.lang.startsWith('it')) || null;
+    const liste = italienischeStimmen();
+    const gewuenscht = (Speicher.daten.einstellungen || {}).stimme;
+    stimme = liste.find((s) => s.name === gewuenscht) || liste[0] || null;
   }
   if (kannSprechen) {
     stimmeSuchen();
     speechSynthesis.addEventListener('voiceschanged', stimmeSuchen);
+  }
+
+  function stimmeWaehlen(name) {
+    Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), stimme: name };
+    Speicher.speichern();
+    stimmeSuchen();
+  }
+
+  function stimmeName() { return stimme ? stimme.name : ''; }
+
+  // Sprechtempo: 0.7 langsam, 0.8 etwas langsamer (Standard), 0.9 fast normal
+  function tempo() { return Number((Speicher.daten.einstellungen || {}).tempo) || 0.8; }
+  function tempoWaehlen(wert) {
+    Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), tempo: Number(wert) };
+    Speicher.speichern();
   }
 
   // Wird aufgerufen, wenn das Vorlesen nach kurzer Zeit nicht startet
@@ -197,33 +221,74 @@ const Lesen = (() => {
   let beiStille = null;
   function wennStill(fn) { beiStille = fn; }
 
+  // Satzzeichen so säubern, dass die Stimme Fragen und Satzenden sicher erkennt:
+  // «Vuole un cornetto?», chiede …  →  Vuole un cornetto? Chiede …
+  function fuerStimme(text) {
+    return text
+      .replace(/[«»“”„"]/g, '')
+      .replace(/\s+[–—-]\s+/g, ', ')
+      .replace(/([.!?])\s*,/g, '$1')
+      .replace(/([.!?])\.+/g, '$1')
+      .replace(/([.!?])\s+(\p{Ll})/gu, (_, z, b) => z + ' ' + b.toUpperCase())
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  // Text in Teile mit Pausen zerlegen:
+  // - nach jedem Satz eine längere Pause
+  // - bei Komma eine kurze Pause
+  // - Fragen bleiben ganz, damit die Stimme am Ende nach oben geht
+  const PAUSE_SATZ = 550;
+  const PAUSE_KOMMA = 220;
+  function teile(text) {
+    const liste = [];
+    const saetze = fuerStimme(text).split(/(?<=[.!?:;])\s+/).filter(Boolean);
+    for (const satz of saetze) {
+      if (satz.endsWith('?')) { liste.push({ text: satz, pause: PAUSE_SATZ }); continue; }
+      const stuecke = satz.split(/(?<=,)\s+/).filter(Boolean);
+      stuecke.forEach((s, i) => liste.push({ text: s, pause: i === stuecke.length - 1 ? PAUSE_SATZ : PAUSE_KOMMA }));
+    }
+    return liste;
+  }
+
+  let lauf = 0;            // jede neue Ausgabe bekommt eine Nummer; alte laufen nicht weiter
+  let pausenUhr = null;
+
   // Liest Text vor. fertig() wird aufgerufen, wenn das Vorlesen endet.
-  // Für das iPhone: Text in Sätze teilen (lange Texte brechen sonst manchmal ab)
-  // und nach cancel() kurz warten (sonst bleibt Safari manchmal stumm).
+  // Die Teile werden nacheinander gesprochen, dazwischen eine echte Pause.
   function sprich(text, fertig) {
     if (!kannSprechen) return;
     if (!stimme) stimmeSuchen();
-    const saetze = text.split(/(?<=[.!?»:])\s+/).map((s) => s.trim()).filter(Boolean);
-    if (!saetze.length) return;
+    const liste = teile(text);
+    if (!liste.length) return;
 
+    const meinLauf = ++lauf;
+    clearTimeout(pausenUhr);
     let gestartet = false;
     let erledigt = false;
     const ende = () => { if (!erledigt) { erledigt = true; if (fertig) fertig(); } };
 
+    const sprichTeil = (i) => {
+      if (meinLauf !== lauf) return;               // inzwischen angehalten oder neu gestartet
+      if (i >= liste.length) { ende(); return; }
+      const u = new SpeechSynthesisUtterance(liste[i].text);
+      u.lang = 'it-IT';
+      if (stimme) u.voice = stimme;
+      u.rate = tempo();                             // Standard: etwas langsamer als normal
+      u.onstart = () => { gestartet = true; };
+      u.onend = () => {
+        if (meinLauf !== lauf) return;
+        pausenUhr = setTimeout(() => sprichTeil(i + 1), liste[i].pause);
+      };
+      u.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') ende(); };
+      speechSynthesis.speak(u);
+    };
+
     const los = () => {
-      speechSynthesis.resume();        // iOS: falls die Ausgabe „hängt“
-      saetze.forEach((s, i) => {
-        const satz = new SpeechSynthesisUtterance(s);
-        satz.lang = 'it-IT';
-        if (stimme) satz.voice = stimme;
-        satz.rate = 0.9;               // etwas langsamer als normal
-        satz.onstart = () => { gestartet = true; };
-        satz.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') ende(); };
-        if (i === saetze.length - 1) satz.onend = ende;
-        speechSynthesis.speak(satz);
-      });
+      speechSynthesis.resume();                     // iOS: falls die Ausgabe „hängt“
+      sprichTeil(0);
       setTimeout(() => {
-        if (!gestartet && !erledigt) {
+        if (meinLauf === lauf && !gestartet && !erledigt) {
           if (beiStille) beiStille();
           ende();
         }
@@ -232,7 +297,7 @@ const Lesen = (() => {
 
     if (speechSynthesis.speaking || speechSynthesis.pending) {
       speechSynthesis.cancel();
-      setTimeout(los, 120);
+      setTimeout(los, 120);                         // nach cancel() kurz warten, sonst bleibt Safari stumm
     } else {
       los();
     }
@@ -244,7 +309,16 @@ const Lesen = (() => {
   }
 
   function stopp() {
+    lauf += 1;
+    clearTimeout(pausenUhr);
     if (kannSprechen) speechSynthesis.cancel();
+  }
+
+  // Den Satz finden, in dem ein Wort steht (für „Satz anhören“)
+  function satzMit(blockText, position) {
+    const saetze = [...blockText.matchAll(/[^.!?]+[.!?»]*/g)];
+    const treffer = saetze.find((m) => position >= m.index && position < m.index + m[0].length);
+    return (treffer ? treffer[0] : blockText).trim();
   }
 
   // ---------- Gelesene Texte ----------
@@ -275,7 +349,8 @@ const Lesen = (() => {
     stuecke, bloecke, vorleseText,
     nachschlagen, inKarteikarten, istInKarteikarten, bedeutungSpeichern,
     eigeneTexte, textSpeichern, textLoeschen,
-    kannSprechen, sprich, stopp, wennStill, hatItalienischeStimme,
+    kannSprechen, sprich, stopp, wennStill, hatItalienischeStimme, teile, satzMit,
+    italienischeStimmen, stimmeWaehlen, stimmeName, tempo, tempoWaehlen,
     stand, ergebnisSpeichern, anzahlVerstanden,
   };
 })();

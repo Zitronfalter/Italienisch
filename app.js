@@ -63,6 +63,28 @@ dateiFeld.addEventListener('change', async () => {
   }
 });
 
+// ---------- Was kommt nach den Vokabeln? ----------
+//
+// Abwechselnd ein Text, der noch nicht verstanden ist, und ein Grammatik-Kapitel,
+// das noch nicht geübt ist (immer von leicht nach schwer).
+
+function naechsterInhalt() {
+  const texte = LESETEXTE.filter((t) => !(Lesen.stand(t.id) && Lesen.stand(t.id).verstanden));
+  const kapitel = KAPITEL.filter((k) => !(Grammatik.stand(k.id) && Grammatik.stand(k.id).geuebt));
+  const letzte = (Speicher.daten.fortschritt.runde || {}).art;
+  const text = texte[0] && { art: 'text', obj: texte[0], name: `Text „${texte[0].titel}“` };
+  const kap = kapitel[0] && { art: 'kapitel', obj: kapitel[0], name: `Grammatik „${kapitel[0].titel}“` };
+  if (text && kap) return letzte === 'text' ? kap : text;
+  return text || kap || null;
+}
+
+function oeffneNaechstes(n) {
+  Speicher.daten.fortschritt.runde = { art: n.art, datum: Vokabeln.heute() };
+  Speicher.speichern();
+  if (n.art === 'text') oeffneText(n.obj);
+  else oeffneKapitel(n.obj, 'grammatik');
+}
+
 // ---------- Startseite ----------
 
 function zeigeStart() {
@@ -70,9 +92,10 @@ function zeigeStart() {
   const teile = [];
   if (wiederholen.length) teile.push(`${wiederholen.length} ${wiederholen.length === 1 ? 'Vokabel' : 'Vokabeln'} zum Wiederholen`);
   if (neu.length) teile.push(`${neu.length} neue ${neu.length === 1 ? 'Wort' : 'Wörter'}`);
-  document.getElementById('heute-text').textContent = teile.length
+  const n = naechsterInhalt();
+  document.getElementById('heute-text').textContent = (teile.length
     ? teile.join(' und ') + '.'
-    : 'Heute ist nichts fällig. Schön!';
+    : 'Keine Vokabeln fällig.') + (n ? ` Danach: ${n.name}` : '');
   zeigeLesenStand();
   zeigeGrammatikStand();
   zeige('start');
@@ -203,6 +226,18 @@ function beendeRunde() {
     el('ende-text').textContent = `${anzahl} ${anzahl === 1 ? 'Wort' : 'Wörter'} geübt, ${abfrage.aufAnhieb} davon auf Anhieb gewusst.`;
   }
   el('ende-sicher').textContent = Vokabeln.anzahlSicher();
+
+  // Teil 2 der Runde: ein Text oder ein Grammatik-Thema
+  const n = naechsterInhalt();
+  el('ende-naechstes').hidden = !n;
+  el('knopf-naechstes').hidden = !n;
+  el('knopf-ende-start').textContent = n ? 'Für heute reicht’s' : 'Zur Startseite';
+  if (n) {
+    if (anzahl > 0) el('ende-titel').textContent = 'Vokabeln geschafft';
+    el('ende-naechstes-text').textContent = n.name;
+    el('knopf-naechstes').textContent = n.art === 'text' ? 'Text lesen' : 'Grammatik ansehen';
+    el('knopf-naechstes').onclick = () => oeffneNaechstes(n);
+  }
   zeige('ende');
 }
 
@@ -897,8 +932,122 @@ el('suche-form').addEventListener('submit', (e) => {
   suchen();
 });
 
+// ---------- Fortschritt ----------
+
+function balken(liste, name, zahl, max) {
+  const zeile = document.createElement('div');
+  zeile.className = 'fach';
+  zeile.innerHTML = '<span class="fach-name"></span><span class="fach-balken"><span></span></span><span class="fach-zahl"></span>';
+  zeile.querySelector('.fach-name').textContent = name;
+  zeile.querySelector('.fach-balken span').style.width = (max ? Math.round((zahl / max) * 100) : 0) + '%';
+  zeile.querySelector('.fach-zahl').textContent = zahl;
+  liste.appendChild(zeile);
+}
+
+function zeigeFortschritt() {
+  const karten = Object.values(Speicher.daten.karten);
+  const sicher = Vokabeln.anzahlSicher();
+  el('fs-sicher').textContent = sicher;
+  el('fs-sicher-text').textContent = karten.length
+    ? `von ${karten.length} Wörtern in deinem Karteikasten`
+    : 'Drück auf „Los“, dann kommen die ersten Wörter.';
+
+  const faecher = el('fs-faecher');
+  faecher.innerHTML = '';
+  const proFach = [1, 2, 3, 4, 5].map((f) => karten.filter((k) => k.fach === f).length);
+  const max = Math.max(1, ...proFach);
+  proFach.forEach((zahl, i) => balken(faecher, `Fach ${i + 1}`, zahl, max));
+
+  const eingebaute = LESETEXTE.length;
+  el('fs-texte').textContent = `${Lesen.anzahlVerstanden()} / ${eingebaute}`;
+  el('fs-grammatik').textContent = `${Grammatik.anzahlGeuebt()} / ${KAPITEL.length}`;
+
+  const t = Niveautest.letzter();
+  if (t) {
+    const datum = new Date(t.datum + 'T12:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
+    el('fs-niveau').textContent = t.niveau || 'unter A1';
+    el('fs-niveau-text').textContent = `Letzter Test am ${datum}. Mach ihn ab und zu wieder, z. B. einmal im Monat.`;
+    el('knopf-test').textContent = 'Test wiederholen (ca. 10 Min.)';
+  } else {
+    el('fs-niveau').textContent = '–';
+    el('fs-niveau-text').textContent = 'Noch kein Test gemacht. 24 Fragen zeigen dir, ob A1, A2 oder B1 sitzt.';
+    el('knopf-test').textContent = 'Niveau-Test machen (ca. 10 Min.)';
+  }
+  zeige('fortschritt');
+}
+
+// ---------- Niveau-Test ----------
+
+const test = { nr: 0, antworten: [], gewaehlt: null, fertig: false, reihenfolge: [] };
+
+function starteTest() {
+  test.nr = 0;
+  test.antworten = [];
+  test.fertig = false;
+  el('test-ergebnis').hidden = true;
+  el('test-frage-karte').hidden = false;
+  el('test-hinweis').hidden = false;
+  el('knopf-test-ende').textContent = 'Test abbrechen';
+  zeige('test');
+  zeigeTestfrage();
+}
+
+function zeigeTestfrage() {
+  const f = NIVEAUTEST[test.nr];
+  test.gewaehlt = null;
+  el('test-stand').textContent = `${test.nr + 1} von ${NIVEAUTEST.length}`;
+  el('test-frage').textContent = f.frage;
+  const box = el('test-antworten');
+  box.innerHTML = '';
+  const optionen = [...mischen(f.antworten.map((a, i) => ({ a, i }))), { a: 'Weiß ich nicht', i: -1 }];
+  for (const { a, i } of optionen) {
+    const knopf = document.createElement('button');
+    knopf.type = 'button';
+    knopf.className = 'antwort' + (i === -1 ? ' antwort-leise' : '');
+    knopf.textContent = a;
+    knopf.addEventListener('click', () => {
+      test.gewaehlt = i;
+      box.querySelectorAll('.antwort').forEach((k) => k.classList.toggle('gewaehlt', k === knopf));
+      el('knopf-test-weiter').disabled = false;
+    });
+    box.appendChild(knopf);
+  }
+  el('knopf-test-weiter').textContent = test.nr === NIVEAUTEST.length - 1 ? 'Auswerten' : 'Weiter';
+  el('knopf-test-weiter').disabled = true;
+}
+
+function testWeiter() {
+  if (test.fertig) { zeigeFortschritt(); return; }
+  if (test.gewaehlt === null) return;
+  test.antworten.push(test.gewaehlt);
+  test.nr += 1;
+  if (test.nr < NIVEAUTEST.length) { zeigeTestfrage(); return; }
+
+  // Auswerten
+  const ergebnis = Niveautest.auswerten(test.antworten);
+  Niveautest.speichern(ergebnis);
+  test.fertig = true;
+  el('test-stand').textContent = '';
+  el('test-frage-karte').hidden = true;
+  el('test-hinweis').hidden = true;
+  el('test-niveau').textContent = ergebnis.niveau || 'unter A1';
+  el('test-erklaerung').textContent = Niveautest.erklaerung(ergebnis.niveau);
+  const stufen = el('test-stufen');
+  stufen.innerHTML = '';
+  for (const [s, w] of Object.entries(ergebnis.proStufe)) balken(stufen, s, w.richtig, w.von);
+  el('test-ergebnis').hidden = false;
+  el('knopf-test-weiter').disabled = false;
+  el('knopf-test-weiter').textContent = 'Zum Fortschritt';
+  el('knopf-test-ende').textContent = 'Zur Startseite';
+}
+
+el('knopf-test').addEventListener('click', starteTest);
+el('knopf-test-weiter').addEventListener('click', testWeiter);
+el('knopf-test-ende').addEventListener('click', () => (test.fertig ? zeigeStart() : zeigeFortschritt()));
+
 // ---------- Knöpfe ----------
 
+el('knopf-fortschritt').addEventListener('click', zeigeFortschritt);
 el('knopf-woerterbuch').addEventListener('click', oeffneWoerterbuch);
 el('knopf-grammatik').addEventListener('click', zeigeKapitelliste);
 el('knopf-lesen').addEventListener('click', zeigeTextliste);

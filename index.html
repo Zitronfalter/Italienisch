@@ -49,6 +49,7 @@
       <button class="knopf-los" id="knopf-los" type="button">Los</button>
       <div class="leise-zeile">
         <button class="knopf-leise" id="knopf-woerterbuch" type="button">Wörterbuch</button>
+        <button class="knopf-leise" id="knopf-fortschritt" type="button">Fortschritt</button>
         <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
       </div>
     </section>
@@ -246,6 +247,68 @@
       <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
     </section>
 
+    <!-- Fortschritt -->
+    <section class="screen" id="screen-fortschritt" hidden>
+      <header class="kopf">
+        <h1>Fortschritt</h1>
+      </header>
+
+      <div class="karte">
+        <p class="karte-titel">Wörter, die sitzen</p>
+        <p class="zahl-gross" id="fs-sicher">0</p>
+        <p class="karte-text" id="fs-sicher-text"></p>
+      </div>
+
+      <div class="karte">
+        <p class="karte-titel">Dein Karteikasten</p>
+        <div class="faecher" id="fs-faecher"></div>
+        <p class="karte-text klein">Fach 1 = neu oder vergessen, Fach 5 = sitzt lange.</p>
+      </div>
+
+      <div class="zahlen-reihe">
+        <div class="karte">
+          <p class="karte-titel">Texte verstanden</p>
+          <p class="zahl-mittel" id="fs-texte"></p>
+        </div>
+        <div class="karte">
+          <p class="karte-titel">Grammatik geübt</p>
+          <p class="zahl-mittel" id="fs-grammatik"></p>
+        </div>
+      </div>
+
+      <div class="karte">
+        <p class="karte-titel">Niveau</p>
+        <p class="zahl-mittel" id="fs-niveau">–</p>
+        <p class="karte-text" id="fs-niveau-text">Noch kein Test gemacht.</p>
+        <button class="knopf-klein fs-test-knopf" id="knopf-test" type="button">Niveau-Test machen (ca. 10 Min.)</button>
+      </div>
+
+      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+    </section>
+
+    <!-- Niveau-Test -->
+    <section class="screen" id="screen-test" hidden>
+      <header class="kopf kopf-zeile">
+        <h2 class="kopf-klein">Niveau-Test</h2>
+        <span class="stand" id="test-stand"></span>
+      </header>
+      <div class="karte frage" id="test-frage-karte">
+        <p class="frage-text" id="test-frage" lang="it"></p>
+        <div class="antworten" id="test-antworten"></div>
+      </div>
+      <div class="karte" id="test-ergebnis" hidden>
+        <p class="karte-titel">Dein Niveau</p>
+        <p class="zahl-gross" id="test-niveau"></p>
+        <p class="karte-text" id="test-erklaerung"></p>
+        <div class="faecher" id="test-stufen"></div>
+      </div>
+      <p class="hinweis" id="test-hinweis">Rate nicht zu viel – „weiß nicht“ ist ehrlicher.</p>
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-test-weiter" type="button">Weiter</button>
+        <button class="knopf-zurueck" id="knopf-test-ende" type="button">Test abbrechen</button>
+      </div>
+    </section>
+
     <!-- Ende der Runde -->
     <section class="screen" id="screen-ende" hidden>
       <header class="kopf">
@@ -258,7 +321,14 @@
         <p class="karte-titel">Wörter, die sitzen</p>
         <p class="zahl-gross" id="ende-sicher">0</p>
       </div>
-      <button class="knopf-zurueck" data-zurueck type="button">Zur Startseite</button>
+      <div class="karte" id="ende-naechstes" hidden>
+        <p class="karte-titel">Jetzt noch</p>
+        <p class="karte-text" id="ende-naechstes-text" lang="it"></p>
+      </div>
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-naechstes" type="button" hidden>Weiter</button>
+        <button class="knopf-zurueck" data-zurueck type="button" id="knopf-ende-start">Zur Startseite</button>
+      </div>
     </section>
 
   </main>
@@ -296,6 +366,7 @@
   <script src="lesen.js"></script>
   <script src="grammatik.js"></script>
   <script src="woerterbuch.js"></script>
+  <script src="niveautest.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

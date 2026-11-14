@@ -33,6 +33,8 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - `woerterbuch.js` + `woerterbuch.json` – großes Wörterbuch (WikDict, CC BY-SA, Quelle in `LIZENZEN.md` und in der App nennen); Formen-Erkennung in `kandidaten()`. Neu bauen mit `werkzeuge/woerterbuch-bauen.js`.
 - Nachschlage-Reihenfolge (`Lesen.nachschlagen`): selbst eingetragene Bedeutung → Wörter im Text → `GRUNDWOERTER` → Grundwortschatz → eigene Wörter → Formen von Grundwortschatz-Wörtern → WikDict.
 - Eigene Texte: `Speicher.daten.eigeneTexte`; eigene Wörter: `Speicher.daten.eigeneWoerter` (`e-…`-IDs, mit `formen` und `selbst`).
+- `niveautest.js` – 24 Fragen (je 8 A1/A2/B1, erste Antwort = richtig), Stufe erreicht ab 6/8
+- Runde („Los“): Vokabeln, danach `naechsterInhalt()` in `app.js` – abwechselnd nächster unverstandener Text und nächstes ungeübtes Kapitel
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner
 

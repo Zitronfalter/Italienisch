@@ -1,7 +1,7 @@
 # 🇮🇹 Roadmap – Italienisch-App
 
-> **Stand:** 8 von 11 Schritten fertig
-> `████████████████░░░░░░` 73 %
+> **Stand:** 9 von 11 Schritten fertig
+> `██████████████████░░░░` 82 %
 >
 > Ein Schritt ist fertig, wenn er im Browser in iPhone-Größe funktioniert.
 > Was **du** tun oder entscheiden musst, steht in [TODO.md](TODO.md).
@@ -20,8 +20,8 @@
 | 6 | **Grammatik** | 9 Kapitel, 54 Übungen: Lücken, Sätze aus Wortkacheln bauen – und Regel direkt am Text | ✅ |
 | 7 | **Wörterbuch** | 55.240 Wörter Italienisch–Deutsch, offline, aus WikDict (CC BY-SA); Suche in beiden Richtungen, erkennt Formen (mangio → mangiare) | ✅ |
 | 8 | **Eigene Texte** | Rezept einfügen, Wort antippen, in Karteikarten übernehmen, eigene Bedeutung eintragen | ✅ |
-| 9 | **Runde & Fortschritt** | 10-Minuten-Runde, Wörter die sitzen, Niveau-Test A1/A2/B1 | ⏳ als Nächstes |
-| 10 | **Design & Begleiter** | Aussehen „Toskana, warm“ und Katze Micio als ruhiger Begleiter (Tipps, freut sich über echten Fortschritt, nie traurig, kein Druck) | ⬜ |
+| 9 | **Runde & Fortschritt** | „Los“: Vokabeln, dann Text oder Grammatik; Seite Fortschritt mit Karteikasten; Niveau-Test (24 Fragen) A1/A2/B1 | ✅ |
+| 10 | **Design & Begleiter** | Aussehen „Toskana, warm“ und Katze Micio als ruhiger Begleiter (Tipps, freut sich über echten Fortschritt, nie traurig, kein Druck) | ⏳ als Nächstes |
 | 11 | **Aufs iPhone** | Veröffentlichen und „Zum Home-Bildschirm“ | ⬜ |
 
 **Zeichen:** ✅ fertig · ⏳ in Arbeit / als Nächstes · ⬜ noch offen

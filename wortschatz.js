@@ -600,6 +600,42 @@ const WORTSCHATZ_THEMEN = [
     ["l'olio", 'das Öl'],
     ['la persona', 'die Person'],
   ]},
+
+  { thema: 'Lektion 9–12', stufe: 'A2', woerter: [
+    ['scorso', 'letzte(r); vergangen'],
+    ['il ristorante', 'das Restaurant'],
+    ['gli spaghetti', 'die Spaghetti'],
+    ['il peperoncino', 'die Chilischote'],
+    ['lo spicchio', 'die Zehe (Knoblauch)'],
+    ['la preparazione', 'die Zubereitung'],
+    ['suo', 'sein; ihr'],
+  ]},
+
+  { thema: 'Lektion 13–16', stufe: 'A2', woerter: [
+    ['consigliare', 'empfehlen; raten'],
+    ['nostro', 'unser'],
+    ['la stagione', 'die Jahreszeit'],
+  ]},
+
+  { thema: 'Lektion 17–18', stufe: 'A2', woerter: [
+    ['il tiramisù', 'das Tiramisu'],
+    ['la tazza', 'die Tasse'],
+    ['il frigorifero', 'der Kühlschrank'],
+    ['la crema', 'die Creme'],
+    ['il tuorlo', 'das Eigelb'],
+    ["l'albume", 'das Eiweiß'],
+    ['separare', 'trennen'],
+    ['il cacao', 'der Kakao'],
+    ['amaro', 'bitter'],
+    ['almeno', 'mindestens'],
+    ['la bicicletta', 'das Fahrrad'],
+    ['il traffico', 'der Verkehr'],
+    ['il sindaco', 'der Bürgermeister'],
+    ['il comune', 'die Gemeinde; die Stadtverwaltung'],
+    ['il progetto', 'das Projekt'],
+    ['il parcheggio', 'der Parkplatz'],
+    ["l'aria", 'die Luft'],
+  ]},
 ];
 
 // ---------- Ab hier: Liste für die App bauen ----------

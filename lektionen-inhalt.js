@@ -105,4 +105,120 @@ var LEKTIONEN = [
     kapitel: [],
     texte: ['ripasso-2'],
   },
+
+  // ==================== A2 ====================
+  {
+    id: 'l09', nr: 9, titel: 'Il fine settimana scorso', situation: 'Erzählen, was man gemacht hat', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'ieri', 'scorso', 'la settimana', 'il mare', 'la spiaggia', 'la macchina', 'il viaggio', "l'amica", "l'amico",
+      'il pesce', 'il pranzo', 'il sole', 'piovere', 'ancora', 'così', 'fare', 'dire', 'piccolo', 'bello', 'gentile',
+      'il ristorante', 'ma',
+    ],
+    kapitel: ['passato-avere'],
+    texte: ['fine-settimana'],
+  },
+  {
+    id: 'l10', nr: 10, titel: 'In vacanza', situation: 'Vom Urlaub erzählen', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'la vacanza', "l'aereo", "l'aeroporto", 'viaggiare', 'il lago', 'la montagna', 'il paese', 'la piazza',
+      'la chiesa', 'il museo', 'il ponte', 'restare', 'entrare', 'la strada', 'lontano', 'vicino', "l'estate", 'lì',
+      'la mappa', 'dritto', 'contento', 'vedere',
+    ],
+    kapitel: ['passato-essere'],
+    texte: ['vacanza'],
+  },
+  {
+    id: 'l11', nr: 11, titel: 'Spaghetti aglio e olio', situation: 'Ein Rezept mit Befehlsform', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'gli spaghetti', 'il peperoncino', 'lo spicchio', 'la preparazione', 'la pentola', 'la padella', 'il cucchiaio',
+      'il grammo', 'il prezzemolo', 'il fuoco', 'a fuoco lento', 'cuocere', 'bollire', 'tritare', 'versare', 'rosolare',
+      'scolare', 'circa', 'portare', 'la pasta', 'il pepe',
+    ],
+    kapitel: ['imperativ'],
+    texte: ['spaghetti-aglio-olio'],
+  },
+  {
+    id: 'l12', nr: 12, titel: 'Al mercato', situation: 'Obst und Gemüse einkaufen', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'il mercato', 'il chilo', 'la frutta', 'la verdura', 'la mela', "l'arancia", 'il limone', 'la patata',
+      'la cipolla', 'il formaggio', 'costare', 'il prezzo', "un po'", 'il resto', 'quanto', 'comprare', 'vendere',
+      'buono', 'chiedere', 'suo', 'allora',
+    ],
+    kapitel: ['pronomi-diretti'],
+    texte: ['mercato'],
+  },
+  {
+    id: 'r3', nr: 12.5, titel: 'Wiederholung 3', situation: 'Lektion 9–12 gemischt', stufe: 'A2', art: 'ripasso',
+    lektionen: ['l09', 'l10', 'l11', 'l12'],
+    woerter: [],
+    kapitel: [],
+    texte: ['ripasso-3'],
+  },
+  {
+    id: 'l13', nr: 13, titel: 'Al ristorante', situation: 'Bestellen, empfehlen, bezahlen', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'il cameriere', 'il menù', 'il tavolo', 'il conto', 'il bicchiere', 'la bottiglia', 'il piatto',
+      "l'antipasto", 'il contorno', 'ordinare', 'prenotare', 'il coperto', 'la mancia', 'il vino', 'la carne',
+      'il pollo', 'il dolce', 'la cena', "l'insalata", 'consigliare', 'tutto', 'avere fame',
+    ],
+    kapitel: ['pronomi-indiretti'],
+    texte: ['ristorante'],
+  },
+  {
+    id: 'l14', nr: 14, titel: 'Quando ero piccola', situation: 'Von früher erzählen', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'il bambino', 'la scuola', 'il giardino', "l'albero", "l'animale", 'il fiore', 'ricordare', 'vivere', 'spesso',
+      'mai', 'giovane', 'vecchio', 'ogni', 'felice', 'il regalo', 'il compleanno', 'la festa', 'quando', 'nostro',
+      "l'anno", 'imparare',
+    ],
+    kapitel: ['imperfetto'],
+    texte: ['da-piccola'],
+  },
+  {
+    id: 'l15', nr: 15, titel: 'Che tempo fa?', situation: 'Wetter und Jahreszeiten vergleichen', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'il tempo', 'il vento', 'la neve', 'la nuvola', 'la pioggia', 'fa caldo', 'fa freddo', 'freddo', 'brutto',
+      'la primavera', "l'autunno", "l'inverno", 'la stagione', 'gennaio', 'agosto', 'alto', 'basso', 'veloce',
+      'diverso', 'come', 'troppo',
+    ],
+    kapitel: ['vergleiche'],
+    texte: ['tempo'],
+  },
+  {
+    id: 'l16', nr: 16, titel: 'Dal medico', situation: 'Sagen, was weh tut', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'il medico', 'la testa', 'la mano', 'il piede', 'il braccio', 'la gamba', "l'occhio", 'la bocca', 'il naso',
+      "l'orecchio", 'il dente', 'la pancia', 'il dolore', 'malato', 'ho mal di testa', 'la medicina', 'la farmacia',
+      "l'ospedale", 'sentire', 'male', 'come sta?', 'mentre',
+    ],
+    kapitel: ['imperfetto-passato'],
+    texte: ['medico'],
+  },
+  {
+    id: 'r4', nr: 16.5, titel: 'Wiederholung 4', situation: 'Lektion 13–16 gemischt', stufe: 'A2', art: 'ripasso',
+    lektionen: ['l13', 'l14', 'l15', 'l16'],
+    woerter: [],
+    kapitel: [],
+    texte: ['ripasso-4'],
+  },
+  {
+    id: 'l17', nr: 17, titel: 'Tiramisù', situation: 'Ein Rezept mit „man“', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'il tiramisù', 'la tazza', 'il frigorifero', 'la crema', 'il tuorlo', "l'albume", 'separare', 'il cacao',
+      'amaro', 'almeno', 'prima', "l'uovo", 'lo zucchero', 'la panna', 'il burro', 'la farina', 'coprire', 'togliere',
+      'crudo', 'cotto',
+    ],
+    kapitel: ['si-impersonale'],
+    texte: ['tiramisu'],
+  },
+  {
+    id: 'l18', nr: 18, titel: 'Bologna in bici', situation: 'Eine Nachricht lesen – A2 geschafft', stufe: 'A2', art: 'lektion',
+    woerter: [
+      'la notizia', 'il governo', 'il problema', 'il cittadino', 'aumentare', 'importante', 'possibile',
+      'la bicicletta', 'il traffico', 'il sindaco', 'il comune', 'il progetto', 'il parcheggio', 'il negozio',
+      'perdere', 'davanti', 'secondo', "d'accordo", "l'aria", 'nuovo', 'cento', 'la porta',
+    ],
+    kapitel: ['relativ-che'],
+    texte: ['bologna-bici'],
+  },
 ];

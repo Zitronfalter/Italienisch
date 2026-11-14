@@ -24,7 +24,9 @@ const GRUNDWOERTER = {
   'è': ['essere', 'ist'], 'sono': ['essere', 'bin; sind (sono le otto = es ist acht Uhr)'],
   'ha': ['avere', 'hat'], 'ho': ['avere', 'ich habe'], 'abbiamo': ['avere', 'wir haben'],
   'va': ['andare', 'geht; fährt'], 'fa': ['fare', 'macht'], 'vuole': ['volere', 'will; möchte (Sie möchten)'],
-  'mi': ['mi', 'mich; mir'], 'si': ['si', 'sich'], 'mio': ['mio', 'mein'], 'mia': ['mia', 'meine'],
+  'mi': ['mi', 'mich; mir'], 'ti': ['ti', 'dich; dir'], 'si': ['si', 'sich; man'],
+  'ci': ['ci', 'uns; da, dort'], "c'": ['ci', "da (c'è = es gibt; da ist)"], 'vi': ['vi', 'euch'],
+  'li': ['li', 'sie (Mehrzahl, männlich)'], 'ne': ['ne', 'davon'], 'mio': ['mio', 'mein'], 'mia': ['mia', 'meine'],
   'lui': ['lui', 'er'], 'lei': ['lei', 'sie; Sie'], 'loro': ['loro', 'sie; ihr, ihre (Mehrzahl)'],
   'che': ['che', 'dass; der/die/das (welcher); was'], 'più': ['più', 'mehr'], 'meno': ['meno', 'weniger'],
   'però': ['però', 'aber; jedoch'], 'poi': ['poi', 'dann; danach'], 'qualche': ['qualche', 'einige; ein paar'],
@@ -562,6 +564,7 @@ Domenica ha piovuto, così siamo tornate a casa presto. È stato un fine settima
       'pranzo': ['il pranzo', 'Mittagessen (a pranzo = zum Mittagessen)'],
       'mangiato': ['mangiare', 'gegessen'],
       'ristorante': ['il ristorante', 'Restaurant', 'das Restaurant'],
+      'cameriere': ['il cameriere', 'Kellner', 'der Kellner'],
       'stato': ['essere', 'gewesen (è stato = war)'],
       'piovuto': ['piovere', 'geregnet (ha piovuto = es hat geregnet)'],
       'tornate': ['tornare', 'zurückgekehrt'],
@@ -585,6 +588,454 @@ Domenica ha piovuto, così siamo tornate a casa presto. È stato un fine settima
   },
 
   {
+    id: 'vacanza', titel: 'In vacanza in Sicilia', art: 'Text', stufe: 'A2',
+    text: `Quest'estate Marta e Paolo sono andati in vacanza in Sicilia. Sono partiti da Milano in aereo. All'aeroporto di Palermo hanno preso una macchina.
+
+Sono restati dieci giorni in un piccolo paese vicino al mare. La mattina sono andati in spiaggia, il pomeriggio hanno visto i paesi vicini.
+
+Un giorno sono andati a Palermo. Sono entrati in una grande chiesa e in un museo. Poi hanno mangiato in una bella piazza.
+
+Marta è anche andata in montagna con un'amica. La strada era lunga, ma il paesaggio era bellissimo.
+
+Sono tornati a casa stanchi, ma molto contenti.`,
+    woerter: {
+      "quest'": ['questo', "diese(r, s) (quest'estate = diesen Sommer)", 'dieser; diese; dieses'],
+      'marta': ['Marta', 'Marta (Vorname)'],
+      'paolo': ['Paolo', 'Paolo (Vorname)'],
+      'andati': ['andare', 'gefahren; gegangen (sono andati = sie sind gefahren)'],
+      'sicilia': ['Sicilia', 'Sizilien'],
+      'partiti': ['partire', 'abgereist; losgeflogen'],
+      'milano': ['Milano', 'Mailand'],
+      'palermo': ['Palermo', 'Palermo (Stadt auf Sizilien)'],
+      'hanno': ['avere', 'sie haben'],
+      'preso': ['prendere', 'genommen (hanno preso = sie haben genommen)'],
+      'restati': ['restare', 'geblieben'],
+      'giorni': ['il giorno', 'Tage'],
+      'visto': ['vedere', 'gesehen; angesehen'],
+      'paesi': ['il paese', 'Dörfer'],
+      'vicini': ['vicino', 'in der Nähe (Mehrzahl)'],
+      'entrati': ['entrare', 'hineingegangen'],
+      'mangiato': ['mangiare', 'gegessen'],
+      'bella': ['bello', 'schön'],
+      'andata': ['andare', 'gefahren; gegangen'],
+      'era': ['essere', 'war'],
+      'lunga': ['lungo', 'lang'],
+      'paesaggio': ['il paesaggio', 'die Landschaft', 'die Landschaft'],
+      'bellissimo': ['bello', 'wunderschön'],
+      'tornati': ['tornare', 'zurückgekommen'],
+      'stanchi': ['stanco', 'müde (Mehrzahl)'],
+      'contenti': ['contento', 'zufrieden; froh (Mehrzahl)'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      "Quest'estate Marta e Paolo sono andati in vacanza in Sicilia.": 'Diesen Sommer sind Marta und Paolo nach Sizilien in den Urlaub gefahren.',
+      'Sono partiti da Milano in aereo.': 'Sie sind von Mailand aus mit dem Flugzeug geflogen.',
+      "All'aeroporto di Palermo hanno preso una macchina.": 'Am Flughafen von Palermo haben sie ein Auto genommen.',
+      'Sono restati dieci giorni in un piccolo paese vicino al mare.': 'Sie sind zehn Tage in einem kleinen Dorf in der Nähe des Meeres geblieben.',
+      'La mattina sono andati in spiaggia, il pomeriggio hanno visto i paesi vicini.': 'Morgens sind sie an den Strand gegangen, nachmittags haben sie sich die Dörfer in der Nähe angesehen.',
+      'Un giorno sono andati a Palermo.': 'Eines Tages sind sie nach Palermo gefahren.',
+      'Sono entrati in una grande chiesa e in un museo.': 'Sie sind in eine große Kirche und in ein Museum gegangen.',
+      'Poi hanno mangiato in una bella piazza.': 'Dann haben sie auf einem schönen Platz gegessen.',
+      "Marta è anche andata in montagna con un'amica.": 'Marta ist auch mit einer Freundin in die Berge gefahren.',
+      'La strada era lunga, ma il paesaggio era bellissimo.': 'Die Straße war lang, aber die Landschaft war wunderschön.',
+      'Sono tornati a casa stanchi, ma molto contenti.': 'Sie sind müde, aber sehr zufrieden nach Hause gekommen.',
+    },
+    fragen: [
+      { frage: 'Wie sind Marta und Paolo nach Sizilien gereist?', antworten: ['Mit dem Flugzeug', 'Mit dem Zug', 'Mit dem Schiff'] },
+      { frage: 'Wie lange sind sie geblieben?', antworten: ['Zehn Tage', 'Eine Woche', 'Zwei Tage'] },
+      { frage: 'Was haben sie in Palermo gemacht?', antworten: ['Eine Kirche und ein Museum besucht', 'Den ganzen Tag am Strand gelegen', 'Ein Auto gekauft'] },
+    ],
+  },
+
+  {
+    id: 'mercato', titel: 'Al mercato', art: 'Text', stufe: 'A2',
+    text: `Sabato mattina Luca va al mercato con sua nonna. Il mercato è in piazza.
+
+«Buongiorno! Quanto costano le mele?» chiede la nonna.
+
+«Due euro al chilo. Sono molto buone!»
+
+«Allora ne prendo un chilo. E i limoni?»
+
+«Li vendo a tre euro al chilo.»
+
+«Sono un po' cari. Li compro la prossima volta.»
+
+Poi la nonna compra le patate, le cipolle e un pezzo di formaggio. Luca lo vuole mangiare subito!
+
+A casa la nonna guarda il resto e dice: «Al mercato la frutta e la verdura sono più fresche.»`,
+    woerter: {
+      'luca': ['Luca', 'Luca (Vorname)'],
+      'sua': ['suo', 'seine; ihre (sua nonna = seine Oma)'],
+      'costano': ['costare', 'kosten'],
+      'mele': ['la mela', 'Äpfel'],
+      'chiede': ['chiedere', 'fragt'],
+      'buone': ['buono', 'gut (Mehrzahl)'],
+      'ne': ['ne', 'davon (ne prendo un chilo = ich nehme ein Kilo davon)'],
+      'prendo': ['prendere', 'ich nehme'],
+      'limoni': ['il limone', 'Zitronen'],
+      'li': ['li', 'sie (Mehrzahl: die Zitronen)'],
+      'vendo': ['vendere', 'ich verkaufe'],
+      'cari': ['caro', 'teuer (Mehrzahl)', 'teuer; lieb'],
+      'compro': ['comprare', 'ich kaufe'],
+      'prossima': ['prossimo', 'nächste'],
+      'volta': ['la volta', 'Mal (la prossima volta = nächstes Mal)', 'das Mal'],
+      'compra': ['comprare', 'kauft'],
+      'patate': ['la patata', 'Kartoffeln'],
+      'cipolle': ['la cipolla', 'Zwiebeln'],
+      'lo': ['lo', 'ihn (lo vuole mangiare = will ihn essen)'],
+      'guarda': ['guardare', 'sieht an'],
+      'dice': ['dire', 'sagt'],
+      'fresche': ['fresco', 'frisch (Mehrzahl)'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Sabato mattina Luca va al mercato con sua nonna.': 'Am Samstagmorgen geht Luca mit seiner Oma auf den Markt.',
+      'Il mercato è in piazza.': 'Der Markt ist auf dem Platz.',
+      'Poi la nonna compra le patate, le cipolle e un pezzo di formaggio.': 'Dann kauft die Oma Kartoffeln, Zwiebeln und ein Stück Käse.',
+      'Luca lo vuole mangiare subito!': 'Luca will ihn sofort essen!',
+    },
+    fragen: [
+      { frage: 'Wie viel kosten die Äpfel?', antworten: ['Zwei Euro das Kilo', 'Drei Euro das Kilo', 'Einen Euro das Kilo'] },
+      { frage: 'Warum kauft die Oma keine Zitronen?', antworten: ['Sie sind ihr etwas zu teuer', 'Es gibt keine', 'Sie sind nicht frisch'] },
+      { frage: 'Was will Luca sofort essen?', antworten: ['Den Käse', 'Einen Apfel', 'Eine Zitrone'] },
+    ],
+  },
+
+  {
+    id: 'ripasso-3', titel: 'Una cena per gli amici', art: 'Text', stufe: 'A2',
+    text: `Ieri Paolo ha invitato due amici a cena. La mattina è andato al mercato e ha comprato pomodori, aglio e un chilo di spaghetti. Il pane l'ha preso in panetteria.
+
+Il pomeriggio ha cucinato. Ha tagliato l'aglio e i pomodori e li ha rosolati in padella con l'olio e il peperoncino.
+
+Gli amici sono arrivati alle otto. Hanno portato una bottiglia di vino.
+
+A cena hanno parlato delle vacanze. Marta è stata in Sicilia, Luca è andato in montagna.
+
+«Gli spaghetti sono buonissimi!» dice Luca. «Ne vorrei ancora un po'.»
+
+Alla fine Paolo è stanco, ma molto contento.`,
+    woerter: {
+      'paolo': ['Paolo', 'Paolo (Vorname)'],
+      'invitato': ['invitare', 'eingeladen', 'einladen'],
+      'amici': ["l'amico", 'Freunde'],
+      'cena': ['la cena', 'Abendessen (a cena = zum Abendessen)', 'das Abendessen'],
+      'andato': ['andare', 'gegangen'],
+      'comprato': ['comprare', 'gekauft'],
+      'pomodori': ['il pomodoro', 'Tomaten'],
+      'preso': ['prendere', "genommen; geholt (l'ha preso = hat es geholt)"],
+      'panetteria': ['la panetteria', 'Bäckerei (in panetteria = in der Bäckerei)', 'die Bäckerei'],
+      'cucinato': ['cucinare', 'gekocht'],
+      'tagliato': ['tagliare', 'geschnitten'],
+      'rosolati': ['rosolare', 'angebraten'],
+      'arrivati': ['arrivare', 'angekommen'],
+      'hanno': ['avere', 'sie haben'],
+      'portato': ['portare', 'mitgebracht'],
+      'bottiglia': ['la bottiglia', 'Flasche', 'die Flasche'],
+      'vino': ['il vino', 'Wein', 'der Wein'],
+      'parlato': ['parlare', 'gesprochen'],
+      'vacanze': ['la vacanza', 'Ferien; Urlaub'],
+      'marta': ['Marta', 'Marta (Vorname)'],
+      'stata': ['essere', 'gewesen (è stata = war)'],
+      'sicilia': ['Sicilia', 'Sizilien'],
+      'luca': ['Luca', 'Luca (Vorname)'],
+      'buonissimi': ['buono', 'sehr lecker'],
+      'dice': ['dire', 'sagt'],
+      'ne': ['ne', "davon (ne vorrei = ich hätte gern noch davon)"],
+      'fine': ['la fine', 'Ende (alla fine = am Ende)'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Ieri Paolo ha invitato due amici a cena.': 'Gestern hat Paolo zwei Freunde zum Abendessen eingeladen.',
+      'La mattina è andato al mercato e ha comprato pomodori, aglio e un chilo di spaghetti.': 'Am Morgen ist er auf den Markt gegangen und hat Tomaten, Knoblauch und ein Kilo Spaghetti gekauft.',
+      "Il pane l'ha preso in panetteria.": 'Das Brot hat er in der Bäckerei geholt.',
+      'Il pomeriggio ha cucinato.': 'Am Nachmittag hat er gekocht.',
+      "Ha tagliato l'aglio e i pomodori e li ha rosolati in padella con l'olio e il peperoncino.": 'Er hat den Knoblauch und die Tomaten geschnitten und sie mit Öl und Chili in der Pfanne angebraten.',
+      'Gli amici sono arrivati alle otto.': 'Die Freunde sind um acht Uhr gekommen.',
+      'Hanno portato una bottiglia di vino.': 'Sie haben eine Flasche Wein mitgebracht.',
+      'A cena hanno parlato delle vacanze.': 'Beim Abendessen haben sie über die Ferien gesprochen.',
+      'Marta è stata in Sicilia, Luca è andato in montagna.': 'Marta war auf Sizilien, Luca war in den Bergen.',
+      'Alla fine Paolo è stanco, ma molto contento.': 'Am Ende ist Paolo müde, aber sehr zufrieden.',
+    },
+    fragen: [
+      { frage: 'Was hat Paolo auf dem Markt gekauft?', antworten: ['Tomaten, Knoblauch und Spaghetti', 'Fisch und Wein', 'Käse und Äpfel'] },
+      { frage: 'Was haben die Freunde mitgebracht?', antworten: ['Eine Flasche Wein', 'Einen Kuchen', 'Blumen'] },
+      { frage: 'Wo war Marta im Urlaub?', antworten: ['Auf Sizilien', 'In den Bergen', 'In Rom'] },
+    ],
+  },
+
+  {
+    id: 'ristorante', titel: 'Al ristorante', art: 'Text', stufe: 'A2',
+    text: `Sabato sera Anna e Marco vanno a cena in un piccolo ristorante. Hanno prenotato un tavolo per le otto.
+
+Il cameriere gli porta il menù. «Vi consiglio il pesce, oggi è molto fresco», dice.
+
+Anna ordina un antipasto e poi il pesce con un contorno di verdure. A Marco il pesce non piace: lui prende il pollo con l'insalata. Da bere ordinano una bottiglia di vino.
+
+«Vi piace?» chiede il cameriere. «Sì, è tutto buonissimo!»
+
+Alla fine Marco chiede il conto. Il coperto costa due euro a persona. Anna lascia una piccola mancia: il cameriere è stato molto gentile.`,
+    woerter: {
+      'anna': ['Anna', 'Anna (Vorname)'],
+      'marco': ['Marco', 'Marco (Vorname)'],
+      'vanno': ['andare', 'sie gehen'],
+      'hanno': ['avere', 'sie haben'],
+      'prenotato': ['prenotare', 'reserviert'],
+      'gli': ['gli', 'ihnen (gli porta = bringt ihnen)'],
+      'porta': ['portare', 'bringt'],
+      'vi': ['vi', 'euch (vi consiglio = ich empfehle euch)'],
+      'consiglio': ['consigliare', 'ich empfehle'],
+      'dice': ['dire', 'sagt'],
+      'ordina': ['ordinare', 'bestellt'],
+      'verdure': ['la verdura', 'Gemüse'],
+      'piace': ['piacere', 'gefällt (a Marco non piace = Marco mag nicht)'],
+      'prende': ['prendere', 'nimmt'],
+      'bere': ['bere', 'trinken (da bere = zum Trinken)'],
+      'ordinano': ['ordinare', 'sie bestellen'],
+      'chiede': ['chiedere', 'fragt; bittet um'],
+      'buonissimo': ['buono', 'sehr lecker'],
+      'fine': ['la fine', 'Ende (alla fine = am Ende)'],
+      'costa': ['costare', 'kostet'],
+      'lascia': ['lasciare', 'lässt da; gibt', 'lassen'],
+      'piccola': ['piccolo', 'klein'],
+      'stato': ['essere', 'gewesen (è stato = war)'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Sabato sera Anna e Marco vanno a cena in un piccolo ristorante.': 'Am Samstagabend gehen Anna und Marco in einem kleinen Restaurant essen.',
+      'Hanno prenotato un tavolo per le otto.': 'Sie haben einen Tisch für acht Uhr reserviert.',
+      'Anna ordina un antipasto e poi il pesce con un contorno di verdure.': 'Anna bestellt eine Vorspeise und dann den Fisch mit Gemüse als Beilage.',
+      "A Marco il pesce non piace: lui prende il pollo con l'insalata.": 'Marco mag keinen Fisch: Er nimmt das Hähnchen mit Salat.',
+      'Da bere ordinano una bottiglia di vino.': 'Zum Trinken bestellen sie eine Flasche Wein.',
+      'Alla fine Marco chiede il conto.': 'Am Ende bittet Marco um die Rechnung.',
+      'Il coperto costa due euro a persona.': 'Das Gedeck kostet zwei Euro pro Person.',
+      'Anna lascia una piccola mancia: il cameriere è stato molto gentile.': 'Anna gibt ein kleines Trinkgeld: Der Kellner war sehr freundlich.',
+    },
+    fragen: [
+      { frage: 'Was empfiehlt der Kellner?', antworten: ['Den Fisch', 'Das Hähnchen', 'Den Wein'] },
+      { frage: 'Was isst Marco?', antworten: ['Hähnchen mit Salat', 'Fisch mit Gemüse', 'Nur eine Vorspeise'] },
+      { frage: 'Wie viel kostet das Gedeck?', antworten: ['Zwei Euro pro Person', 'Zehn Euro', 'Nichts'] },
+    ],
+  },
+
+  {
+    id: 'da-piccola', titel: 'Quando ero piccola', art: 'Text', stufe: 'A2',
+    text: `Quando ero piccola abitavo con la mia famiglia in un paese vicino a Siena. La nostra casa era vecchia, ma aveva un grande giardino con molti alberi e fiori.
+
+Mio padre lavorava in città e tornava sempre tardi. Mia madre era maestra nella scuola del paese.
+
+Il pomeriggio giocavo in giardino con mio fratello e con il nostro cane. D'estate andavamo spesso al lago. Non avevamo la televisione, ma eravamo felici.
+
+Ogni anno per il mio compleanno la nonna faceva una torta al cioccolato. Ricordo ancora il suo profumo!`,
+    woerter: {
+      'ero': ['essere', 'ich war'],
+      'piccola': ['piccolo', 'klein'],
+      'abitavo': ['abitare', 'ich wohnte'],
+      'siena': ['Siena', 'Siena (Stadt in der Toskana)'],
+      'nostra': ['nostro', 'unsere'],
+      'era': ['essere', 'war'],
+      'vecchia': ['vecchio', 'alt'],
+      'aveva': ['avere', 'hatte'],
+      'molti': ['molto', 'viele'],
+      'alberi': ["l'albero", 'Bäume'],
+      'fiori': ['il fiore', 'Blumen'],
+      'lavorava': ['lavorare', 'arbeitete'],
+      'tornava': ['tornare', 'kam zurück'],
+      'maestra': ['la maestra', 'Lehrerin (in der Grundschule)', 'die Lehrerin'],
+      'giocavo': ['giocare', 'ich spielte'],
+      "d'": ['di', "von; aus (d'estate = im Sommer)"],
+      'andavamo': ['andare', 'wir fuhren; wir gingen'],
+      'avevamo': ['avere', 'wir hatten'],
+      'televisione': ['la televisione', 'Fernseher; Fernsehen', 'der Fernseher'],
+      'eravamo': ['essere', 'wir waren'],
+      'felici': ['felice', 'glücklich (Mehrzahl)'],
+      'faceva': ['fare', 'machte; backte'],
+      'cioccolato': ['il cioccolato', 'Schokolade (al cioccolato = mit Schokolade)', 'die Schokolade'],
+      'ricordo': ['ricordare', 'ich erinnere mich an'],
+      'profumo': ['il profumo', 'Duft', 'der Duft'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Quando ero piccola abitavo con la mia famiglia in un paese vicino a Siena.': 'Als ich klein war, wohnte ich mit meiner Familie in einem Dorf in der Nähe von Siena.',
+      'La nostra casa era vecchia, ma aveva un grande giardino con molti alberi e fiori.': 'Unser Haus war alt, aber es hatte einen großen Garten mit vielen Bäumen und Blumen.',
+      'Mio padre lavorava in città e tornava sempre tardi.': 'Mein Vater arbeitete in der Stadt und kam immer spät nach Hause.',
+      'Mia madre era maestra nella scuola del paese.': 'Meine Mutter war Lehrerin in der Schule im Dorf.',
+      'Il pomeriggio giocavo in giardino con mio fratello e con il nostro cane.': 'Nachmittags spielte ich mit meinem Bruder und unserem Hund im Garten.',
+      "D'estate andavamo spesso al lago.": 'Im Sommer fuhren wir oft an den See.',
+      'Non avevamo la televisione, ma eravamo felici.': 'Wir hatten keinen Fernseher, aber wir waren glücklich.',
+      'Ogni anno per il mio compleanno la nonna faceva una torta al cioccolato.': 'Jedes Jahr backte die Oma zu meinem Geburtstag einen Schokoladenkuchen.',
+      'Ricordo ancora il suo profumo!': 'Ich erinnere mich noch an seinen Duft!',
+    },
+    fragen: [
+      { frage: 'Wo wohnte die Erzählerin als Kind?', antworten: ['In einem Dorf bei Siena', 'In Rom', 'Am Meer'] },
+      { frage: 'Was war ihre Mutter von Beruf?', antworten: ['Lehrerin', 'Ärztin', 'Köchin'] },
+      { frage: 'Was machte die Oma zum Geburtstag?', antworten: ['Einen Schokoladenkuchen', 'Ein Tiramisù', 'Eine Pizza'] },
+    ],
+  },
+
+  {
+    id: 'tempo', titel: 'Che tempo fa in Italia?', art: 'Text', stufe: 'A2',
+    text: `In Italia il tempo è molto diverso da nord a sud.
+
+A Milano l'inverno è freddo e spesso c'è la nebbia. A volte c'è anche la neve. In Sicilia l'inverno è meno freddo: anche a gennaio ci sono giorni di sole.
+
+L'estate è calda in tutta Italia, ma il sud è più caldo del nord. In agosto a Palermo ci sono anche quaranta gradi!
+
+La primavera e l'autunno sono le stagioni più belle: non fa troppo caldo e non fa troppo freddo. In autunno però piove spesso e c'è vento.
+
+E oggi? Che tempo fa?`,
+    woerter: {
+      'italia': ['Italia', 'Italien'],
+      'nord': ['il nord', 'Norden', 'der Norden'],
+      'sud': ['il sud', 'Süden', 'der Süden'],
+      'milano': ['Milano', 'Mailand'],
+      'nebbia': ['la nebbia', 'Nebel', 'der Nebel'],
+      'volte': ['la volta', 'Mal (a volte = manchmal)', 'das Mal'],
+      'sicilia': ['Sicilia', 'Sizilien'],
+      'giorni': ['il giorno', 'Tage'],
+      'calda': ['caldo', 'warm; heiß'],
+      'tutta': ['tutto', 'ganz (in tutta Italia = in ganz Italien)'],
+      'palermo': ['Palermo', 'Palermo (Stadt auf Sizilien)'],
+      'quaranta': ['quaranta', 'vierzig', 'vierzig'],
+      'gradi': ['il grado', 'Grad', 'der Grad'],
+      'stagioni': ['la stagione', 'Jahreszeiten'],
+      'belle': ['bello', 'schön (Mehrzahl)'],
+      'piove': ['piovere', 'es regnet'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'In Italia il tempo è molto diverso da nord a sud.': 'In Italien ist das Wetter von Norden bis Süden sehr verschieden.',
+      "A Milano l'inverno è freddo e spesso c'è la nebbia.": 'In Mailand ist der Winter kalt und oft gibt es Nebel.',
+      "A volte c'è anche la neve.": 'Manchmal gibt es auch Schnee.',
+      "In Sicilia l'inverno è meno freddo: anche a gennaio ci sono giorni di sole.": 'Auf Sizilien ist der Winter weniger kalt: Auch im Januar gibt es sonnige Tage.',
+      "L'estate è calda in tutta Italia, ma il sud è più caldo del nord.": 'Der Sommer ist in ganz Italien heiß, aber der Süden ist heißer als der Norden.',
+      'In agosto a Palermo ci sono anche quaranta gradi!': 'Im August hat es in Palermo sogar vierzig Grad!',
+      "La primavera e l'autunno sono le stagioni più belle: non fa troppo caldo e non fa troppo freddo.": 'Frühling und Herbst sind die schönsten Jahreszeiten: Es ist nicht zu heiß und nicht zu kalt.',
+      "In autunno però piove spesso e c'è vento.": 'Im Herbst regnet es aber oft und es ist windig.',
+      'Che tempo fa?': 'Wie ist das Wetter?',
+    },
+    fragen: [
+      { frage: 'Wie ist der Winter in Mailand?', antworten: ['Kalt, oft mit Nebel', 'Warm und sonnig', 'Immer mit Schnee'] },
+      { frage: 'Wie heiß kann es im August in Palermo werden?', antworten: ['Vierzig Grad', 'Zwanzig Grad', 'Dreißig Grad'] },
+      { frage: 'Welche Jahreszeiten sind am schönsten?', antworten: ['Frühling und Herbst', 'Sommer und Winter', 'Nur der Sommer'] },
+    ],
+  },
+
+  {
+    id: 'medico', titel: 'Dal medico', art: 'Text', stufe: 'A2',
+    text: `Ieri mattina Sara si è svegliata con un forte mal di testa. Aveva anche mal di pancia e si sentiva molto stanca.
+
+È andata subito dal medico. Mentre aspettava, leggeva un libro.
+
+«Buongiorno, signora. Come sta?» ha chiesto il medico.
+
+«Male. Ho mal di testa e non ho fame.»
+
+Il medico le ha guardato la bocca e gli occhi. «Non è niente di grave, è solo un'influenza. Deve restare a casa tre giorni e bere molta acqua.»
+
+Sara è andata in farmacia e ha comprato una medicina. Poi è tornata a casa e ha dormito tutto il pomeriggio.`,
+    woerter: {
+      'sara': ['Sara', 'Sara (Vorname)'],
+      'svegliata': ['svegliarsi', 'aufgewacht (si è svegliata = ist aufgewacht)'],
+      'forte': ['forte', 'stark', 'stark'],
+      'mal': ['male', 'Schmerz (mal di testa = Kopfschmerzen)'],
+      'aveva': ['avere', 'hatte'],
+      'sentiva': ['sentire', 'fühlte (si sentiva = fühlte sich)'],
+      'stanca': ['stanco', 'müde'],
+      'andata': ['andare', 'gegangen'],
+      'aspettava': ['aspettare', 'wartete', 'warten'],
+      'leggeva': ['leggere', 'las'],
+      'signora': ['la signora', 'Frau (Anrede)', 'die Dame; Frau (Anrede)'],
+      'chiesto': ['chiedere', 'gefragt'],
+      'fame': ['avere fame', 'Hunger (non ho fame = ich habe keinen Hunger)'],
+      'le': ['le', 'ihr (le ha guardato = hat ihr … angesehen)'],
+      'guardato': ['guardare', 'angesehen'],
+      'occhi': ["l'occhio", 'Augen'],
+      'niente': ['niente', 'nichts', 'nichts'],
+      'grave': ['grave', 'schlimm; schwer', 'schlimm; schwer'],
+      'influenza': ["l'influenza", 'Grippe', 'die Grippe'],
+      'deve': ['dovere', 'muss'],
+      'giorni': ['il giorno', 'Tage'],
+      'molta': ['molto', 'viel'],
+      'comprato': ['comprare', 'gekauft'],
+      'tornata': ['tornare', 'zurückgekommen'],
+      'dormito': ['dormire', 'geschlafen'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Ieri mattina Sara si è svegliata con un forte mal di testa.': 'Gestern Morgen ist Sara mit starken Kopfschmerzen aufgewacht.',
+      'Aveva anche mal di pancia e si sentiva molto stanca.': 'Sie hatte auch Bauchschmerzen und fühlte sich sehr müde.',
+      'È andata subito dal medico.': 'Sie ist sofort zum Arzt gegangen.',
+      'Mentre aspettava, leggeva un libro.': 'Während sie wartete, las sie ein Buch.',
+      'Sara è andata in farmacia e ha comprato una medicina.': 'Sara ist in die Apotheke gegangen und hat ein Medikament gekauft.',
+      'Poi è tornata a casa e ha dormito tutto il pomeriggio.': 'Dann ist sie nach Hause gegangen und hat den ganzen Nachmittag geschlafen.',
+    },
+    fragen: [
+      { frage: 'Was tat Sara weh?', antworten: ['Kopf und Bauch', 'Arm und Bein', 'Die Zähne'] },
+      { frage: 'Was hat Sara, sagt der Arzt?', antworten: ['Eine Grippe, nichts Schlimmes', 'Etwas Schlimmes', 'Zahnschmerzen'] },
+      { frage: 'Was soll sie tun?', antworten: ['Drei Tage zu Hause bleiben und viel trinken', 'Ins Krankenhaus gehen', 'Gleich wieder arbeiten'] },
+    ],
+  },
+
+  {
+    id: 'ripasso-4', titel: 'Una vecchia amica', art: 'Text', stufe: 'A2',
+    text: `Ieri Marta ha incontrato una vecchia amica, Giulia. Non la vedeva da dieci anni!
+
+Sono andate a pranzo in un ristorante vicino al lago. Faceva caldo e c'era il sole, così hanno preso un tavolo fuori.
+
+Mentre mangiavano, hanno parlato di quando erano bambine. «Ti ricordi la nostra scuola?» ha chiesto Giulia. «Certo! La maestra era molto severa, ma noi eravamo felici.»
+
+Giulia ha ordinato il pesce, Marta un piatto di spaghetti. «Qui il pesce è buonissimo!» ha detto Giulia.
+
+Alla fine il cameriere ha portato il conto. Marta l'ha pagato: «Oggi ti offro io il pranzo!»`,
+    woerter: {
+      'marta': ['Marta', 'Marta (Vorname)'],
+      'incontrato': ['incontrare', 'getroffen', 'treffen'],
+      'vecchia': ['vecchio', 'alt'],
+      'giulia': ['Giulia', 'Giulia (Vorname)'],
+      'la': ['la', 'sie (non la vedeva = sie hatte sie nicht gesehen)'],
+      'vedeva': ['vedere', 'sah (non la vedeva da = hatte sie seit … nicht gesehen)'],
+      'andate': ['andare', 'gegangen'],
+      'faceva': ['fare', "machte (faceva caldo = es war warm)"],
+      'era': ['essere', 'war'],
+      'hanno': ['avere', 'sie haben'],
+      'preso': ['prendere', 'genommen'],
+      'fuori': ['fuori', 'draußen', 'draußen'],
+      'mangiavano': ['mangiare', 'sie aßen'],
+      'parlato': ['parlare', 'gesprochen'],
+      'erano': ['essere', 'sie waren'],
+      'bambine': ['il bambino', 'kleine Mädchen; Kinder'],
+      'ricordi': ['ricordare', 'erinnerst dich (ti ricordi = erinnerst du dich)'],
+      'nostra': ['nostro', 'unsere'],
+      'chiesto': ['chiedere', 'gefragt'],
+      'certo': ['certo', 'sicher; natürlich', 'sicher; natürlich'],
+      'maestra': ['la maestra', 'Lehrerin (in der Grundschule)', 'die Lehrerin'],
+      'severa': ['severo', 'streng', 'streng'],
+      'eravamo': ['essere', 'wir waren'],
+      'felici': ['felice', 'glücklich (Mehrzahl)'],
+      'ordinato': ['ordinare', 'bestellt'],
+      'buonissimo': ['buono', 'sehr lecker'],
+      'detto': ['dire', 'gesagt'],
+      'fine': ['la fine', 'Ende (alla fine = am Ende)'],
+      'portato': ['portare', 'gebracht'],
+      'pagato': ['pagare', 'bezahlt'],
+      'offro': ['offrire', 'ich lade ein (ti offro = ich lade dich ein)', 'anbieten; einladen'],
+    },
+    // Übersetzung der Sätze (für Hören & Üben)
+    uebersetzung: {
+      'Ieri Marta ha incontrato una vecchia amica, Giulia.': 'Gestern hat Marta eine alte Freundin getroffen, Giulia.',
+      'Non la vedeva da dieci anni!': 'Sie hatte sie seit zehn Jahren nicht gesehen!',
+      'Sono andate a pranzo in un ristorante vicino al lago.': 'Sie sind in einem Restaurant am See zu Mittag essen gegangen.',
+      "Faceva caldo e c'era il sole, così hanno preso un tavolo fuori.": 'Es war warm und die Sonne schien, deshalb haben sie einen Tisch draußen genommen.',
+    },
+    fragen: [
+      { frage: 'Wie lange hatten sich Marta und Giulia nicht gesehen?', antworten: ['Zehn Jahre', 'Ein Jahr', 'Zwei Wochen'] },
+      { frage: 'Warum sitzen sie draußen?', antworten: ['Es ist warm und sonnig', 'Drinnen ist kein Platz', 'Am See ist es ruhig'] },
+      { frage: 'Wer bezahlt?', antworten: ['Marta', 'Giulia', 'Jede für sich'] },
+    ],
+  },
+
+  {
     id: 'tiramisu', titel: 'Tiramisù', art: 'Rezept', stufe: 'A2',
     text: `## Ingredienti per 6 persone
 - 4 uova
@@ -595,13 +1046,13 @@ Domenica ha piovuto, così siamo tornate a casa presto. È stato un fine settima
 - cacao amaro
 
 ## Preparazione
-Separa i tuorli dagli albumi. Sbatti i tuorli con lo zucchero fino a ottenere una crema chiara. Aggiungi il mascarpone e mescola bene.
+Prima si separano i tuorli dagli albumi. Si mescolano i tuorli con lo zucchero. Poi si aggiunge il mascarpone e si mescola bene: così si ottiene una crema.
 
-Monta gli albumi a neve e uniscili delicatamente alla crema.
+Si montano gli albumi a neve e si aggiungono piano alla crema.
 
-Bagna velocemente i savoiardi nel caffè e mettili in una teglia. Copri con uno strato di crema. Ripeti: savoiardi, crema.
+Si bagnano i savoiardi nel caffè e si mettono in una teglia. Si copre con uno strato di crema. Poi si fa un altro strato di savoiardi e di crema.
 
-Metti il tiramisù in frigorifero per almeno quattro ore. Prima di servire, spolvera con il cacao.`,
+Il tiramisù si mette in frigorifero per almeno quattro ore. Prima di servire, si copre con il cacao.`,
     woerter: {
       'tiramisù': ['il tiramisù', 'Tiramisu (wörtlich: „zieh mich hoch“)'],
       'ingredienti': ["l'ingrediente", 'Zutaten'],
@@ -610,45 +1061,40 @@ Metti il tiramisù in frigorifero per almeno quattro ore. Prima di servire, spol
       'grammi': ['il grammo', 'Gramm'],
       'mascarpone': ['il mascarpone', 'Mascarpone (Frischkäse)'],
       'savoiardi': ['il savoiardo', 'Löffelbiskuits', 'der Löffelbiskuit'],
-      'tazze': ['la tazza', 'Tassen', 'die Tasse'],
-      'cacao': ['il cacao', 'Kakao', 'der Kakao'],
-      'amaro': ['amaro', 'bitter (ungesüßt)', 'bitter'],
-      'preparazione': ['la preparazione', 'die Zubereitung', 'die Zubereitung'],
-      'separa': ['separare', 'trenne!', 'trennen'],
-      'tuorli': ['il tuorlo', 'Eigelbe', 'das Eigelb'],
-      'albumi': ["l'albume", 'Eiweiße', 'das Eiweiß'],
-      'sbatti': ['sbattere', 'schlage! (verquirlen)', 'schlagen; verquirlen'],
-      'fino': ['fino a', 'bis (fino a)', 'bis'],
-      'ottenere': ['ottenere', 'erhalten', 'erhalten'],
-      'crema': ['la crema', 'Creme', 'die Creme'],
-      'chiara': ['chiaro', 'hell', 'hell'],
-      'aggiungi': ['aggiungere', 'füge hinzu!'],
-      'mescola': ['mescolare', 'rühre um!'],
-      'monta': ['montare', 'schlage! (steif schlagen)', 'steif schlagen'],
+      'tazze': ['la tazza', 'Tassen'],
+      'preparazione': ['la preparazione', 'die Zubereitung'],
+      'prima': ['prima', 'zuerst (prima di = vor)'],
+      'separano': ['separare', 'man trennt (si separano)'],
+      'tuorli': ['il tuorlo', 'Eigelbe'],
+      'albumi': ["l'albume", 'Eiweiße'],
+      'mescolano': ['mescolare', 'man verrührt (si mescolano)'],
+      'aggiunge': ['aggiungere', 'man gibt dazu (si aggiunge)'],
+      'mescola': ['mescolare', 'man rührt um (si mescola)'],
+      'ottiene': ['ottenere', 'man erhält (si ottiene)', 'erhalten'],
+      'montano': ['montare', 'man schlägt steif (si montano)', 'steif schlagen'],
       'neve': ['la neve', 'Schnee (a neve = zu Eischnee)'],
-      'uniscili': ['unire', 'heb sie unter! (unisci + li = sie)', 'vereinen; unterheben'],
-      'delicatamente': ['delicatamente', 'vorsichtig', 'vorsichtig'],
-      'bagna': ['bagnare', 'tränke! (nass machen)', 'tränken; nass machen'],
-      'velocemente': ['velocemente', 'schnell', 'schnell'],
-      'mettili': ['mettere', 'leg sie!'],
+      'aggiungono': ['aggiungere', 'man gibt dazu (Mehrzahl)'],
+      'piano': ['piano', 'langsam; vorsichtig', 'langsam; leise'],
+      'bagnano': ['bagnare', 'man tränkt (si bagnano)', 'tränken; nass machen'],
+      'mettono': ['mettere', 'man legt (si mettono)'],
       'teglia': ['la teglia', 'die Form (zum Backen)', 'die Auflaufform'],
-      'copri': ['coprire', 'bedecke!'],
+      'copre': ['coprire', 'man bedeckt (si copre)'],
       'strato': ['lo strato', 'Schicht', 'die Schicht'],
-      'ripeti': ['ripetere', 'wiederhole!', 'wiederholen'],
-      'metti': ['mettere', 'stell!'],
-      'frigorifero': ['il frigorifero', 'Kühlschrank', 'der Kühlschrank'],
-      'almeno': ['almeno', 'mindestens', 'mindestens'],
-      'prima': ['prima', 'vorher (prima di = vor)'],
-      'spolvera': ['spolverare', 'bestäube!', 'bestäuben'],
+      'altro': ['altro', 'noch ein; andere(r)', 'andere(r)'],
+      'mette': ['mettere', 'man stellt (si mette)'],
+      'servire': ['servire', 'servieren'],
     },
     // Übersetzung der Sätze (für Hören & Üben)
     uebersetzung: {
-      'Separa i tuorli dagli albumi.': 'Trenn das Eigelb vom Eiweiß.',
-      'Aggiungi il mascarpone e mescola bene.': 'Gib den Mascarpone dazu und rühr gut um.',
-      'Copri con uno strato di crema.': 'Bedeck alles mit einer Schicht Creme.',
-      'Ripeti: savoiardi, crema.': 'Wiederhole: Löffelbiskuits, Creme.',
-      'Metti il tiramisù in frigorifero per almeno quattro ore.': 'Stell das Tiramisù mindestens vier Stunden in den Kühlschrank.',
-      'Prima di servire, spolvera con il cacao.': 'Vor dem Servieren mit Kakao bestäuben.',
+      'Prima si separano i tuorli dagli albumi.': 'Zuerst trennt man das Eigelb vom Eiweiß.',
+      'Si mescolano i tuorli con lo zucchero.': 'Man verrührt das Eigelb mit dem Zucker.',
+      'Poi si aggiunge il mascarpone e si mescola bene: così si ottiene una crema.': 'Dann gibt man den Mascarpone dazu und rührt gut um: So entsteht eine Creme.',
+      'Si montano gli albumi a neve e si aggiungono piano alla crema.': 'Man schlägt das Eiweiß steif und hebt es vorsichtig unter die Creme.',
+      'Si bagnano i savoiardi nel caffè e si mettono in una teglia.': 'Man tränkt die Löffelbiskuits im Kaffee und legt sie in eine Form.',
+      'Si copre con uno strato di crema.': 'Man bedeckt sie mit einer Schicht Creme.',
+      'Poi si fa un altro strato di savoiardi e di crema.': 'Dann macht man noch eine Schicht Löffelbiskuits und Creme.',
+      'Il tiramisù si mette in frigorifero per almeno quattro ore.': 'Man stellt das Tiramisù mindestens vier Stunden in den Kühlschrank.',
+      'Prima di servire, si copre con il cacao.': 'Vor dem Servieren bestäubt man es mit Kakao.',
     },
     fragen: [
       { frage: 'Wie lange muss das Tiramisù in den Kühlschrank?', antworten: ['Mindestens vier Stunden', 'Eine halbe Stunde', 'Einen ganzen Tag'] },
@@ -659,46 +1105,38 @@ Metti il tiramisù in frigorifero per almeno quattro ore. Prima di servire, spol
 
   {
     id: 'bologna-bici', titel: 'Bologna: più biciclette in città', art: 'Nachricht', stufe: 'A2',
-    text: `Il comune di Bologna ha presentato ieri un nuovo progetto: entro il 2028 la città avrà cento chilometri di nuove piste ciclabili.
+    text: `Il comune di Bologna ha un nuovo progetto: entro il 2028 la città avrà cento chilometri di nuove strade per le biciclette.
 
-«Vogliamo meno traffico e un'aria più pulita», ha detto il sindaco.
+«Vogliamo una città che ha meno traffico e un'aria più pulita», ha detto il sindaco.
 
-Secondo un sondaggio, il sessanta per cento dei cittadini è favorevole. Alcuni commercianti però sono preoccupati: temono di perdere parcheggi davanti ai loro negozi.`,
+Secondo un sondaggio, il sessanta per cento dei cittadini è d'accordo. Ma ci sono anche persone che non sono contente: alcuni negozi temono di perdere i parcheggi che sono davanti alla porta.`,
     woerter: {
       'bologna': ['Bologna', 'Bologna (Stadt)'],
-      'biciclette': ['la bicicletta', 'Fahrräder', 'das Fahrrad'],
-      'comune': ['il comune', 'die Stadtverwaltung; die Gemeinde', 'die Gemeinde'],
-      'presentato': ['presentare', 'vorgestellt', 'vorstellen'],
-      'progetto': ['il progetto', 'Projekt', 'das Projekt'],
+      'biciclette': ['la bicicletta', 'Fahrräder'],
       'entro': ['entro', 'bis (spätestens)', 'bis spätestens'],
       'avrà': ['avere', 'wird haben (Zukunft)'],
-      'cento': ['cento', 'hundert (per cento = Prozent)'],
       'chilometri': ['il chilometro', 'Kilometer', 'der Kilometer'],
       'nuove': ['nuovo', 'neue'],
-      'piste': ['la pista', 'Wege (pista ciclabile = Radweg)', 'die Piste; die Bahn'],
-      'ciclabili': ['ciclabile', 'Rad- (pista ciclabile = Radweg)', 'befahrbar mit dem Rad'],
+      'strade': ['la strada', 'Straßen; Wege'],
       'vogliamo': ['volere', 'wir wollen'],
-      'traffico': ['il traffico', 'Verkehr', 'der Verkehr'],
-      'aria': ["l'aria", 'Luft', 'die Luft'],
       'pulita': ['pulito', 'saubere', 'sauber'],
       'detto': ['dire', 'gesagt (ha detto = hat gesagt)'],
-      'sindaco': ['il sindaco', 'der Bürgermeister', 'der Bürgermeister'],
       'secondo': ['secondo', 'laut; gemäß', 'laut; gemäß (auch: zweite)'],
       'sondaggio': ['il sondaggio', 'Umfrage', 'die Umfrage'],
-      'sessanta': ['sessanta', 'sechzig'],
+      'sessanta': ['sessanta', 'sechzig', 'sechzig'],
+      'cento': ['cento', 'hundert (per cento = Prozent)'],
       'cittadini': ['il cittadino', 'Bürger (Mehrzahl)'],
-      'favorevole': ['favorevole', 'dafür; einverstanden', 'dafür (sein)'],
+      'persone': ['la persona', 'Personen'],
+      'contente': ['contento', 'zufrieden (Mehrzahl)'],
       'alcuni': ['alcuni', 'einige', 'einige'],
-      'commercianti': ['il commerciante', 'Händler; Geschäftsleute', 'der Händler'],
-      'preoccupati': ['preoccupato', 'besorgt', 'besorgt'],
-      'temono': ['temere', 'sie fürchten', 'fürchten'],
-      'parcheggi': ['il parcheggio', 'Parkplätze', 'der Parkplatz'],
       'negozi': ['il negozio', 'Geschäfte'],
+      'temono': ['temere', 'sie fürchten', 'fürchten'],
+      'parcheggi': ['il parcheggio', 'Parkplätze'],
     },
     fragen: [
       { frage: 'Was plant Bologna?', antworten: ['100 Kilometer neue Radwege', 'Eine neue U-Bahn', 'Mehr Parkplätze'] },
       { frage: 'Wie viele Bürger sind dafür?', antworten: ['60 Prozent', '16 Prozent', 'Alle'] },
-      { frage: 'Wer macht sich Sorgen?', antworten: ['Einige Geschäftsleute', 'Die Radfahrer', 'Die Schüler'] },
+      { frage: 'Wer macht sich Sorgen?', antworten: ['Einige Geschäfte', 'Die Radfahrer', 'Die Schüler'] },
     ],
   },
 ];

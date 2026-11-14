@@ -16,6 +16,7 @@
   - Format: PNG mit durchsichtigem Hintergrund (oder SVG), quadratisch, mindestens 512 × 512 Pixel
   - Ohne Text, Sprechblasen, Punkte oder XP – die Sprüche macht die App selbst
 - [ ] **Lektion 1–8 ausprobieren:** Passt die neue Startseite? Ist „kenne ich / neu“ angenehm? Sind die Texte zu leicht oder zu schwer?
+- [ ] **Lektion 9–18 (A2) ansehen**, wenn du so weit bist: Sind die neuen Texte (Urlaub, Markt, Restaurant, Kindheit, Wetter, Arzt) zu leicht oder zu schwer? Danach planen wir B1 (Lektion 19–28) zusammen.
 - [ ] **Wortliste durchsehen** – in [wortschatz.js](wortschatz.js), eine Zeile pro Wort.
       Fehlt dir ein Thema oder Wort? Claude Bescheid sagen.
 

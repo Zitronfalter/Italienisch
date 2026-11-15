@@ -39,6 +39,9 @@
 | **Lektionen, Schritt 6** | Inhalt B1: Lektion 19–28 mit Wiederholung 5–7 – B1 fertig. 10 neue Kapitel (Zukunft, „würde“, sto facendo, glielo, ci/ne, avevo fatto, congiuntivo, Passiv, Sätze mit se, dimmi/mi dica), 13 neue Texte (Pläne, Telefon, Mail, Ragù der Nonna, Vorstellungsgespräch, Venedig, Zeitung, Bergtour, Reklamation …) | ✅ – wartet auf Nicoles Blick |
 | **Lektionen, Schritt 7** | Inhalt B2: Lektion 29–36 mit Wiederholung 8 und 9 – B2 fertig. 8 neue Kapitel (se fossi, avrei dovuto, sia andato, passato remoto, indirekte Rede, se avessi saputo, benché/affinché, il quale/chi/ciò che), 10 neue Texte (Lotto, Pech beim Reisen, Polizeibericht, Pizza Margherita, Interview, Pesto …). Niveau-Test jetzt mit B2 (32 Fragen) | ✅ – wartet auf Nicoles Blick |
 | **Zusatzübungen** | Wer beim Üben unter 80 % bleibt, bekommt leichtere Zusatzübungen angeboten: erst ein Tipp in kleinen Schritten, dann 6 Übungen (Auswählen, Lücke, Kacheln) mit kurzer Erklärung bei Fehlern. Für alle 38 Kapitel von A1 bis B2 – auch nach „Kann ich schon“ und Wiederholungen | ✅ – wartet auf Nicoles Blick |
+| **Mehr Übung, Schritt 1: Grammatik wiederholen** | Geübte Kapitel kommen wie Vokabeln in einen Karteikasten (5 Fächer: nach 2, 5, 12, 30, 60 Tagen). Fällige Kapitel kommen nach den Vokabeln dran (höchstens 2, je 3 Aufgaben, gemischt). Für 14 Kapitel baut die App die Aufgaben selbst (Verbformen in allen Zeiten, Artikel, del/nel …) – mit Wörtern, die du schon kennst. Fortschritt zeigt die Fächer | ✅ |
+| **Mehr Übung, Schritt 2: neue Wörter pro Tag** | Neue Wörter nur, wenn die alten sitzen; Höchstzahl pro Tag selbst einstellbar (15 Minuten am Tag) | ⏳ als Nächstes |
+| **Mehr Übung, Schritt 3: mehr Wörter** | Ziel etwa 3.000 Wörter, eingebaut in mehr, aber kürzere Lektionen – mit neuen Texten und Übungen, von A1 bis B2 | ⬜ |
 
 Konzept: [docs/superpowers/specs/2026-11-14-lektionen-design.md](docs/superpowers/specs/2026-11-14-lektionen-design.md)
 

@@ -92,6 +92,12 @@ function lektionName(l) {
 }
 
 function naechsterSchritt() {
+  // Zuerst fällige Grammatik wiederholen (wie beim Karteikasten), dann weiter in der Lektion
+  const wdh = Wiederholung.fuerRunde();
+  if (wdh.length) {
+    const namen = wdh.map((id) => `„${Grammatik.kapitel(id).titel}“`).join(' und ');
+    return { art: 'wiederholen', name: `Grammatik wiederholen: ${namen}` };
+  }
   const t = Lektionen.naechsterTeil({ ohneWortCheck: true });
   if (t) {
     return { ...t, name: `${lektionName(t.lektion)}, ${TEIL_NAMEN[t.art]}` };
@@ -100,6 +106,7 @@ function naechsterSchritt() {
 }
 
 function oeffneNaechstes(n) {
+  if (n.art === 'wiederholen') { starteGrammatikWiederholung(); return; }
   if (n.lektion) {
     lekt.offen = n.lektion;            // „Zurück zur Lektion“ führt dann zu dieser Lektion
     Lektionen.beginnen(n.lektion.id);
@@ -792,7 +799,7 @@ function beendeRunde() {
   if (n) {
     if (anzahl > 0) el('ende-titel').textContent = 'Vokabeln geschafft';
     el('ende-naechstes-text').textContent = n.name;
-    el('knopf-naechstes').textContent = { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben', uebungen: 'Übungen' }[n.art];
+    el('knopf-naechstes').textContent = { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben', uebungen: 'Übungen', wiederholen: 'Grammatik wiederholen' }[n.art];
     el('knopf-naechstes').onclick = () => oeffneNaechstes(n);
   }
   zeige('ende');
@@ -1708,6 +1715,15 @@ function zeigeFortschritt() {
   balken(faecher, 'Neu', jung, max);
   proFach.forEach((zahl, i) => balken(faecher, `Fach ${i + 1}`, zahl, max));
 
+  // Grammatik-Kapitel im Karteikasten
+  Wiederholung.einsortieren();
+  const gramFaecher = el('fs-gram-faecher');
+  gramFaecher.innerHTML = '';
+  const gramVerteilung = Wiederholung.verteilung();
+  const gramMax = Math.max(1, ...gramVerteilung);
+  gramVerteilung.forEach((zahl, i) => balken(gramFaecher, `Fach ${i + 1}`, zahl, gramMax));
+  gramFaecher.hidden = !gramVerteilung.some(Boolean);
+
   const eingebaute = LESETEXTE.length;
   el('fs-texte').textContent = `${Lesen.anzahlVerstanden()} / ${eingebaute}`;
   el('fs-grammatik').textContent = `${Grammatik.anzahlGeuebt()} / ${KAPITEL.length}`;
@@ -2104,7 +2120,7 @@ function zeigeAufgabe() {
     el('aufgabe-hoer').hidden = !Lesen.kannSprechen;
     aufgabeKacheln(Vokabeln.deutschKacheln(w).kacheln, 'de');
   } else if (a.art === 'grammatik') {
-    const u = Grammatik.kapitel(a.kapitel).uebungen[a.nr];
+    const u = a.uebung || Grammatik.kapitel(a.kapitel).uebungen[a.nr];
     el('aufgabe-text').textContent = u.de;
     if (u.art === 'luecke') {
       el('aufgabe-art').textContent = 'Setze das fehlende Wort ein.';
@@ -2138,7 +2154,7 @@ function aufgabePruefen() {
     gut = Vokabeln.pruefeDeutsch(gelegt, w);
     loesung = Vokabeln.deutschZiel(w.de).join(' ');
   } else if (a.art === 'grammatik') {
-    const u = Grammatik.kapitel(a.kapitel).uebungen[a.nr];
+    const u = a.uebung || Grammatik.kapitel(a.kapitel).uebungen[a.nr];
     if (u.art === 'luecke') {
       const text = el('aufgabe-eingabe').value.trim();
       if (!text) { el('aufgabe-eingabe').focus(); return; }
@@ -2255,6 +2271,31 @@ function starteRipasso(l) {
       weiter: () => oeffneLektion(Lektionen.finde(l.id)),
     };
   }, () => oeffneLektion(Lektionen.finde(l.id)));
+}
+
+// Grammatik-Wiederholung (Karteikasten für Kapitel, siehe wiederholung.js):
+// je fälligem Kapitel 3 Aufgaben, gemischt. Danach geht es mit dem nächsten Schritt weiter.
+function starteGrammatikWiederholung() {
+  const liste = Wiederholung.rundeAufgaben();
+  if (!liste.length) { zeigeStart(); return; }
+  starteAufgaben(liste, 'Grammatik wiederholen', (richtig, von) => {
+    const kapitel = [...new Set(liste.map((a) => a.kapitel))];
+    for (const id of kapitel) {
+      const anzahl = liste.filter((a) => a.kapitel === id).length;
+      Wiederholung.eintragen(id, anzahl - (aufg.fehler[id] || 0), anzahl);
+    }
+    const n = naechsterSchritt();
+    const gut = richtig / von >= 0.8;
+    return {
+      gut,
+      titel: gut ? 'Gut wiederholt ✓' : 'Ein paar Sachen brauchen noch Übung',
+      text: (gut
+        ? 'Die Kapitel kommen erst in ein paar Tagen wieder.'
+        : 'Kein Problem – diese Kapitel kommen bald noch einmal.')
+        + (n ? ` Als Nächstes: ${n.name}` : ''),
+      weiter: n ? () => oeffneNaechstes(n) : zeigeStart,
+    };
+  }, zeigeStart);
 }
 
 // ---------- Begleiter ----------

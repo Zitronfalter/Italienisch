@@ -9,13 +9,13 @@ const WURZEL = path.join(__dirname, '..', '..');
 
 // Reihenfolge wie in index.html (ohne app.js, das die Oberfläche braucht)
 const STANDARD = [
-  'speicher.js', 'wortschatz.js', 'vokabeln.js', 'texte.js', 'texte-b.js', 'lesen.js', 'grammatik.js', 'grammatik-b.js', 'zusatz.js',
-  'lektionen-inhalt.js', 'lektionen.js', 'uebungen.js',
+  'speicher.js', 'wortschatz.js', 'vokabeln.js', 'texte.js', 'texte-b.js', 'lesen.js', 'grammatik.js', 'grammatik-b.js', 'zusatz.js', 'erzeuger.js',
+  'lektionen-inhalt.js', 'lektionen.js', 'uebungen.js', 'wiederholung.js',
 ];
 
 const NAMEN = [
   'Speicher', 'Vokabeln', 'Lesen', 'Grammatik', 'Uebungen', 'Lektionen',
-  'LEKTIONEN', 'WORTSCHATZ', 'WORTSCHATZ_THEMEN', 'KAPITEL', 'LESETEXTE', 'GRUNDWOERTER', 'wortId', 'ZUSATZ',
+  'LEKTIONEN', 'WORTSCHATZ', 'WORTSCHATZ_THEMEN', 'KAPITEL', 'LESETEXTE', 'GRUNDWOERTER', 'wortId', 'ZUSATZ', 'Erzeuger', 'Wiederholung',
 ];
 
 function platzhalter(gespeichert) {

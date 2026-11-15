@@ -42,6 +42,8 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Neue Lektionstexte: `node werkzeuge/lektionen-pruefen.js` muss 0 Fehler melden (jedes Wort aus dieser oder früheren Lektion, `GRUNDWOERTER` oder höchstens 8 im Text erklärt).
 - `niveautest.js` – 32 Fragen (je 8 A1/A2/B1/B2, erste Antwort = richtig), Stufe erreicht ab 6/8
 - Runde („Los“): erst „kenne ich / neu“ (falls nötig), Vokabeln, danach `naechsterSchritt()` in `app.js` – nächster Teil der aktuellen Lektion; ist dort nichts offen, `naechsterInhalt()` (Frei üben)
+- `wiederholung.js` – Grammatik-Karteikasten: geübte Kapitel (oder aus erledigten Lektionen) bekommen `fach`/`faellig` in `fortschritt.grammatik[id]`; fällige Kapitel kommen in `naechsterSchritt()` zuerst (`starteGrammatikWiederholung` in `app.js`, 2 Kapitel × 3 Aufgaben).
+- `erzeuger.js` – erzeugt Lücken-Aufgaben selbst (Verbformen aller Zeiten, Artikel, Präposition + Artikel) für 14 Kapitel (`KAPITEL_ERZEUGER`). Nur Verben aus den Listen dort; unregelmäßige Formen stehen in Tabellen. Test `erzeuger.test.js`. In der Aufgabenrunde: `{ art: 'grammatik', kapitel, uebung }` statt `nr`.
 - `uebungen.js` – Hören & Üben: Wortpaare, Diktat, Hören+Kacheln; Hörsätze aus Grammatik-Übungen (mit Deutsch) und Lesetexten (ohne «»-Dialoge). Runde: Text → Grammatik → Hören im Wechsel.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner

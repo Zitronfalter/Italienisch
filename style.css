@@ -251,9 +251,9 @@ button {
 .frage-karte { display: flow-root; }
 .frage-limo {
   float: right;
-  width: 56px;
-  height: 56px;
-  margin: -8px -6px 4px 10px;
+  width: 84px;
+  height: 84px;
+  margin: -12px -8px 4px 12px;
 }
 .frage-limo .roboter {
   width: 100%;

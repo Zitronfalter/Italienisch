@@ -11,6 +11,11 @@
 - [x] **Begleiter:** Erledigt am 15.11.2026 – statt Roboter ist jetzt **Limo** da, die kleine Zitrone (aus deinem Entwurf, aufrecht, Blätter als Haarschopf). Die App-Farben passen jetzt zu Limo, Terrakotta ist raus, das App-Symbol zeigt Limo.
 - [ ] **Limo und die neuen Farben auf dem iPhone ansehen:** Gefallen dir Gelb, Grün und das ruhige Blau bei „noch nicht“? Ist Limo gut zu erkennen? Hinweis: Das App-Symbol auf dem Home-Bildschirm wechselt evtl. erst, wenn du die App einmal entfernst und neu „Zum Home-Bildschirm“ hinzufügst.
 - [x] **Menü aussuchen:** Erledigt am 15.11.2026 – Vorschlag A (Leiste unten), vierter Reiter „Mein Stand“.
+- [ ] **Limo-Symbol auf den Home-Bildschirm holen** (das iPhone behält sonst das alte Terrakotta-Symbol). Reihenfolge wichtig, sonst ist der Lernstand weg:
+      1. In der App: Einstellungen → **Sichern** → in iCloud Drive ablegen.
+      2. Symbol auf dem Home-Bildschirm lange drücken → **App entfernen** → „Vom Home-Bildschirm entfernen“ bzw. „Löschen“.
+      3. In Safari https://zitronfalter.github.io/Italienisch/ öffnen → **Teilen** → **„Zum Home-Bildschirm“**.
+      4. Neue App öffnen: Einstellungen → Sichern & Laden → **Laden** → die Datei aus Schritt 1 wählen.
 - [ ] **Neues Menü ausprobieren:** Unten gibt es jetzt die Leiste mit Heute, Lektionen, Üben, Mein Stand. Findest du alles? Fehlt dir etwas auf „Heute“?
 - [ ] **Menü, Schritt 2 ansehen:** Jetzt 5 Reiter, „Einstellungen“ ganz rechts. „‹ Zurück“ steht immer oben links. Passt „Heute“ so ohne Scrollen? Fehlt dir oben etwas?
 - [ ] **Vorlesen einstellen:** Einstellungen → „Vorlesen“. (1) Tempo: Hörst du jetzt einen Unterschied zwischen „sehr langsam“ und „normal“? Wenn nicht: andere Stimme wählen und noch mal probieren – und Claude sagen, welche Stimme es war. (2) Bei „Stimme für männliche Wörter“ eine Männerstimme wählen (z. B. Luca), bei „weibliche Wörter“ eine Frauenstimme (z. B. Alice). Hörprobe kommt sofort.

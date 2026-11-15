@@ -15,8 +15,8 @@
 | 1 | **Gerüst** | Startseite mit „Los“, läuft offline, eigenes App-Symbol | ✅ |
 | 2 | **Sichern & Laden** | Lernstand als Datei in iCloud Drive ablegen und zurückholen | ✅ |
 | 3 | **Vokabeltrainer** | Eintippen, Prüfen, Karteikasten mit 5 Fächern | ✅ |
-| 4 | **Grundwortschatz** | 1.960 Wörter von A1 bis B2, nach Themen und Lektionen | ✅ |
-| 5 | **Lesetexte & Rezepte** | 129 Texte (davon 5 Rezepte, 5 Nachrichten), Fragen, Wort antippen, Vorlesen | ✅ |
+| 4 | **Grundwortschatz** | 2.285 Wörter von A1 bis B2 in 144 Lektionen, nach Themen und Lektionen | ✅ |
+| 5 | **Lesetexte & Rezepte** | 153 Texte (davon 5 Rezepte, 5 Nachrichten), Fragen, Wort antippen, Vorlesen | ✅ |
 | 6 | **Grammatik** | 38 Kapitel (A1–B2), 304 Übungen plus 228 leichtere Zusatzübungen: Lücken, Sätze aus Wortkacheln bauen – und Regel direkt am Text | ✅ |
 | 7 | **Wörterbuch** | 55.240 Wörter Italienisch–Deutsch, offline, aus WikDict (CC BY-SA); Suche in beiden Richtungen, erkennt Formen (mangio → mangiare) | ✅ |
 | 8 | **Eigene Texte** | Rezept einfügen, Wort antippen, in Karteikarten übernehmen, eigene Bedeutung eintragen | ✅ |
@@ -46,7 +46,7 @@
 | **Mehr Übung, Schritt 3b: mehr Wörter A2** | 30 kurze Wort-Lektionen (je 3 nach Lektion 9–18): Ausflüge, Feste, Gefühle, Urlaub, Strand, Berge, Kochen, Gewürze, Geschäfte, Restaurant, Schule, Wetter, Körper, Krankheit, Hausarbeit, Feiertage, Umwelt, Kultur, Technik … 431 neue Wörter | ✅ – wartet auf Nicoles Blick |
 | **Hören nur mit Bekanntem** | Hören & Üben (auch „Frei üben“) nimmt nur Sätze bis zur aktuellen Lektion – keine Zeitformen oder Wörter, die erst später kommen; auch die falschen Kacheln und die selbst erzeugten Aufgaben bleiben beim Bekannten | ✅ |
 | **Mehr Übung, Schritt 3c: mehr Wörter B1** | 30 kurze Wort-Lektionen (je 3 nach Lektion 19–28): Lebenspläne, Studium, Ausland, Traumhaus, höflich bitten, Geld, Telefon, Büro, Mails, Freundschaft, Kochen, Familie, Bewerbung, Firma, Lebenslauf, Venedig, Meinungen, Politik, Kunst, Geschichte, Wandern, Tiere, Reklamation, Online-Shopping, Ämter … 433 neue Wörter | ✅ – wartet auf Nicoles Blick |
-| **Mehr Übung, Schritt 3d: mehr Wörter B2** | Je 3 kurze Wort-Lektionen nach Lektion 29–36, Ziel insgesamt etwa 2.400 Wörter | ⏳ als Nächstes |
+| **Mehr Übung, Schritt 3d: mehr Wörter B2** | 24 kurze Wort-Lektionen (je 3 nach Lektion 29–36): Glück, Charakter, Ehrenamt, Reisepech, Bedauern, Autobahn, Verbrechen, Schmuck, Presse, Könige, Pizzabäcker, Märchen, feine Küche, Berichten, Frauen & Arbeit, Zufall, Bahn, Paare, Homeoffice, Konnektoren, Stadt & Land, Spezialitäten, Menschen beschreiben, Sprache lernen. 325 neue Wörter – jetzt 2.285 Wörter in 144 Lektionen | ✅ – wartet auf Nicoles Blick |
 
 Konzept: [docs/superpowers/specs/2026-11-14-lektionen-design.md](docs/superpowers/specs/2026-11-14-lektionen-design.md)
 

@@ -9,8 +9,8 @@ const WURZEL = path.join(__dirname, '..', '..');
 
 // Reihenfolge wie in index.html (ohne app.js, das die Oberfläche braucht)
 const STANDARD = [
-  'speicher.js', 'wortschatz.js', 'vokabeln.js', 'texte.js', 'texte-b.js', 'texte-a1.js', 'texte-a2.js', 'texte-b1.js', 'lesen.js', 'grammatik.js', 'grammatik-b.js', 'zusatz.js', 'erzeuger.js',
-  'lektionen-inhalt.js', 'lektionen-a1.js', 'lektionen-a2.js', 'lektionen-b1.js', 'lektionen.js', 'uebungen.js', 'wiederholung.js',
+  'speicher.js', 'wortschatz.js', 'vokabeln.js', 'texte.js', 'texte-b.js', 'texte-a1.js', 'texte-a2.js', 'texte-b1.js', 'texte-b2.js', 'lesen.js', 'grammatik.js', 'grammatik-b.js', 'zusatz.js', 'erzeuger.js',
+  'lektionen-inhalt.js', 'lektionen-a1.js', 'lektionen-a2.js', 'lektionen-b1.js', 'lektionen-b2.js', 'lektionen.js', 'uebungen.js', 'wiederholung.js',
 ];
 
 const NAMEN = [

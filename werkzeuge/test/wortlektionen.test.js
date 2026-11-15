@@ -54,3 +54,25 @@ test('gemischte Übungen einer Wort-Lektion: Wörter und Grammatik der Lektion d
   assert.ok(liste.some((a) => a.art === 'deutsch' && l.wortIds.includes(a.id)));
   assert.ok(liste.some((a) => a.art === 'grammatik' && a.kapitel === 'artikel'));
 });
+
+test('Hören (Frei üben): nur Sätze bis zur aktuellen Lektion, keine Zukunft am Anfang', () => {
+  const k = laden();
+  k.Speicher.daten.fortschritt.lektionen = { l01: { erledigt: '2026-11-10' } };
+  for (let i = 0; i < 20; i++) {
+    for (const a of k.Uebungen.runde()) {
+      if (!a.satz) continue;
+      assert.notStrictEqual(a.satz.kapitel, 'futuro', a.satz.it);
+      assert.ok(!a.satz.stufe || a.satz.stufe === 'A1', a.satz.it);
+    }
+  }
+});
+
+test('erzeugte Aufgaben am Anfang: nur Wörter aus den ersten Lektionen', () => {
+  const k = laden();
+  const bis = new Set(k.Lektionen.alle().filter((l) => l.nr <= 2.3).flatMap((l) => l.wortIds));
+  for (let i = 0; i < 30; i++) {
+    const u = k.Erzeuger.aufgabe('artikel');
+    const wort = u.satz.replace(/^___'?\s?/, '').replace(/\s*\(.*\)$/, '');
+    assert.ok([...bis].some((id) => id === k.wortId(wort)), u.satz);
+  }
+});

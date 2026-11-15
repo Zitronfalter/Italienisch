@@ -84,10 +84,12 @@ const Uebungen = (() => {
   }
 
   // Kacheln: Wörter des Satzes + 2 falsche Wörter aus anderen Sätzen
-  function kacheln(satz) {
+  // vorrat: Sätze, aus denen die falschen Wörter kommen (am besten nur Bekanntes)
+  function kacheln(satz, vorrat = null) {
     const eigene = satz.replace(/[.,!?;:«»"]/g, '').split(/\s+/).filter(Boolean);
     const klein = new Set(eigene.map((w) => w.toLowerCase()));
-    const fremde = mischen(saetze())
+    const grenze = Lektionen.aktuelle();
+    const fremde = mischen(vorrat || saetze().filter((x) => !grenze || bekanntBis(x, grenze.nr)))
       .flatMap((s) => s.it.replace(/[.,!?;:«»"]/g, '').split(/\s+/))
       .filter((w) => w.length > 2 && !klein.has(w.toLowerCase()));
     return mischen([...eigene, ...[...new Set(fremde)].slice(0, 2)]);
@@ -124,20 +126,48 @@ const Uebungen = (() => {
 
   // ---------- Eine Runde zusammenstellen ----------
 
+  // Wörter der Lektionen: Wort (klein, ohne Artikel) → Nummer der Lektion, in der es neu ist
+  let lektionVonCache = null;
+  function lektionVonWort() {
+    if (lektionVonCache) return lektionVonCache;
+    lektionVonCache = new Map();
+    const klein = (t) => t.toLowerCase().replace(/’/g, "'");
+    for (const l of [...Lektionen.alle()].sort((a, b) => a.nr - b.nr)) {
+      for (const it of l.woerter) {
+        const formen = [
+          klein(it).replace(/^(il|lo|la|i|gli|le) /, '').replace(/^l'/, ''),
+          ...klein(it).split(/[\s']+/).filter((t) => t.length > 1 && !GRUNDWOERTER[t]),
+        ];
+        for (const f of formen) if (!lektionVonCache.has(f)) lektionVonCache.set(f, l.nr);
+      }
+    }
+    return lektionVonCache;
+  }
+
+  // Passt der Satz zum Stand bis Lektion nr? (kein Wort aus einer späteren Lektion)
+  function bekanntBis(satz, nr) {
+    const von = lektionVonWort();
+    return satz.it.toLowerCase().replace(/[.,!?;:«»"–]/g, ' ').split(/\s+/).filter(Boolean)
+      .every((w) => !von.has(w) || von.get(w) <= nr);
+  }
+
   // optionen.lektion: nur Sätze aus Kapiteln und Texten dieser und früherer Lektionen,
   // Wortpaare aus den Wörtern der Lektion. Ungelöste Sätze kommen zuerst.
+  // Ohne Lektion (Frei üben): Stand der aktuellen Lektion – nie Zeitformen oder Wörter aus späteren Lektionen.
   function runde(optionen = {}) {
     let pool = saetze();
     let paarListe = null;
     const l = optionen.lektion;
-    if (l) {
-      const bis = Lektionen.alle().filter((x) => x.nr <= l.nr);
-      const kap = new Set(bis.flatMap((x) => x.kapitel));
+    const grenze = l || Lektionen.aktuelle();
+    if (grenze) {
+      const bis = Lektionen.alle().filter((x) => x.nr <= grenze.nr);
+      const kap = new Set(bis.flatMap((x) => [...x.kapitel, ...(x.uebenKapitel || [])]));
       const tx = new Set(bis.flatMap((x) => x.texte));
-      const passend = pool.filter((x) => kap.has(x.kapitel) || tx.has(x.text));
-      if (passend.length >= 4) pool = passend;
-      if (l.wortIds.length >= 3) paarListe = paare(5, l.wortIds);
+      const dazu = pool.filter((x) => kap.has(x.kapitel) || tx.has(x.text));
+      const passend = dazu.filter((x) => bekanntBis(x, grenze.nr));
+      pool = passend.length >= 4 ? passend : dazu.length >= 4 ? dazu : pool.filter((x) => x.stufe === 'A1');
     }
+    if (l && l.wortIds.length >= 3) paarListe = paare(5, l.wortIds);
     const geloest = new Set(((Speicher.daten.fortschritt.hoeren || {}).geloest) || []);
     // Zuerst Sätze aus dem Text dieser Lektion, dann aus den Lektionen davor; ungelöste vor gelösten
     const eigen = new Set((l && l.texte) || []);
@@ -152,9 +182,9 @@ const Uebungen = (() => {
     const aufgaben = [
       { art: 'paare', paare: paarListe || paare() },
       { art: 'diktat', satz: auswahl[0] },
-      { art: 'kacheln', satz: auswahl[1], kacheln: kacheln(auswahl[1].it) },
+      { art: 'kacheln', satz: auswahl[1], kacheln: kacheln(auswahl[1].it, pool) },
       { art: 'diktat', satz: auswahl[2] },
-      { art: 'kacheln', satz: auswahl[3], kacheln: kacheln(auswahl[3].it) },
+      { art: 'kacheln', satz: auswahl[3], kacheln: kacheln(auswahl[3].it, pool) },
     ];
     return aufgaben;
   }

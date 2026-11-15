@@ -36,7 +36,7 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - `woerterbuch.js` + `woerterbuch.json` – großes Wörterbuch (WikDict, CC BY-SA, Quelle in `LIZENZEN.md` und in der App nennen); Formen-Erkennung in `kandidaten()`. Neu bauen mit `werkzeuge/woerterbuch-bauen.js`.
 - Nachschlage-Reihenfolge (`Lesen.nachschlagen`): selbst eingetragene Bedeutung → Wörter im Text → `GRUNDWOERTER` → Grundwortschatz → eigene Wörter → Formen von Grundwortschatz-Wörtern → WikDict.
 - Eigene Texte: `Speicher.daten.eigeneTexte`; eigene Wörter: `Speicher.daten.eigeneWoerter` (`e-…`-IDs, mit `formen` und `selbst`).
-- `lektionen-a1.js` – kurze Wort-Lektionen (`wortLektion: true`, `uebenKapitel`, `kapitel: []`), je 3 hinter Lektion 1–8 eingefügt (nr 1.1–1.3 …), auch in die Wiederholungen. Teile: Wörter, Text, Hören, Übungen (Übungen erst, wenn die Wörter gelernt sind). Texte in `texte-a1.js`. Anzeige-Nummer: `Lektionen.anzeigeNr(l)` (fortlaufend, ohne Wiederholungen).
+- `lektionen-a1.js` – kurze Wort-Lektionen (`wortLektion: true`, `uebenKapitel`, `kapitel: []`), je 3 hinter Lektion 1–8 eingefügt (nr 1.1–1.3 …), auch in die Wiederholungen. Teile: Wörter, Text, Hören, Übungen (Übungen erst, wenn die Wörter gelernt sind). Texte in `texte-a1.js`. A2 genauso: `lektionen-a2.js` (ruft `wortLektionenEinfuegen()` aus `lektionen-a1.js` auf), `texte-a2.js`. Anzeige-Nummer: `Lektionen.anzeigeNr(l)` (fortlaufend, ohne Wiederholungen).
 - `lektionen-inhalt.js` – Lektionen (`LEKTIONEN`): Wörter (italienisch wie in `wortschatz.js`), Kapitel-IDs, Text-IDs. Konzept: `docs/superpowers/specs/2026-11-14-lektionen-design.md`
 - Wiederholungen (`art: 'ripasso'`, `nr` z. B. 4.5, `lektionen: [...]`): Teile „Übungen“ (10 gemischte Aufgaben) und Text, keine neuen Wörter. Aufgabenrunde in `app.js` (`starteAufgaben`) auch für „Kann ich schon“ (8 Aufgaben, ab 7 richtig übersprungen).
 - Gelöste Übungen: `fortschritt.grammatik[id].geloest` (Nummern – neue Übungen nur hinten anhängen), `fortschritt.hoeren.geloest`.
@@ -50,6 +50,7 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Weitermachen: `stelleMerken(art)` / `stelleVergessen` / `weitermachen()` in `app.js` → `Speicher.daten.laufend` (Vokabel-Runde nur am selben Tag, sonst 14 Tage). Neue Aktivitäten müssen dort mitgemerkt werden.
 - Trefferquote: `Vokabeln.ergebnisZaehlen(gut)` bei jeder Antwort → `fortschritt.tage`; `neuGrenze()` senkt neue Wörter bei unter 70 % (0 bei unter 55 %).
 - Richtig gelöst → `autoWeiter()` (Vokabeln) bzw. Timer in `aufgabePruefen` geht von selbst weiter.
+- Hören (`Uebungen.runde`) ohne Lektion nimmt die aktuelle Lektion als Grenze: nur Sätze aus Kapiteln/Texten bis dahin und ohne Wörter späterer Lektionen (`bekanntBis`). Erzeuger nimmt bei wenig bekannten Wörtern die frühesten aus dem Lernweg.
 - `uebungen.js` – Hören & Üben: Wortpaare, Diktat, Hören+Kacheln; Hörsätze aus Grammatik-Übungen (mit Deutsch) und Lesetexten (ohne «»-Dialoge). Runde: Text → Grammatik → Hören im Wechsel.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner

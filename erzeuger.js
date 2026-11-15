@@ -176,10 +176,30 @@ const Erzeuger = (() => {
     return Boolean(k && !(typeof k.kennen === 'number' && k.kennen < Vokabeln.KENNEN_FERTIG));
   }
 
+  // Reihenfolge der Wörter im Lernweg: Wort-ID → Nummer der Lektion
+  function lektionsNr() {
+    const m = new Map();
+    for (const l of Lektionen.alle()) for (const id of l.wortIds) if (!m.has(id)) m.set(id, l.nr);
+    return m;
+  }
+
+  // Zu wenige bekannte Wörter? Dann die frühesten aus dem Lernweg: alle bis zur aktuellen Lektion,
+  // und – wenn das nicht reicht – die nächsten, bis es genug sind. Sonst null (dann alle).
+  function fruehe(liste, idVon, mindestens) {
+    const nr = lektionsNr();
+    const a = Lektionen.aktuelle();
+    const sortiert = liste.filter((x) => nr.has(idVon(x))).sort((x, y) => nr.get(idVon(x)) - nr.get(idVon(y)));
+    if (!sortiert.length) return null;
+    const bis = a ? sortiert.filter((x) => nr.get(idVon(x)) <= a.nr) : [];
+    return bis.length >= mindestens ? bis : sortiert.slice(0, Math.max(mindestens, bis.length));
+  }
+
+  // Erst Wörter, die du kennst; sind es zu wenige, Wörter bis zur aktuellen Lektion; erst danach alle
   function auswahl(liste, mindestens) {
     const da = liste.filter((it) => eintrag(it));
     const gekannt = da.filter(bekannt);
-    return gekannt.length >= mindestens ? gekannt : da;
+    if (gekannt.length >= mindestens) return gekannt;
+    return fruehe(da, (it) => wortId(it), mindestens) || da;
   }
 
   function verbAufgabe(verben, zeitName, form) {
@@ -211,7 +231,8 @@ const Erzeuger = (() => {
   function nomenAuswahl() {
     const alle = nomen();
     const gekannt = alle.filter((n) => bekannt(n.w.it));
-    return gekannt.length >= 10 ? gekannt : alle;
+    if (gekannt.length >= 10) return gekannt;
+    return fruehe(alle, (n) => n.w.id, 10) || alle;
   }
 
   function lueckeVor(artikel, rest) {

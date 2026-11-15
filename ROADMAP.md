@@ -15,8 +15,8 @@
 | 1 | **Gerüst** | Startseite mit „Los“, läuft offline, eigenes App-Symbol | ✅ |
 | 2 | **Sichern & Laden** | Lernstand als Datei in iCloud Drive ablegen und zurückholen | ✅ |
 | 3 | **Vokabeltrainer** | Eintippen, Prüfen, Karteikasten mit 5 Fächern | ✅ |
-| 4 | **Grundwortschatz** | 1.096 Wörter von A1 bis B2, nach Themen und Lektionen | ✅ |
-| 5 | **Lesetexte & Rezepte** | 69 Texte (davon 5 Rezepte, 5 Nachrichten), Fragen, Wort antippen, Vorlesen | ✅ |
+| 4 | **Grundwortschatz** | 1.527 Wörter von A1 bis B2, nach Themen und Lektionen | ✅ |
+| 5 | **Lesetexte & Rezepte** | 99 Texte (davon 5 Rezepte, 5 Nachrichten), Fragen, Wort antippen, Vorlesen | ✅ |
 | 6 | **Grammatik** | 38 Kapitel (A1–B2), 304 Übungen plus 228 leichtere Zusatzübungen: Lücken, Sätze aus Wortkacheln bauen – und Regel direkt am Text | ✅ |
 | 7 | **Wörterbuch** | 55.240 Wörter Italienisch–Deutsch, offline, aus WikDict (CC BY-SA); Suche in beiden Richtungen, erkennt Formen (mangio → mangiare) | ✅ |
 | 8 | **Eigene Texte** | Rezept einfügen, Wort antippen, in Karteikarten übernehmen, eigene Bedeutung eintragen | ✅ |
@@ -43,7 +43,9 @@
 | **Mehr Übung, Schritt 2: neue Wörter pro Tag** | Höchstens 1, 2, 3 oder 5 neue Wörter am Tag (einstellbar unter Fortschritt, Standard 3). Keine neuen, solange noch viele Wörter kennengelernt werden, viele fällig sind oder einige noch nicht sitzen – die Startseite sagt, warum | ✅ |
 | **Mehr Übung, Schritt 2b: Fehler, Weitermachen, Schwierigkeit** | Falsche Grammatik- und Hör-Übungen kommen ab dem nächsten Tag wieder (bis sie einmal richtig sind). Richtige Antwort → geht von selbst weiter. Nach einer Pause: „Weitermachen“ genau an der Stelle (Vokabeln, Übungen, Hören, Text). Läuft es schwer (unter 70 % in 7 Tagen), kommen weniger neue Wörter | ✅ |
 | **Mehr Übung, Schritt 3a: mehr Wörter A1** | 24 kurze Wort-Lektionen (je 3 nach Lektion 1–8) mit je 11–16 Wörtern, kurzem Text, Hören und gemischten Übungen (neue Wörter + Grammatik der Lektion davor). 321 neue Wörter. Lektionen werden jetzt fortlaufend gezählt | ✅ – wartet auf Nicoles Blick |
-| **Mehr Übung, Schritt 3b–d: mehr Wörter A2, B1, B2** | Je 3 kurze Wort-Lektionen nach Lektion 9–36, Ziel insgesamt etwa 2.400 Wörter | ⏳ als Nächstes: A2 |
+| **Mehr Übung, Schritt 3b: mehr Wörter A2** | 30 kurze Wort-Lektionen (je 3 nach Lektion 9–18): Ausflüge, Feste, Gefühle, Urlaub, Strand, Berge, Kochen, Gewürze, Geschäfte, Restaurant, Schule, Wetter, Körper, Krankheit, Hausarbeit, Feiertage, Umwelt, Kultur, Technik … 431 neue Wörter | ✅ – wartet auf Nicoles Blick |
+| **Hören nur mit Bekanntem** | Hören & Üben (auch „Frei üben“) nimmt nur Sätze bis zur aktuellen Lektion – keine Zeitformen oder Wörter, die erst später kommen; auch die falschen Kacheln und die selbst erzeugten Aufgaben bleiben beim Bekannten | ✅ |
+| **Mehr Übung, Schritt 3c–d: mehr Wörter B1, B2** | Je 3 kurze Wort-Lektionen nach Lektion 19–36, Ziel insgesamt etwa 2.400 Wörter | ⏳ als Nächstes: B1 |
 
 Konzept: [docs/superpowers/specs/2026-11-14-lektionen-design.md](docs/superpowers/specs/2026-11-14-lektionen-design.md)
 

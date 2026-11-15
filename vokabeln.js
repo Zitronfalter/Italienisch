@@ -6,7 +6,12 @@ const Vokabeln = (() => {
   const ABSTAND = { 1: 1, 2: 3, 3: 7, 4: 16, 5: 35 };
   const SICHER_AB_FACH = 4;          // ab Fach 4 gilt ein Wort als „sitzt“
   const MAX_FAELLIG = 20;            // höchstens so viele Wiederholungen pro Runde
-  const MAX_NEU = 5;                 // höchstens so viele neue Wörter pro Runde
+  // Neue Wörter pro Tag: selbst einstellbar (Fortschritt), Standard 3.
+  // Es kommen nur neue, wenn die alten gut laufen (siehe rundeZusammenstellen).
+  const NEU_WAHL = [1, 2, 3, 5];
+  const NEU_STANDARD = 3;
+  const PAUSE_FAELLIG = 15;          // so viele fällige Wörter → heute keine neuen
+  const PAUSE_SCHWER = 8;            // so viele Wörter in Fach 1, die schon falsch waren → keine neuen
 
   // ---------- Datum (Ortszeit, als Text JJJJ-MM-TT) ----------
 
@@ -82,21 +87,61 @@ const Vokabeln = (() => {
 
   function anzahlJung() { return jungeWoerter().length; }
 
-  // Liste für eine Runde: fällige Wörter zum Schreiben, junge Wörter zum Kennenlernen,
-  // dann (wenn Platz) ein paar neue.
-  function rundeZusammenstellen() {
-    const h = heute();
-    const wiederholen = faellige().filter((id) => !istJung(karten()[id])).slice(0, MAX_FAELLIG);
-    const jung = jungeWoerter().slice(0, 10);
-    const platz = Math.max(0, MAX_NEU - Math.floor(wiederholen.length / 4) - Math.floor(jung.length / 2));
-    const neu = neue().slice(0, platz);
-    return { wiederholen, jung, neu, heute: h };
+  // ---------- Neue Wörter pro Tag ----------
+
+  function neuProTag() {
+    const n = Number((Speicher.daten.einstellungen || {}).neuProTag);
+    return NEU_WAHL.includes(n) ? n : NEU_STANDARD;
   }
 
-  // Ein neues Wort kommt in den Karteikasten – erst zum Kennenlernen.
-  function aufnehmen(id) {
+  function neuProTagWaehlen(wert) {
+    Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), neuProTag: Number(wert) };
+    Speicher.speichern();
+  }
+
+  // Wie viele neue Wörter heute schon dazugekommen sind
+  function neuHeute() {
+    const z = Speicher.daten.fortschritt.neuHeute;
+    return z && z.datum === heute() ? z.anzahl : 0;
+  }
+
+  // Warum heute keine neuen Wörter kommen – oder null.
+  //   'tag'     → die neuen Wörter für heute sind schon da
+  //   'jung'    → erst die Wörter kennenlernen, die gerade neu sind
+  //   'faellig' → viele Wörter sind zum Wiederholen dran
+  //   'schwer'  → einige Wörter sitzen noch nicht (Fach 1, schon falsch gewesen)
+  function pauseGrund(faelligAnzahl, jungAnzahl) {
+    const n = neuProTag();
+    if (neuHeute() >= n) return 'tag';
+    if (jungAnzahl >= Math.max(4, n * 2)) return 'jung';
+    if (faelligAnzahl >= PAUSE_FAELLIG) return 'faellig';
+    const schwer = Object.values(karten()).filter((k) => !istJung(k) && k.fach === 1 && k.falsch > 0).length;
+    if (schwer >= PAUSE_SCHWER) return 'schwer';
+    return null;
+  }
+
+  // Liste für eine Runde: fällige Wörter zum Schreiben, junge Wörter zum Kennenlernen,
+  // dann – wenn es gut läuft – ein paar neue (höchstens neuProTag() am Tag).
+  // pause: Grund, warum keine neuen kommen (nur wenn es noch neue gäbe)
+  function rundeZusammenstellen() {
+    const h = heute();
+    const alleFaellig = faellige().filter((id) => !istJung(karten()[id]));
+    const wiederholen = alleFaellig.slice(0, MAX_FAELLIG);
+    const jung = jungeWoerter().slice(0, 10);
+    const warten = neue();
+    const grund = warten.length ? pauseGrund(alleFaellig.length, jungeWoerter().length) : null;
+    const neu = grund ? [] : warten.slice(0, neuProTag() - neuHeute());
+    return { wiederholen, jung, neu, pause: grund, heute: h };
+  }
+
+  // Ein Wort kommt in den Karteikasten – erst zum Kennenlernen.
+  // optionen.neu: ein neues Wort aus der Runde (zählt für „neue Wörter pro Tag“)
+  function aufnehmen(id, optionen = {}) {
     if (!karten()[id]) {
       karten()[id] = { fach: 1, faellig: heute(), richtig: 0, falsch: 0, kennen: 0 };
+      if (optionen.neu) {
+        Speicher.daten.fortschritt.neuHeute = { datum: heute(), anzahl: neuHeute() + 1 };
+      }
       Speicher.speichern();
     }
   }
@@ -272,6 +317,10 @@ const Vokabeln = (() => {
     kennenGelernt,
     KENNEN_FERTIG,
     rundeZusammenstellen,
+    neuProTag,
+    neuProTagWaehlen,
+    neuHeute,
+    NEU_WAHL,
     aufnehmen,
     eintragen,
     pruefe,

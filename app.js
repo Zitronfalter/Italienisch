@@ -357,8 +357,16 @@ function losKlick() {
 
 // ---------- Startseite ----------
 
+// Warum heute keine neuen Wörter kommen (siehe Vokabeln.rundeZusammenstellen)
+const PAUSE_TEXT = {
+  tag: 'Die neuen Wörter für heute hast du schon – morgen kommen weitere.',
+  jung: 'Neue Wörter kommen, sobald du die aktuellen kennengelernt hast.',
+  faellig: 'Heute keine neuen Wörter – erst die fälligen wiederholen.',
+  schwer: 'Heute keine neuen Wörter – ein paar Wörter brauchen noch Übung.',
+};
+
 function zeigeStart() {
-  const { wiederholen, jung, neu } = Vokabeln.rundeZusammenstellen();
+  const { wiederholen, jung, neu, pause } = Vokabeln.rundeZusammenstellen();
   const teile = [];
   if (wiederholen.length) teile.push(`${wiederholen.length} ${wiederholen.length === 1 ? 'Vokabel' : 'Vokabeln'} zum Wiederholen`);
   if (jung.length) teile.push(`${jung.length} zum Kennenlernen`);
@@ -366,7 +374,9 @@ function zeigeStart() {
   const n = naechsterSchritt();
   document.getElementById('heute-text').textContent = (teile.length
     ? teile.join(', ') + '.'
-    : 'Keine Vokabeln fällig.') + (n ? ` Danach: ${n.name}` : '');
+    : 'Keine Vokabeln fällig.')
+    + (PAUSE_TEXT[pause] ? ` ${PAUSE_TEXT[pause]}` : '')
+    + (n ? ` Danach: ${n.name}` : '');
   zeigeLektionen();
   zeigeLesenStand();
   zeigeGrammatikStand();
@@ -486,7 +496,7 @@ function zeigeSchritt() {
 
   if (schritt.art === 'neu') {
     const w = Vokabeln.wort(schritt.id);
-    Vokabeln.aufnehmen(w.id);
+    Vokabeln.aufnehmen(w.id, { neu: true });
     el('frage-art').textContent = 'Neues Wort – erst einmal nur ansehen und anhören';
     el('frage-wort').textContent = w.de;
     el('loesung-neu').textContent = w.it;
@@ -1698,6 +1708,16 @@ function balken(liste, name, zahl, max) {
   liste.appendChild(zeile);
 }
 
+function zeigeNeuHeute() {
+  const heute = Vokabeln.neuHeute();
+  el('neu-pro-tag-text').textContent = `Heute: ${heute} von ${Vokabeln.neuProTag()}. Neue Wörter kommen nur, wenn die anderen gut laufen – so hast du Zeit, sie ein paar Tage zu üben.`;
+}
+
+el('neu-pro-tag').addEventListener('change', (e) => {
+  Vokabeln.neuProTagWaehlen(e.target.value);
+  zeigeNeuHeute();
+});
+
 function zeigeFortschritt() {
   const karten = Object.values(Speicher.daten.karten);
   const sicher = Vokabeln.anzahlSicher();
@@ -1715,6 +1735,10 @@ function zeigeFortschritt() {
   balken(faecher, 'Neu', jung, max);
   proFach.forEach((zahl, i) => balken(faecher, `Fach ${i + 1}`, zahl, max));
 
+  // Neue Wörter pro Tag
+  el('neu-pro-tag').value = String(Vokabeln.neuProTag());
+  zeigeNeuHeute();
+
   // Grammatik-Kapitel im Karteikasten
   Wiederholung.einsortieren();
   const gramFaecher = el('fs-gram-faecher');
@@ -1722,7 +1746,11 @@ function zeigeFortschritt() {
   const gramVerteilung = Wiederholung.verteilung();
   const gramMax = Math.max(1, ...gramVerteilung);
   gramVerteilung.forEach((zahl, i) => balken(gramFaecher, `Fach ${i + 1}`, zahl, gramMax));
-  gramFaecher.hidden = !gramVerteilung.some(Boolean);
+  const gramDa = gramVerteilung.some(Boolean);
+  gramFaecher.style.display = gramDa ? '' : 'none';     // .faecher überschreibt sonst „hidden“
+  el('fs-gram-text').textContent = gramDa
+    ? 'Geübte Kapitel kommen wie Vokabeln immer wieder – mit neuen Aufgaben. Fach 5 = sitzt lange.'
+    : 'Sobald du ein Kapitel geübt hast, kommt es hier in den Karteikasten und nach ein paar Tagen wieder – mit neuen Aufgaben.';
 
   const eingebaute = LESETEXTE.length;
   el('fs-texte').textContent = `${Lesen.anzahlVerstanden()} / ${eingebaute}`;

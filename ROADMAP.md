@@ -51,6 +51,7 @@
 | **Einfacheres Menü** | Leiste unten mit 4 Reitern: Heute (Limo, Los, aktuelle Lektion), Lektionen, Üben (Lesen, Grammatik, Hören, Wörterbuch), Mein Stand (Fortschritt, Wörter, Sichern). In Übungen ist die Leiste weg | ✅ – wartet auf Nicoles Blick |
 | **Vorlesen: Tempo und zwei Stimmen** | Tempo in 4 deutlicheren Stufen (sehr langsam … normal), auch unter „Mein Stand“ → „Vorlesen“. Eigene Stimme für männliche Wörter (il, lo, un …) und für weibliche (la, le, una …) bei Vokabeln und Wortpaaren – Texte bleiben bei einer Stimme | ✅ – wartet auf Nicoles Blick |
 | **Menü, Schritt 2** | 5 Reiter: Heute · Üben · Lektionen · Mein Stand · **Einstellungen** (Vorlesen, neue Wörter pro Tag, Sichern). „‹ Zurück“ bzw. „✕ Übung beenden“ immer oben in einer festen Leiste. Heute, Üben und Wörterbuch passen ohne Scrollen auf den Bildschirm | ✅ – wartet auf Nicoles Blick |
+| **Frei üben mit Farbe** | Farbige Symbole wie in den iPhone-Einstellungen (Lesen gelb, Grammatik grün, Hören blau, Wörterbuch dunkel) und Limo mit wechselnden Tipps; Limo in den Übungen größer | ✅ – wartet auf Nicoles Blick |
 | **Apple-Design** | Moderner, wie eine iPhone-App | ⏳ – wird besprochen |
 | **Meine Wörter** | Alle Wörter nach Lektion mit Stand (sitzt, übe ich noch, lerne ich kennen, noch nicht dran), Filter, antippen zum Hören, Schalter „Deutsch verdecken“ zum Selbsttest (zählt nicht für den Karteikasten). Unter „Mein Stand“ → „Alle Wörter ansehen“ | ✅ – wartet auf Nicoles Blick |
 

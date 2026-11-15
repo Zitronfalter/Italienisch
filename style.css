@@ -1137,3 +1137,36 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 .weiter-teil .knopf-leise { margin-top: 2px; align-self: flex-start; padding-left: 0; }
 .knopf-los.knopf-los-unten { margin-top: auto; }
 .weiter-teil[hidden] { display: none; }
+
+/* ---------- Frei üben: farbige Symbole wie in den iPhone-Einstellungen ---------- */
+.ueben-karte { padding-left: 80px; padding-right: 44px; min-height: 84px; justify-content: center; }
+.ueben-symbol {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+}
+.ueben-symbol svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* Farbe + Strich mit genug Kontrast, hell und dunkel */
+.symbol-gelb { background: var(--akzent); color: var(--akzent-text); }
+.symbol-gruen { background: var(--richtig); color: var(--richtig-text); }
+.symbol-blau { background: var(--fehler); color: var(--flaeche); }
+.symbol-stift { background: var(--text); color: var(--flaeche); }
+.ueben-karte .karte-text { font-size: 15px; }
+#screen-ueben { gap: 14px; }
+#screen-ueben .begleiter-bild { width: 64px; height: 64px; }
+#screen-ueben .begleiter-blase { font-size: 15px; }

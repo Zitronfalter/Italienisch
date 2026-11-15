@@ -52,7 +52,11 @@ document.getElementById('knopf-oben-zurueck').addEventListener('click', () => {
 // Einen Reiter der Leiste öffnen
 function oeffneReiter(reiter) {
   if (reiter === 'lektionen') { zeigeLektionen(); zeige('lektionen'); }
-  else if (reiter === 'ueben') { zeigeLesenStand(); zeigeGrammatikStand(); zeigeHoerenStand(); zeige('ueben'); }
+  else if (reiter === 'ueben') {
+    zeigeLesenStand(); zeigeGrammatikStand(); zeigeHoerenStand();
+    Begleiter.zeigen(el('begleiter-ueben'), Begleiter.uebenNachricht());
+    zeige('ueben');
+  }
   else if (reiter === 'stand') zeigeFortschritt();
   else if (reiter === 'einst') zeigeEinstellungen();
   else zeigeStart();

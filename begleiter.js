@@ -138,10 +138,24 @@ const Begleiter = (() => {
     return hoeren ? 'hoert' : 'denkt';
   }
 
+  // Seite „Frei üben“: Limo lädt ein – ohne Druck, wechselt jedes Mal
+  const UEBEN_TEXTE = [
+    { stimmung: 'liest', text: 'Worauf hast du Lust? Alles hier zählt – auch nur fünf Minuten.' },
+    { stimmung: 'hoert', text: 'Hören trainiert das Ohr. Probier mal „Hören & Üben“!' },
+    { stimmung: 'denkt', text: 'Eine Regel nicht ganz klar? Bei Grammatik gibt’s Tipps in kleinen Schritten.' },
+    { stimmung: 'freut', text: 'Ein Rezept auf Italienisch lesen – und danach kochen? Buon appetito!' },
+    { stimmung: 'liest', text: 'Wort vergessen? Im Wörterbuch findest du es – auch ohne Internet.' },
+  ];
+  let uebenNr = Math.floor(Math.random() * UEBEN_TEXTE.length);
+  function uebenNachricht() {
+    uebenNr = (uebenNr + 1) % UEBEN_TEXTE.length;
+    return UEBEN_TEXTE[uebenNr];
+  }
+
   // Eine Lektion ist geschafft
   function lektionGeschafft(titel) {
     return { stimmung: 'jubelt', text: `Lektion „${titel}“ geschafft! Ottimo lavoro. Die nächste wartet, wann du magst.` };
   }
 
-  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft, uebungLimo, uebungStimmung };
+  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft, uebungLimo, uebungStimmung, uebenNachricht };
 })();

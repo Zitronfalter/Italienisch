@@ -8,13 +8,8 @@
 
 ## 🟢 Jetzt
 
-- [ ] **Begleiter-Roboter zeichnen lassen** und hier hochladen – bis dahin zeigt die App einen schlichten Platzhalter-Roboter.
-  Wünsche für die Zeichnung:
-  - Kleiner, freundlicher Roboter, gezeichnet (nicht KI-generiert), gern im Stil der Vorlage
-  - Farben frei – danach passen wir die Farben der App an den Roboter an
-  - Je ein Bild pro Stimmung: **winkt** (Begrüßung), **freut sich**, **denkt nach**, **ruhig**, **überrascht**, **liest ein Buch**, **jubelt** (Meilenstein)
-  - Format: PNG mit durchsichtigem Hintergrund (oder SVG), quadratisch, mindestens 512 × 512 Pixel
-  - Ohne Text, Sprechblasen, Punkte oder XP – die Sprüche macht die App selbst
+- [x] **Begleiter:** Erledigt am 15.11.2026 – statt Roboter ist jetzt **Limo** da, die kleine Zitrone (aus deinem Entwurf, aufrecht, Blätter als Haarschopf). Die App-Farben passen jetzt zu Limo, Terrakotta ist raus, das App-Symbol zeigt Limo.
+- [ ] **Limo und die neuen Farben auf dem iPhone ansehen:** Gefallen dir Gelb, Grün und das ruhige Blau bei „noch nicht“? Ist Limo gut zu erkennen? Hinweis: Das App-Symbol auf dem Home-Bildschirm wechselt evtl. erst, wenn du die App einmal entfernst und neu „Zum Home-Bildschirm“ hinzufügst.
 - [ ] **Lektion 1–8 ausprobieren:** Passt die neue Startseite? Ist „kenne ich / neu“ angenehm? Sind die Texte zu leicht oder zu schwer?
 - [ ] **Lektion 9–18 (A2) ansehen**, wenn du so weit bist: Sind die neuen Texte (Urlaub, Markt, Restaurant, Kindheit, Wetter, Arzt) zu leicht oder zu schwer? Danach planen wir B1 (Lektion 19–28) zusammen.
 - [ ] **Wortliste durchsehen** – in [wortschatz.js](wortschatz.js), eine Zeile pro Wort.

@@ -1,10 +1,10 @@
-// Begleiter: kleiner Roboter mit Sprechblase
+// Begleiter: Limo, die kleine Zitrone, mit Sprechblase (Zeichnung in limo.js)
 //
 // Regeln: freundlich, ruhig, nie traurig, kein Druck, keine Punkte.
-// Er begrüßt, gibt Tipps und freut sich über echten Fortschritt (Meilensteine).
+// Limo begrüßt, gibt Tipps und freut sich über echten Fortschritt (Meilensteine).
 //
-// BILDER: Solange hier null steht, zeichnet die App einen Platzhalter-Roboter.
-// Wenn die Zeichnungen da sind, z. B. 'begleiter/winkt.png' eintragen
+// BILDER: Solange hier null steht, zeichnet limo.js Limo als SVG.
+// Ein eigenes Bild kann eine Stimmung ersetzen, z. B. 'begleiter/winkt.png'
 // (Datei auch in sw.js bei DATEIEN aufnehmen).
 
 const BEGLEITER_BILDER = {
@@ -97,47 +97,14 @@ const Begleiter = (() => {
     if (!geuebt) return { stimmung: 'ruhig', text: 'Heute ist nichts fällig. Ein Text passt trotzdem immer.' };
     if (aufAnhieb === geuebt) return { stimmung: 'jubelt', text: 'Alles auf Anhieb gewusst. Perfetto!' };
     if (aufAnhieb / geuebt >= 0.6) return { stimmung: 'freut', text: 'Bravo! Die meisten Wörter saßen schon.' };
-    return { stimmung: 'ruhig', text: 'Gut gemacht. Was noch nicht saß, kommt morgen wieder – ganz von selbst.' };
+    return { stimmung: 'mut', text: 'Gut gemacht. Was noch nicht saß, kommt morgen wieder – ganz von selbst.' };
   }
 
   // ---------- Bild ----------
 
-  // Platzhalter-Roboter als SVG. Farben kommen aus style.css (--roboter-…).
-  function platzhalter(stimmung) {
-    const augen = {
-      winkt: '<path d="M36 44 q5 -6 10 0 M54 44 q5 -6 10 0"/>',
-      freut: '<path d="M36 44 q5 -6 10 0 M54 44 q5 -6 10 0"/>',
-      jubelt: '<path d="M36 44 q5 -7 10 0 M54 44 q5 -7 10 0"/>',
-      denkt: '<circle cx="43" cy="40" r="3" class="voll"/><circle cx="61" cy="40" r="3" class="voll"/>',
-      ruhig: '<path d="M36 41 q5 5 10 0 M54 41 q5 5 10 0"/>',
-      ueberrascht: '<circle cx="41" cy="42" r="4.5"/><circle cx="59" cy="42" r="4.5"/>',
-      liest: '<path d="M36 44 h10 M54 44 h10"/>',
-    }[stimmung] || '';
-    const mund = { jubelt: '<path d="M45 50 q5 5 10 0"/>', ueberrascht: '<circle cx="50" cy="51" r="2"/>' }[stimmung] || '';
-    const arme = {
-      winkt: '<path d="M33 74 q-8 4 -9 12 M67 72 q8 -8 10 -18"/>',
-      jubelt: '<path d="M33 72 q-8 -8 -10 -18 M67 72 q8 -8 10 -18"/>',
-      denkt: '<path d="M33 74 q-8 4 -9 12 M67 74 q2 -6 -6 -10"/>',
-      liest: '<path d="M33 74 q4 8 10 8 M67 74 q-4 8 -10 8"/>',
-    }[stimmung] || '<path d="M33 74 q-8 4 -9 12 M67 74 q8 4 9 12"/>';
-    const buch = stimmung === 'liest' ? '<rect class="buch" x="38" y="76" width="24" height="14" rx="2"/>' : '';
-    return `
-      <svg class="roboter" viewBox="0 0 100 100" aria-hidden="true">
-        <line class="linie" x1="50" y1="8" x2="50" y2="18"/>
-        <circle class="antenne" cx="50" cy="7" r="4"/>
-        <rect class="kopf" x="20" y="18" width="60" height="46" rx="20"/>
-        <rect class="visier" x="28" y="27" width="44" height="30" rx="13"/>
-        <g class="augen">${augen}${mund}</g>
-        <rect class="koerper" x="33" y="64" width="34" height="26" rx="11"/>
-        <circle class="herz" cx="50" cy="76" r="4"/>
-        <g class="arme">${arme}</g>
-        ${buch}
-      </svg>`;
-  }
-
   function bildHtml(stimmung) {
     const datei = BEGLEITER_BILDER[stimmung];
-    return datei ? `<img class="roboter" src="${datei}" alt="" aria-hidden="true">` : platzhalter(stimmung);
+    return datei ? `<img class="roboter" src="${datei}" alt="" aria-hidden="true">` : Limo.svg(stimmung, { klasse: 'roboter limo' });
   }
 
   // Zeigt den Begleiter in einem Element: { stimmung, text }

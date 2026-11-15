@@ -27,6 +27,7 @@
 - [ ] **Neu ausprobieren:** (1) Richtige Antwort → es geht nach einer Sekunde von selbst weiter. Ist das Tempo gut? (2) Mitten in einer Runde die App schließen und wieder öffnen → „Weitermachen“. (3) Falsche Übungen kommen am nächsten Tag unter „Wiederholen“ wieder.
 - [ ] **Neue kurze Lektionen A1 ansehen:** Nach jeder Lektion 1–8 kommen jetzt 3 kurze Wort-Lektionen (Zahlen, Länder, Getränke, Familie, Hobbys, Stadt, Obst, Möbel, Kleidung, Berufe …). Die Lektionen sind neu durchgezählt: Deine alte „Lektion 2“ heißt jetzt „Lektion 5“. Hast du schon Lektionen erledigt, kommen die neuen kurzen danach dran – was du schon kannst, kannst du mit „Kann ich schon“ überspringen. Passt die Menge? Sind die Texte gut?
 - [ ] **Neue kurze Lektionen A2 ansehen** (nach den A2-Lektionen): 30 Stück, z. B. Strand, Berge, Gewürze, Schule, Körper, Feiertage, Umwelt, Technik. Passen Themen und Texte?
+- [ ] **Neue kurze Lektionen B1 ansehen** (nach den B1-Lektionen): 30 Stück, z. B. Studium, Traumhaus, Telefon, Büro, Bewerbung, Venedig, Politik, Geschichte, Reklamation, Ämter. Passen Themen und Texte?
 - [ ] **Hören prüfen:** Kommen beim Hören jetzt nur noch Wörter und Zeitformen vor, die du schon kennst? Wenn nicht: Satz notieren und Claude zeigen.
 - [ ] **Frage an dich:** Meinst du mit dem „Haken“ das ✓ / „Fertig“ oben rechts über der Tastatur? Dann sag Claude Bescheid – das schließt nur die Tastatur; Claude schaut, ob es auch prüfen kann.
 - [x] **Commit freigeben:** Erledigt am 15.11.2026 – B1, B2 und Zusatzübungen sind gespeichert (Commit).

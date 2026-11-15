@@ -3,7 +3,7 @@
 //
 // WICHTIG: Bei jeder Änderung an den Dateien die Versionsnummer erhöhen.
 // Dann lädt das iPhone beim nächsten Start die neuen Dateien.
-const VERSION = 'v39';
+const VERSION = 'v40';
 const CACHE = 'italienisch-' + VERSION;
 
 const DATEIEN = [
@@ -17,6 +17,7 @@ const DATEIEN = [
   'texte-b.js',
   'texte-a1.js',
   'texte-a2.js',
+  'texte-b1.js',
   'lesen.js',
   'grammatik.js',
   'grammatik-b.js',
@@ -31,6 +32,7 @@ const DATEIEN = [
   'lektionen-inhalt.js',
   'lektionen-a1.js',
   'lektionen-a2.js',
+  'lektionen-b1.js',
   'lektionen.js',
   'app.js',
   'manifest.webmanifest',

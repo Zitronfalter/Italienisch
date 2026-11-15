@@ -24,6 +24,8 @@
 - [ ] **Zusatzübungen ausprobieren:** Mach in einem Grammatik-Kapitel absichtlich ein paar Fehler. Am Ende erscheint „Leichtere Zusatzübungen“ – erst ein Tipp in kleinen Schritten, dann leichte Aufgaben. Gefällt dir das so?
 - [ ] **Grammatik-Wiederholung ausprobieren:** Kapitel, die du geübt hast, kommen jetzt nach ein paar Tagen von selbst wieder (nach den Vokabeln, „Grammatik wiederholen“). Sind die Aufgaben verständlich? Sind 2 Kapitel mit je 3 Aufgaben gut so – oder zu viel / zu wenig?
 - [ ] **Neue Wörter pro Tag einstellen:** Unter **Fortschritt** → „Neue Wörter pro Tag“ (1, 2, 3 oder 5; Standard 3). Passt die Menge zu deinen 15 Minuten?
+- [ ] **Neu ausprobieren:** (1) Richtige Antwort → es geht nach einer Sekunde von selbst weiter. Ist das Tempo gut? (2) Mitten in einer Runde die App schließen und wieder öffnen → „Weitermachen“. (3) Falsche Übungen kommen am nächsten Tag unter „Wiederholen“ wieder.
+- [ ] **Frage an dich:** Meinst du mit dem „Haken“ das ✓ / „Fertig“ oben rechts über der Tastatur? Dann sag Claude Bescheid – das schließt nur die Tastatur; Claude schaut, ob es auch prüfen kann.
 - [x] **Commit freigeben:** Erledigt am 15.11.2026 – B1, B2 und Zusatzübungen sind gespeichert (Commit).
 
 ---

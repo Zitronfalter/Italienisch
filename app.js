@@ -93,10 +93,14 @@ function lektionName(l) {
 
 function naechsterSchritt() {
   // Zuerst fällige Grammatik wiederholen (wie beim Karteikasten), dann weiter in der Lektion
-  const wdh = Wiederholung.fuerRunde();
-  if (wdh.length) {
+  // und Übungen, die an einem früheren Tag falsch waren
+  if (Wiederholung.etwasFaellig()) {
+    const wdh = Wiederholung.fuerRunde();
     const namen = wdh.map((id) => `„${Grammatik.kapitel(id).titel}“`).join(' und ');
-    return { art: 'wiederholen', name: `Grammatik wiederholen: ${namen}` };
+    return {
+      art: 'wiederholen',
+      name: namen ? `Grammatik wiederholen: ${namen}` : 'Wiederholen: Übungen, die neulich noch nicht saßen',
+    };
   }
   const t = Lektionen.naechsterTeil({ ohneWortCheck: true });
   if (t) {
@@ -346,6 +350,7 @@ function zeigeWortCheck(l, danach) {
 
 // „Los“: erst (falls nötig) „kenne ich / neu“, dann die Vokabeln
 function losKlick() {
+  if (gemerkteStelle()) { weitermachen(); return; }     // nach einer Pause: an derselben Stelle weiter
   const t = Lektionen.naechsterTeil();
   if (t && t.art === 'woerter') {
     Lektionen.beginnen(t.lektion.id);
@@ -362,7 +367,7 @@ const PAUSE_TEXT = {
   tag: 'Die neuen Wörter für heute hast du schon – morgen kommen weitere.',
   jung: 'Neue Wörter kommen, sobald du die aktuellen kennengelernt hast.',
   faellig: 'Heute keine neuen Wörter – erst die fälligen wiederholen.',
-  schwer: 'Heute keine neuen Wörter – ein paar Wörter brauchen noch Übung.',
+  schwer: 'Heute keine neuen Wörter – erst festigen, was du schon hast. Das macht es leichter.',
 };
 
 function zeigeStart() {
@@ -383,6 +388,11 @@ function zeigeStart() {
   zeigeHoerenStand();
   if (!geschafftZeigen(el('begleiter-start'))) Begleiter.zeigen(el('begleiter-start'), Begleiter.startNachricht());
   lekt.offen = null;
+  // Gemerkte Stelle: „Weitermachen“ statt „Los“
+  const stelle = gemerkteStelle();
+  el('weiter-karte').hidden = !stelle;
+  if (stelle) el('weiter-text').textContent = stelleBeschreibung(stelle);
+  el('knopf-los').textContent = stelle ? 'Weitermachen' : 'Los';
   zeige('start');
 }
 
@@ -470,6 +480,7 @@ function sprichWort(text, langsam = false) {
 }
 
 function zeigeSchritt() {
+  stelleMerken('runde');
   const schritt = abfrage.schritte[abfrage.pos];
   const zaehlt = (s) => s.art !== 'neu';
   const gesamt = abfrage.schritte.filter(zaehlt).length;
@@ -615,6 +626,7 @@ function pruefenDeutsch(weissNicht) {
   if (!abfrage.gewertet.has(w.id)) {
     abfrage.gewertet.add(w.id);
     if (!abfrage.ohneWertung) Vokabeln.eintragen(w.id, gewusst, 'de');
+    Vokabeln.ergebnisZaehlen(gewusst);
     if (gewusst) abfrage.aufAnhieb += 1;
   }
   if (!gewusst) abfrage.schritte.push({ art: 'deutsch', id: w.id });
@@ -632,6 +644,7 @@ function pruefenDeutsch(weissNicht) {
   el('knopf-pruefen').textContent = 'Weiter';
   el('knopf-pruefen').focus();
   abfrage.geprueft = true;
+  if (gewusst) autoWeiter(el('rueck-text').hidden ? 1200 : 2200);
 }
 
 function waehlen(knopf, richtig, w) {
@@ -641,6 +654,7 @@ function waehlen(knopf, richtig, w) {
     if (b.textContent === w.it) b.classList.add('richtig');
   });
   if (!richtig) knopf.classList.add('falsch');
+  Vokabeln.ergebnisZaehlen(richtig);
   if (richtig) {
     Vokabeln.kennenGelernt(w.id);
     abfrage.kennen.add(w.id);
@@ -660,6 +674,7 @@ function waehlen(knopf, richtig, w) {
   el('knopf-pruefen').textContent = 'Weiter';
   el('knopf-pruefen').hidden = false;
   el('knopf-pruefen').focus();
+  if (richtig) autoWeiter(1800);
 }
 
 function rundePaarTippen(b) {
@@ -727,6 +742,7 @@ function pruefen(weissNicht = false) {
   if (!abfrage.gewertet.has(w.id)) {
     abfrage.gewertet.add(w.id);
     if (!abfrage.ohneWertung) Vokabeln.eintragen(w.id, gewusst, 'it');
+    Vokabeln.ergebnisZaehlen(gewusst);
     if (gewusst) abfrage.aufAnhieb += 1;
   }
   // Nicht gewusst: am Ende der Runde noch einmal fragen.
@@ -756,15 +772,29 @@ function pruefen(weissNicht = false) {
   el('knopf-pruefen').textContent = 'Weiter';
   el('knopf-pruefen').focus();
   abfrage.geprueft = true;
+  if (ergebnis.stufe === 'richtig') autoWeiter();
+}
+
+// Richtig gelöst: nach kurzer Pause geht es von selbst weiter.
+// Bei Fehlern bleibt die Lösung stehen, bis du weitertippst.
+function autoWeiter(ms = 1200) {
+  const pos = abfrage.pos;
+  clearTimeout(abfrage.autoZeit);
+  abfrage.autoZeit = setTimeout(() => {
+    if (abfrage.pos === pos && abfrage.geprueft && !el('screen-runde').hidden) weiter();
+  }, ms);
 }
 
 function weiter() {
+  clearTimeout(abfrage.autoZeit);
   abfrage.pos += 1;
   if (abfrage.pos >= abfrage.schritte.length) beendeRunde();
   else zeigeSchritt();
 }
 
 function beendeRunde() {
+  clearTimeout(abfrage.autoZeit);
+  if (abfrage.pos >= abfrage.schritte.length) stelleVergessen('runde');   // „Beenden“ mittendrin: Stelle bleibt
   // „Wörter üben“ einer erledigten Lektion: kurzer Abschluss, zurück zur Lektion
   if (abfrage.ohneWertung) {
     el('ende-titel').textContent = 'Fertig geübt';
@@ -923,6 +953,7 @@ function mischen(liste) {
 function oeffneText(t, zurueckZu = 'liste') {
   lesen.text = t;
   lesen.zurueckZu = zurueckZu;
+  stelleMerken('text');
   el('knopf-lesen-zurueck').textContent = zurueckZu === 'lektion' ? 'Zurück zur Lektion' : 'Zurück zu den Texten';
   lesen.geprueft = false;
   lesen.antworten = t.fragen.map(() => null);
@@ -1020,6 +1051,7 @@ function fragenPruefen() {
   });
   const von = t.fragen.length;
   Lesen.ergebnisSpeichern(t.id, richtig, von);
+  if (richtig === von) stelleVergessen('text');
   lektionenPruefen();
   ergebnis.classList.toggle('fehler', richtig < von);
   ergebnis.textContent = richtig === von
@@ -1410,6 +1442,7 @@ function zeigeZusatzTipp() {
 }
 
 function zeigeUebung() {
+  stelleMerken('uebung');
   const u = gramUebungen()[gram.liste[gram.nr]];
   gram.geprueft = false;
   gram.tipp = false;
@@ -1542,6 +1575,10 @@ function uebungPruefen(wahlKnopf) {
     // Zusatzübungen haben eigene Nummern – sie zählen nicht als gelöste Kapitel-Übungen
     if (!gram.zusatz) Grammatik.uebungGeloest(gram.kapitel.id, gram.liste[gram.nr]);
   }
+  if (!gram.zusatz) Vokabeln.ergebnisZaehlen(gut);
+  if (!gram.zusatz && u.art !== 'wahl') {
+    Wiederholung.fehlerMerken({ art: 'grammatik', kapitel: gram.kapitel.id, nr: gram.liste[gram.nr] }, gut);
+  }
 
   el('uebung-rueck').classList.toggle('falsch', !gut);
   el('uebung-rueck-titel').textContent = ergebnis.stufe === 'richtig' ? 'Richtig.'
@@ -1572,6 +1609,7 @@ function uebungWeiter() {
   gram.nr += 1;
   if (gram.nr < gram.liste.length) { zeigeUebung(); return; }
   // Fertig
+  stelleVergessen('uebung');
   const k = gram.kapitel;
   const von = gram.liste.length;
   const gut = gram.richtig / von >= 0.8;
@@ -1710,7 +1748,13 @@ function balken(liste, name, zahl, max) {
 
 function zeigeNeuHeute() {
   const heute = Vokabeln.neuHeute();
-  el('neu-pro-tag-text').textContent = `Heute: ${heute} von ${Vokabeln.neuProTag()}. Neue Wörter kommen nur, wenn die anderen gut laufen – so hast du Zeit, sie ein paar Tage zu üben.`;
+  const q = Vokabeln.trefferQuote();
+  const grenze = Vokabeln.neuGrenze();
+  const ruhiger = grenze < Vokabeln.neuProTag()
+    ? ` Gerade etwas ruhiger: heute höchstens ${grenze}, bis es wieder leichter läuft.` : '';
+  el('neu-pro-tag-text').textContent = `Heute: ${heute} von ${Vokabeln.neuProTag()}.${ruhiger}`
+    + (q === null ? '' : ` Letzte 7 Tage: ${Math.round(q * 100)} % richtig.`)
+    + ' Neue Wörter kommen nur, wenn die anderen gut laufen – so hast du Zeit, sie ein paar Tage zu üben.';
 }
 
 el('neu-pro-tag').addEventListener('change', (e) => {
@@ -1871,6 +1915,7 @@ function hoerVorlesen(langsam = false) {
 }
 
 function zeigeHoerAufgabe() {
+  stelleMerken('hoeren');
   const a = hoer.aufgaben[hoer.nr];
   hoer.geprueft = false;
   hoer.gewaehlt = null;
@@ -2007,6 +2052,8 @@ function hoerPruefen() {
     hoer.richtig += 1;
     Uebungen.satzGeloest(a.satz);
   }
+  Wiederholung.fehlerMerken({ art: 'hoeren', satz: a.satz }, gut);
+  Vokabeln.ergebnisZaehlen(gut);
   hoer.geprueft = true;
 
   el('hoeren-rueck').classList.toggle('falsch', !gut);
@@ -2039,6 +2086,7 @@ function hoerWeiter() {
   hoer.nr += 1;
   if (hoer.nr < hoer.aufgaben.length) { zeigeHoerAufgabe(); return; }
   vorlesenStopp();
+  stelleVergessen('hoeren');
   Uebungen.ergebnisSpeichern(hoer.richtig, hoer.aufgaben.length);
   if (hoer.lektion) Lektionen.hoerenSpeichern(hoer.lektion.id, hoer.richtig, hoer.aufgaben.length);
   lektionenPruefen();
@@ -2082,8 +2130,9 @@ el('knopf-hoeren-start').addEventListener('click', () => starteHoeren());
 // fehler: Kapitel-ID → Anzahl falscher Grammatik-Aufgaben (für das Angebot „Zusatzübungen“)
 const aufg = { liste: [], nr: 0, richtig: 0, geprueft: false, ende: null, fertig: null, abbruch: null, fehler: {} };
 
-function starteAufgaben(liste, titel, fertig, abbruch) {
-  Object.assign(aufg, { liste, nr: 0, richtig: 0, geprueft: false, ende: null, fertig, abbruch, fehler: {} });
+// info: { typ: 'wiederholen' | 'ripasso' | 'kannich', lektion } – zum Weitermachen nach einer Pause
+function starteAufgaben(liste, titel, fertig, abbruch, info = {}) {
+  Object.assign(aufg, { liste, nr: 0, richtig: 0, geprueft: false, ende: null, fertig, abbruch, fehler: {}, titel, info });
   el('knopf-aufgabe-zusatz').hidden = true;
   el('aufgaben-titel').textContent = titel;
   zeige('aufgaben');
@@ -2130,6 +2179,7 @@ function aufgabeKacheln(woerter, sprache) {
 }
 
 function zeigeAufgabe() {
+  stelleMerken('aufgaben');
   const a = aufg.liste[aufg.nr];
   aufg.geprueft = false;
   el('aufgaben-stand').textContent = `${aufg.nr + 1} von ${aufg.liste.length}`;
@@ -2201,6 +2251,9 @@ function aufgabePruefen() {
   }
   if (gut) aufg.richtig += 1;
   else if (a.art === 'grammatik') aufg.fehler[a.kapitel] = (aufg.fehler[a.kapitel] || 0) + 1;
+  a.gut = gut;
+  Vokabeln.ergebnisZaehlen(gut);
+  Wiederholung.fehlerMerken(a, gut);   // falsch → kommt an einem der nächsten Tage wieder
   aufg.geprueft = true;
   el('aufgabe-ablage').classList.add('fertig');
   el('aufgabe-rueck').classList.toggle('falsch', !gut);
@@ -2210,12 +2263,21 @@ function aufgabePruefen() {
   el('aufgabe-rueck').hidden = false;
   el('knopf-aufgabe').textContent = 'Weiter';
   el('knopf-aufgabe').focus();
+  // Richtig und nichts weiter zu lesen: von selbst weiter
+  if (gut && el('aufgabe-rueck-text').hidden) {
+    const nr = aufg.nr;
+    clearTimeout(aufg.autoZeit);
+    aufg.autoZeit = setTimeout(() => {
+      if (aufg.nr === nr && aufg.geprueft && !aufg.ende && !el('screen-aufgaben').hidden) aufgabeWeiter();
+    }, 1200);
+  }
 }
 
 function aufgabeWeiter() {
   aufg.nr += 1;
   if (aufg.nr < aufg.liste.length) { zeigeAufgabe(); return; }
   vorlesenStopp();
+  stelleVergessen('aufgaben');
   aufg.ende = aufg.fertig(aufg.richtig, aufg.liste.length);
   el('aufgaben-stand').textContent = '';
   el('aufgabe-art').textContent = `${aufg.richtig} von ${aufg.liste.length} richtig`;
@@ -2268,8 +2330,8 @@ el('knopf-aufgaben-beenden').addEventListener('click', () => {
 });
 
 // „Kann ich schon“: 8 Aufgaben, ab 7 richtig ist die Lektion erledigt
-function starteKannIch(l) {
-  starteAufgaben(Lektionen.aufgabenFuer(l, 8), 'Kann ich schon?', (richtig, von) => {
+function starteKannIch(l, liste = null) {
+  starteAufgaben(liste || Lektionen.aufgabenFuer(l, 8), 'Kann ich schon?', (richtig, von) => {
     if (Lektionen.ueberspringen(l.id, richtig, von)) {
       lektionenPruefen();
       lekt.geschafft.push(l);
@@ -2281,14 +2343,17 @@ function starteKannIch(l) {
       text: 'Lass uns die Lektion zusammen anschauen.',
       weiter: () => oeffneLektion(Lektionen.finde(l.id)),
     };
-  }, () => oeffneLektion(Lektionen.finde(l.id)));
+  }, () => oeffneLektion(Lektionen.finde(l.id)), { typ: 'kannich', lektion: l.id });
 }
 
 // Wiederholung: 10 gemischte Aufgaben aus den Lektionen davor
-function starteRipasso(l) {
+function starteRipasso(l, gespeichert = null) {
   lekt.offen = l;
   Lektionen.beginnen(l.id);
-  starteAufgaben(Lektionen.aufgabenFuer(l, 10), l.titel, (richtig, von) => {
+  // Übungen, die früher falsch waren, kommen hier mit dran
+  const fehler = gespeichert ? [] : Wiederholung.faelligeFehler(3);
+  const liste = gespeichert || mischen([...fehler, ...Lektionen.aufgabenFuer(l, 10 - fehler.length)]);
+  starteAufgaben(liste, l.titel, (richtig, von) => {
     Lektionen.ripassoSpeichern(l.id, richtig, von);
     lektionenPruefen();
     const gut = richtig / von >= 0.8;
@@ -2298,19 +2363,20 @@ function starteRipasso(l) {
       text: gut ? '' : 'Ab 8 von 10 sind die Übungen geschafft. Versuch es gern noch einmal.',
       weiter: () => oeffneLektion(Lektionen.finde(l.id)),
     };
-  }, () => oeffneLektion(Lektionen.finde(l.id)));
+  }, () => oeffneLektion(Lektionen.finde(l.id)), { typ: 'ripasso', lektion: l.id });
 }
 
 // Grammatik-Wiederholung (Karteikasten für Kapitel, siehe wiederholung.js):
 // je fälligem Kapitel 3 Aufgaben, gemischt. Danach geht es mit dem nächsten Schritt weiter.
-function starteGrammatikWiederholung() {
-  const liste = Wiederholung.rundeAufgaben();
+function starteGrammatikWiederholung(gespeichert = null) {
+  const liste = gespeichert || Wiederholung.rundeAufgaben();
   if (!liste.length) { zeigeStart(); return; }
   starteAufgaben(liste, 'Grammatik wiederholen', (richtig, von) => {
-    const kapitel = [...new Set(liste.map((a) => a.kapitel))];
-    for (const id of kapitel) {
-      const anzahl = liste.filter((a) => a.kapitel === id).length;
-      Wiederholung.eintragen(id, anzahl - (aufg.fehler[id] || 0), anzahl);
+    // Fächer nur für die fälligen Kapitel (nicht für die früher falschen Übungen)
+    const kapitelAufgaben = liste.filter((a) => a.kapitel && !a.ausFehler);
+    for (const id of new Set(kapitelAufgaben.map((a) => a.kapitel))) {
+      const eigene = kapitelAufgaben.filter((a) => a.kapitel === id);
+      Wiederholung.eintragen(id, eigene.filter((a) => a.gut).length, eigene.length);
     }
     const n = naechsterSchritt();
     const gut = richtig / von >= 0.8;
@@ -2323,8 +2389,137 @@ function starteGrammatikWiederholung() {
         + (n ? ` Als Nächstes: ${n.name}` : ''),
       weiter: n ? () => oeffneNaechstes(n) : zeigeStart,
     };
-  }, zeigeStart);
+  }, zeigeStart, { typ: 'wiederholen' });
 }
+
+// ---------- Weitermachen, wo du warst ----------
+//
+// Die App merkt sich die Stelle (Speicher.daten.laufend), damit du nach einer Pause
+// genau dort weitermachen kannst. Die Ergebnisse selbst sind schon nach jeder Antwort gespeichert.
+// Vokabel-Runden gelten nur am selben Tag (am nächsten Tag sind andere Wörter fällig).
+
+const LAUFEND_TAGE = 14;
+
+function stelleMerken(art) {
+  const d = { art, datum: Vokabeln.heute(), lektionOffen: lekt.offen ? lekt.offen.id : null };
+  if (art === 'runde') {
+    Object.assign(d, {
+      schritte: abfrage.schritte, pos: abfrage.pos, gewertet: [...abfrage.gewertet], aufAnhieb: abfrage.aufAnhieb,
+      kennen: [...abfrage.kennen], zweiterVersuch: [...abfrage.zweiterVersuch], ohneWertung: Boolean(abfrage.ohneWertung),
+    });
+  } else if (art === 'aufgaben') {
+    Object.assign(d, { liste: aufg.liste, nr: aufg.nr, richtig: aufg.richtig, fehler: aufg.fehler, titel: aufg.titel, info: aufg.info });
+  } else if (art === 'uebung') {
+    Object.assign(d, { kapitel: gram.kapitel.id, liste: gram.liste, nr: gram.nr, richtig: gram.richtig, zusatz: gram.zusatz, zurueckZu: gram.zurueckZu });
+  } else if (art === 'hoeren') {
+    Object.assign(d, { aufgaben: hoer.aufgaben, nr: hoer.nr, richtig: hoer.richtig, lektion: hoer.lektion ? hoer.lektion.id : null });
+  } else if (art === 'text') {
+    Object.assign(d, { text: lesen.text.id, zurueckZu: lesen.zurueckZu, scroll: 0 });
+  }
+  Speicher.daten.laufend = d;
+  Speicher.speichern();
+}
+
+// Nur vergessen, wenn gerade diese Art gemerkt ist
+function stelleVergessen(art) {
+  const d = Speicher.daten.laufend;
+  if (d && (!art || d.art === art)) {
+    Speicher.daten.laufend = null;
+    Speicher.speichern();
+  }
+}
+
+function alleTexte() {
+  return [...LESETEXTE, ...(Speicher.daten.eigeneTexte || [])];
+}
+
+// Gemerkte Stelle – oder null, wenn sie zu alt ist oder nicht mehr passt
+function gemerkteStelle() {
+  const d = Speicher.daten.laufend;
+  if (!d || !d.art) return null;
+  if (d.art === 'runde' && d.datum !== Vokabeln.heute()) return null;
+  if (d.datum < Vokabeln.inTagen(-LAUFEND_TAGE)) return null;
+  if (d.art === 'uebung' && !Grammatik.kapitel(d.kapitel)) return null;
+  if (d.art === 'text' && !alleTexte().find((t) => t.id === d.text)) return null;
+  if (d.art === 'aufgaben' && d.info && d.info.lektion && !Lektionen.finde(d.info.lektion)) return null;
+  return d;
+}
+
+function stelleBeschreibung(d) {
+  if (d.art === 'runde') {
+    const zaehlt = d.schritte.filter((s) => s.art !== 'neu').length;
+    const erledigt = d.schritte.slice(0, d.pos).filter((s) => s.art !== 'neu').length;
+    return `Vokabeln – ${Math.min(erledigt + 1, zaehlt)} von ${zaehlt}`;
+  }
+  if (d.art === 'aufgaben') return `${d.titel} – Aufgabe ${d.nr + 1} von ${d.liste.length}`;
+  if (d.art === 'uebung') {
+    return `${d.zusatz ? 'Zusatzübungen' : 'Grammatik'} „${Grammatik.kapitel(d.kapitel).titel}“ – ${d.nr + 1} von ${d.liste.length}`;
+  }
+  if (d.art === 'hoeren') return `Hören & Üben – ${d.nr + 1} von ${d.aufgaben.length}`;
+  return `Text „${alleTexte().find((t) => t.id === d.text).titel}“`;
+}
+
+function weitermachen() {
+  const d = gemerkteStelle();
+  if (!d) { zeigeStart(); return; }
+  lekt.offen = d.lektionOffen ? Lektionen.finde(d.lektionOffen) || null : null;
+  if (d.art === 'runde') {
+    Object.assign(abfrage, {
+      schritte: d.schritte, pos: d.pos, gewertet: new Set(d.gewertet), aufAnhieb: d.aufAnhieb,
+      kennen: new Set(d.kennen), zweiterVersuch: new Set(d.zweiterVersuch), ohneWertung: d.ohneWertung,
+      geprueft: false, gewaehlt: null, paarFehler: new Set(),
+    });
+    zeige('runde');
+    zeigeSchritt();
+  } else if (d.art === 'aufgaben') {
+    const typ = (d.info || {}).typ;
+    const l = d.info && d.info.lektion ? Lektionen.finde(d.info.lektion) : null;
+    if (typ === 'ripasso' && l) starteRipasso(l, d.liste);
+    else if (typ === 'kannich' && l) starteKannIch(l, d.liste);
+    else starteGrammatikWiederholung(d.liste);
+    Object.assign(aufg, { nr: d.nr, richtig: d.richtig, fehler: d.fehler || {} });
+    zeigeAufgabe();
+  } else if (d.art === 'uebung') {
+    Object.assign(gram, {
+      kapitel: Grammatik.kapitel(d.kapitel), zurueckZu: d.zurueckZu, zusatz: d.zusatz, liste: d.liste,
+      nr: d.nr, richtig: d.richtig, fertig: false, geprueft: false,
+    });
+    el('uebung-titel').textContent = d.zusatz ? 'Zusatzübungen' : 'Übung';
+    zeige('uebung');
+    zeigeUebung();
+  } else if (d.art === 'hoeren') {
+    Object.assign(hoer, {
+      lektion: d.lektion ? Lektionen.finde(d.lektion) : null, aufgaben: d.aufgaben, nr: d.nr, richtig: d.richtig, fertig: false,
+    });
+    el('hoeren-titel').textContent = 'Hören & Üben';
+    el('knopf-hoeren-beenden').textContent = 'Übung beenden';
+    zeige('hoeren');
+    zeigeHoerAufgabe();
+  } else if (d.art === 'text') {
+    const scroll = d.scroll || 0;
+    oeffneText(alleTexte().find((t) => t.id === d.text), d.zurueckZu);
+    setTimeout(() => window.scrollTo(0, scroll), 50);
+  }
+}
+
+// Beim Lesen: Stelle im Text merken (höchstens alle 2 Sekunden)
+let scrollMerkenZeit = null;
+window.addEventListener('scroll', () => {
+  if (el('screen-lesen').hidden) return;
+  clearTimeout(scrollMerkenZeit);
+  scrollMerkenZeit = setTimeout(() => {
+    const d = Speicher.daten.laufend;
+    if (d && d.art === 'text' && lesen.text && d.text === lesen.text.id) {
+      d.scroll = Math.round(window.scrollY);
+      Speicher.speichern();
+    }
+  }, 2000);
+}, { passive: true });
+
+el('knopf-weiter-verwerfen').addEventListener('click', () => {
+  stelleVergessen();
+  zeigeStart();
+});
 
 // ---------- Begleiter ----------
 

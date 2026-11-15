@@ -45,6 +45,10 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Runde („Los“): erst „kenne ich / neu“ (falls nötig), Vokabeln, danach `naechsterSchritt()` in `app.js` – nächster Teil der aktuellen Lektion; ist dort nichts offen, `naechsterInhalt()` (Frei üben)
 - `wiederholung.js` – Grammatik-Karteikasten: geübte Kapitel (oder aus erledigten Lektionen) bekommen `fach`/`faellig` in `fortschritt.grammatik[id]`; fällige Kapitel kommen in `naechsterSchritt()` zuerst (`starteGrammatikWiederholung` in `app.js`, 2 Kapitel × 3 Aufgaben).
 - `erzeuger.js` – erzeugt Lücken-Aufgaben selbst (Verbformen aller Zeiten, Artikel, Präposition + Artikel) für 14 Kapitel (`KAPITEL_ERZEUGER`). Nur Verben aus den Listen dort; unregelmäßige Formen stehen in Tabellen. Test `erzeuger.test.js`. In der Aufgabenrunde: `{ art: 'grammatik', kapitel, uebung }` statt `nr`.
+- Falsche Übungen: `Wiederholung.fehlerMerken(aufgabe, gut)` → `fortschritt.fehler`; ab dem nächsten Tag in der Grammatik-Wiederholung (`faelligeFehler`, `ausFehler: true`) und in Wiederholungs-Lektionen.
+- Weitermachen: `stelleMerken(art)` / `stelleVergessen` / `weitermachen()` in `app.js` → `Speicher.daten.laufend` (Vokabel-Runde nur am selben Tag, sonst 14 Tage). Neue Aktivitäten müssen dort mitgemerkt werden.
+- Trefferquote: `Vokabeln.ergebnisZaehlen(gut)` bei jeder Antwort → `fortschritt.tage`; `neuGrenze()` senkt neue Wörter bei unter 70 % (0 bei unter 55 %).
+- Richtig gelöst → `autoWeiter()` (Vokabeln) bzw. Timer in `aufgabePruefen` geht von selbst weiter.
 - `uebungen.js` – Hören & Üben: Wortpaare, Diktat, Hören+Kacheln; Hörsätze aus Grammatik-Übungen (mit Deutsch) und Lesetexten (ohne «»-Dialoge). Runde: Text → Grammatik → Hören im Wechsel.
 - `sw.js` – Service Worker (offline)
 - `werkzeuge/server.js` – Test-Server nur für den eigenen Rechner

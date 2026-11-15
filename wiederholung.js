@@ -97,11 +97,73 @@ const Wiederholung = (() => {
     ];
   }
 
-  // Alle Aufgaben für die Runde, gemischt (abwechselnd üben hilft beim Behalten)
+  // ---------- Falsch gelöste Übungen ----------
+  //
+  // Jede falsche Grammatik- oder Hör-Übung kommt auf eine Liste (fortschritt.fehler).
+  // Ab dem nächsten Tag kommt sie in der Wiederholung und in Wiederholungs-Lektionen wieder.
+  // Einmal richtig gelöst → sie fällt von der Liste.
+  const MAX_FEHLER_LISTE = 60;
+
+  function fehlerListe() {
+    const f = Speicher.daten.fortschritt;
+    f.fehler = f.fehler || [];
+    return f.fehler;
+  }
+
+  function schluessel(a) {
+    if (a.art === 'hoeren') return 'h:' + a.satz.it;
+    if (a.uebung) return `g:${a.kapitel}:${a.uebung.satz}`;
+    return `g:${a.kapitel}:${a.nr}`;
+  }
+
+  // a: Aufgabe wie in der Aufgabenrunde ({ art: 'grammatik', kapitel, nr | uebung } oder { art: 'hoeren', satz })
+  function fehlerMerken(a, gut) {
+    if (!a || (a.art !== 'grammatik' && a.art !== 'hoeren')) return;
+    const liste = fehlerListe();
+    const key = schluessel(a);
+    const i = liste.findIndex((x) => x.key === key);
+    if (gut) {
+      if (i >= 0) { liste.splice(i, 1); Speicher.speichern(); }
+      return;
+    }
+    const eintrag = { key, art: a.art, datum: Vokabeln.heute() };
+    if (a.art === 'hoeren') eintrag.satz = a.satz;
+    else {
+      eintrag.kapitel = a.kapitel;
+      if (a.uebung) eintrag.uebung = a.uebung; else eintrag.nr = a.nr;
+    }
+    if (i >= 0) liste.splice(i, 1);
+    liste.push(eintrag);
+    while (liste.length > MAX_FEHLER_LISTE) liste.shift();
+    Speicher.speichern();
+  }
+
+  // Falsche Übungen von früheren Tagen (die ältesten zuerst), als Aufgaben
+  function faelligeFehler(max = 4) {
+    const h = Vokabeln.heute();
+    return fehlerListe()
+      .filter((x) => x.datum < h && (x.art === 'hoeren' || Grammatik.kapitel(x.kapitel)))
+      .slice(0, max)
+      .map((x) => (x.art === 'hoeren'
+        ? { art: 'hoeren', satz: x.satz, ausFehler: true }
+        : { art: 'grammatik', kapitel: x.kapitel, ...(x.uebung ? { uebung: x.uebung } : { nr: x.nr }), ausFehler: true }));
+  }
+
+  function anzahlFehler() { return fehlerListe().length; }
+
+  // Alle Aufgaben für die Runde, gemischt (abwechselnd üben hilft beim Behalten):
+  // fällige Kapitel und bis zu 4 Übungen, die früher falsch waren
   function rundeAufgaben() {
     const aufgaben = fuerRunde().flatMap(aufgabenFuer);
+    const schon = new Set(aufgaben.map(schluessel));
+    const fehler = faelligeFehler().filter((a) => !schon.has(schluessel(a)));
     Speicher.speichern();
-    return mischen(aufgaben);
+    return mischen([...aufgaben, ...fehler]);
+  }
+
+  // Gibt es heute etwas zu wiederholen?
+  function etwasFaellig() {
+    return fuerRunde().length > 0 || faelligeFehler(1).length > 0;
   }
 
   function eintragen(id, richtig, von) {
@@ -128,5 +190,8 @@ const Wiederholung = (() => {
     return v;
   }
 
-  return { einsortieren, faellige, fuerRunde, rundeAufgaben, aufgabenFuer, eintragen, fach, anzahlSicher, verteilung, ABSTAND };
+  return {
+    einsortieren, faellige, fuerRunde, rundeAufgaben, aufgabenFuer, eintragen, fach, anzahlSicher, verteilung, ABSTAND,
+    fehlerMerken, faelligeFehler, anzahlFehler, etwasFaellig,
+  };
 })();

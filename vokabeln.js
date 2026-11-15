@@ -105,6 +105,44 @@ const Vokabeln = (() => {
     return z && z.datum === heute() ? z.anzahl : 0;
   }
 
+  // ---------- Wie gut läuft es gerade? ----------
+  //
+  // Jede Antwort (Vokabeln, Grammatik, Hören) wird pro Tag gezählt: fortschritt.tage[datum] = [richtig, von].
+  // Daraus die Trefferquote der letzten 7 Tage. Läuft es schwer, kommen weniger neue Wörter.
+  const QUOTE_TAGE = 7;
+  const QUOTE_MIN_ANTWORTEN = 20;    // vorher keine Anpassung
+  const QUOTE_RUHIGER = 0.7;         // darunter: höchstens 1 neues Wort am Tag
+  const QUOTE_PAUSE = 0.55;          // darunter: heute keine neuen Wörter
+
+  function ergebnisZaehlen(gut) {
+    const f = Speicher.daten.fortschritt;
+    f.tage = f.tage || {};
+    const h = heute();
+    const t = f.tage[h] || [0, 0];
+    f.tage[h] = [t[0] + (gut ? 1 : 0), t[1] + 1];
+    const grenze = inTagen(-30);
+    for (const d of Object.keys(f.tage)) if (d < grenze) delete f.tage[d];
+    Speicher.speichern();
+  }
+
+  // Anteil richtiger Antworten der letzten 7 Tage (0…1) – oder null bei zu wenigen Antworten
+  function trefferQuote() {
+    const tage = Speicher.daten.fortschritt.tage || {};
+    const ab = inTagen(-(QUOTE_TAGE - 1));
+    let richtig = 0;
+    let von = 0;
+    for (const [d, [r, v]] of Object.entries(tage)) if (d >= ab) { richtig += r; von += v; }
+    return von >= QUOTE_MIN_ANTWORTEN ? richtig / von : null;
+  }
+
+  // Neue Wörter heute: die eigene Höchstzahl, bei schwerer Lage weniger
+  function neuGrenze() {
+    const n = neuProTag();
+    const q = trefferQuote();
+    if (q === null || q >= QUOTE_RUHIGER) return n;
+    return q < QUOTE_PAUSE ? 0 : 1;
+  }
+
   // Warum heute keine neuen Wörter kommen – oder null.
   //   'tag'     → die neuen Wörter für heute sind schon da
   //   'jung'    → erst die Wörter kennenlernen, die gerade neu sind
@@ -112,7 +150,8 @@ const Vokabeln = (() => {
   //   'schwer'  → einige Wörter sitzen noch nicht (Fach 1, schon falsch gewesen)
   function pauseGrund(faelligAnzahl, jungAnzahl) {
     const n = neuProTag();
-    if (neuHeute() >= n) return 'tag';
+    if (neuGrenze() === 0) return 'schwer';
+    if (neuHeute() >= neuGrenze()) return 'tag';
     if (jungAnzahl >= Math.max(4, n * 2)) return 'jung';
     if (faelligAnzahl >= PAUSE_FAELLIG) return 'faellig';
     const schwer = Object.values(karten()).filter((k) => !istJung(k) && k.fach === 1 && k.falsch > 0).length;
@@ -130,7 +169,7 @@ const Vokabeln = (() => {
     const jung = jungeWoerter().slice(0, 10);
     const warten = neue();
     const grund = warten.length ? pauseGrund(alleFaellig.length, jungeWoerter().length) : null;
-    const neu = grund ? [] : warten.slice(0, neuProTag() - neuHeute());
+    const neu = grund ? [] : warten.slice(0, neuGrenze() - neuHeute());
     return { wiederholen, jung, neu, pause: grund, heute: h };
   }
 
@@ -319,6 +358,9 @@ const Vokabeln = (() => {
     rundeZusammenstellen,
     neuProTag,
     neuProTagWaehlen,
+    neuGrenze,
+    ergebnisZaehlen,
+    trefferQuote,
     neuHeute,
     NEU_WAHL,
     aufnehmen,

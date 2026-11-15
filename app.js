@@ -130,17 +130,31 @@ dateiFeld.addEventListener('change', async () => {
 // Abwechselnd ein Text, der noch nicht verstanden ist, und ein Grammatik-Kapitel,
 // das noch nicht geübt ist (immer von leicht nach schwer).
 
+// Nur Texte und Kapitel bis zur Stufe der aktuellen Lektion (sonst zu schwer).
+// Hören nur, wenn heute noch Sätze übrig sind. Ist nichts mehr da: „Meine Wörter“ zum Selbsttest.
+const STUFEN = ['A1', 'A2', 'B1', 'B2'];
 function naechsterInhalt() {
-  const texte = LESETEXTE.filter((t) => !(Lesen.stand(t.id) && Lesen.stand(t.id).verstanden));
-  const kapitel = KAPITEL.filter((k) => !(Grammatik.stand(k.id) && Grammatik.stand(k.id).geuebt));
+  const akt = Lektionen.aktuelle();
+  const bisStufe = STUFEN.indexOf(akt ? akt.stufe : 'B2');
+  const passt = (x) => STUFEN.indexOf(x.stufe) <= bisStufe;
+  const texte = LESETEXTE.filter((t) => passt(t) && !(Lesen.stand(t.id) && Lesen.stand(t.id).verstanden));
+  const kapitel = KAPITEL.filter((k) => passt(k) && !(Grammatik.stand(k.id) && Grammatik.stand(k.id).geuebt));
   const letzte = (Speicher.daten.fortschritt.runde || {}).art;
   const text = texte[0] && { art: 'text', obj: texte[0], name: `Text „${texte[0].titel}“` };
   const kap = kapitel[0] && { art: 'kapitel', obj: kapitel[0], name: `Grammatik „${kapitel[0].titel}“` };
-  const hoeren = { art: 'hoeren', name: 'Hören & Üben' };
+  const hoeren = Uebungen.frischeSaetze().length && { art: 'hoeren', name: 'Hören & Üben' };
   // Reihenfolge: Text → Grammatik → Hören → Text …; was fertig ist, fällt weg
   const kreis = [text, kap, hoeren].filter(Boolean);
+  if (!kreis.length) return { art: 'woerter', name: 'Meine Wörter: Deutsch verdecken und dich selbst prüfen' };
   const i = kreis.findIndex((x) => x.art === letzte);
   return kreis[(i + 1) % kreis.length];
+}
+
+// „Mehr neue Wörter holen“ anbieten? Nur wenn heute nichts mehr zu üben ist und die
+// neuen Wörter wegen des Tageslimits pausieren (nicht bei „viel fällig“ oder „läuft schwer“).
+function mehrWoerterMoeglich() {
+  const r = Vokabeln.rundeZusammenstellen();
+  return r.pause === 'tag' && !r.wiederholen.length && !r.jung.length;
 }
 
 // Nach den Vokabeln: der nächste Teil der aktuellen Lektion – oder, wenn dort nichts offen ist,
@@ -164,7 +178,8 @@ function naechsterSchritt() {
     };
   }
   const t = Lektionen.naechsterTeil({ ohneWortCheck: true });
-  if (t) {
+  // Hören der Lektion nur, wenn heute noch frische Sätze da sind – sonst etwas anderes
+  if (t && !(t.art === 'hoeren' && !Uebungen.frischeSaetze({ lektion: t.lektion }).length)) {
     return { ...t, name: `${lektionName(t.lektion)}, ${TEIL_NAMEN[t.art]}` };
   }
   return naechsterInhalt();
@@ -172,6 +187,12 @@ function naechsterSchritt() {
 
 function oeffneNaechstes(n) {
   if (n.art === 'wiederholen') { starteGrammatikWiederholung(); return; }
+  if (n.art === 'woerter') {
+    woerterAnsicht.verdeckt = true;
+    woerterAnsicht.filter = 'alle';
+    zeigeWoerter();
+    return;
+  }
   if (n.lektion) {
     lekt.offen = n.lektion;            // „Zurück zur Lektion“ führt dann zu dieser Lektion
     Lektionen.beginnen(n.lektion.id);
@@ -891,23 +912,35 @@ function beendeRunde() {
   }
   el('ende-sicher').textContent = Vokabeln.anzahlSicher();
   lektionenPruefen();
+  // Heute nichts mehr zu üben, neue Wörter nur wegen des Tageslimits in Pause → „Mehr neue Wörter holen“
+  const mehr = mehrWoerterMoeglich();
+  const allesGeuebt = anzahl === 0 && kennen === 0;
+  if (allesGeuebt) {
+    el('ende-titel').textContent = 'Für heute alles geübt';
+    el('ende-text').textContent = mehr
+      ? 'Alle Wörter für heute sind geübt. Wenn du magst, holst du dir noch 3 neue dazu.'
+      : 'Alle Wörter für heute sind geübt. Morgen geht es weiter.';
+  }
   if (!geschafftZeigen(el('begleiter-ende'))) {
     Begleiter.zeigen(el('begleiter-ende'), anzahl
       ? Begleiter.endeNachricht(anzahl, abfrage.aufAnhieb)
       : kennen
         ? { stimmung: 'freut', text: 'Schön! Neue Wörter erst kennenlernen – geschrieben wird später.' }
-        : Begleiter.endeNachricht(0, 0));
+        : mehr
+          ? { stimmung: 'freut', text: 'Für heute hast du alles geübt – brava! Lust auf mehr? Hol dir neue Wörter oder probier meinen Vorschlag.' }
+          : { stimmung: 'ruhig', text: 'Für heute hast du alles geübt. Morgen kommt Neues – bis dahin passt mein Vorschlag.' });
   }
 
   // Teil 2 der Runde: der nächste Teil der Lektion (oder etwas zum freien Üben)
   const n = naechsterSchritt();
   el('ende-naechstes').hidden = !n;
   el('knopf-naechstes').hidden = !n;
-  el('knopf-ende-start').textContent = n ? 'Für heute reicht’s' : 'Zur Startseite';
+  el('knopf-mehr-woerter').hidden = !mehr;
+  el('knopf-ende-start').textContent = n || mehr ? 'Für heute reicht’s' : 'Zur Startseite';
   if (n) {
     if (anzahl > 0) el('ende-titel').textContent = 'Vokabeln geschafft';
     el('ende-naechstes-text').textContent = n.name;
-    el('knopf-naechstes').textContent = { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben', uebungen: 'Übungen', wiederholen: 'Grammatik wiederholen' }[n.art];
+    el('knopf-naechstes').textContent = { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben', uebungen: 'Übungen', wiederholen: 'Grammatik wiederholen', woerter: 'Meine Wörter' }[n.art];
     el('knopf-naechstes').onclick = () => oeffneNaechstes(n);
   }
   zeige('ende');
@@ -920,6 +953,11 @@ el('abfrage-form').addEventListener('submit', (e) => {
   abfrage.geprueft ? weiter() : pruefen();
 });
 el('knopf-beenden').addEventListener('click', beendeRunde);
+// Heute 3 neue Wörter mehr – gleich eine Runde (mit „kenne ich / neu“, falls die Lektion neu ist)
+el('knopf-mehr-woerter').addEventListener('click', () => {
+  Vokabeln.mehrHolen();
+  losKlick();
+});
 
 // ---------- Lesen ----------
 

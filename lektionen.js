@@ -226,6 +226,8 @@ const Lektionen = (() => {
       hoeren: gemischt(Uebungen.saetze().filter((x) => tx.has(x.text) || kap.has(x.kapitel)))
         .map((satz) => ({ art: 'hoeren', satz })),
     };
+    // heute schon richtig gelöste Aufgaben kommen nicht noch einmal
+    for (const art of Object.keys(vorrat)) vorrat[art] = vorrat[art].filter((a) => !Wiederholung.heuteGeloest(a));
     const ziel = anzahl === 8 ? { deutsch: 4, grammatik: 3, hoeren: 1 } : { deutsch: 4, grammatik: 4, hoeren: 2 };
     const auswahl = [];
     for (const art of Object.keys(ziel)) auswahl.push(...vorrat[art].splice(0, ziel[art]));

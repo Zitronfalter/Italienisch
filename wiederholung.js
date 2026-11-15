@@ -72,7 +72,8 @@ const Wiederholung = (() => {
   function festeUebungen(id, anzahl) {
     const k = Grammatik.kapitel(id);
     const zuletzt = (g()[id] && g()[id].zuletzt) || [];
-    const nummern = k.uebungen.map((u, i) => i).filter((i) => ['luecke', 'kacheln'].includes(k.uebungen[i].art));
+    const nummern = k.uebungen.map((u, i) => i).filter((i) => ['luecke', 'kacheln'].includes(k.uebungen[i].art))
+      .filter((i) => !heuteGeloest({ art: 'grammatik', kapitel: id, nr: i }));   // heute schon richtig → nicht nochmal
     const frisch = mischen(nummern.filter((i) => !zuletzt.includes(i)));
     const alt = mischen(nummern.filter((i) => zuletzt.includes(i)));
     return [...frisch, ...alt].slice(0, anzahl);
@@ -85,7 +86,10 @@ const Wiederholung = (() => {
       const gesehen = new Set();
       for (let versuch = 0; erzeugt.length < AUFGABEN_PRO_KAPITEL - 1 && versuch < 20; versuch++) {
         const u = Erzeuger.aufgabe(id);
-        if (u && !gesehen.has(u.satz)) { gesehen.add(u.satz); erzeugt.push(u); }
+        if (u && !gesehen.has(u.satz) && !heuteGeloest({ art: 'grammatik', kapitel: id, uebung: u })) {
+          gesehen.add(u.satz);
+          erzeugt.push(u);
+        }
       }
     }
     const feste = festeUebungen(id, AUFGABEN_PRO_KAPITEL - erzeugt.length);
@@ -112,12 +116,35 @@ const Wiederholung = (() => {
 
   function schluessel(a) {
     if (a.art === 'hoeren') return 'h:' + a.satz.it;
+    if (a.art === 'deutsch') return 'd:' + a.id;
     if (a.uebung) return `g:${a.kapitel}:${a.uebung.satz}`;
     return `g:${a.kapitel}:${a.nr}`;
   }
 
-  // a: Aufgabe wie in der Aufgabenrunde ({ art: 'grammatik', kapitel, nr | uebung } oder { art: 'hoeren', satz })
+  // ---------- Heute schon richtig gelöst? ----------
+  //
+  // fortschritt.heute = { datum, gesehen: [schluessel] } – nur richtig gelöste Aufgaben.
+  // Sie kommen am selben Tag nicht noch einmal; falsche dürfen wiederkommen.
+
+  function heuteListe() {
+    const f = Speicher.daten.fortschritt;
+    const h = Vokabeln.heute();
+    if (!f.heute || f.heute.datum !== h) f.heute = { datum: h, gesehen: [] };
+    return f.heute.gesehen;
+  }
+
+  function heuteGeloest(a) {
+    return Boolean(a) && heuteListe().includes(schluessel(a));
+  }
+
+  // a: Aufgabe wie in der Aufgabenrunde ({ art: 'grammatik', kapitel, nr | uebung }, { art: 'hoeren', satz }
+  // oder { art: 'deutsch', id })
   function fehlerMerken(a, gut) {
+    if (a && gut && ['grammatik', 'hoeren', 'deutsch'].includes(a.art)) {
+      const liste = heuteListe();
+      const key = schluessel(a);
+      if (!liste.includes(key)) { liste.push(key); Speicher.speichern(); }
+    }
     if (!a || (a.art !== 'grammatik' && a.art !== 'hoeren')) return;
     const liste = fehlerListe();
     const key = schluessel(a);
@@ -192,6 +219,6 @@ const Wiederholung = (() => {
 
   return {
     einsortieren, faellige, fuerRunde, rundeAufgaben, aufgabenFuer, eintragen, fach, anzahlSicher, verteilung, ABSTAND,
-    fehlerMerken, faelligeFehler, anzahlFehler, etwasFaellig,
+    fehlerMerken, faelligeFehler, anzahlFehler, etwasFaellig, heuteGeloest,
   };
 })();

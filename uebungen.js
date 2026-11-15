@@ -154,11 +154,10 @@ const Uebungen = (() => {
   // optionen.lektion: nur Sätze aus Kapiteln und Texten dieser und früherer Lektionen,
   // Wortpaare aus den Wörtern der Lektion. Ungelöste Sätze kommen zuerst.
   // Ohne Lektion (Frei üben): Stand der aktuellen Lektion – nie Zeitformen oder Wörter aus späteren Lektionen.
-  function runde(optionen = {}) {
+  // Alle Sätze, die zum Stand passen (bis zur Lektion bzw. zur aktuellen Lektion)
+  function passendeSaetze(optionen = {}) {
     let pool = saetze();
-    let paarListe = null;
-    const l = optionen.lektion;
-    const grenze = l || Lektionen.aktuelle();
+    const grenze = optionen.lektion || Lektionen.aktuelle();
     if (grenze) {
       const bis = Lektionen.alle().filter((x) => x.nr <= grenze.nr);
       const kap = new Set(bis.flatMap((x) => [...x.kapitel, ...(x.uebenKapitel || [])]));
@@ -167,7 +166,20 @@ const Uebungen = (() => {
       const passend = dazu.filter((x) => bekanntBis(x, grenze.nr));
       pool = passend.length >= 4 ? passend : dazu.length >= 4 ? dazu : pool.filter((x) => x.stufe === 'A1');
     }
-    if (l && l.wortIds.length >= 3) paarListe = paare(5, l.wortIds);
+    return pool;
+  }
+
+  // Passende Sätze ohne die, die heute schon richtig gehört wurden
+  function frischeSaetze(optionen = {}) {
+    return passendeSaetze(optionen).filter((x) => !Wiederholung.heuteGeloest({ art: 'hoeren', satz: x }));
+  }
+
+  // Eine Runde: Wortpaare + bis zu 4 Satz-Aufgaben (Diktat / Kacheln im Wechsel).
+  // Heute schon richtig gelöste Sätze kommen nicht noch einmal – sind keine mehr da, bleiben nur die Wortpaare.
+  function runde(optionen = {}) {
+    const pool = passendeSaetze(optionen);
+    const l = optionen.lektion;
+    const paarListe = l && l.wortIds.length >= 3 ? paare(5, l.wortIds) : null;
     const geloest = new Set(((Speicher.daten.fortschritt.hoeren || {}).geloest) || []);
     // Zuerst Sätze aus dem Text dieser Lektion, dann aus den Lektionen davor; ungelöste vor gelösten
     const eigen = new Set((l && l.texte) || []);
@@ -175,17 +187,17 @@ const Uebungen = (() => {
       ...mischen(liste.filter((x) => eigen.has(x.text))),
       ...mischen(liste.filter((x) => !eigen.has(x.text))),
     ];
+    const frisch = frischeSaetze(optionen);
     const auswahl = [
-      ...reihe(pool.filter((x) => !geloest.has(sauber(x.it)))),
-      ...reihe(pool.filter((x) => geloest.has(sauber(x.it)))),
+      ...reihe(frisch.filter((x) => !geloest.has(sauber(x.it)))),
+      ...reihe(frisch.filter((x) => geloest.has(sauber(x.it)))),
     ].slice(0, 4);
-    const aufgaben = [
-      { art: 'paare', paare: paarListe || paare() },
-      { art: 'diktat', satz: auswahl[0] },
-      { art: 'kacheln', satz: auswahl[1], kacheln: kacheln(auswahl[1].it, pool) },
-      { art: 'diktat', satz: auswahl[2] },
-      { art: 'kacheln', satz: auswahl[3], kacheln: kacheln(auswahl[3].it, pool) },
-    ];
+    const aufgaben = [{ art: 'paare', paare: paarListe || paare() }];
+    auswahl.forEach((satz, i) => {
+      aufgaben.push(i % 2 === 0
+        ? { art: 'diktat', satz }
+        : { art: 'kacheln', satz, kacheln: kacheln(satz.it, pool) });
+    });
     return aufgaben;
   }
 
@@ -213,5 +225,5 @@ const Uebungen = (() => {
     return (Speicher.daten.fortschritt.hoeren || {}).runden || 0;
   }
 
-  return { saetze, runde, satzGeloest, pruefeDiktat, pruefeKacheln, kacheln, paare, sauber, ergebnisSpeichern, anzahlRunden };
+  return { saetze, runde, frischeSaetze, satzGeloest, pruefeDiktat, pruefeKacheln, kacheln, paare, sauber, ergebnisSpeichern, anzahlRunden };
 })();

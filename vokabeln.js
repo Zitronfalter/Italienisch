@@ -137,10 +137,21 @@ const Vokabeln = (() => {
 
   // Neue Wörter heute: die eigene Höchstzahl, bei schwerer Lage weniger
   function neuGrenze() {
-    const n = neuProTag();
+    const n = neuProTag() + neuExtra();
     const q = trefferQuote();
     if (q === null || q >= QUOTE_RUHIGER) return n;
-    return q < QUOTE_PAUSE ? 0 : 1;
+    return q < QUOTE_PAUSE ? 0 : 1 + neuExtra();
+  }
+
+  // „Mehr neue Wörter holen“: heute 3 neue Wörter zusätzlich (nur auf Wunsch, gilt nur heute)
+  const MEHR_ANZAHL = 3;
+  function neuExtra() {
+    const z = Speicher.daten.fortschritt.neuExtra;
+    return z && z.datum === heute() ? z.anzahl : 0;
+  }
+  function mehrHolen() {
+    Speicher.daten.fortschritt.neuExtra = { datum: heute(), anzahl: neuExtra() + MEHR_ANZAHL };
+    Speicher.speichern();
   }
 
   // Warum heute keine neuen Wörter kommen – oder null.
@@ -359,6 +370,8 @@ const Vokabeln = (() => {
     neuProTag,
     neuProTagWaehlen,
     neuGrenze,
+    neuExtra,
+    mehrHolen,
     ergebnisZaehlen,
     trefferQuote,
     neuHeute,

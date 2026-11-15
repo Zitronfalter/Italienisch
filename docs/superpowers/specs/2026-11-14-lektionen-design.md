@@ -274,3 +274,25 @@ Nach jedem Schritt: im Browser in iPhone-Größe prüfen, ROADMAP anpassen, Nico
 - Wie die Ripasso-Übungen gemischt werden.
 - Wortwahl der Hinweistexte (kurz, freundlich, auf Deutsch, ohne Druck).
 - Wie die Kurzform von Hörsätzen gebildet wird (z. B. `Uebungen.sauber()`).
+
+## Nachtrag 15.11.2026: B1, B2 und Zusatzübungen (Claudes Entscheidungen)
+
+Nicole hat gebeten, B1 und B2 selbständig zu bauen und Zusatzübungen für zu viele Fehler einzubauen.
+
+- **Lektionsplan B1** (Lektion 19–28, Wiederholung nach je 4): 19 Pläne (futuro), 20 Wünsche (condizionale),
+  R5 (17–20), 21 Telefon (stare + gerundio), 22 Mail (glielo), 23 Ragù der Nonna (ci/ne), 24 Vorstellungsgespräch
+  (trapassato), R6, 25 Venedig/Meinung (congiuntivo), 26 Zeitung: Bild entdeckt (Passiv), 27 Bergtour (se + Gegenwart),
+  28 Reklamation (dimmi / mi dica), R7 – B1 geschafft.
+- **Lektionsplan B2** (Lektion 29–36): 29 Lotto (congiuntivo imperfetto), 30 Reisepech (condizionale passato),
+  31 Polizeibericht (congiuntivo passato), 32 Pizza Margherita (passato remoto), R8, 33 Interview (indirekte Rede),
+  34 Verpasster Zug (se avessi saputo), 35 Homeoffice (benché, affinché …), 36 Pesto (il quale, chi, ciò che), R9.
+- **Abweichung vom Plan:** R5 umfasst Lektion 17–20 (wie im Plan), A2 endet damit ohne eigene Wiederholung nach L18.
+- **Wörter:** Neue Themen „Lektion 19: …“ usw. in `wortschatz.js` (Stufe B1/B2). Wörter aus alten Themen, die noch
+  zu keiner Lektion gehörten, wurden B1/B2-Lektionen zugeordnet, wo sie passen. IDs der alten Wörter unverändert.
+- **Neue Dateien:** `grammatik-b.js`, `texte-b.js` (hängen an `KAPITEL` / `LESETEXTE` an), `zusatz.js`.
+- **Zusatzübungen:** Jedes Kapitel hat `zusatz: { tipp, uebungen }` mit 6 leichteren Übungen; neue Art `wahl`
+  (aus 3 Wörtern wählen). Angeboten, wenn ein Üben unter 80 % bleibt: am Ende der Übung, auf der Kapitelseite
+  und nach „Kann ich schon“ oder einer Wiederholung (Kapitel mit den meisten Fehlern). Sie zählen nicht als gelöste
+  Übungen und machen kein Kapitel „geübt“ – sie sind eine Hilfe, kein Ersatz. Kein `FORMAT`-Wechsel nötig
+  (neues Feld `fortschritt.grammatik[id].zusatz` ist freiwillig).
+- `GRUNDWOERTER` um kleine Wörter erweitert (dalla, nello, questo, quello, se, glielo, cui, ciò …).

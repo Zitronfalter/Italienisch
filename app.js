@@ -851,10 +851,12 @@ function zeigeTextliste() {
     liste.appendChild(textEintrag(t, `eingefügt am ${datum}`));
   }
 
-  for (const stufe of ['A1', 'A2']) {
+  const stufenNamen = { A1: 'Leicht (A1)', A2: 'Etwas schwerer (A2)', B1: 'Mittel (B1)', B2: 'Anspruchsvoll (B2)' };
+  for (const stufe of ['A1', 'A2', 'B1', 'B2']) {
+    if (!LESETEXTE.some((x) => x.stufe === stufe)) continue;
     const titel = document.createElement('p');
     titel.className = 'stufe-titel';
-    titel.textContent = stufe === 'A1' ? 'Leicht (A1)' : 'Etwas schwerer (A2)';
+    titel.textContent = stufenNamen[stufe];
     liste.appendChild(titel);
     for (const t of LESETEXTE.filter((x) => x.stufe === stufe)) {
       const s = Lesen.stand(t.id);
@@ -1240,7 +1242,13 @@ el('knopf-lesen-zurueck').addEventListener('click', () => {
 
 // ---------- Grammatik ----------
 
-const gram = { kapitel: null, zurueckZu: 'grammatik', liste: [], nr: 0, richtig: 0, geprueft: false, fertig: false, gelegt: [] };
+// zusatz: true = leichtere Zusatzübungen (k.zusatz.uebungen), tipp: gerade wird der Tipp vorab gezeigt
+const gram = { kapitel: null, zurueckZu: 'grammatik', liste: [], nr: 0, richtig: 0, geprueft: false, fertig: false, gelegt: [], zusatz: false, tipp: false };
+
+// Übungen, die gerade geübt werden (normale oder Zusatzübungen)
+function gramUebungen() {
+  return gram.zusatz ? gram.kapitel.zusatz.uebungen : gram.kapitel.uebungen;
+}
 
 function zeigeGrammatikStand() {
   const n = Grammatik.anzahlGeuebt();
@@ -1252,10 +1260,12 @@ function zeigeGrammatikStand() {
 function zeigeKapitelliste() {
   const liste = el('kapitel-liste');
   liste.innerHTML = '';
-  for (const stufe of ['A1', 'A2']) {
+  const stufenNamen = { A1: 'Grundlagen (A1)', A2: 'Weiter geht’s (A2)', B1: 'Fortgeschritten (B1)', B2: 'Sicher unterwegs (B2)' };
+  for (const stufe of ['A1', 'A2', 'B1', 'B2']) {
+    if (!KAPITEL.some((x) => x.stufe === stufe)) continue;
     const titel = document.createElement('p');
     titel.className = 'stufe-titel';
-    titel.textContent = stufe === 'A1' ? 'Grundlagen (A1)' : 'Weiter geht’s (A2)';
+    titel.textContent = stufenNamen[stufe];
     liste.appendChild(titel);
     for (const k of KAPITEL.filter((x) => x.stufe === stufe)) {
       const s = Grammatik.stand(k.id);
@@ -1311,6 +1321,9 @@ function oeffneKapitel(k, zurueckZu) {
     ? 'Alle Übungen gelöst ✓'
     : offen < n ? `${n - offen} von ${n} Übungen gelöst – jetzt kommen die anderen.` : `${n} Übungen`;
   el('knopf-ueben').textContent = offen ? 'Üben' : 'Nochmal alle';
+  const zusatz = Grammatik.zusatzAnbieten(k.id);
+  el('kapitel-zusatz-hinweis').hidden = !zusatz;
+  el('knopf-zusatz').hidden = !zusatz;
   el('knopf-kapitel-zurueck').textContent = { lesen: 'Zurück zum Text', lektion: 'Zurück zur Lektion' }[zurueckZu] || 'Zurück';
   zeige('kapitel');
 }
@@ -1331,26 +1344,95 @@ function starteUebung(alle = false) {
   gram.nr = 0;
   gram.richtig = 0;
   gram.fertig = false;
+  gram.zusatz = false;
+  gram.tipp = false;
   el('uebung-titel').textContent = 'Übung';
+  el('uebung-tipp').hidden = true;
   zeige('uebung');
   zeigeUebung();
 }
 
-function zeigeUebung() {
-  const k = gram.kapitel;
-  const u = k.uebungen[gram.liste[gram.nr]];
+// Leichtere Zusatzübungen: erst ein Tipp in kleinen Schritten, dann die Übungen der Reihe nach
+function starteZusatz(k, zurueckZu) {
+  if (!Grammatik.hatZusatz(k.id)) return;
+  gram.kapitel = k;
+  if (zurueckZu) gram.zurueckZu = zurueckZu;
+  gram.zusatz = true;
+  gram.liste = k.zusatz.uebungen.map((u, i) => i);
+  gram.nr = 0;
+  gram.richtig = 0;
+  gram.fertig = false;
   gram.geprueft = false;
+  el('uebung-titel').textContent = 'Zusatzübungen';
+  zeige('uebung');
+  if (k.zusatz.tipp && k.zusatz.tipp.length) zeigeZusatzTipp();
+  else zeigeUebung();
+}
+
+function zeigeZusatzTipp() {
+  const k = gram.kapitel;
+  gram.tipp = true;
+  el('uebung-stand').textContent = '';
+  el('uebung-art').textContent = 'Schritt für Schritt';
+  el('uebung-de').textContent = k.titel;
+  const liste = el('uebung-tipp');
+  liste.innerHTML = '';
+  for (const schritt of k.zusatz.tipp) {
+    const li = document.createElement('li');
+    li.textContent = schritt;
+    liste.appendChild(li);
+  }
+  liste.hidden = false;
+  el('uebung-luecke').hidden = true;
+  el('uebung-kacheln').hidden = true;
+  el('uebung-wahl').hidden = true;
+  el('uebung-rueck').hidden = true;
+  el('knopf-uebung-zusatz').hidden = true;
+  el('knopf-uebung').hidden = false;
+  el('knopf-uebung').textContent = 'Los geht’s';
+}
+
+function zeigeUebung() {
+  const u = gramUebungen()[gram.liste[gram.nr]];
+  gram.geprueft = false;
+  gram.tipp = false;
   gram.gelegt = [];
+  el('uebung-tipp').hidden = true;
+  el('knopf-uebung-zusatz').hidden = true;
   el('uebung-stand').textContent = `${gram.nr + 1} von ${gram.liste.length}`;
   el('uebung-de').textContent = u.de;
   el('uebung-rueck').hidden = true;
   el('knopf-uebung').textContent = 'Prüfen';
+  el('knopf-uebung').hidden = false;
 
   const istLuecke = u.art === 'luecke';
+  const istWahl = u.art === 'wahl';
   el('uebung-luecke').hidden = !istLuecke;
-  el('uebung-kacheln').hidden = istLuecke;
+  el('uebung-kacheln').hidden = istLuecke || istWahl;
+  el('uebung-wahl').hidden = !istWahl;
 
-  if (istLuecke) {
+  if (istWahl) {
+    el('uebung-art').textContent = 'Welches Wort passt?';
+    const satz = el('wahl-satz');
+    satz.innerHTML = '';
+    const [vorne, hinten] = u.satz.split('___');
+    const luecke = document.createElement('span');
+    luecke.className = 'luecke';
+    luecke.textContent = ' ';
+    satz.append(vorne, luecke, hinten || '');
+    const box = el('wahl-antworten');
+    box.innerHTML = '';
+    for (const option of mischen(u.optionen)) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'antwort';
+      b.textContent = option;
+      b.addEventListener('click', () => uebungPruefen(b));
+      box.appendChild(b);
+    }
+    // Ohne Auswahl gibt es nichts zu prüfen: Knopf erst nach der Antwort zeigen
+    el('knopf-uebung').hidden = true;
+  } else if (istLuecke) {
     el('uebung-art').textContent = 'Setze das fehlende Wort ein.';
     zeigeLueckenSatz(u.satz, '');
     const feld = el('luecke-eingabe');
@@ -1390,7 +1472,7 @@ function zeigeLueckenSatz(satz, eingabe) {
 }
 
 el('luecke-eingabe').addEventListener('input', (e) => {
-  const u = gram.kapitel.uebungen[gram.liste[gram.nr]];
+  const u = gramUebungen()[gram.liste[gram.nr]];
   zeigeLueckenSatz(u.satz, e.target.value);
 });
 
@@ -1409,11 +1491,22 @@ function kachelLegen(kachel) {
   el('kachel-ablage').appendChild(gelegt);
 }
 
-function uebungPruefen() {
-  const u = gram.kapitel.uebungen[gram.liste[gram.nr]];
+// wahlKnopf: bei Auswahl-Übungen die angetippte Antwort
+function uebungPruefen(wahlKnopf) {
+  if (gram.geprueft || gram.tipp) return;
+  const u = gramUebungen()[gram.liste[gram.nr]];
   let ergebnis;
   let loesungText;
-  if (u.art === 'luecke') {
+  if (u.art === 'wahl') {
+    if (!wahlKnopf) return;
+    ergebnis = Grammatik.pruefeWahl(wahlKnopf.textContent, u);
+    loesungText = u.satz.replace('___', u.optionen[0]);
+    el('wahl-antworten').querySelectorAll('.antwort').forEach((b) => {
+      if (b.textContent === u.optionen[0]) b.classList.add('richtig');
+    });
+    if (ergebnis.stufe === 'falsch') wahlKnopf.classList.add('falsch');
+    el('knopf-uebung').hidden = false;
+  } else if (u.art === 'luecke') {
     const text = el('luecke-eingabe').value.trim();
     if (!text) { el('luecke-eingabe').focus(); return; }
     ergebnis = Grammatik.pruefeLuecke(text, u);
@@ -1429,7 +1522,8 @@ function uebungPruefen() {
   const gut = ergebnis.stufe !== 'falsch';
   if (gut) {
     gram.richtig += 1;
-    Grammatik.uebungGeloest(gram.kapitel.id, gram.liste[gram.nr]);
+    // Zusatzübungen haben eigene Nummern – sie zählen nicht als gelöste Kapitel-Übungen
+    if (!gram.zusatz) Grammatik.uebungGeloest(gram.kapitel.id, gram.liste[gram.nr]);
   }
 
   el('uebung-rueck').classList.toggle('falsch', !gut);
@@ -1447,7 +1541,7 @@ function uebungPruefen() {
   }
   if (!gut) {
     const regel = document.createElement('span');
-    regel.textContent = 'Regel: ' + gram.kapitel.kurz;
+    regel.textContent = u.warum ? 'Warum: ' + u.warum : 'Regel: ' + gram.kapitel.kurz;
     text.append(document.createElement('br'), regel);
   }
   text.hidden = !text.childNodes.length;
@@ -1463,8 +1557,23 @@ function uebungWeiter() {
   // Fertig
   const k = gram.kapitel;
   const von = gram.liste.length;
-  Grammatik.ergebnisSpeichern(k.id, gram.richtig, von);
-  lektionenPruefen();
+  const gut = gram.richtig / von >= 0.8;
+  let zusatzZeigen = false;
+  if (gram.zusatz) {
+    Grammatik.zusatzSpeichern(k.id, gram.richtig, von);
+    el('uebung-rueck-titel').textContent = gut
+      ? 'Schön – jetzt klappt es bestimmt auch mit den Übungen des Kapitels.'
+      : 'Schon besser. Lies die Regel noch einmal in Ruhe – dann geht es weiter.';
+  } else {
+    Grammatik.ergebnisSpeichern(k.id, gram.richtig, von);
+    lektionenPruefen();
+    zusatzZeigen = Grammatik.zusatzAnbieten(k.id, gram.richtig, von);
+    el('uebung-rueck-titel').textContent = gut
+      ? 'Gut gemacht – Kapitel geübt. ✓'
+      : zusatzZeigen
+        ? 'Das war noch viel Neues. Leichtere Zusatzübungen helfen, Schritt für Schritt.'
+        : 'Lies die Regel noch einmal und übe dann erneut.';
+  }
   gram.fertig = true;
   el('uebung-titel').textContent = 'Fertig';
   el('uebung-stand').textContent = '';
@@ -1472,23 +1581,26 @@ function uebungWeiter() {
   el('uebung-de').textContent = `${gram.richtig} von ${von} richtig`;
   el('uebung-luecke').hidden = true;
   el('uebung-kacheln').hidden = true;
+  el('uebung-wahl').hidden = true;
   el('uebung-rueck').classList.remove('falsch');
-  el('uebung-rueck-titel').textContent = gram.richtig / von >= 0.8
-    ? 'Gut gemacht – Kapitel geübt. ✓'
-    : 'Lies die Regel noch einmal und übe dann erneut.';
   el('uebung-rueck-text').hidden = true;
   el('uebung-rueck').hidden = false;
+  el('knopf-uebung').hidden = false;
   el('knopf-uebung').textContent = 'Zurück zum Kapitel';
+  el('knopf-uebung-zusatz').hidden = !zusatzZeigen;
 }
 
 el('knopf-uebung').addEventListener('click', () => {
   if (gram.fertig) { oeffneKapitel(gram.kapitel, gram.zurueckZu); return; }
+  if (gram.tipp) { zeigeUebung(); return; }
   gram.geprueft ? uebungWeiter() : uebungPruefen();
 });
 el('luecke-form').addEventListener('submit', (e) => {
   e.preventDefault();
   gram.geprueft ? uebungWeiter() : uebungPruefen();
 });
+el('knopf-uebung-zusatz').addEventListener('click', () => starteZusatz(gram.kapitel));
+el('knopf-zusatz').addEventListener('click', () => starteZusatz(gram.kapitel));
 el('knopf-ueben').addEventListener('click', () => starteUebung(!Grammatik.ungeloeste(gram.kapitel.id).length));
 el('knopf-uebung-beenden').addEventListener('click', () => oeffneKapitel(gram.kapitel, gram.zurueckZu));
 
@@ -1608,7 +1720,7 @@ function zeigeFortschritt() {
     el('knopf-test').textContent = 'Test wiederholen (ca. 10 Min.)';
   } else {
     el('fs-niveau').textContent = '–';
-    el('fs-niveau-text').textContent = 'Noch kein Test gemacht. 24 Fragen zeigen dir, ob A1, A2 oder B1 sitzt.';
+    el('fs-niveau-text').textContent = 'Noch kein Test gemacht. 32 Fragen zeigen dir, ob A1, A2, B1 oder B2 sitzt.';
     el('knopf-test').textContent = 'Niveau-Test machen (ca. 10 Min.)';
   }
   zeige('fortschritt');
@@ -1923,10 +2035,12 @@ el('knopf-hoeren-start').addEventListener('click', () => starteHoeren());
 // Aufgaben aus Lektionen.aufgabenFuer: deutsch (Kacheln), grammatik (Lücke oder Kacheln), hoeren (Kacheln).
 // fertig(richtig, von) gibt { titel, text, weiter } zurück: was nach der letzten Aufgabe passiert.
 
-const aufg = { liste: [], nr: 0, richtig: 0, geprueft: false, ende: null, fertig: null, abbruch: null };
+// fehler: Kapitel-ID → Anzahl falscher Grammatik-Aufgaben (für das Angebot „Zusatzübungen“)
+const aufg = { liste: [], nr: 0, richtig: 0, geprueft: false, ende: null, fertig: null, abbruch: null, fehler: {} };
 
 function starteAufgaben(liste, titel, fertig, abbruch) {
-  Object.assign(aufg, { liste, nr: 0, richtig: 0, geprueft: false, ende: null, fertig, abbruch });
+  Object.assign(aufg, { liste, nr: 0, richtig: 0, geprueft: false, ende: null, fertig, abbruch, fehler: {} });
+  el('knopf-aufgabe-zusatz').hidden = true;
   el('aufgaben-titel').textContent = titel;
   zeige('aufgaben');
   zeigeAufgabe();
@@ -2042,6 +2156,7 @@ function aufgabePruefen() {
     loesung = a.satz.it + (a.satz.de ? ' – ' + a.satz.de : '');
   }
   if (gut) aufg.richtig += 1;
+  else if (a.art === 'grammatik') aufg.fehler[a.kapitel] = (aufg.fehler[a.kapitel] || 0) + 1;
   aufg.geprueft = true;
   el('aufgabe-ablage').classList.add('fertig');
   el('aufgabe-rueck').classList.toggle('falsch', !gut);
@@ -2070,7 +2185,27 @@ function aufgabeWeiter() {
   el('aufgabe-rueck-text').hidden = !aufg.ende.text;
   el('aufgabe-rueck').hidden = false;
   el('knopf-aufgabe').textContent = 'Weiter';
+  // Zu viele Fehler: Zusatzübungen für das Kapitel mit den meisten Fehlern anbieten
+  aufg.zusatzKapitel = aufg.ende.gut ? null : zusatzKapitelNachFehlern(aufg.fehler);
+  el('knopf-aufgabe-zusatz').hidden = !aufg.zusatzKapitel;
+  if (aufg.zusatzKapitel) {
+    const k = Grammatik.kapitel(aufg.zusatzKapitel);
+    el('knopf-aufgabe-zusatz').textContent = `Zusatzübungen: ${k.titel}`;
+  }
 }
+
+// Kapitel mit den meisten Fehlern (mindestens 1), das Zusatzübungen hat
+function zusatzKapitelNachFehlern(fehler) {
+  const kandidaten = Object.entries(fehler)
+    .filter(([id, n]) => n > 0 && Grammatik.hatZusatz(id))
+    .sort((a, b) => b[1] - a[1]);
+  return kandidaten.length ? kandidaten[0][0] : null;
+}
+
+el('knopf-aufgabe-zusatz').addEventListener('click', () => {
+  const k = Grammatik.kapitel(aufg.zusatzKapitel);
+  if (k) starteZusatz(k, lekt.offen ? 'lektion' : 'grammatik');
+});
 
 el('knopf-aufgabe').addEventListener('click', () => {
   if (aufg.ende) { aufg.ende.weiter(); return; }

@@ -32,6 +32,28 @@ const GRUNDWOERTER = {
   'però': ['però', 'aber; jedoch'], 'poi': ['poi', 'dann; danach'], 'qualche': ['qualche', 'einige; ein paar'],
   'anni': ["l'anno", 'Jahre'], 'ore': ["l'ora", 'Stunden; Uhr'], 'minuti': ['il minuto', 'Minuten'],
   'euro': ["l'euro", 'Euro', 'der Euro'],
+  // dazu ab B1
+  'dalla': ['da + la', 'von der; bei der'], 'dallo': ['da + lo', 'vom'], "dall'": ["da + l'", 'vom; von der; seit'],
+  'dalle': ['da + le', 'von den; ab (Uhrzeit)'], 'dello': ['di + lo', 'des; vom'], 'degli': ['di + gli', 'der (Mehrzahl); einige'],
+  'nello': ['in + lo', 'im; in dem'], "nell'": ["in + l'", 'im; in der'], 'nei': ['in + i', 'in den'], 'negli': ['in + gli', 'in den'],
+  'nelle': ['in + le', 'in den'], 'sullo': ['su + lo', 'auf dem'], "sull'": ["su + l'", 'auf dem; auf der; über'],
+  'sui': ['su + i', 'auf den; über die'], 'sugli': ['su + gli', 'auf den; über die'], 'sulle': ['su + le', 'auf den; über die'],
+  'allo': ['a + lo', 'zum; am'], 'agli': ['a + gli', 'den; zu den'],
+  'ed': ['e', 'und (vor Vokal)'], 'ad': ['a', 'in; nach; zu (vor Vokal)'], "anch'": ['anche', 'auch'],
+  'questo': ['questo', 'dieser; dieses'], 'questa': ['questo', 'diese'], 'questi': ['questo', 'diese (Mehrzahl)'],
+  'queste': ['questo', 'diese (Mehrzahl)'], "quest'": ['questo', 'diese(r/s) (vor Vokal)'],
+  'quello': ['quello', 'jener; das (da)'], 'quella': ['quello', 'jene; die (da)'], 'quel': ['quello', 'jener; der (da)'],
+  'altro': ['altro', 'andere(r); noch ein'], 'altra': ['altro', 'andere; noch eine'], 'altri': ['altro', 'andere (Mehrzahl)'],
+  'altre': ['altro', 'andere (Mehrzahl)'], 'cosa': ['cosa', 'was (che cosa = was); Sache'],
+  'tanto': ['tanto', 'so viel; sehr'], 'tanta': ['tanto', 'so viel; viel'], 'tanti': ['tanto', 'so viele; viele'], 'tante': ['tanto', 'so viele; viele'],
+  'certo': ['certo', 'sicher; natürlich'],
+  'se': ['se', 'wenn; falls; ob'], 'ah': ['ah', 'ah; ach'], 'me': ['me', 'mich; mir (betont; me lo = es mir)'],
+  'te': ['te', 'dich; dir (betont; te lo = es dir)'], 'glielo': ['glielo', 'es ihm / ihr'], 'gliela': ['gliela', 'sie ihm / ihr'],
+  'glieli': ['glieli', 'sie (Mehrzahl) ihm / ihr'], 'gliele': ['gliele', 'sie (Mehrzahl) ihm / ihr'], 'gliene': ['gliene', 'davon ihm / ihr'],
+  'hanno': ['avere', 'sie haben'], 'era': ['essere', 'war'], 'erano': ['essere', 'waren'],
+  'molti': ['molto', 'viele'], 'molte': ['molto', 'viele'], 'molta': ['molto', 'viel'],
+  'piace': ['piacere', 'gefällt (mi piace = mir gefällt)'], 'piacciono': ['piacere', 'gefallen (Mehrzahl)'],
+  'cui': ['cui', 'dem; der; dessen (in cui = in dem)'], 'ciò': ['ciò', 'das (ciò che = das, was)'],
 };
 
 const LESETEXTE = [

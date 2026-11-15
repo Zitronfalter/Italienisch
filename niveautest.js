@@ -1,4 +1,4 @@
-// Niveau-Test: 24 Fragen, je 8 für A1, A2 und B1
+// Niveau-Test: 32 Fragen, je 8 für A1, A2, B1 und B2
 // Die erste Antwort ist die richtige (die App mischt die Reihenfolge).
 // Eine Stufe gilt als erreicht, wenn mindestens 6 von 8 Fragen stimmen
 // und die Stufe davor auch erreicht ist.
@@ -33,10 +33,20 @@ const NIVEAUTEST = [
   { stufe: 'B1', frage: '„Vuoi delle mele?“ – „Sì, ___ prendo due.“', antworten: ['ne', 'li', 'ci'] },
   { stufe: 'B1', frage: '„Nonostante la pioggia, siamo usciti.“ bedeutet …', antworten: ['Trotz des Regens sind wir rausgegangen.', 'Wegen des Regens sind wir drinnen geblieben.', 'Nach dem Regen sind wir rausgegangen.'] },
   { stufe: 'B1', frage: '„Glielo dico domani.“ bedeutet …', antworten: ['Ich sage es ihm (oder ihr) morgen.', 'Ich sage ihm morgen nichts.', 'Er sagt es mir morgen.'] },
+
+  // ---------- B2 ----------
+  { stufe: 'B2', frage: 'Se fossi in te, ___ subito. (partire)', antworten: ['partirei', 'partirò', 'parto'] },
+  { stufe: 'B2', frage: "Se l'avessi saputo, ___ venuta.", antworten: ['sarei', 'fossi', 'ero'] },
+  { stufe: 'B2', frage: 'Penso che Marco ___ già partito.', antworten: ['sia', 'è', 'sarà'] },
+  { stufe: 'B2', frage: "Benché ___ tardi, restiamo ancora un po'.", antworten: ['sia', 'è', 'sarà'] },
+  { stufe: 'B2', frage: '„Il ladro sarebbe scappato in macchina.“ bedeutet …', antworten: ['Der Dieb soll mit dem Auto geflohen sein.', 'Der Dieb wäre gern mit dem Auto geflohen.', 'Der Dieb wird mit dem Auto fliehen.'] },
+  { stufe: 'B2', frage: '„Nel 1889 la regina visitò Napoli.“ – visitò heißt …', antworten: ['besuchte', 'wird besuchen', 'besucht'] },
+  { stufe: 'B2', frage: '„Verrò domani.“ → Ha detto che ___ il giorno dopo.', antworten: ['sarebbe venuta', 'verrà', 'viene'] },
+  { stufe: 'B2', frage: 'La città nella ___ vivo è piccola.', antworten: ['quale', 'cui', 'che'] },
 ];
 
 const Niveautest = (() => {
-  const STUFEN = ['A1', 'A2', 'B1'];
+  const STUFEN = ['A1', 'A2', 'B1', 'B2'];
   const MINDESTENS = 6;      // von 8
 
   // antworten: Liste der gewählten Antwort-Nummern (0 = richtig)
@@ -61,6 +71,7 @@ const Niveautest = (() => {
       A1: 'A1 sitzt: Du verstehst einfache Sätze und kannst dich vorstellen. Als Nächstes: die A2-Texte und die Vergangenheit.',
       A2: 'A2 sitzt: Alltag, Urlaub und einfache Rezepte klappen. Für B1 helfen eigene Texte und mehr Zeitung.',
       B1: 'B1: Du verstehst auch längere Texte. Jetzt sind Zeitungsartikel ein gutes Ziel.',
+      B2: 'B2: Zeitung, Geschichten und schwierige Rezepte klappen. Bravissima!',
     }[niveau];
   }
 

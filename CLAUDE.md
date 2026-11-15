@@ -27,9 +27,10 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - `speicher.js` – Speichern, Sichern, Laden
 - `vokabeln.js` – Karteikasten (5 Fächer) und Prüfen der Antwort. Neue Karten haben `kennen` (0…`KENNEN_FERTIG`=4): erst Kennenlernen (Zeigen+Hören, Wortpaare, Wählen nach Lesen/Hören), danach Schreiben ab dem nächsten Tag. Karten ohne `kennen` (alt) gelten als bekannt. Fällige Wörter ab Fach 2 kommen abwechselnd als Italienisch schreiben oder Italienisch → Deutsch mit Kacheln (`karte.richtung`, `richtungFuer`, `deutschKacheln`).
 - `wortschatz.js` – Grundwortschatz (Themen, A1/A2)
-- `texte.js` – Lesetexte/Rezepte mit Wortbedeutungen, Fragen (erste Antwort = richtig) und `uebersetzung` (deutsche Übersetzung jedes Hörsatzes; Test `werkzeuge/test/hoeren.test.js` prüft, dass keiner fehlt)
+- `texte.js` – Lesetexte/Rezepte mit Wortbedeutungen, Fragen (erste Antwort = richtig) und `uebersetzung` (deutsche Übersetzung jedes Hörsatzes; Test `werkzeuge/test/hoeren.test.js` prüft, dass keiner fehlt). Texte B1/B2 in `texte-b.js` (`LESETEXTE.push`)
 - `lesen.js` – Nachschlagen, Vorlesen (Web Speech API, it-IT), gelesene Texte
-- `grammatik.js` – Kapitel (Regel, Tabelle, Übungen: Lücke/Kacheln), Fortschritt, Regel-Erkennung am Text (`kapitelFuerWort`)
+- `grammatik.js` – Kapitel (Regel, Tabelle, Übungen: Lücke/Kacheln), Fortschritt, Regel-Erkennung am Text (`kapitelFuerWort`). Kapitel B1/B2 in `grammatik-b.js` (`KAPITEL.push`, Zusatzübungen direkt im Kapitel)
+- `zusatz.js` – leichtere Zusatzübungen A1/A2 (`ZUSATZ`, wird an die Kapitel gehängt): Tipp in Schritten + 6 Übungen, auch Art `wahl` (erste Option richtig), optional `warum`. Angeboten unter 80 % (`Grammatik.zusatzAnbieten`), am Ende der Übung, auf der Kapitelseite und nach „Kann ich schon“/Wiederholung. Zählen nicht als gelöst/geübt (`fortschritt.grammatik[id].zusatz`). Jedes neue Kapitel braucht Zusatzübungen (Test `zusatz.test.js`)
 - Neue Texte: jedes Wort muss eine Bedeutung haben (im Text, in `GRUNDWOERTER` oder im Wortschatz) – vor dem Fertigmelden mit einem kleinen Node-Skript prüfen.
 - `woerterbuch.js` + `woerterbuch.json` – großes Wörterbuch (WikDict, CC BY-SA, Quelle in `LIZENZEN.md` und in der App nennen); Formen-Erkennung in `kandidaten()`. Neu bauen mit `werkzeuge/woerterbuch-bauen.js`.
 - Nachschlage-Reihenfolge (`Lesen.nachschlagen`): selbst eingetragene Bedeutung → Wörter im Text → `GRUNDWOERTER` → Grundwortschatz → eigene Wörter → Formen von Grundwortschatz-Wörtern → WikDict.
@@ -39,7 +40,7 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Gelöste Übungen: `fortschritt.grammatik[id].geloest` (Nummern – neue Übungen nur hinten anhängen), `fortschritt.hoeren.geloest`.
 - `lektionen.js` – welche Lektion dran ist, Teile (Wörter/Grammatik/Text/Hören), erledigt, „kenne ich / neu“, Übergang vom alten Lernstand (`FORMAT` 2). Neue Wörter in der Runde kommen nur aus der aktuellen Lektion.
 - Neue Lektionstexte: `node werkzeuge/lektionen-pruefen.js` muss 0 Fehler melden (jedes Wort aus dieser oder früheren Lektion, `GRUNDWOERTER` oder höchstens 8 im Text erklärt).
-- `niveautest.js` – 24 Fragen (je 8 A1/A2/B1, erste Antwort = richtig), Stufe erreicht ab 6/8
+- `niveautest.js` – 32 Fragen (je 8 A1/A2/B1/B2, erste Antwort = richtig), Stufe erreicht ab 6/8
 - Runde („Los“): erst „kenne ich / neu“ (falls nötig), Vokabeln, danach `naechsterSchritt()` in `app.js` – nächster Teil der aktuellen Lektion; ist dort nichts offen, `naechsterInhalt()` (Frei üben)
 - `uebungen.js` – Hören & Üben: Wortpaare, Diktat, Hören+Kacheln; Hörsätze aus Grammatik-Übungen (mit Deutsch) und Lesetexten (ohne «»-Dialoge). Runde: Text → Grammatik → Hören im Wechsel.
 - `sw.js` – Service Worker (offline)

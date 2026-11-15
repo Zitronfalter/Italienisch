@@ -102,6 +102,7 @@ function pruefeLektionen(k) {
       for (const u of kap.uebungen) {
         const satz = u.art === 'kacheln' ? u.it : u.satz.replace('___', u.loesung);
         for (const form of woerterIn(k, satz)) {
+          if (k.GRUNDWOERTER[form]) continue;
           if (lektionVon.has(form) && lektionVon.get(form) > l.nr) {
             hinweise.push(`${l.id}, Kapitel ${kid}: „${form}“ kommt erst in Lektion ${lektionVon.get(form)} („${satz}“)`);
           }

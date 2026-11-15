@@ -282,8 +282,10 @@
         <table class="tabelle" id="kapitel-tabelle" lang="it"></table>
       </div>
       <p class="karte-text" id="kapitel-uebungen-stand"></p>
+      <p class="karte-text" id="kapitel-zusatz-hinweis" hidden>Beim letzten Üben war noch einiges neu. Leichtere Zusatzübungen helfen, Schritt für Schritt.</p>
       <div class="knopf-gruppe">
         <button class="knopf-haupt" id="knopf-ueben" type="button">Üben</button>
+        <button class="knopf-zweit" id="knopf-zusatz" type="button" hidden>Leichtere Zusatzübungen</button>
         <button class="knopf-zurueck" id="knopf-kapitel-zurueck" type="button">Zurück</button>
       </div>
     </section>
@@ -298,6 +300,13 @@
       <div class="karte frage-karte">
         <p class="frage-art" id="uebung-art"></p>
         <p class="frage-wort uebung-de" id="uebung-de"></p>
+        <ol class="tipp-liste" id="uebung-tipp" hidden></ol>
+      </div>
+
+      <!-- Auswahl (Zusatzübungen) -->
+      <div id="uebung-wahl" hidden>
+        <p class="luecke-satz" id="wahl-satz" lang="it"></p>
+        <div class="antworten" id="wahl-antworten" lang="it"></div>
       </div>
 
       <!-- Lücke -->
@@ -323,6 +332,7 @@
 
       <div class="knopf-gruppe">
         <button class="knopf-haupt" id="knopf-uebung" type="button">Prüfen</button>
+        <button class="knopf-zweit" id="knopf-uebung-zusatz" type="button" hidden>Leichtere Zusatzübungen</button>
         <button class="knopf-zurueck" id="knopf-uebung-beenden" type="button">Übung beenden</button>
       </div>
     </section>
@@ -364,6 +374,7 @@
 
       <div class="knopf-gruppe">
         <button class="knopf-haupt" id="knopf-aufgabe" type="button">Prüfen</button>
+        <button class="knopf-zweit" id="knopf-aufgabe-zusatz" type="button" hidden>Leichtere Zusatzübungen</button>
         <button class="knopf-zurueck" id="knopf-aufgaben-beenden" type="button">Beenden</button>
       </div>
     </section>
@@ -555,8 +566,11 @@
   <script src="wortschatz.js"></script>
   <script src="vokabeln.js"></script>
   <script src="texte.js"></script>
+  <script src="texte-b.js"></script>
   <script src="lesen.js"></script>
   <script src="grammatik.js"></script>
+  <script src="grammatik-b.js"></script>
+  <script src="zusatz.js"></script>
   <script src="woerterbuch.js"></script>
   <script src="niveautest.js"></script>
   <script src="begleiter.js"></script>

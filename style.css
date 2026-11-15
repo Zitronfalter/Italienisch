@@ -922,3 +922,15 @@ button {
 }
 
 .begleiter[hidden] { display: none; }
+
+/* Zusatzübungen: Tipp in kleinen Schritten */
+.tipp-liste {
+  margin: 12px 0 0;
+  padding-left: 22px;
+  font-family: var(--serif);
+  line-height: 1.5;
+}
+.tipp-liste li { margin-bottom: 8px; }
+.tipp-liste li:last-child { margin-bottom: 0; }
+.tipp-liste[hidden] { display: none; }
+#uebung-wahl .antworten { margin-top: 12px; }

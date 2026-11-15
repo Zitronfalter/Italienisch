@@ -19,6 +19,10 @@
 - [ ] **Lektion 9–18 (A2) ansehen**, wenn du so weit bist: Sind die neuen Texte (Urlaub, Markt, Restaurant, Kindheit, Wetter, Arzt) zu leicht oder zu schwer? Danach planen wir B1 (Lektion 19–28) zusammen.
 - [ ] **Wortliste durchsehen** – in [wortschatz.js](wortschatz.js), eine Zeile pro Wort.
       Fehlt dir ein Thema oder Wort? Claude Bescheid sagen.
+- [ ] **B1 und B2 ansehen** (Lektion 19–36): Claude hat die Lektionen selbständig gebaut. Wenn du so weit bist (oder vorher reinschnuppern magst): Passen die Themen? Sind die Texte zu leicht oder zu schwer?
+      Am schnellsten über **Frei üben → Lesen** und **Frei üben → Grammatik** (dort stehen jetzt auch B1 und B2).
+- [ ] **Zusatzübungen ausprobieren:** Mach in einem Grammatik-Kapitel absichtlich ein paar Fehler. Am Ende erscheint „Leichtere Zusatzübungen“ – erst ein Tipp in kleinen Schritten, dann leichte Aufgaben. Gefällt dir das so?
+- [x] **Commit freigeben:** Erledigt am 15.11.2026 – B1, B2 und Zusatzübungen sind gespeichert (Commit).
 
 ---
 

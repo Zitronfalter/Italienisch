@@ -5,6 +5,9 @@
 // kurz:     Regel in einem Satz – wird bei einem Fehler angezeigt
 // uebungen: { art: 'luecke', de, satz (mit ___), loesung, auch? }
 //           { art: 'kacheln', de, it (richtiger Satz), extra: [falsche Kacheln], auch? }
+//           Neue Übungen nur hinten anhängen (gelöste werden mit ihrer Nummer gemerkt).
+// zusatz:   leichtere Zusatzübungen bei vielen Fehlern – stehen in zusatz.js.
+// Kapitel für B1 und B2 stehen in grammatik-b.js.
 
 const KAPITEL = [
   {
@@ -685,6 +688,41 @@ const Grammatik = (() => {
     return k ? k.uebungen.map((u, i) => i).filter((i) => !geloest.includes(i)) : [];
   }
 
+  // ---------- Zusatzübungen (bei vielen Fehlern) ----------
+
+  const ZUSATZ_AB = 0.8;   // unter 80 % richtig: Zusatzübungen anbieten
+
+  function hatZusatz(id) {
+    const k = kapitel(id);
+    return Boolean(k && k.zusatz && k.zusatz.uebungen && k.zusatz.uebungen.length);
+  }
+
+  // Ohne Zahlen: nach dem letzten gespeicherten Üben des Kapitels
+  function zusatzAnbieten(id, richtig, von) {
+    if (!hatZusatz(id)) return false;
+    if (richtig === undefined) {
+      const s = stand(id);
+      if (!s || !s.von) return false;
+      richtig = s.richtig;
+      von = s.von;
+    }
+    return von > 0 && richtig / von < ZUSATZ_AB;
+  }
+
+  function zusatzSpeichern(id, richtig, von) {
+    const f = Speicher.daten.fortschritt;
+    f.grammatik = f.grammatik || {};
+    const st = (f.grammatik[id] = f.grammatik[id] || {});
+    st.zusatz = { richtig, von, datum: Vokabeln.heute() };
+    Speicher.speichern();
+  }
+
+  // Auswahl-Übung: die erste Option ist die richtige
+  function pruefeWahl(wahl, u) {
+    const richtig = satzSauber(wahl) === satzSauber(u.optionen[0]);
+    return { stufe: richtig ? 'richtig' : 'falsch', hinweis: '' };
+  }
+
   function anzahlGeuebt() {
     return KAPITEL.filter((k) => stand(k.id) && stand(k.id).geuebt).length;
   }
@@ -717,5 +755,8 @@ const Grammatik = (() => {
     return kapitel('verben-ere-ire');
   }
 
-  return { kapitel, pruefeLuecke, pruefeKacheln, kacheln, stand, ergebnisSpeichern, uebungGeloest, ungeloeste, anzahlGeuebt, kapitelFuerWort };
+  return {
+    kapitel, pruefeLuecke, pruefeKacheln, pruefeWahl, kacheln, stand, ergebnisSpeichern, uebungGeloest, ungeloeste,
+    anzahlGeuebt, kapitelFuerWort, hatZusatz, zusatzAnbieten, zusatzSpeichern,
+  };
 })();

@@ -114,21 +114,28 @@ const Begleiter = (() => {
     element.dataset.stimmung = nachricht.stimmung;
   }
 
-  // Kleine Limo in der Rückmeldung einer Übung (.rueckmeldung):
-  // freut sich bei „richtig“, macht Mut bei „noch nicht“ – nie traurig.
-  function rueckZeigen(box) {
-    let bild = box.querySelector('.rueck-limo');
+  // Kleine Limo in der Aufgaben-Karte einer Übung (.frage-karte), von Anfang an dabei:
+  // denkt mit (bei Hör-Aufgaben: hört zu), nach dem Prüfen freut sie sich oder macht Mut – nie traurig.
+  function uebungLimo(karte, stimmung) {
+    let bild = karte.querySelector('.frage-limo');
     if (!bild) {
       bild = document.createElement('span');
-      bild.className = 'rueck-limo';
+      bild.className = 'frage-limo';
       bild.setAttribute('aria-hidden', 'true');
-      box.prepend(bild);
+      karte.prepend(bild);
     }
-    const stimmung = box.classList.contains('falsch') ? 'mut' : 'freut';
     if (bild.dataset.stimmung !== stimmung) {
       bild.innerHTML = bildHtml(stimmung);
       bild.dataset.stimmung = stimmung;
     }
+  }
+
+  // Stimmung passend zur Übungsseite: Rückmeldung sichtbar → freut / mut, sonst denkt / hoert
+  function uebungStimmung(seite) {
+    const rueck = seite.querySelector('.rueckmeldung');
+    if (rueck && !rueck.hidden) return rueck.classList.contains('falsch') ? 'mut' : 'freut';
+    const hoeren = [...seite.querySelectorAll('.hoer-knoepfe')].some((h) => !h.hidden && h.offsetParent !== null);
+    return hoeren ? 'hoert' : 'denkt';
   }
 
   // Eine Lektion ist geschafft
@@ -136,5 +143,5 @@ const Begleiter = (() => {
     return { stimmung: 'jubelt', text: `Lektion „${titel}“ geschafft! Ottimo lavoro. Die nächste wartet, wann du magst.` };
   }
 
-  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft, rueckZeigen };
+  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft, uebungLimo, uebungStimmung };
 })();

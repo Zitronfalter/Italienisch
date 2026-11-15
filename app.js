@@ -2721,14 +2721,21 @@ document.querySelectorAll('[data-zurueck]').forEach((knopf) => {
   knopf.addEventListener('click', () => oeffneReiter(knopf.dataset.zurueck || 'heute'));
 });
 
-// Limo in den Rückmeldungen der Übungen: sobald ein Kasten erscheint oder
-// zwischen richtig/falsch wechselt, zeigt Limo die passende Stimmung.
+// Limo in den Übungen: sitzt in der Aufgaben-Karte (.frage-karte) und passt ihre Stimmung an,
+// sobald sich auf der Seite etwas zeigt/versteckt (neue Aufgabe, Hören, Rückmeldung).
 if (typeof MutationObserver !== 'undefined') {
+  const UEBUNGS_SEITEN = ['screen-runde', 'screen-uebung', 'screen-aufgaben', 'screen-hoeren'];
+  const limoAktualisieren = (seite) => {
+    if (seite.hidden) return;
+    const karte = seite.querySelector('.frage-karte');
+    if (karte) Begleiter.uebungLimo(karte, Begleiter.uebungStimmung(seite));
+  };
   const limoBeobachter = new MutationObserver((aenderungen) => {
-    for (const a of aenderungen) if (!a.target.hidden) Begleiter.rueckZeigen(a.target);
+    const seiten = new Set(aenderungen.map((a) => a.target.closest('.screen')).filter(Boolean));
+    seiten.forEach(limoAktualisieren);
   });
-  for (const id of ['rueckmeldung', 'uebung-rueck', 'aufgabe-rueck', 'hoeren-rueck']) {
-    limoBeobachter.observe(el(id), { attributes: true, attributeFilter: ['hidden', 'class'] });
+  for (const id of UEBUNGS_SEITEN) {
+    limoBeobachter.observe(el(id), { attributes: true, subtree: true, attributeFilter: ['hidden', 'class'] });
   }
 }
 

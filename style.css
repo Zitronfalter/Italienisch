@@ -43,13 +43,18 @@ html, body {
   font-size: 18px;
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
+  /* Höhe = echtes Fenster. (100vh/100dvh ist als Home-Bildschirm-App am iPhone
+     etwas größer als sichtbar – dann scrollt die Seite ein Stück.) */
+  height: 100%;
+  overscroll-behavior: none;   /* kein Nachfedern, wenn nichts zu scrollen ist */
 }
 
 #app {
   max-width: 560px;
   margin: 0 auto;
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
   /* Abstand zu Notch und Home-Leiste am iPhone */
   padding:
     calc(env(safe-area-inset-top) + 24px)
@@ -62,7 +67,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-height: calc(100dvh - 48px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  flex: 1 0 auto;    /* füllt den Rest von #app – so sitzt „Los“ unten */
 }
 .screen[hidden] { display: none; }
 
@@ -240,17 +245,17 @@ button {
   border-radius: var(--radius);
   background: var(--flaeche);
   border-left: 4px solid var(--richtig);
-  display: flow-root;     /* Limo (float) bleibt im Kasten */
 }
 .rueckmeldung.falsch { border-left-color: var(--fehler); }
-/* kleine Limo rechts in der Rückmeldung (begleiter.js: rueckZeigen) */
-.rueck-limo {
+/* kleine Limo oben rechts in der Aufgaben-Karte (begleiter.js: uebungLimo) */
+.frage-karte { display: flow-root; }
+.frage-limo {
   float: right;
-  width: 52px;
-  height: 52px;
-  margin: -6px -8px 0 10px;
+  width: 56px;
+  height: 56px;
+  margin: -8px -6px 4px 10px;
 }
-.rueck-limo .roboter {
+.frage-limo .roboter {
   width: 100%;
   height: 100%;
   display: block;
@@ -1090,10 +1095,6 @@ body.mit-leiste #app {
 .leiste { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .leiste button { font-size: 11px; letter-spacing: -0.1px; }
 .leiste button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* Seiten mit Leiste: genau eine Bildschirmhöhe, damit „Los“ über der Leiste sitzt */
-body.mit-leiste .screen {
-  min-height: calc(100dvh - 24px - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-}
 
 /* ---------- Leiste oben: „‹ Zurück“ wie bei iPhone-Apps ---------- */
 .oben-leiste {
@@ -1135,10 +1136,4 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 .weiter-teil { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rand); display: flex; flex-direction: column; }
 .weiter-teil .knopf-leise { margin-top: 2px; align-self: flex-start; padding-left: 0; }
 .knopf-los.knopf-los-unten { margin-top: auto; }
-body.mit-oben .screen {
-  min-height: calc(100dvh - 64px - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-}
 .weiter-teil[hidden] { display: none; }
-body.mit-oben.mit-leiste .screen {
-  min-height: calc(100dvh - 64px - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-}

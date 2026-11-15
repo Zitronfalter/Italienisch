@@ -201,16 +201,60 @@ const Lesen = (() => {
     speechSynthesis.addEventListener('voiceschanged', stimmeSuchen);
   }
 
-  function stimmeWaehlen(name) {
-    Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), stimme: name };
+  // art: '' = normale Stimme, 'M' = für männliche Wörter, 'W' = für weibliche Wörter
+  // (name '' bei M/W = wie die normale Stimme)
+  function stimmeWaehlen(name, art = '') {
+    Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), ['stimme' + art]: name };
     Speicher.speichern();
     stimmeSuchen();
   }
 
-  function stimmeName() { return stimme ? stimme.name : ''; }
+  function stimmeName(art = '') {
+    if (art) return (Speicher.daten.einstellungen || {})['stimme' + art] || '';
+    return stimme ? stimme.name : '';
+  }
 
-  // Sprechtempo: 0.7 langsam, 0.8 etwas langsamer (Standard), 0.9 fast normal
-  function tempo() { return Number((Speicher.daten.einstellungen || {}).tempo) || 0.8; }
+  // Stimme für ein einzelnes Wort: männlich/weiblich, wenn eingestellt – sonst die normale
+  function stimmeFuerWort(text) {
+    const art = { m: 'M', w: 'W' }[geschlecht(text)];
+    const name = art && stimmeName(art);
+    return (name && italienischeStimmen().find((s) => s.name === name)) || stimme;
+  }
+
+  // ---------- Geschlecht eines Worts (für die Stimme) ----------
+  //
+  // Am Artikel: il, lo, i, gli, un, uno → männlich; la, le, una, un' → weiblich.
+  // Bei l' entscheidet die Endung; unklare Wörter (l'insegnante) → null = normale Stimme.
+
+  const L_MAENNLICH = new Set(['amore', 'esame', 'ombrellone', 'albume', 'aspirapolvere', 'ascensore', 'attore',
+    'animale', 'ospedale', 'odore', 'avvenire', 'ambiente', 'affare', 'ordine', 'imperatore', 'interesse',
+    'uomo', 'elefante', 'errore', 'esempio', 'orecchio', 'occhio', 'ufficio', 'ospedale', 'autore', 'inverno',
+    'aereo', 'abbigliamento', 'ingegnere', 'infermiere', 'accendino', 'abito', 'arrosto']);
+  const L_WEIBLICH = new Set(['estate', 'ape', 'arte', 'anagrafe', 'attrice', 'automobile', 'auto', 'immagine',
+    'acqua', 'origine', 'ambasciatrice', 'arance', 'eco']);
+
+  function geschlecht(text) {
+    const t = String(text).trim().toLowerCase().replace(/’/g, "'");
+    if (/^(il|lo|i|gli|un|uno)\s/.test(t)) return 'm';
+    if (/^(la|le|una)\s/.test(t) || /^un'/.test(t)) return 'w';
+    const l = t.match(/^l'([\p{L}]+)/u);
+    if (!l) return null;
+    const wort = l[1];
+    if (L_MAENNLICH.has(wort)) return 'm';
+    if (L_WEIBLICH.has(wort)) return 'w';
+    if (/ista$/.test(wort)) return null;                       // l'artista: beides
+    if (/(zione|sione|ione|trice|ice|tà|tù)$/.test(wort)) return 'w';
+    if (/o$/.test(wort)) return 'm';
+    if (/a$/.test(wort)) return 'w';
+    return null;
+  }
+
+  // Sprechtempo: 0.55 sehr langsam, 0.7 langsam, 0.85 etwas langsamer (Standard), 1 normal
+  // (frühere Werte 0.8 / 0.9 bleiben gültig)
+  const TEMPI = [0.55, 0.7, 0.85, 1];
+  function tempo() { return Number((Speicher.daten.einstellungen || {}).tempo) || 0.85; }
+  // nächste Stufe zur Anzeige im Auswahlfeld
+  function tempoStufe() { return TEMPI.reduce((a, b) => (Math.abs(b - tempo()) < Math.abs(a - tempo()) ? b : a)); }
   function tempoWaehlen(wert) {
     Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), tempo: Number(wert) };
     Speicher.speichern();
@@ -256,10 +300,13 @@ const Lesen = (() => {
 
   // Liest Text vor. fertig() wird aufgerufen, wenn das Vorlesen endet.
   // Die Teile werden nacheinander gesprochen, dazwischen eine echte Pause.
-  // optionen.tempo: anderes Tempo nur für diese Ausgabe (z. B. 0.6 für „langsam anhören“)
+  // optionen.langsam: deutlich langsamer als eingestellt (Knopf „Langsam“)
+  // optionen.wort: einzelnes Wort – Stimme nach Geschlecht (falls eingestellt)
   function sprich(text, fertig, optionen = {}) {
     if (!kannSprechen) return;
     if (!stimme) stimmeSuchen();
+    const dieseStimme = optionen.wort ? stimmeFuerWort(text) : stimme;
+    const diesesTempo = optionen.langsam ? Math.max(0.4, tempo() * 0.7) : tempo();
     const liste = teile(text);
     if (!liste.length) return;
 
@@ -274,8 +321,8 @@ const Lesen = (() => {
       if (i >= liste.length) { ende(); return; }
       const u = new SpeechSynthesisUtterance(liste[i].text);
       u.lang = 'it-IT';
-      if (stimme) u.voice = stimme;
-      u.rate = optionen.tempo || tempo();           // Standard: etwas langsamer als normal
+      if (dieseStimme) u.voice = dieseStimme;
+      u.rate = diesesTempo;
       u.onstart = () => { gestartet = true; };
       u.onend = () => {
         if (meinLauf !== lauf) return;
@@ -351,7 +398,7 @@ const Lesen = (() => {
     nachschlagen, inKarteikarten, istInKarteikarten, bedeutungSpeichern,
     eigeneTexte, textSpeichern, textLoeschen,
     kannSprechen, sprich, stopp, wennStill, hatItalienischeStimme, teile, satzMit,
-    italienischeStimmen, stimmeWaehlen, stimmeName, tempo, tempoWaehlen,
+    italienischeStimmen, stimmeWaehlen, stimmeName, tempo, tempoWaehlen, tempoStufe, geschlecht,
     stand, ergebnisSpeichern, anzahlVerstanden,
   };
 })();

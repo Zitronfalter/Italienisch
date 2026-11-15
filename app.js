@@ -505,10 +505,11 @@ function auswahlFuer(w) {
   return mischen([w, ...falsche]);
 }
 
-function sprichWort(text, langsam = false) {
+// wort: true = einzelnes Wort → Stimme nach Geschlecht (männlich/weiblich, falls eingestellt)
+function sprichWort(text, langsam = false, wort = true) {
   if (!Lesen.kannSprechen) return;
   vorlesenStopp();
-  Lesen.sprich(text, null, langsam ? { tempo: 0.6 } : {});
+  Lesen.sprich(text, null, { langsam, wort });
 }
 
 function zeigeSchritt() {
@@ -1267,33 +1268,46 @@ function zeigeVorleseHinweis() {
 }
 Lesen.wennStill(zeigeVorleseHinweis);
 
-// Stimme und Tempo auswählen
+// Stimme und Tempo auswählen – beim Lesen („Stimme und Tempo“) und unter „Mein Stand“ („Vorlesen“).
+// Auswahlfelder: select[data-tempo], select[data-stimme=""|"M"|"W"] (M/W = Stimme für männliche/weibliche Wörter)
+const HOERPROBE = { '': 'Ciao! Questa è la mia voce. Ti piace?', M: 'il ragazzo, il libro', W: 'la ragazza, la casa' };
+
 function fuelleStimmWahl() {
-  el('tempo-wahl').value = String(Lesen.tempo());
-  const wahl = el('stimme-wahl');
+  document.querySelectorAll('select[data-tempo]').forEach((t) => { t.value = String(Lesen.tempoStufe()); });
   const stimmen = Lesen.italienischeStimmen();
-  wahl.innerHTML = '';
-  for (const s of stimmen) {
-    const o = document.createElement('option');
-    o.value = s.name;
-    o.textContent = s.name;
-    wahl.appendChild(o);
-  }
-  wahl.value = Lesen.stimmeName();
-  // Auswahl nur zeigen, wenn es mehr als eine italienische Stimme gibt
-  wahl.hidden = stimmen.length < 2;
-  el('stimme-label').hidden = stimmen.length < 2;
+  document.querySelectorAll('select[data-stimme]').forEach((wahl) => {
+    const art = wahl.dataset.stimme;
+    wahl.innerHTML = '';
+    if (art) {
+      const o = document.createElement('option');
+      o.value = '';
+      o.textContent = 'wie die normale Stimme';
+      wahl.appendChild(o);
+    }
+    for (const s of stimmen) {
+      const o = document.createElement('option');
+      o.value = s.name;
+      o.textContent = s.name;
+      wahl.appendChild(o);
+    }
+    wahl.value = Lesen.stimmeName(art);
+  });
+  // Stimmen-Auswahl nur zeigen, wenn es mehr als eine italienische Stimme gibt
+  document.querySelectorAll('[data-stimmen-teil]').forEach((x) => { x.hidden = stimmen.length < 2; });
 }
-el('tempo-wahl').addEventListener('change', (e) => {
+document.querySelectorAll('select[data-tempo]').forEach((t) => t.addEventListener('change', (e) => {
   Lesen.tempoWaehlen(e.target.value);
+  fuelleStimmWahl();
   vorlesenStopp();
   Lesen.sprich('Ciao! Così parlo adesso.');           // kurze Hörprobe
-});
-el('stimme-wahl').addEventListener('change', (e) => {
-  Lesen.stimmeWaehlen(e.target.value);
+}));
+document.querySelectorAll('select[data-stimme]').forEach((wahl) => wahl.addEventListener('change', (e) => {
+  const art = e.target.dataset.stimme;
+  Lesen.stimmeWaehlen(e.target.value, art);
+  fuelleStimmWahl();
   vorlesenStopp();
-  Lesen.sprich('Ciao! Questa è la mia voce. Ti piace?');
-});
+  Lesen.sprich(HOERPROBE[art], null, { wort: Boolean(art) });
+}));
 if (Lesen.kannSprechen) speechSynthesis.addEventListener('voiceschanged', fuelleStimmWahl);
 
 // Ganzen Text vorlesen / anhalten
@@ -1811,6 +1825,8 @@ function zeigeFortschritt() {
   balken(faecher, 'Neu', jung, max);
   proFach.forEach((zahl, i) => balken(faecher, `Fach ${i + 1}`, zahl, max));
 
+  fuelleStimmWahl();
+
   // Neue Wörter pro Tag
   el('neu-pro-tag').value = String(Vokabeln.neuProTag());
   zeigeNeuHeute();
@@ -2047,7 +2063,7 @@ function hoerVorlesen(langsam = false) {
   const a = hoer.aufgaben[hoer.nr];
   if (!a || !a.satz) return;
   vorlesenStopp();
-  Lesen.sprich(a.satz.it, null, langsam ? { tempo: 0.6 } : {});
+  Lesen.sprich(a.satz.it, null, { langsam });
 }
 
 function zeigeHoerAufgabe() {
@@ -2134,7 +2150,7 @@ function paarTippen(b) {
     if (vorher) vorher.classList.remove('gewaehlt');
     hoer.gewaehlt = b;
     b.classList.add('gewaehlt');
-    if (b.dataset.seite === 'it' && Lesen.kannSprechen) Lesen.sprich(b.textContent);
+    if (b.dataset.seite === 'it' && Lesen.kannSprechen) Lesen.sprich(b.textContent, null, { wort: true });
     return;
   }
   vorher.classList.remove('gewaehlt');
@@ -2279,7 +2295,7 @@ function aufgabeSprechen(langsam = false) {
   const a = aufg.liste[aufg.nr];
   if (!a) return;
   const text = a.art === 'hoeren' ? a.satz.it : a.art === 'deutsch' ? Vokabeln.wort(a.id).it : '';
-  if (text) sprichWort(text, langsam);
+  if (text) sprichWort(text, langsam, a.art === 'deutsch');
 }
 
 function aufgabeKacheln(woerter, sprache) {

@@ -247,13 +247,14 @@
       <details class="stimm-einstellung" id="stimm-einstellung">
         <summary>Stimme und Tempo</summary>
         <label class="feld-label" for="tempo-wahl">Tempo</label>
-        <select class="eingabe-feld eingabe-klein" id="tempo-wahl">
+        <select class="eingabe-feld eingabe-klein" id="tempo-wahl" data-tempo>
+          <option value="0.55">sehr langsam</option>
           <option value="0.7">langsam</option>
-          <option value="0.8">etwas langsamer</option>
-          <option value="0.9">fast normal</option>
+          <option value="0.85">etwas langsamer</option>
+          <option value="1">normal</option>
         </select>
-        <label class="feld-label" for="stimme-wahl" id="stimme-label">Stimme</label>
-        <select class="eingabe-feld eingabe-klein" id="stimme-wahl"></select>
+        <label class="feld-label" for="stimme-wahl" id="stimme-label" data-stimmen-teil>Stimme</label>
+        <select class="eingabe-feld eingabe-klein" id="stimme-wahl" data-stimme="" data-stimmen-teil></select>
         <p class="karte-text klein">Bessere Stimmen: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Italienisch → eine „Premium“- oder „Verbessert“-Stimme laden. Sie betonen Fragen deutlicher.</p>
       </details>
       <p class="meldung fehler" id="vorlese-hinweis" role="status" hidden></p>
@@ -476,6 +477,25 @@
         <p class="zahl-mittel" id="fs-niveau">–</p>
         <p class="karte-text" id="fs-niveau-text">Noch kein Test gemacht.</p>
         <button class="knopf-klein fs-test-knopf" id="knopf-test" type="button">Niveau-Test machen (ca. 10 Min.)</button>
+      </div>
+
+      <div class="karte">
+        <p class="karte-titel">Vorlesen</p>
+        <label class="feld-label" for="stand-tempo">Tempo</label>
+        <select class="eingabe-feld eingabe-klein" id="stand-tempo" data-tempo>
+          <option value="0.55">sehr langsam</option>
+          <option value="0.7">langsam</option>
+          <option value="0.85">etwas langsamer</option>
+          <option value="1">normal</option>
+        </select>
+        <label class="feld-label" for="stand-stimme" data-stimmen-teil>Stimme</label>
+        <select class="eingabe-feld eingabe-klein" id="stand-stimme" data-stimme="" data-stimmen-teil></select>
+        <label class="feld-label" for="stand-stimme-m" data-stimmen-teil>Stimme für männliche Wörter (il, lo, un …)</label>
+        <select class="eingabe-feld eingabe-klein" id="stand-stimme-m" data-stimme="M" data-stimmen-teil></select>
+        <label class="feld-label" for="stand-stimme-w" data-stimmen-teil>Stimme für weibliche Wörter (la, le, una …)</label>
+        <select class="eingabe-feld eingabe-klein" id="stand-stimme-w" data-stimme="W" data-stimmen-teil></select>
+        <p class="karte-text klein" data-stimmen-teil>Gilt für Vokabeln und Wortpaare, nicht für Texte. So hörst du das Geschlecht mit.</p>
+        <p class="karte-text klein">Mehr Stimmen: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Italienisch. Hörst du beim Tempo keinen Unterschied, probier eine andere Stimme – manche iPhone-Stimmen achten kaum aufs Tempo.</p>
       </div>
 
       <div class="karte">

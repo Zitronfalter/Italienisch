@@ -1082,3 +1082,6 @@ body.mit-leiste #app {
   font-size: 14px;
   cursor: pointer;
 }
+
+/* Stimmen-Auswahl nur bei mehreren italienischen Stimmen */
+[data-stimmen-teil][hidden] { display: none; }

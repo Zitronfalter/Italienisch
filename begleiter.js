@@ -114,10 +114,27 @@ const Begleiter = (() => {
     element.dataset.stimmung = nachricht.stimmung;
   }
 
+  // Kleine Limo in der Rückmeldung einer Übung (.rueckmeldung):
+  // freut sich bei „richtig“, macht Mut bei „noch nicht“ – nie traurig.
+  function rueckZeigen(box) {
+    let bild = box.querySelector('.rueck-limo');
+    if (!bild) {
+      bild = document.createElement('span');
+      bild.className = 'rueck-limo';
+      bild.setAttribute('aria-hidden', 'true');
+      box.prepend(bild);
+    }
+    const stimmung = box.classList.contains('falsch') ? 'mut' : 'freut';
+    if (bild.dataset.stimmung !== stimmung) {
+      bild.innerHTML = bildHtml(stimmung);
+      bild.dataset.stimmung = stimmung;
+    }
+  }
+
   // Eine Lektion ist geschafft
   function lektionGeschafft(titel) {
     return { stimmung: 'jubelt', text: `Lektion „${titel}“ geschafft! Ottimo lavoro. Die nächste wartet, wann du magst.` };
   }
 
-  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft };
+  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft, rueckZeigen };
 })();

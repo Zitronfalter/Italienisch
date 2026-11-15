@@ -23,7 +23,9 @@ Ziele und Wünsche stehen in `VORGABEN.md`, der Plan in `ROADMAP.md`, Nicoles Au
 - Oberfläche ruhig: keine Punkte, Serien, Belohnungs-Animationen oder Werbung. Farben als Variablen in `style.css`, hell und dunkel.
 
 ## Dateien
-- `app.js` – Bildschirme und Knöpfe
+- `app.js` – Bildschirme und Knöpfe. Leiste unten (`#leiste`, 4 Reiter: Heute · Lektionen · Üben · Mein Stand): `REITER_VON` sagt, zu welchem Reiter ein Bildschirm gehört – nicht aufgeführte Bildschirme (Runde, Übungen, Lesen, Test …) zeigen keine Leiste. Neue Bildschirme dort eintragen. `oeffneReiter(reiter)`; `data-zurueck="ueben|stand"` führt zum Reiter, leer = Heute.
+- `woerterliste.js` – „Meine Wörter“: `Woerterliste.stand(id)` (sitzt/uebt/kennenlernen/nichtDran), `gruppen()` nach Lektion + „Weitere Wörter“ + „Eigene Wörter“, `zaehlen()`. Anzeige `zeigeWoerter()` in `app.js`; „Deutsch verdecken“ ändert nichts am Lernstand. Test `woerterliste.test.js`.
+- Limo in Übungen: `Begleiter.rueckZeigen(box)` setzt eine kleine Limo in jeden `.rueckmeldung`-Kasten (freut / mut), ausgelöst über einen `MutationObserver` in `app.js`.
 - `speicher.js` – Speichern, Sichern, Laden
 - `vokabeln.js` – Karteikasten (5 Fächer) und Prüfen der Antwort. Neue Karten haben `kennen` (0…`KENNEN_FERTIG`=4): erst Kennenlernen (Zeigen+Hören, Wortpaare, Wählen nach Lesen/Hören), danach Schreiben ab dem nächsten Tag. Karten ohne `kennen` (alt) gelten als bekannt. Fällige Wörter ab Fach 2 kommen abwechselnd als Italienisch schreiben oder Italienisch → Deutsch mit Kacheln (`karte.richtung`, `richtungFuer`, `deutschKacheln`).
 - Neue Wörter pro Tag: `Vokabeln.neuProTag()` (Einstellung `einstellungen.neuProTag`, Standard 3), gezählt in `fortschritt.neuHeute` (nur `aufnehmen(id, { neu: true })` aus der Runde). Pause-Gründe in `rundeZusammenstellen` (`tag`, `jung`, `faellig`, `schwer`), Text auf der Startseite (`PAUSE_TEXT`).

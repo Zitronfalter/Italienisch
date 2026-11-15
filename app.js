@@ -1,11 +1,36 @@
 // Italienisch-App – Hauptprogramm
 
+// Zu welchem Reiter der Leiste unten gehört ein Bildschirm?
+// Nicht aufgeführt (Runde, Übung, Lesen, Test …) = Leiste ausgeblendet.
+const REITER_VON = {
+  start: 'heute',
+  lektionen: 'lektionen', lektion: 'lektionen',
+  ueben: 'ueben', texte: 'ueben', grammatik: 'ueben', kapitel: 'ueben', woerterbuch: 'ueben',
+  fortschritt: 'stand', woerter: 'stand', daten: 'stand',
+};
+
 // Zwischen den Bildschirmen wechseln: genau einer ist sichtbar.
 function zeige(name) {
   document.querySelectorAll('.screen').forEach((el) => {
     el.hidden = el.id !== 'screen-' + name;
   });
+  const reiter = REITER_VON[name];
+  const leiste = document.getElementById('leiste');
+  leiste.hidden = !reiter;
+  document.body.classList.toggle('mit-leiste', Boolean(reiter));
+  leiste.querySelectorAll('[data-reiter]').forEach((k) => {
+    if (k.dataset.reiter === reiter) k.setAttribute('aria-current', 'page');
+    else k.removeAttribute('aria-current');
+  });
   window.scrollTo(0, 0);
+}
+
+// Einen Reiter der Leiste öffnen
+function oeffneReiter(reiter) {
+  if (reiter === 'lektionen') { zeigeLektionen(); zeige('lektionen'); }
+  else if (reiter === 'ueben') { zeigeLesenStand(); zeigeGrammatikStand(); zeigeHoerenStand(); zeige('ueben'); }
+  else if (reiter === 'stand') zeigeFortschritt();
+  else zeigeStart();
 }
 
 // Gruß passend zur Tageszeit
@@ -387,10 +412,12 @@ function zeigeStart() {
     : 'Keine Vokabeln fällig.')
     + (PAUSE_TEXT[pause] ? ` ${PAUSE_TEXT[pause]}` : '')
     + (n ? ` Danach: ${n.name}` : '');
-  zeigeLektionen();
-  zeigeLesenStand();
-  zeigeGrammatikStand();
-  zeigeHoerenStand();
+  // „Jetzt dran“: nur die aktuelle Lektion (alle anderen im Reiter „Lektionen“)
+  const jetzt = Lektionen.aktuelle();
+  const jetztDran = el('jetzt-dran');
+  jetztDran.innerHTML = '';
+  if (jetzt) jetztDran.appendChild(lektionKnopf(jetzt, 'jetzt'));
+  el('jetzt-dran-titel').hidden = !jetzt;
   if (!geschafftZeigen(el('begleiter-start'))) Begleiter.zeigen(el('begleiter-start'), Begleiter.startNachricht());
   lekt.offen = null;
   // Gemerkte Stelle: „Weitermachen“ statt „Los“
@@ -1819,6 +1846,110 @@ function zeigeFortschritt() {
   zeige('fortschritt');
 }
 
+// ---------- Meine Wörter ----------
+//
+// Liste aller Wörter mit Stand (woerterliste.js). Nur ansehen und selbst prüfen –
+// „Deutsch verdecken“ zählt nicht für den Karteikasten.
+
+const STAND_INFO = {
+  sitzt: { name: 'Sitzt', zeichen: '●' },
+  uebt: { name: 'Übe ich noch', zeichen: '◐' },
+  kennenlernen: { name: 'Lerne ich kennen', zeichen: '◔' },
+  nichtDran: { name: 'Noch nicht dran', zeichen: '○' },
+};
+
+const woerterAnsicht = { filter: 'alle', verdeckt: false, gruppen: [] };
+
+function zeigeWoerter() {
+  woerterAnsicht.gruppen = Woerterliste.gruppen();
+  el('woerter-verdecken').checked = woerterAnsicht.verdeckt;
+  woerterZeichnen();
+  zeige('woerter');
+}
+
+function woerterZeichnen() {
+  const { gruppen, filter } = woerterAnsicht;
+  const zahl = Woerterliste.zaehlen(gruppen);
+  const gesamt = Object.values(zahl).reduce((a, b) => a + b, 0);
+
+  const leiste = el('woerter-filter');
+  leiste.innerHTML = '';
+  const knoepfe = [['alle', 'Alle', gesamt], ...Object.entries(STAND_INFO).map(([k, i]) => [k, i.name, zahl[k]])];
+  for (const [key, name, anzahl] of knoepfe) {
+    const k = document.createElement('button');
+    k.type = 'button';
+    k.className = 'filter-knopf';
+    k.textContent = `${name} · ${anzahl}`;
+    k.setAttribute('aria-pressed', String(filter === key));
+    k.addEventListener('click', () => { woerterAnsicht.filter = key; woerterZeichnen(); });
+    leiste.appendChild(k);
+  }
+
+  const ziel = el('woerter-gruppen');
+  ziel.innerHTML = '';
+  for (const g of gruppen) {
+    const passend = g.woerter.filter((w) => filter === 'alle' || w.stand === filter);
+    if (!passend.length) continue;
+    const box = document.createElement('details');
+    box.className = 'woerter-gruppe';
+    box.innerHTML = '<summary><span class="gruppe-titel"></span><span class="gruppe-zahl"></span></summary><ul class="woerter-zeilen"></ul>';
+    box.querySelector('.gruppe-titel').textContent = g.titel;
+    box.querySelector('.gruppe-zahl').textContent = `${passend.length} ${passend.length === 1 ? 'Wort' : 'Wörter'}`;
+    // Zeilen erst beim Aufklappen bauen (über 2.000 Wörter)
+    const fuellen = () => {
+      const ul = box.querySelector('ul');
+      if (ul.children.length) return;
+      for (const w of passend) ul.appendChild(wortZeile(w));
+    };
+    box.addEventListener('toggle', () => { if (box.open) fuellen(); });
+    if (g.aktuell) { box.open = true; fuellen(); }
+    ziel.appendChild(box);
+  }
+  if (!ziel.children.length) {
+    const p = document.createElement('p');
+    p.className = 'karte-text';
+    p.textContent = 'Hier ist gerade kein Wort.';
+    ziel.appendChild(p);
+  }
+}
+
+function wortZeile(w) {
+  const li = document.createElement('li');
+  li.className = 'wort-zeile stand-' + w.stand;
+  li.innerHTML = `
+    <button class="wort-it" type="button" lang="it"></button>
+    <span class="wort-stand"><span aria-hidden="true"></span> </span>
+    <span class="wort-de" lang="de"></span>`;
+  const it = li.querySelector('.wort-it');
+  it.textContent = w.it;
+  it.setAttribute('aria-label', `${w.it} anhören`);
+  it.addEventListener('click', () => sprichWort(w.it));
+  const info = STAND_INFO[w.stand];
+  li.querySelector('.wort-stand span').textContent = info.zeichen;
+  li.querySelector('.wort-stand').append(info.name);
+  const de = li.querySelector('.wort-de');
+  if (woerterAnsicht.verdeckt) {
+    const zeigen = document.createElement('button');
+    zeigen.type = 'button';
+    zeigen.className = 'wort-zeigen';
+    zeigen.textContent = 'zeigen';
+    zeigen.setAttribute('aria-label', `Bedeutung von ${w.it} zeigen`);
+    zeigen.addEventListener('click', () => { de.textContent = w.de; });
+    de.appendChild(zeigen);
+  } else {
+    de.textContent = w.de;
+  }
+  return li;
+}
+
+el('woerter-verdecken').addEventListener('change', (e) => {
+  woerterAnsicht.verdeckt = e.target.checked;
+  // offene Gruppen merken und neu zeichnen
+  const offen = [...document.querySelectorAll('#woerter-gruppen details')].map((d) => d.open);
+  woerterZeichnen();
+  document.querySelectorAll('#woerter-gruppen details').forEach((d, i) => { if (offen[i]) d.open = true; });
+});
+
 // ---------- Niveau-Test ----------
 
 const test = { nr: 0, antworten: [], gewaehlt: null, fertig: false, reihenfolge: [] };
@@ -2123,7 +2254,7 @@ el('knopf-hoeren-langsam').addEventListener('click', () => hoerVorlesen(true));
 el('knopf-hoeren-beenden').addEventListener('click', () => {
   vorlesenStopp();
   if (hoer.lektion) zurueckZurLektion();
-  else zeigeStart();
+  else oeffneReiter('ueben');
 });
 el('knopf-hoeren-start').addEventListener('click', () => starteHoeren());
 
@@ -2535,15 +2666,30 @@ el('begleiter-start').addEventListener('click', () => {
 
 // ---------- Knöpfe ----------
 
-el('knopf-fortschritt').addEventListener('click', zeigeFortschritt);
+el('knopf-woerter').addEventListener('click', () => { woerterAnsicht.verdeckt = false; woerterAnsicht.filter = 'alle'; zeigeWoerter(); });
+el('leiste').querySelectorAll('[data-reiter]').forEach((knopf) => {
+  knopf.addEventListener('click', () => oeffneReiter(knopf.dataset.reiter));
+});
 el('knopf-woerterbuch').addEventListener('click', oeffneWoerterbuch);
 el('knopf-grammatik').addEventListener('click', zeigeKapitelliste);
 el('knopf-lesen').addEventListener('click', zeigeTextliste);
 document.getElementById('knopf-los').addEventListener('click', losKlick);
 document.getElementById('knopf-daten').addEventListener('click', oeffneDaten);
+// „Zurück“: data-zurueck="ueben" / "stand" führt zu diesem Reiter, leer = Startseite
 document.querySelectorAll('[data-zurueck]').forEach((knopf) => {
-  knopf.addEventListener('click', zeigeStart);
+  knopf.addEventListener('click', () => oeffneReiter(knopf.dataset.zurueck || 'heute'));
 });
+
+// Limo in den Rückmeldungen der Übungen: sobald ein Kasten erscheint oder
+// zwischen richtig/falsch wechselt, zeigt Limo die passende Stimmung.
+if (typeof MutationObserver !== 'undefined') {
+  const limoBeobachter = new MutationObserver((aenderungen) => {
+    for (const a of aenderungen) if (!a.target.hidden) Begleiter.rueckZeigen(a.target);
+  });
+  for (const id of ['rueckmeldung', 'uebung-rueck', 'aufgabe-rueck', 'hoeren-rueck']) {
+    limoBeobachter.observe(el(id), { attributes: true, attributeFilter: ['hidden', 'class'] });
+  }
+}
 
 setzeGruss();
 Lektionen.uebergang();

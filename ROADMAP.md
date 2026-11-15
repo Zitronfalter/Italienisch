@@ -47,6 +47,9 @@
 | **Hören nur mit Bekanntem** | Hören & Üben (auch „Frei üben“) nimmt nur Sätze bis zur aktuellen Lektion – keine Zeitformen oder Wörter, die erst später kommen; auch die falschen Kacheln und die selbst erzeugten Aufgaben bleiben beim Bekannten | ✅ |
 | **Mehr Übung, Schritt 3c: mehr Wörter B1** | 30 kurze Wort-Lektionen (je 3 nach Lektion 19–28): Lebenspläne, Studium, Ausland, Traumhaus, höflich bitten, Geld, Telefon, Büro, Mails, Freundschaft, Kochen, Familie, Bewerbung, Firma, Lebenslauf, Venedig, Meinungen, Politik, Kunst, Geschichte, Wandern, Tiere, Reklamation, Online-Shopping, Ämter … 433 neue Wörter | ✅ – wartet auf Nicoles Blick |
 | **Mehr Übung, Schritt 3d: mehr Wörter B2** | 24 kurze Wort-Lektionen (je 3 nach Lektion 29–36): Glück, Charakter, Ehrenamt, Reisepech, Bedauern, Autobahn, Verbrechen, Schmuck, Presse, Könige, Pizzabäcker, Märchen, feine Küche, Berichten, Frauen & Arbeit, Zufall, Bahn, Paare, Homeoffice, Konnektoren, Stadt & Land, Spezialitäten, Menschen beschreiben, Sprache lernen. 325 neue Wörter – jetzt 2.285 Wörter in 144 Lektionen | ✅ – wartet auf Nicoles Blick |
+| **Limo in den Übungen** | Bei jeder Rückmeldung (Vokabeln, Grammatik, Aufgaben, Hören) steht eine kleine Limo: freut sich bei „Richtig“, macht Mut bei „Noch nicht“ | ✅ – wartet auf Nicoles Blick |
+| **Einfacheres Menü** | Leiste unten mit 4 Reitern: Heute (Limo, Los, aktuelle Lektion), Lektionen, Üben (Lesen, Grammatik, Hören, Wörterbuch), Mein Stand (Fortschritt, Wörter, Sichern). In Übungen ist die Leiste weg | ✅ – wartet auf Nicoles Blick |
+| **Meine Wörter** | Alle Wörter nach Lektion mit Stand (sitzt, übe ich noch, lerne ich kennen, noch nicht dran), Filter, antippen zum Hören, Schalter „Deutsch verdecken“ zum Selbsttest (zählt nicht für den Karteikasten). Unter „Mein Stand“ → „Alle Wörter ansehen“ | ✅ – wartet auf Nicoles Blick |
 
 Konzept: [docs/superpowers/specs/2026-11-14-lektionen-design.md](docs/superpowers/specs/2026-11-14-lektionen-design.md)
 
@@ -56,7 +59,6 @@ Konzept: [docs/superpowers/specs/2026-11-14-lektionen-design.md](docs/superpower
 
 ## 💡 Ideen für später
 
-- 📋 Wortliste ansehen, nach Thema filtern
 - ✏️ Tippfehler-Nachsicht verfeinern (z. B. zählt „grazia“ gerade als „grazie“)
 - 📰 Mehr Zeitungstexte für B2
 - 🧩 Zusatzübungen auch beim Hören und bei den Vokabeln

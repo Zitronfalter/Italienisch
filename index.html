@@ -47,14 +47,27 @@
 
       <button class="knopf-los knopf-los-oben" id="knopf-los" type="button">Los</button>
 
-      <h2 class="abschnitt">Deine Lektionen</h2>
+      <h2 class="abschnitt" id="jetzt-dran-titel">Jetzt dran</h2>
+      <div class="lektionen-liste" id="jetzt-dran"></div>
+    </section>
+
+    <!-- Reiter „Lektionen“ -->
+    <section class="screen" id="screen-lektionen" hidden>
+      <header class="kopf">
+        <h1>Lektionen</h1>
+      </header>
       <div class="lektionen-liste" id="lektionen-liste"></div>
       <details class="lektionen-erledigt" id="lektionen-erledigt" hidden>
         <summary id="lektionen-erledigt-titel">Erledigt – zum Wiederholen</summary>
         <div class="lektionen-liste" id="lektionen-erledigt-liste"></div>
       </details>
+    </section>
 
-      <h2 class="abschnitt">Frei üben</h2>
+    <!-- Reiter „Üben“ -->
+    <section class="screen" id="screen-ueben" hidden>
+      <header class="kopf">
+        <h1>Frei üben</h1>
+      </header>
       <button class="karte karte-knopf" id="knopf-lesen" type="button">
         <span class="karte-titel">Lesen</span>
         <span class="karte-text" id="lesen-stand">Texte und Rezepte</span>
@@ -78,11 +91,6 @@
         <span class="karte-text">Italienisch – Deutsch, offline</span>
         <span class="pfeil" aria-hidden="true">›</span>
       </button>
-
-      <div class="leise-zeile">
-        <button class="knopf-leise" id="knopf-fortschritt" type="button">Fortschritt</button>
-        <button class="knopf-leise" id="knopf-daten" type="button">Sichern &amp; Laden</button>
-      </div>
     </section>
 
     <!-- Eine Lektion -->
@@ -148,8 +156,22 @@
         <button class="knopf-haupt" id="knopf-sichern" type="button">Sichern</button>
         <button class="knopf-zweit" id="knopf-laden" type="button">Laden</button>
         <input type="file" id="datei-laden" accept=".json,application/json" hidden>
-        <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+        <button class="knopf-zurueck" data-zurueck="stand" type="button">Zurück</button>
       </div>
+    </section>
+
+    <!-- Meine Wörter -->
+    <section class="screen" id="screen-woerter" hidden>
+      <header class="kopf">
+        <h1>Meine Wörter</h1>
+      </header>
+      <div class="filter-reihe" id="woerter-filter" role="group" aria-label="Wörter filtern"></div>
+      <label class="schalter-zeile">
+        <input type="checkbox" id="woerter-verdecken">
+        <span>Deutsch verdecken – tippe auf „zeigen“, um dich selbst zu prüfen. Zählt nicht für den Karteikasten.</span>
+      </label>
+      <div id="woerter-gruppen"></div>
+      <button class="knopf-zurueck" data-zurueck="stand" type="button">Zurück</button>
     </section>
 
     <!-- Vokabel-Abfrage -->
@@ -208,7 +230,7 @@
         <h1>Lesen</h1>
       </header>
       <div class="text-liste" id="text-liste"></div>
-      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+      <button class="knopf-zurueck" data-zurueck="ueben" type="button">Zurück</button>
     </section>
 
     <!-- Einen Text lesen -->
@@ -274,7 +296,7 @@
         <h1>Grammatik</h1>
       </header>
       <div class="text-liste" id="kapitel-liste"></div>
-      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+      <button class="knopf-zurueck" data-zurueck="ueben" type="button">Zurück</button>
     </section>
 
     <!-- Ein Kapitel: Regel und Tabelle -->
@@ -402,19 +424,20 @@
         Daten aus <a href="https://de.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a>,
         Lizenz <a href="https://www.wikdict.com/page/about" target="_blank" rel="noopener">CC BY-SA</a>.
       </p>
-      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+      <button class="knopf-zurueck" data-zurueck="ueben" type="button">Zurück</button>
     </section>
 
-    <!-- Fortschritt -->
+    <!-- Reiter „Mein Stand“ (früher Fortschritt) -->
     <section class="screen" id="screen-fortschritt" hidden>
       <header class="kopf">
-        <h1>Fortschritt</h1>
+        <h1>Mein Stand</h1>
       </header>
 
       <div class="karte">
         <p class="karte-titel">Wörter, die sitzen</p>
         <p class="zahl-gross" id="fs-sicher">0</p>
         <p class="karte-text" id="fs-sicher-text"></p>
+        <button class="knopf-klein knopf-klein-voll fs-test-knopf" id="knopf-woerter" type="button">Alle Wörter ansehen</button>
       </div>
 
       <div class="karte">
@@ -455,7 +478,11 @@
         <button class="knopf-klein fs-test-knopf" id="knopf-test" type="button">Niveau-Test machen (ca. 10 Min.)</button>
       </div>
 
-      <button class="knopf-zurueck" data-zurueck type="button">Zurück</button>
+      <div class="karte">
+        <p class="karte-titel">Sichern &amp; Laden</p>
+        <p class="karte-text klein">Etwa einmal pro Woche eine Kopie in iCloud Drive ablegen.</p>
+        <button class="knopf-klein fs-test-knopf" id="knopf-daten" type="button">Sichern &amp; Laden</button>
+      </div>
     </section>
 
     <!-- Niveau-Test -->
@@ -555,6 +582,26 @@
 
   </main>
 
+  <!-- Leiste unten: die vier Reiter -->
+  <nav class="leiste" id="leiste" aria-label="Hauptmenü" hidden>
+    <button type="button" data-reiter="heute">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7v8.5a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>
+      <span>Heute</span>
+    </button>
+    <button type="button" data-reiter="lektionen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h11.5a2 2 0 0 1 2 2V20H7a2 2 0 0 1-2-2zM5 18a2 2 0 0 1 2-2h11.5M9 8.5h6"/></svg>
+      <span>Lektionen</span>
+    </button>
+    <button type="button" data-reiter="ueben">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5h6.5V11H4.5zM13 4.5h6.5V11H13zM4.5 13H11v6.5H4.5zM13 13h6.5v6.5H13z"/></svg>
+      <span>Üben</span>
+    </button>
+    <button type="button" data-reiter="stand">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 20V13M10 20V8.5M15.5 20v-6M21 20V4.5M3 20.5h19"/></svg>
+      <span>Mein Stand</span>
+    </button>
+  </nav>
+
   <!-- Wort-Blatt: erscheint unten, wenn man auf ein Wort tippt -->
   <div class="wort-blatt" id="wort-blatt" role="dialog" aria-label="Wortbedeutung" hidden>
     <div class="wort-kopf">
@@ -607,6 +654,7 @@
   <script src="lektionen-b1.js"></script>
   <script src="lektionen-b2.js"></script>
   <script src="lektionen.js"></script>
+  <script src="woerterliste.js"></script>
   <script src="wiederholung.js"></script>
   <script src="app.js"></script>
 </body>

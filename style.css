@@ -240,8 +240,21 @@ button {
   border-radius: var(--radius);
   background: var(--flaeche);
   border-left: 4px solid var(--richtig);
+  display: flow-root;     /* Limo (float) bleibt im Kasten */
 }
 .rueckmeldung.falsch { border-left-color: var(--fehler); }
+/* kleine Limo rechts in der Rückmeldung (begleiter.js: rueckZeigen) */
+.rueck-limo {
+  float: right;
+  width: 52px;
+  height: 52px;
+  margin: -6px -8px 0 10px;
+}
+.rueck-limo .roboter {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 .rueck-titel {
   margin: 0;
   font-weight: 600;
@@ -647,19 +660,6 @@ button {
 
 /* ---------- Wörterbuch ---------- */
 
-.leise-zeile {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0 4px;
-  margin-top: -8px;
-}
-.leise-zeile .knopf-leise {
-  margin-top: 0;
-  padding: 8px 8px;
-  font-size: 15px;
-}
-
 .treffer-liste {
   display: flex;
   flex-direction: column;
@@ -924,3 +924,161 @@ button {
 .tipp-liste li:last-child { margin-bottom: 0; }
 .tipp-liste[hidden] { display: none; }
 #uebung-wahl .antworten { margin-top: 12px; }
+
+/* ---------- Leiste unten (vier Reiter) ---------- */
+
+.leiste {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 6px calc(env(safe-area-inset-right) + 4px) calc(env(safe-area-inset-bottom) + 6px) calc(env(safe-area-inset-left) + 4px);
+  background: var(--flaeche);
+  border-top: 1px solid var(--rand);
+}
+.leiste[hidden] { display: none; }
+.leiste button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: 4px 2px;
+  border: none;
+  background: none;
+  color: var(--text-leise);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.leiste svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.leiste button[aria-current="page"] {
+  color: var(--text);
+  font-weight: 600;
+}
+/* kleiner gelber Strich über dem aktiven Reiter */
+.leiste button[aria-current="page"] svg {
+  border-top: 3px solid var(--akzent);
+  padding-top: 1px;
+  margin-top: -4px;
+}
+/* Platz unten, damit die Leiste nichts verdeckt */
+body.mit-leiste #app {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 96px);
+}
+
+/* ---------- Meine Wörter ---------- */
+
+.filter-reihe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.filter-knopf {
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1.5px solid var(--rand);
+  border-radius: 999px;
+  background: var(--flaeche);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+.filter-knopf[aria-pressed="true"] {
+  border-color: var(--akzent-linie);
+  background: var(--akzent);
+  color: var(--akzent-text);
+  font-weight: 600;
+}
+.schalter-zeile {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 15px;
+  color: var(--text-leise);
+}
+.schalter-zeile input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 1px 0 0;
+  accent-color: var(--richtig);
+}
+.woerter-gruppe {
+  margin-bottom: 10px;
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+  background: var(--flaeche);
+}
+.woerter-gruppe summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.gruppe-zahl {
+  flex: none;
+  color: var(--text-leise);
+  font-weight: 400;
+  font-size: 15px;
+}
+.woerter-zeilen {
+  margin: 0;
+  padding: 0 16px 8px;
+  list-style: none;
+}
+.wort-zeile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--rand);
+}
+.wort-it {
+  justify-self: start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 19px;
+  text-align: left;
+  cursor: pointer;
+}
+.wort-stand {
+  font-size: 13px;
+  color: var(--text-leise);
+  white-space: nowrap;
+}
+.stand-sitzt .wort-stand { color: var(--richtig); font-weight: 600; }
+.stand-nichtDran .wort-it { color: var(--text-leise); }
+.wort-de {
+  grid-column: 1 / -1;
+  font-size: 15px;
+  color: var(--text-leise);
+}
+.wort-zeigen {
+  min-height: 32px;
+  padding: 2px 12px;
+  border: 1.5px dashed var(--akzent-linie);
+  border-radius: 999px;
+  background: none;
+  color: var(--akzent-linie);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}

@@ -139,9 +139,15 @@ const Uebungen = (() => {
       if (l.wortIds.length >= 3) paarListe = paare(5, l.wortIds);
     }
     const geloest = new Set(((Speicher.daten.fortschritt.hoeren || {}).geloest) || []);
+    // Zuerst Sätze aus dem Text dieser Lektion, dann aus den Lektionen davor; ungelöste vor gelösten
+    const eigen = new Set((l && l.texte) || []);
+    const reihe = (liste) => [
+      ...mischen(liste.filter((x) => eigen.has(x.text))),
+      ...mischen(liste.filter((x) => !eigen.has(x.text))),
+    ];
     const auswahl = [
-      ...mischen(pool.filter((x) => !geloest.has(sauber(x.it)))),
-      ...mischen(pool.filter((x) => geloest.has(sauber(x.it)))),
+      ...reihe(pool.filter((x) => !geloest.has(sauber(x.it)))),
+      ...reihe(pool.filter((x) => geloest.has(sauber(x.it)))),
     ].slice(0, 4);
     const aufgaben = [
       { art: 'paare', paare: paarListe || paare() },

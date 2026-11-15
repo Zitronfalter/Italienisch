@@ -26,6 +26,11 @@ const Lektionen = (() => {
 
   function finde(id) { return alle().find((l) => l.id === id); }
 
+  // Nummer zum Anzeigen: Lektionen fortlaufend gezählt (Wiederholungen zählen nicht mit)
+  function anzeigeNr(l) {
+    return LEKTIONEN.filter((x) => x.art !== 'ripasso').findIndex((x) => x.id === l.id) + 1;
+  }
+
   // ---------- Teile einer Lektion ----------
 
   function teilWoerter(l) {
@@ -59,9 +64,18 @@ const Lektionen = (() => {
   }
 
   // Lektion: Wörter, Grammatik, Text, Hören. Wiederholung: gemischte Übungen und Text.
+  // Wort-Lektion (lektionen-a1.js): Wörter, Text, Hören, gemischte Übungen.
   function teile(l) {
     if (l.art === 'ripasso') {
       return { uebungen: teilUebungen(l), text: teilAus(l.texte, Lesen.stand, (s) => s.verstanden) };
+    }
+    if (l.wortLektion) {
+      return {
+        woerter: teilWoerter(l),
+        text: teilAus(l.texte, Lesen.stand, (s) => s.verstanden),
+        hoeren: teilHoeren(l),
+        uebungen: teilUebungen(l),
+      };
     }
     return {
       woerter: teilWoerter(l),
@@ -151,6 +165,8 @@ const Lektionen = (() => {
     const text = l.texte.map((id) => LESETEXTE.find((t) => t.id === id)).find((t) => t && !(Lesen.stand(t.id) || {}).verstanden);
     if (text) return { art: 'text', lektion: l, obj: text };
     if (l.art !== 'ripasso' && teilHoeren(l) !== 'fertig') return { art: 'hoeren', lektion: l };
+    // Wort-Lektion: gemischte Übungen erst, wenn die Wörter gelernt sind
+    if (l.wortLektion && teilUebungen(l) !== 'fertig' && teilWoerter(l) === 'fertig') return { art: 'uebungen', lektion: l };
     return null;
   }
 
@@ -186,7 +202,7 @@ const Lektionen = (() => {
     const quellen = l.art === 'ripasso' ? alle().filter((x) => (l.lektionen || []).includes(x.id)) : [l];
     return {
       wortIds: quellen.flatMap((x) => x.wortIds),
-      kapitel: quellen.flatMap((x) => x.kapitel),
+      kapitel: quellen.flatMap((x) => [...x.kapitel, ...(x.uebenKapitel || [])]),
       texte: quellen.flatMap((x) => x.texte),
     };
   }
@@ -199,9 +215,13 @@ const Lektionen = (() => {
     const tx = new Set(s.texte);
     const vorrat = {
       deutsch: gemischt(s.wortIds).map((id) => ({ art: 'deutsch', id })),
-      grammatik: gemischt(s.kapitel.flatMap((kid) => {
+      grammatik: gemischt([...new Set(s.kapitel)].flatMap((kid) => {
         const k = Grammatik.kapitel(kid);
-        return k ? k.uebungen.map((u, nr) => ({ art: 'grammatik', kapitel: kid, nr })) : [];
+        if (!k) return [];
+        const feste = k.uebungen.map((u, nr) => ({ art: 'grammatik', kapitel: kid, nr }));
+        // dazu 2 selbst erzeugte Aufgaben, wo es geht (erzeuger.js)
+        const erzeugt = Erzeuger.hat(kid) ? [Erzeuger.aufgabe(kid), Erzeuger.aufgabe(kid)].map((u) => ({ art: 'grammatik', kapitel: kid, uebung: u })) : [];
+        return [...feste, ...erzeugt];
       })),
       hoeren: gemischt(Uebungen.saetze().filter((x) => tx.has(x.text) || kap.has(x.kapitel)))
         .map((satz) => ({ art: 'hoeren', satz })),
@@ -253,7 +273,7 @@ const Lektionen = (() => {
   }
 
   return {
-    alle, finde, teile, istErledigt, aktualisieren, aktuelle, beginnen,
+    alle, finde, anzeigeNr, teile, istErledigt, aktualisieren, aktuelle, beginnen,
     brauchtWortCheck, woerterEinordnen, neueWoerter, naechsterTeil, hoerenSpeichern, uebergang,
     aufgabenFuer, ueberspringen, ripassoSpeichern,
   };

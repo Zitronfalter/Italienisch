@@ -88,7 +88,7 @@ const TEIL_NAMEN = { woerter: 'Wörter', kapitel: 'Grammatik', grammatik: 'Gramm
 
 // „Lektion 3“ oder „Wiederholung“
 function lektionName(l) {
-  return l.art === 'ripasso' ? 'Wiederholung' : `Lektion ${l.nr}`;
+  return l.art === 'ripasso' ? 'Wiederholung' : `Lektion ${Lektionen.anzeigeNr(l)}`;
 }
 
 function naechsterSchritt() {
@@ -267,6 +267,11 @@ function oeffneLektion(l) {
     if (text) teil('Text', teilAus([Lesen.stand(id)], (s) => s.verstanden), text.titel, () => oeffneText(text, 'lektion'));
   }
   teil('Hören & Üben', t.hoeren, 'Hören, schreiben, Sätze legen', () => starteHoeren({ lektion: l }));
+  if (l.wortLektion) {
+    teil('Übungen', t.uebungen, t.woerter === 'fertig'
+      ? 'Wörter und Grammatik gemischt'
+      : 'Gemischt – wenn die Wörter sitzen', () => starteRipasso(l));
+  }
 
   const wl = el('lektion-wortliste');
   wl.innerHTML = '';

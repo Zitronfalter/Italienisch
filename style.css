@@ -1085,3 +1085,60 @@ body.mit-leiste #app {
 
 /* Stimmen-Auswahl nur bei mehreren italienischen Stimmen */
 [data-stimmen-teil][hidden] { display: none; }
+
+/* ---------- Leiste unten: fünf Reiter ---------- */
+.leiste { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.leiste button { font-size: 11px; letter-spacing: -0.1px; }
+.leiste button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Seiten mit Leiste: genau eine Bildschirmhöhe, damit „Los“ über der Leiste sitzt */
+body.mit-leiste .screen {
+  min-height: calc(100dvh - 24px - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+/* ---------- Leiste oben: „‹ Zurück“ wie bei iPhone-Apps ---------- */
+.oben-leiste {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: env(safe-area-inset-top) calc(env(safe-area-inset-right) + 8px) 0 calc(env(safe-area-inset-left) + 8px);
+  background: var(--hintergrund);
+  border-bottom: 1px solid var(--rand);
+}
+.oben-leiste[hidden] { display: none; }
+#knopf-oben-zurueck {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 0 8px;
+  border: none;
+  background: none;
+  color: var(--akzent-linie);
+  font: inherit;
+  font-size: 17px;
+  cursor: pointer;
+}
+#oben-zurueck-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.oben-zeichen { font-size: 28px; line-height: 1; margin-top: -3px; }
+body.mit-oben #app { padding-top: calc(env(safe-area-inset-top) + 64px); }
+/* der Zurück-Knopf unten ist dann doppelt */
+body.mit-oben .screen .knopf-zurueck { display: none; }
+
+/* ---------- Heute: alles auf einen Blick, ohne Scrollen ---------- */
+.screen-heute { gap: 14px; }
+.screen-heute .begleiter-bild { width: 64px; height: 64px; }
+.screen-heute .begleiter-blase { font-size: 15px; }
+.heute-karte .karte-text { margin-top: 2px; }
+.weiter-teil { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rand); display: flex; flex-direction: column; }
+.weiter-teil .knopf-leise { margin-top: 2px; align-self: flex-start; padding-left: 0; }
+.knopf-los.knopf-los-unten { margin-top: auto; }
+body.mit-oben .screen {
+  min-height: calc(100dvh - 64px - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+.weiter-teil[hidden] { display: none; }
+body.mit-oben.mit-leiste .screen {
+  min-height: calc(100dvh - 64px - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}

@@ -6,7 +6,8 @@ const REITER_VON = {
   start: 'heute',
   lektionen: 'lektionen', lektion: 'lektionen',
   ueben: 'ueben', texte: 'ueben', grammatik: 'ueben', kapitel: 'ueben', woerterbuch: 'ueben',
-  fortschritt: 'stand', woerter: 'stand', daten: 'stand',
+  fortschritt: 'stand', woerter: 'stand',
+  einstellungen: 'einst', daten: 'einst',
 };
 
 // Zwischen den Bildschirmen wechseln: genau einer ist sichtbar.
@@ -22,15 +23,46 @@ function zeige(name) {
     if (k.dataset.reiter === reiter) k.setAttribute('aria-current', 'page');
     else k.removeAttribute('aria-current');
   });
+  obenLeisteZeigen();
+  setTimeout(obenLeisteZeigen, 0);   // falls die Seite ihren Zurück-Text gleich danach ändert
   window.scrollTo(0, 0);
 }
+
+// Leiste oben: „‹ Zurück“ (bzw. „✕ Übung beenden“) für den Zurück-Knopf der sichtbaren Seite.
+// Der Knopf unten bleibt im HTML, wird aber ausgeblendet (body.mit-oben).
+function zurueckKnopfDerSeite() {
+  const seite = [...document.querySelectorAll('.screen')].find((s) => !s.hidden);
+  return seite && [...seite.querySelectorAll('.knopf-zurueck')].find((k) => !k.hidden);
+}
+function obenLeisteZeigen() {
+  const knopf = zurueckKnopfDerSeite();
+  document.getElementById('oben-leiste').hidden = !knopf;
+  document.body.classList.toggle('mit-oben', Boolean(knopf));
+  if (!knopf) return;
+  const text = knopf.textContent.trim();
+  const beenden = /beenden|abbrechen/i.test(text);
+  document.querySelector('#oben-leiste .oben-zeichen').textContent = beenden ? '✕' : '‹';
+  document.getElementById('oben-zurueck-text').textContent = text;
+}
+document.getElementById('knopf-oben-zurueck').addEventListener('click', () => {
+  const knopf = zurueckKnopfDerSeite();
+  if (knopf) knopf.click();
+});
 
 // Einen Reiter der Leiste öffnen
 function oeffneReiter(reiter) {
   if (reiter === 'lektionen') { zeigeLektionen(); zeige('lektionen'); }
   else if (reiter === 'ueben') { zeigeLesenStand(); zeigeGrammatikStand(); zeigeHoerenStand(); zeige('ueben'); }
   else if (reiter === 'stand') zeigeFortschritt();
+  else if (reiter === 'einst') zeigeEinstellungen();
   else zeigeStart();
+}
+
+function zeigeEinstellungen() {
+  fuelleStimmWahl();
+  el('neu-pro-tag').value = String(Vokabeln.neuProTag());
+  zeigeNeuHeute();
+  zeige('einstellungen');
 }
 
 // Gruß passend zur Tageszeit
@@ -417,7 +449,6 @@ function zeigeStart() {
   const jetztDran = el('jetzt-dran');
   jetztDran.innerHTML = '';
   if (jetzt) jetztDran.appendChild(lektionKnopf(jetzt, 'jetzt'));
-  el('jetzt-dran-titel').hidden = !jetzt;
   if (!geschafftZeigen(el('begleiter-start'))) Begleiter.zeigen(el('begleiter-start'), Begleiter.startNachricht());
   lekt.offen = null;
   // Gemerkte Stelle: „Weitermachen“ statt „Los“
@@ -1824,12 +1855,6 @@ function zeigeFortschritt() {
   const max = Math.max(1, jung, ...proFach);
   balken(faecher, 'Neu', jung, max);
   proFach.forEach((zahl, i) => balken(faecher, `Fach ${i + 1}`, zahl, max));
-
-  fuelleStimmWahl();
-
-  // Neue Wörter pro Tag
-  el('neu-pro-tag').value = String(Vokabeln.neuProTag());
-  zeigeNeuHeute();
 
   // Grammatik-Kapitel im Karteikasten
   Wiederholung.einsortieren();

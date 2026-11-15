@@ -23,10 +23,9 @@
   <main id="app">
 
     <!-- Startseite -->
-    <section class="screen" id="screen-start">
+    <section class="screen screen-heute" id="screen-start">
       <header class="kopf">
-        <p class="gruss" id="gruss">Buongiorno!</p>
-        <h1>Italienisch</h1>
+        <h1 id="gruss">Buongiorno!</h1>
       </header>
 
       <button class="begleiter" id="begleiter-start" type="button" aria-label="Begleiter: nächster Tipp">
@@ -34,33 +33,19 @@
         <span class="begleiter-blase"><span class="begleiter-text"></span></span>
       </button>
 
-      <div class="karte">
+      <!-- aktuelle Lektion (die Reihenfolge macht die App) -->
+      <div class="lektionen-liste" id="jetzt-dran"></div>
+
+      <div class="karte heute-karte">
         <p class="karte-titel">Heute</p>
         <p class="karte-text" id="heute-text">Etwa 10 Minuten: erst fällige Vokabeln, dann der nächste Teil deiner Lektion.</p>
+        <div class="weiter-teil" id="weiter-karte" hidden>
+          <p class="karte-text"><strong>Du warst gerade hier:</strong> <span id="weiter-text"></span></p>
+          <button class="knopf-leise" id="knopf-weiter-verwerfen" type="button">Lieber neu anfangen</button>
+        </div>
       </div>
 
-      <div class="karte weiter-karte" id="weiter-karte" hidden>
-        <p class="karte-titel">Du warst gerade hier</p>
-        <p class="karte-text" id="weiter-text"></p>
-        <button class="knopf-leise" id="knopf-weiter-verwerfen" type="button">Lieber neu anfangen</button>
-      </div>
-
-      <button class="knopf-los knopf-los-oben" id="knopf-los" type="button">Los</button>
-
-      <h2 class="abschnitt" id="jetzt-dran-titel">Jetzt dran</h2>
-      <div class="lektionen-liste" id="jetzt-dran"></div>
-    </section>
-
-    <!-- Reiter „Lektionen“ -->
-    <section class="screen" id="screen-lektionen" hidden>
-      <header class="kopf">
-        <h1>Lektionen</h1>
-      </header>
-      <div class="lektionen-liste" id="lektionen-liste"></div>
-      <details class="lektionen-erledigt" id="lektionen-erledigt" hidden>
-        <summary id="lektionen-erledigt-titel">Erledigt – zum Wiederholen</summary>
-        <div class="lektionen-liste" id="lektionen-erledigt-liste"></div>
-      </details>
+      <button class="knopf-los knopf-los-unten" id="knopf-los" type="button">Los</button>
     </section>
 
     <!-- Reiter „Üben“ -->
@@ -91,6 +76,19 @@
         <span class="karte-text">Italienisch – Deutsch, offline</span>
         <span class="pfeil" aria-hidden="true">›</span>
       </button>
+    </section>
+
+    <!-- Reiter „Lektionen“ -->
+    <section class="screen" id="screen-lektionen" hidden>
+      <header class="kopf">
+        <h1>Lektionen</h1>
+      </header>
+      <p class="karte-text klein">Die App nimmt die Lektionen unter „Heute“ von selbst der Reihe nach. Hier kannst du vorblättern oder Erledigtes wiederholen.</p>
+      <div class="lektionen-liste" id="lektionen-liste"></div>
+      <details class="lektionen-erledigt" id="lektionen-erledigt" hidden>
+        <summary id="lektionen-erledigt-titel">Erledigt – zum Wiederholen</summary>
+        <div class="lektionen-liste" id="lektionen-erledigt-liste"></div>
+      </details>
     </section>
 
     <!-- Eine Lektion -->
@@ -156,7 +154,7 @@
         <button class="knopf-haupt" id="knopf-sichern" type="button">Sichern</button>
         <button class="knopf-zweit" id="knopf-laden" type="button">Laden</button>
         <input type="file" id="datei-laden" accept=".json,application/json" hidden>
-        <button class="knopf-zurueck" data-zurueck="stand" type="button">Zurück</button>
+        <button class="knopf-zurueck" data-zurueck="einst" type="button">Zurück</button>
       </div>
     </section>
 
@@ -445,14 +443,6 @@
         <p class="karte-titel">Dein Karteikasten</p>
         <div class="faecher" id="fs-faecher"></div>
         <p class="karte-text klein">Neu = wird gerade kennengelernt (ansehen, hören, zuordnen). Fach 1 = wird geschrieben, Fach 5 = sitzt lange.</p>
-        <label class="feld-label" for="neu-pro-tag">Neue Wörter pro Tag (höchstens)</label>
-        <select class="eingabe-feld eingabe-klein" id="neu-pro-tag">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="5">5</option>
-        </select>
-        <p class="karte-text klein" id="neu-pro-tag-text">Neue Wörter kommen nur, wenn die anderen gut laufen.</p>
       </div>
 
       <div class="karte">
@@ -478,6 +468,13 @@
         <p class="karte-text" id="fs-niveau-text">Noch kein Test gemacht.</p>
         <button class="knopf-klein fs-test-knopf" id="knopf-test" type="button">Niveau-Test machen (ca. 10 Min.)</button>
       </div>
+    </section>
+
+    <!-- Reiter „Einstellungen“ -->
+    <section class="screen" id="screen-einstellungen" hidden>
+      <header class="kopf">
+        <h1>Einstellungen</h1>
+      </header>
 
       <div class="karte">
         <p class="karte-titel">Vorlesen</p>
@@ -496,6 +493,18 @@
         <select class="eingabe-feld eingabe-klein" id="stand-stimme-w" data-stimme="W" data-stimmen-teil></select>
         <p class="karte-text klein" data-stimmen-teil>Gilt für Vokabeln und Wortpaare, nicht für Texte. So hörst du das Geschlecht mit.</p>
         <p class="karte-text klein">Mehr Stimmen: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Italienisch. Hörst du beim Tempo keinen Unterschied, probier eine andere Stimme – manche iPhone-Stimmen achten kaum aufs Tempo.</p>
+      </div>
+
+      <div class="karte">
+        <p class="karte-titel">Lernen</p>
+        <label class="feld-label" for="neu-pro-tag">Neue Wörter pro Tag (höchstens)</label>
+        <select class="eingabe-feld eingabe-klein" id="neu-pro-tag">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+        </select>
+        <p class="karte-text klein" id="neu-pro-tag-text">Neue Wörter kommen nur, wenn die anderen gut laufen.</p>
       </div>
 
       <div class="karte">
@@ -602,23 +611,32 @@
 
   </main>
 
-  <!-- Leiste unten: die vier Reiter -->
+  <!-- Leiste oben: „‹ Zurück“ auf Unterseiten (führt den Zurück-Knopf der Seite aus) -->
+  <div class="oben-leiste" id="oben-leiste" hidden>
+    <button type="button" id="knopf-oben-zurueck"><span class="oben-zeichen" aria-hidden="true">‹</span> <span id="oben-zurueck-text">Zurück</span></button>
+  </div>
+
+  <!-- Leiste unten: die fünf Reiter -->
   <nav class="leiste" id="leiste" aria-label="Hauptmenü" hidden>
     <button type="button" data-reiter="heute">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7v8.5a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>
       <span>Heute</span>
     </button>
-    <button type="button" data-reiter="lektionen">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h11.5a2 2 0 0 1 2 2V20H7a2 2 0 0 1-2-2zM5 18a2 2 0 0 1 2-2h11.5M9 8.5h6"/></svg>
-      <span>Lektionen</span>
-    </button>
     <button type="button" data-reiter="ueben">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5h6.5V11H4.5zM13 4.5h6.5V11H13zM4.5 13H11v6.5H4.5zM13 13h6.5v6.5H13z"/></svg>
       <span>Üben</span>
     </button>
+    <button type="button" data-reiter="lektionen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h11.5a2 2 0 0 1 2 2V20H7a2 2 0 0 1-2-2zM5 18a2 2 0 0 1 2-2h11.5M9 8.5h6"/></svg>
+      <span>Lektionen</span>
+    </button>
     <button type="button" data-reiter="stand">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 20V13M10 20V8.5M15.5 20v-6M21 20V4.5M3 20.5h19"/></svg>
       <span>Mein Stand</span>
+    </button>
+    <button type="button" data-reiter="einst">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+      <span>Einstellungen</span>
     </button>
   </nav>
 

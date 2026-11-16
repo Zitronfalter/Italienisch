@@ -74,9 +74,10 @@ const Vokabeln = (() => {
       .map(([id]) => id);
   }
 
-  function kennenGelernt(id) {
+  // hoechstens: nur bis zu dieser Stufe zählen (z. B. Wortpaare höchstens bis 1, damit die Satz-Treppe nicht übersprungen wird)
+  function kennenGelernt(id, hoechstens = KENNEN_FERTIG) {
     const k = karten()[id];
-    if (!istJung(k)) return;
+    if (!istJung(k) || k.kennen >= hoechstens) return;
     k.kennen += 1;
     if (k.kennen >= KENNEN_FERTIG) {
       k.fach = 1;

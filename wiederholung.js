@@ -115,6 +115,7 @@ const Wiederholung = (() => {
   }
 
   function schluessel(a) {
+    if (a.art === 'satz') return 's:' + a.satz.it;
     if (a.art === 'hoeren') return 'h:' + a.satz.it;
     if (a.art === 'deutsch') return 'd:' + a.id;
     if (a.uebung) return `g:${a.kapitel}:${a.uebung.satz}`;
@@ -140,7 +141,7 @@ const Wiederholung = (() => {
   // a: Aufgabe wie in der Aufgabenrunde ({ art: 'grammatik', kapitel, nr | uebung }, { art: 'hoeren', satz }
   // oder { art: 'deutsch', id })
   function fehlerMerken(a, gut) {
-    if (a && gut && ['grammatik', 'hoeren', 'deutsch'].includes(a.art)) {
+    if (a && gut && ['grammatik', 'hoeren', 'deutsch', 'satz'].includes(a.art)) {
       const liste = heuteListe();
       const key = schluessel(a);
       if (!liste.includes(key)) { liste.push(key); Speicher.speichern(); }

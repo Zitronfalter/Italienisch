@@ -222,6 +222,34 @@ button {
   font-weight: 600;
 }
 
+/* Satz-Aufgaben: ganzer Satz statt eines Worts, Wörter antippbar, Lernwort gelb hinterlegt */
+.frage-wort.frage-satz {
+  font-size: 22px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.satz-wort {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.satz-wort.lernwort {
+  padding: 0 3px;
+  border-radius: 4px;
+  background: var(--akzent);
+  color: var(--akzent-text);
+}
+.loesung-neu.satz-nachschlag {
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text-leise);
+}
+
 .eingabe { margin: 0; }
 .eingabe-feld {
   width: 100%;

@@ -22,7 +22,14 @@ const Lektionen = (() => {
   }
 
   function alle() {
-    return LEKTIONEN.map((l) => ({ ...l, wortIds: l.woerter.map((it) => wortId(it)) }));
+    // Satz-Lektionen: gleiche Wörter, aber in der Reihenfolge der Sätze (bestimmt die Päckchen)
+    return LEKTIONEN.map((l) => {
+      // (nur wenn SAETZE genau die Wörter der Lektion enthält – sonst gilt die Liste der Lektion)
+      const r = Saetze.reihenfolge(l.id);
+      const passt = r && r.length === l.woerter.length && r.every((it) => l.woerter.includes(it));
+      const woerter = passt ? r : l.woerter;
+      return { ...l, woerter, wortIds: woerter.map((it) => wortId(it)) };
+    });
   }
 
   function finde(id) { return alle().find((l) => l.id === id); }

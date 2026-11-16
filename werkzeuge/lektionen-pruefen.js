@@ -18,12 +18,19 @@ function woerterIn(k, zeile) {
   return k.Lesen.stuecke(zeile).filter((s) => s.wort).map((s) => klein(s.text));
 }
 
-function pruefeLektionen(k) {
-  const fehler = [];
-  const hinweise = [];
-  const lektionen = [...k.LEKTIONEN].sort((a, b) => a.nr - b.nr);
+// Formen eines Lektionsworts, unter denen es im Text vorkommt:
+// ohne Artikel, ganz, und jedes Teilwort ("come stai?" → "come", "stai")
+// (Artikel und andere Grundwörter nicht: „gli ingredienti“ macht „gli“ nicht zum Lektionswort)
+function formenVon(k, it) {
+  const alleTeile = woerterIn(k, it);
+  const teile = alleTeile.length > 1 ? alleTeile.filter((t) => !k.GRUNDWOERTER[t]) : [];
+  return [ohneArtikel(it), klein(it), ...teile];
+}
 
-  // Wort (ohne Artikel) → Nummer der Lektion
+// Wort (ohne Artikel) → Nummer der Lektion, in der es zuerst vorkommt.
+// fehler: Liste für Meldungen (Wort fehlt im Wortschatz, Wort doppelt)
+function lektionVonTabelle(k, fehler = []) {
+  const lektionen = [...k.LEKTIONEN].sort((a, b) => a.nr - b.nr);
   const lektionVon = new Map();
   const besitzer = new Map();   // Wort-ID → Lektions-ID
   for (const l of lektionen) {
@@ -38,15 +45,19 @@ function pruefeLektionen(k) {
         continue;
       }
       besitzer.set(id, l.id);
-      // auch jedes Teilwort: "come stai?" → "come", "stai"
-      // (Artikel und andere Grundwörter nicht: „gli ingredienti“ macht „gli“ nicht zum Lektionswort)
-      const alleTeile = woerterIn(k, it);
-      const teile = alleTeile.length > 1 ? alleTeile.filter((t) => !k.GRUNDWOERTER[t]) : [];
-      for (const form of [ohneArtikel(it), klein(it), ...teile]) {
+      for (const form of formenVon(k, it)) {
         if (!lektionVon.has(form)) lektionVon.set(form, l.nr);
       }
     }
   }
+  return lektionVon;
+}
+
+function pruefeLektionen(k) {
+  const fehler = [];
+  const hinweise = [];
+  const lektionen = [...k.LEKTIONEN].sort((a, b) => a.nr - b.nr);
+  const lektionVon = lektionVonTabelle(k, fehler);
 
   const doppelt = (liste, art, finde) => {
     const gesehen = new Map();
@@ -114,7 +125,7 @@ function pruefeLektionen(k) {
   return { fehler, hinweise };
 }
 
-module.exports = { pruefeLektionen };
+module.exports = { pruefeLektionen, lektionVonTabelle, formenVon, woerterIn, klein, ohneArtikel };
 
 if (require.main === module) {
   const { laden } = require('./test/laden');

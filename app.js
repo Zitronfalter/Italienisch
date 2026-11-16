@@ -590,6 +590,7 @@ function zeigeStart() {
 //   { art: 'neu', id }            → neues Wort zeigen und vorlesen
 //   { art: 'paare', ids }         → Wortpaare zuordnen
 //   { art: 'waehlen', id, modus } → richtiges Wort antippen: zum deutschen Wort ('de') oder nach Gehör ('hoeren')
+//   { art: 'satz', id, stufe, modus, satz, kacheln } → Satz-Aufgabe für Wörter mit Sätzen (siehe saetze.js)
 // Neue Wörter werden erst geschrieben, wenn du sie ein paar Mal so geübt hast (siehe vokabeln.js).
 
 const abfrage = {
@@ -617,32 +618,48 @@ function wegRundenSchritte(s) {
     return Lesen.kannSprechen && Math.floor(n / 2) % 2 === 1 ? 'hoeren' : 'de';
   };
   const jung = (id) => !karten[id] || Vokabeln.istJung(karten[id]);
+  const ohneSatz = (id) => !Saetze.hat(id);
   if (s.art === 'woerter') {
     const neu = ids.filter((id) => !karten[id]);
     const ueben = ids.filter(jung);
+    // Wörter mit Sätzen: Satz-Treppe (Stufe 0 vor den Wortpaaren, danach höchstens noch 1 Stufe)
+    const satz = Saetze.rundenAufgaben([{ ids: ueben, maxStufen: 2 }]);
     return [
-      ...neu.map((id) => ({ art: 'neu', id })),
+      ...neu.filter(ohneSatz).map((id) => ({ art: 'neu', id })),
+      ...satz.vorne,
       ...(ueben.length ? [{ art: 'paare', ids: mischen(ueben).slice(0, 5) }] : []),
-      ...mischen(ueben).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
+      ...mischen([
+        ...ueben.filter(ohneSatz).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
+        ...satz.hinten,
+      ]),
     ];
   }
   // Üben: neueste Wörter zuerst (stehen hinten im Schritt)
   const neueste = [...ids].reverse().filter((id) => karten[id]);
   const jungeIds = neueste.filter(jung).slice(0, 6);
+  // Junge Wörter mit Sätzen: je ihre nächste Stufe (Stufe 0 kommt vor die Wortpaare)
+  const satz = Saetze.rundenAufgaben([{ ids: jungeIds, maxStufen: 1 }]);
   const schritte = [
     ...(jungeIds.length ? [{ art: 'paare', ids: mischen(jungeIds).slice(0, 5) }] : []),
-    ...mischen(jungeIds).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
+    ...mischen([
+      ...jungeIds.filter(ohneSatz).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
+      ...satz.hinten,
+    ]),
   ];
+  // Gelernte Wörter der Lektion: mit Sätzen Stufe 1–3 reihum, sonst Italienisch → Deutsch
+  let fertigeSaetze = 0;
   for (const id of neueste.filter((x) => !jung(x))) {
-    if (schritte.length >= 7) break;
-    schritte.push({ art: 'deutsch', id, ohneWertung: true });
+    if (satz.vorne.length + schritte.length >= 7) break;
+    schritte.push(Saetze.hat(id)
+      ? Saetze.aufgabe(id, 1 + (fertigeSaetze++ % 3), { ohneWertung: true })
+      : { art: 'deutsch', id, ohneWertung: true });
   }
   // Damit Altes nicht vergessen wird: 3 Wörter aus früheren Lektionen oder „kenne ich“,
   // die schwächsten zuerst (niedriges Fach), mal lesen, mal schreiben – ändert keine Fächer
   for (const id of alteWoerter(ids, 3)) {
     schritte.push({ art: Math.random() < 0.5 ? 'deutsch' : 'frage', id, ohneWertung: true });
   }
-  return [schritte[0], ...mischen(schritte.slice(1))].filter(Boolean);
+  return [...satz.vorne, schritte[0], ...mischen(schritte.slice(1))].filter(Boolean);
 }
 
 // anzahl gelernte Wörter außerhalb von ohne: zufällig aus den 12 schwächsten (Fach, dann am längsten nicht dran)
@@ -675,8 +692,11 @@ function starteRunde(optionen = {}) {
     return;
   }
   if (optionen.ids) {
+    // Wörter mit Sätzen: ein Satz (Stufe 1–3 zufällig), ohne Wertung
     abfrage.schritte = mischen(optionen.ids.filter((id) => Vokabeln.wort(id)))
-      .map((id) => ({ art: Math.random() < 0.5 ? 'deutsch' : 'frage', id }));
+      .map((id) => (Saetze.hat(id)
+        ? Saetze.aufgabe(id, 1 + Math.floor(Math.random() * 3), { ohneWertung: true })
+        : { art: Math.random() < 0.5 ? 'deutsch' : 'frage', id }));
     abfrage.ohneWertung = true;
     abfrage.pos = 0;
     abfrage.gewertet = new Set();
@@ -700,11 +720,18 @@ function starteRunde(optionen = {}) {
     // Pro Runde kommen meist 2 Punkte dazu → abwechselnd: erst lesen, nächstes Mal hören
     return Lesen.kannSprechen && Math.floor(n / 2) % 2 === 1 ? 'hoeren' : 'de';
   };
+  // Wörter mit Sätzen: Satz-Treppe statt neu/wählen (neue Wörter 2 Stufen, junge 1 Stufe)
+  const ohneSatz = (id) => !Saetze.hat(id);
+  const satz = Saetze.rundenAufgaben([{ ids: neu, maxStufen: 2 }, { ids: jung, maxStufen: 1 }]);
   abfrage.schritte = [
     ...wiederholen.map((id) => ({ art: Vokabeln.richtungFuer(id) === 'de' ? 'deutsch' : 'frage', id })),
-    ...neu.map((id) => ({ art: 'neu', id })),
+    ...neu.filter(ohneSatz).map((id) => ({ art: 'neu', id })),
+    ...satz.vorne,
     ...(ueben.length ? [{ art: 'paare', ids: mischen(ueben).slice(0, 5) }] : []),
-    ...mischen(ueben).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
+    ...mischen([
+      ...ueben.filter(ohneSatz).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
+      ...satz.hinten,
+    ]),
   ];
   abfrage.pos = 0;
   abfrage.gewertet = new Set();
@@ -736,6 +763,13 @@ function sprichWort(text, langsam = false, wort = true) {
 }
 
 function zeigeSchritt() {
+  // Satz-Aufgabe: Stufe noch aktuell? Sonst neue Aufgabe; fertige Wörter überspringen
+  while (abfrage.pos < abfrage.schritte.length && abfrage.schritte[abfrage.pos].art === 'satz') {
+    const neu = Saetze.aktualisieren(abfrage.schritte[abfrage.pos]);
+    if (neu) { abfrage.schritte[abfrage.pos] = neu; break; }
+    abfrage.pos += 1;
+  }
+  if (abfrage.pos >= abfrage.schritte.length) { beendeRunde(); return; }
   stelleMerken('runde');
   const schritt = abfrage.schritte[abfrage.pos];
   const zaehlt = (s) => s.art !== 'neu';
@@ -757,11 +791,18 @@ function zeigeSchritt() {
   el('runde-kacheln').hidden = true;
   el('frage-wort').hidden = false;
   el('frage-wort').lang = 'de';
+  el('frage-wort').classList.remove('frage-satz');
+  el('loesung-neu').lang = 'it';
+  el('loesung-neu').classList.remove('satz-nachschlag');
+  el('runde-ablage').lang = 'de';
+  el('runde-vorrat').lang = 'de';
   const eingabe = el('abfrage-eingabe');
   eingabe.value = '';
   eingabe.readOnly = false;
 
-  if (schritt.art === 'neu') {
+  if (schritt.art === 'satz') {
+    zeigeSatz(schritt);
+  } else if (schritt.art === 'neu') {
     const w = Vokabeln.wort(schritt.id);
     Vokabeln.aufnehmen(w.id, { neu: !abfrage.weg });   // im Weg zählt kein Tageslimit
     el('frage-art').textContent = 'Neues Wort – erst einmal nur ansehen und anhören';
@@ -851,6 +892,160 @@ function zeigeSchritt() {
     el('runde-paare').hidden = false;
     el('knopf-pruefen').hidden = true;      // fertig, wenn alle Paare gefunden sind
   }
+}
+
+// ---------- Satz-Aufgaben (Wörter mit Sätzen, siehe saetze.js) ----------
+
+// Kacheln in den Vorrat legen (lang: Sprache der Kacheln)
+function rundeKachelnFuellen(woerter, lang) {
+  const ablage = el('runde-ablage');
+  const vorrat = el('runde-vorrat');
+  ablage.innerHTML = '';
+  ablage.classList.remove('fertig');
+  ablage.lang = lang;
+  vorrat.innerHTML = '';
+  vorrat.lang = lang;
+  for (const wort of woerter) {
+    const k = document.createElement('button');
+    k.type = 'button';
+    k.className = 'kachel';
+    k.textContent = wort;
+    k.addEventListener('click', () => rundeKachelLegen(k));
+    vorrat.appendChild(k);
+  }
+  el('runde-kacheln').hidden = false;
+}
+
+// Italienischer Satz, jedes Wort antippbar (Bedeutung erscheint darunter), das Lernwort hervorgehoben
+function satzAnzeigen(a) {
+  const ziel = el('frage-wort');
+  ziel.innerHTML = '';
+  ziel.lang = 'it';
+  ziel.classList.add('frage-satz');
+  const lern = Saetze.fundstelle(a.satz.it, a.satz.form);
+  const w = Vokabeln.wort(a.id);
+  let pos = 0;
+  for (const st of Lesen.stuecke(a.satz.it)) {
+    const start = pos;
+    pos += st.text.length;
+    if (!st.wort) { ziel.appendChild(document.createTextNode(st.text)); continue; }
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'satz-wort';
+    b.textContent = st.text;
+    const istLern = lern && start >= lern.start && start < lern.ende;
+    if (istLern) b.classList.add('lernwort');
+    b.addEventListener('click', () => {
+      let it = st.text;
+      let de = 'nicht gefunden';
+      if (istLern && w) { it = w.it; de = w.de; } else {
+        const r = Lesen.nachschlagen(st.text);
+        if (r) { it = r.grundform; de = r.bedeutung; }
+      }
+      const box = el('loesung-neu');
+      box.lang = 'de';
+      box.classList.add('satz-nachschlag');
+      box.innerHTML = '';
+      const s = document.createElement('span');
+      s.lang = 'it';
+      s.textContent = it;
+      box.append(s, ` = ${de}`);
+      box.hidden = false;
+      sprichWort(st.text);
+    });
+    ziel.appendChild(b);
+  }
+}
+
+function zeigeSatz(a) {
+  if (a.modus === 'kennen') Vokabeln.aufnehmen(a.id, { neu: !abfrage.weg });   // im Weg zählt kein Tageslimit
+  el('knopf-weiss-nicht').hidden = false;
+  if (a.modus === 'kennen' || a.modus === 'de') {
+    el('frage-art').textContent = a.modus === 'kennen'
+      ? 'Neues Wort im Satz – was heißt der Satz?'
+      : 'Was heißt der Satz?';
+    satzAnzeigen(a);
+    rundeKachelnFuellen(a.kacheln, 'de');
+    if (a.modus === 'kennen') {
+      el('runde-hoer').hidden = !Lesen.kannSprechen;
+      sprichWort(a.satz.it, false, false);
+    }
+  } else if (a.modus === 'hoeren') {
+    el('frage-art').textContent = 'Hör zu und leg den Satz';
+    el('frage-wort').hidden = true;
+    el('runde-hoer').hidden = false;
+    rundeKachelnFuellen(a.kacheln, 'it');
+    sprichWort(a.satz.it, false, false);
+  } else if (a.modus === 'luecke') {
+    el('frage-art').textContent = 'Was fehlt? Schreib es auf Italienisch.';
+    el('frage-wort').lang = 'it';
+    el('frage-wort').classList.add('frage-satz');
+    const hinweis = Saetze.hinweis(a);
+    el('frage-wort').textContent = Saetze.lueckenSatz(a) + (hinweis ? ` (${hinweis})` : '');
+    el('abfrage-form').hidden = false;
+    el('abfrage-eingabe').focus();
+  } else {
+    el('frage-art').textContent = 'Auf Italienisch?';
+    el('frage-wort').classList.add('frage-satz');
+    el('frage-wort').textContent = a.satz.de;
+    rundeKachelnFuellen(a.kacheln, 'it');
+  }
+}
+
+function pruefenSatz(weissNicht) {
+  const a = abfrage.schritte[abfrage.pos];
+  const luecke = a.modus === 'luecke';
+  const eingabe = el('abfrage-eingabe');
+  const antwort = luecke
+    ? eingabe.value.trim()
+    : [...el('runde-ablage').querySelectorAll('.kachel')].map((k) => k.textContent);
+  if (!weissNicht && !antwort.length) { if (luecke) eingabe.focus(); return; }
+  const ergebnis = weissNicht ? { stufe: 'falsch', hinweis: '' }
+    : luecke ? Saetze.pruefeLuecke(a, antwort)
+      : { stufe: Saetze.pruefe(a, antwort) ? 'richtig' : 'falsch', hinweis: '' };
+  const gut = ergebnis.stufe !== 'falsch';
+
+  Vokabeln.ergebnisZaehlen(gut);
+  Wiederholung.fehlerMerken(a, gut);
+  // „Wörter üben“ einer erledigten Lektion: zählt für den Abschluss-Text
+  if (abfrage.ohneWertung && !abfrage.gewertet.has(a.id)) {
+    abfrage.gewertet.add(a.id);
+    if (gut) abfrage.aufAnhieb += 1;
+  }
+  if (Saetze.stufeGeschafft(a, gut, abfrage.ohneWertung)) abfrage.kennen.add(a.id);
+  // Nicht gewusst: einmal pro Wort und Stufe später noch einmal, mit einem anderen Satz
+  const merker = `satz:${a.id}:${a.stufe}`;
+  let nochmal = false;
+  if (!gut && !abfrage.zweiterVersuch.has(merker)) {
+    abfrage.zweiterVersuch.add(merker);
+    const neu = Saetze.aufgabe(a.id, a.stufe, { ohneWertung: a.ohneWertung });
+    if (neu) { abfrage.schritte.push(neu); nochmal = true; }
+  }
+
+  const box = el('rueckmeldung');
+  box.classList.toggle('falsch', !gut);
+  el('rueck-titel').textContent = ergebnis.stufe === 'richtig' ? 'Richtig.'
+    : ergebnis.stufe === 'fast' ? 'Fast richtig – zählt.'
+      : weissNicht ? 'So heißt der Satz:' : 'Noch nicht.';
+  const text = el('rueck-text');
+  text.innerHTML = '';
+  if (ergebnis.hinweis) text.append(ergebnis.hinweis, document.createElement('br'));
+  const it = document.createElement('strong');
+  it.lang = 'it';
+  it.textContent = a.satz.it;
+  text.append(it, document.createElement('br'), a.satz.de);
+  if (nochmal) text.append(document.createElement('br'), 'Kommt gleich noch einmal.');
+  text.hidden = false;
+  box.hidden = false;
+
+  el('runde-ablage').classList.add('fertig');
+  eingabe.readOnly = true;
+  el('knopf-weiss-nicht').hidden = true;
+  el('knopf-pruefen').textContent = 'Weiter';
+  el('knopf-pruefen').focus();
+  abfrage.geprueft = true;
+  if (a.modus !== 'hoeren' && a.modus !== 'kennen') sprichWort(a.satz.it, false, false);
+  if (gut) autoWeiter(3000);
 }
 
 // Italienisch → Deutsch: Kachel antippen legt sie ab, nochmal antippen nimmt sie zurück
@@ -980,7 +1175,11 @@ function rundePaareFertig() {
   const schritt = abfrage.schritte[abfrage.pos];
   // Wörter, die ohne Fehler zugeordnet wurden, zählen fürs Kennenlernen
   for (const id of schritt.ids) {
-    if (!abfrage.paarFehler.has(id)) { Vokabeln.kennenGelernt(id); abfrage.kennen.add(id); }
+    // Wörter mit Sätzen steigen nur über die Satz-Aufgaben (Stufe 0 zählt erst, wenn die Kacheln stimmen)
+    if (!abfrage.paarFehler.has(id) && !Saetze.hat(id)) {
+      Vokabeln.kennenGelernt(id);
+      abfrage.kennen.add(id);
+    }
   }
   abfrage.geprueft = true;
   const box = el('rueckmeldung');
@@ -992,18 +1191,22 @@ function rundePaareFertig() {
   el('knopf-pruefen').hidden = false;
 }
 
+// Satz-Aufgaben: den ganzen Satz sprechen (ohne Wort-Stimme), sonst das Wort
 el('runde-play').addEventListener('click', () => {
   const s = abfrage.schritte[abfrage.pos];
-  if (s && s.id) sprichWort(Vokabeln.wort(s.id).it);
+  if (s && s.art === 'satz') sprichWort(s.satz.it, false, false);
+  else if (s && s.id) sprichWort(Vokabeln.wort(s.id).it);
 });
 el('runde-langsam').addEventListener('click', () => {
   const s = abfrage.schritte[abfrage.pos];
-  if (s && s.id) sprichWort(Vokabeln.wort(s.id).it, true);
+  if (s && s.art === 'satz') sprichWort(s.satz.it, true, false);
+  else if (s && s.id) sprichWort(Vokabeln.wort(s.id).it, true);
 });
 
 function pruefen(weissNicht = false) {
   const schritt = abfrage.schritte[abfrage.pos];
   if (schritt.art === 'deutsch') return pruefenDeutsch(weissNicht);
+  if (schritt.art === 'satz') return pruefenSatz(weissNicht);
   const w = Vokabeln.wort(schritt.id);
   const eingabe = el('abfrage-eingabe');
   const text = eingabe.value.trim();

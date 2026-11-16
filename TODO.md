@@ -18,6 +18,9 @@
       3. Passt der Abstand, in dem neue Wörter kommen?
       4. Geht es nach einer richtigen Antwort (nach 3 Sekunden) zu schnell oder zu langsam weiter?
       5. Sind Sätze dabei, die komisch klingen? Dann schreib sie dir auf und sag sie Claude.
+- [ ] **„Prüfen“ erst mit Antwort ansehen:** Der Knopf „Prüfen“ ist blass, solange nichts eingetippt oder keine Kachel gelegt ist. Fühlt sich das richtig an?
+- [ ] **Grammatik in der Lektion ansehen:** Lektionen → Lektion antippen. Oben steht jetzt die Grammatik der Lektion, antippen zeigt Regel und Tabelle. Passt das so? Und: Sind die Wortpaare jetzt gleich hoch? Springt beim Kacheln-Legen noch etwas (die Ablage hat jetzt zwei Zeilen mit Linien)?
+- [x] **Glas-Design entscheiden:** Erledigt am 16.11.2026 – ohne Glas.
 - [ ] **Noch planen:** Kacheln im Satz verschieben.
 - [ ] **Lektion als Weg ausprobieren** (auf dem iPhone, Lektion 1–2): „Los“ bringt erst fällige Wörter, dann fällige Grammatik, dann den nächsten Schritt. Fragen an dich:
       1. Sind die Schritte kurz genug (3–5 Minuten)?

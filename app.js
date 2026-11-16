@@ -335,6 +335,7 @@ function oeffneLektion(l) {
     ol.appendChild(li);
   });
   liste.appendChild(ol);
+  zeigeLektionGrammatik(l);
 
   if (l.art === 'ripasso') {
     el('lektion-woerter').hidden = true;
@@ -377,6 +378,28 @@ function oeffneLektion(l) {
   if (Lektionen.istErledigt(l)) knopf('Wörter üben', () => starteRunde({ ids: l.wortIds }));
   else knopf('Kann ich schon', () => starteKannIch(l));
   zeige('lektion');
+}
+
+// Grammatik der Lektion als kleine Karte(n): Titel + erster Satz der Regel, antippen → Kapitel
+function zeigeLektionGrammatik(l) {
+  const box = el('lektion-grammatik');
+  box.innerHTML = '';
+  for (const id of l.kapitel || []) {
+    const k = Grammatik.kapitel(id);
+    if (!k) continue;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'karte karte-knopf grammatik-kurz';
+    b.innerHTML = '<span class="grammatik-kurz-meta"></span><span class="karte-titel"></span>'
+      + '<span class="karte-text"></span><span class="grammatik-kurz-mehr">Regel und Tabelle ansehen ›</span>';
+    const geuebt = (Grammatik.stand(id) || {}).geuebt;
+    b.querySelector('.grammatik-kurz-meta').textContent = geuebt ? 'Grammatik · geübt ✓' : 'Neue Grammatik';
+    b.querySelector('.karte-titel').textContent = k.titel;
+    b.querySelector('.karte-text').textContent = k.regel[0] || '';
+    b.addEventListener('click', () => oeffneKapitel(k, 'lektion'));
+    box.appendChild(b);
+  }
+  box.hidden = !box.children.length;
 }
 
 // Zurück zur zuletzt geöffneten Lektion (oder zur Startseite)

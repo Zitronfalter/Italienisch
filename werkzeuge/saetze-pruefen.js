@@ -9,10 +9,21 @@
 //  - aus einer früheren Lektion stammt,
 //  - ein Wort dieser Lektion ist, das in der SAETZE-Liste vorher oder an dieser Stelle steht,
 //  - über `formen` oder Woerterbuch.kandidaten() eine Form eines solchen Worts ist (bevo → bere),
-//  - ein Eigenname ist (Großbuchstabe, nicht am Satzanfang).
+//  - ein Eigenname ist (Großbuchstabe, nicht am Satzanfang),
+//  - in schon-bekannt.js steht (Wörter, die Nicole schon kennt – nur, wenn
+//    `bekannt` übergeben wird; das Kommandozeilen-Programm und der Daten-Test tun das).
 // Groß-/Kleinschreibung zählt sonst nicht (Satzanfang „Grazie“ = „grazie“).
 
-const { lektionVonTabelle, formenVon, klein, ohneArtikel } = require('./lektionen-pruefen');
+const { lektionVonTabelle, formenVon, woerterIn, klein, ohneArtikel } = require('./lektionen-pruefen');
+
+// Wörter aus schon-bekannt.js (Nicoles Duolingo-Liste) als Menge (mehrteilige Einträge Wort für Wort)
+function ladeBekannt(k) {
+  const menge = new Set();
+  for (const eintrag of k.SchonBekannt.LISTE) {
+    for (const w of woerterIn(k, eintrag)) menge.add(w);
+  }
+  return menge;
+}
 
 const MIN_SAETZE = 3;
 
@@ -31,7 +42,7 @@ function woerterMitAnfang(k, satz) {
   return liste;
 }
 
-function pruefeSaetze(k) {
+function pruefeSaetze(k, { bekannt = new Set() } = {}) {
   const fehler = [];
   const hinweise = [];
   const lektionVon = lektionVonTabelle(k);
@@ -61,7 +72,7 @@ function pruefeSaetze(k) {
       const saetze = e.saetze || [];
       if (saetze.length < MIN_SAETZE) fehler.push(`${lid}: „${e.wort}“ hat nur ${saetze.length} Sätze (mindestens ${MIN_SAETZE})`);
 
-      const ok = (form) => Boolean(k.GRUNDWOERTER[form])
+      const ok = (form) => Boolean(k.GRUNDWOERTER[form]) || bekannt.has(form)
         || (lektionVon.has(form) && lektionVon.get(form) < l.nr)
         || (hier.has(form) && hier.get(form) <= stelle);
 
@@ -95,11 +106,12 @@ function pruefeSaetze(k) {
   return { fehler, hinweise };
 }
 
-module.exports = { pruefeSaetze };
+module.exports = { pruefeSaetze, ladeBekannt };
 
 if (require.main === module) {
   const { laden } = require('./test/laden');
-  const { fehler, hinweise } = pruefeSaetze(laden());
+  const k = laden();
+  const { fehler, hinweise } = pruefeSaetze(k, { bekannt: ladeBekannt(k) });
   for (const h of hinweise) console.log('Hinweis: ' + h);
   for (const f of fehler) console.log('FEHLER:  ' + f);
   console.log(`\n${fehler.length} Fehler, ${hinweise.length} Hinweise`);

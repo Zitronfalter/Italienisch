@@ -419,13 +419,16 @@ function zeigeWortCheck(l, danach, ids = l.wortIds) {
   for (const id of ids.filter((x) => !Speicher.daten.karten[x])) {
     const w = Vokabeln.wort(id);
     if (!w) continue;
+    // Wörter aus Nicoles Duolingo-Liste (schon-bekannt.js) stehen schon auf „kenne ich“
+    const vorgemerkt = SchonBekannt.enthaelt(w.it);
+    if (vorgemerkt) bekannt.add(id);
     const zeile = document.createElement('div');
     zeile.className = 'wortcheck-zeile';
     zeile.innerHTML = `
       <span class="wortcheck-wort"><span class="wort-it" lang="it"></span><span class="wort-de"></span></span>
       <span class="wortcheck-wahl">
-        <button type="button" data-wahl="kenne">kenne ich</button>
-        <button type="button" data-wahl="neu" class="gewaehlt">neu</button>
+        <button type="button" data-wahl="kenne"${vorgemerkt ? ' class="gewaehlt"' : ''}>kenne ich</button>
+        <button type="button" data-wahl="neu"${vorgemerkt ? '' : ' class="gewaehlt"'}>neu</button>
       </span>`;
     zeile.querySelector('.wort-it').textContent = w.it;
     zeile.querySelector('.wort-de').textContent = w.de;
@@ -438,6 +441,7 @@ function zeigeWortCheck(l, danach, ids = l.wortIds) {
     });
     liste.appendChild(zeile);
   }
+  el('wortcheck-duolingo').hidden = !bekannt.size;
   el('knopf-wortcheck-fertig').onclick = () => {
     Lektionen.woerterEinordnen(l.id, [...bekannt]);
     lektionenPruefen();

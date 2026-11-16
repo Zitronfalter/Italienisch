@@ -12,6 +12,8 @@
 - [ ] **Verbesserungen nach deinem Test ansehen:** (1) Springt die Seite noch, wenn du „Weiter“ tippst? (2) Wortpaare: Kommen jetzt 5 Paare mit Wörtern, die du schon kennst – jedes Mal andere? (3) Bei „Wörter üben“ kommen jedes Mal 3 alte Wörter mit. Reicht dir das?
 - [x] **Übungen planen:** Erledigt am 16.11.2026 – „Neue Wörter in Sätzen“ ist geplant (erst Lektion 4–6 zum Testen).
 - [x] **Bauplan „Neue Wörter in Sätzen“ freigeben:** Erledigt am 16.11.2026 – gebaut für Lektion 4–6.
+- [ ] **Duolingo-Wörter vorgemerkt:** Bei „Kennst du die schon?“ stehen Wörter aus deiner Duolingo-Liste jetzt schon auf „kenne ich“. Passt das, oder sind Wörter dabei, die du doch nicht kannst? Dann einfach auf „neu“ tippen.
+- [ ] **Neue Sätze ansehen (Lektion 4–6):** Die Sätze sind neu geschrieben – natürlicher, mit Alltagsszenen und mehr Abwechslung, auch mit Wörtern, die du von Duolingo kennst. Klingen sie jetzt besser? Komische Sätze bitte aufschreiben.
 - [ ] **Neue Wörter in Sätzen ausprobieren** (auf dem iPhone, Lektion 4–6; du kommst dahin, wenn Lektion 3 fertig ist). Neue Wörter kommen jetzt zuerst in einem Satz. Fragen an dich:
       1. Reichen die Sätze pro Wort, oder sind es zu viele?
       2. Ist die Treppe (Satz kennenlernen → ins Deutsche legen → hören → Lücke oder Italienisch legen) zu schnell oder zu langsam?
@@ -21,7 +23,7 @@
 - [ ] **„Prüfen“ erst mit Antwort ansehen:** Der Knopf „Prüfen“ ist blass, solange nichts eingetippt oder keine Kachel gelegt ist. Fühlt sich das richtig an?
 - [ ] **Grammatik in der Lektion ansehen:** Lektionen → Lektion antippen. Oben steht jetzt die Grammatik der Lektion, antippen zeigt Regel und Tabelle. Passt das so? Und: Sind die Wortpaare jetzt gleich hoch? Springt beim Kacheln-Legen noch etwas (die Ablage hat jetzt zwei Zeilen mit Linien)?
 - [x] **Glas-Design entscheiden:** Erledigt am 16.11.2026 – ohne Glas.
-- [ ] **Stimmen Luca und Paola fehlen in der App:** (1) iPhone einmal neu starten, App öffnen → Einstellungen → Vorlesen. (2) Wenn sie immer noch fehlen: die Adresse https://zitronfalter.github.io/Italienisch/ in einem normalen Safari-Tab öffnen und dort unter Einstellungen → Vorlesen nachsehen. Claude sagen, wo du welche Stimmen siehst.
+- [x] **Stimmen Luca und Paola fehlen in der App:** Erledigt am 16.11.2026 – Safari gibt Webseiten auf dem iPhone nur Alice; bleibt so (keine tiefere Stimme für männliche Wörter).
 - [ ] **Knöpfe in Pillenform ansehen:** „Los“, „Prüfen“, „Weiter“ und die umrandeten Knöpfe haben jetzt ganz runde Enden. Gefällt dir das?
 - [ ] **Noch planen:** Kacheln im Satz verschieben.
 - [ ] **Lektion als Weg ausprobieren** (auf dem iPhone, Lektion 1–2): „Los“ bringt erst fällige Wörter, dann fällige Grammatik, dann den nächsten Schritt. Fragen an dich:

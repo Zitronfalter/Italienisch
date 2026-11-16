@@ -83,9 +83,9 @@ test('zweimal Stufe 1: verschiedene Sätze; alles heute gelöst: trotzdem eine A
 test('pruefe Deutsch: Groß/klein egal, Reihenfolge zählt', () => {
   const k = laden();
   const a = k.Saetze.aufgabe(k.wortId(ERSTES), 0);
-  assert.strictEqual(a.satz.de, 'Hallo! Ich heiße Luca, und du?');
-  assert.strictEqual(k.Saetze.pruefe(a, ['hallo', 'ICH', 'heiße', 'luca', 'und', 'du']), true);
-  assert.strictEqual(k.Saetze.pruefe(a, ['Ich', 'Hallo', 'heiße', 'Luca', 'und', 'du']), false);
+  assert.strictEqual(a.satz.de, 'Hallo! Ich bin die neue Nachbarin, ich heiße Elena.');
+  assert.strictEqual(k.Saetze.pruefe(a, ['hallo', 'ICH', 'bin', 'die', 'neue', 'nachbarin', 'ich', 'heiße', 'elena']), true);
+  assert.strictEqual(k.Saetze.pruefe(a, ['Ich', 'Hallo', 'bin', 'die', 'neue', 'Nachbarin', 'ich', 'heiße', 'Elena']), false);
 });
 
 test('Hören/Italienisch: Kacheln passen zum Satz, auch mit Apostroph und Gedankenstrich', () => {

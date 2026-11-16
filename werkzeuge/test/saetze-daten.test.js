@@ -4,10 +4,11 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const { laden } = require('./laden');
-const { pruefeSaetze } = require('../saetze-pruefen');
+const { pruefeSaetze, ladeBekannt } = require('../saetze-pruefen');
 
 test('Prüfprogramm meldet 0 Fehler', () => {
-  const { fehler } = pruefeSaetze(laden());
+  const k = laden();
+  const { fehler } = pruefeSaetze(k, { bekannt: ladeBekannt(k) });
   assert.deepStrictEqual(fehler, []);
 });
 

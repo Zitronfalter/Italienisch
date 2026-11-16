@@ -9,8 +9,10 @@
 //    Gesucht wird nach ganzen Wörtern, Groß-/Kleinschreibung und Satzzeichen zählen nicht.
 //  - formen: { form: grundform } für Formen bekannter Wörter, die die Formen-Erkennung nicht findet
 //    (z. B. { "dov'": 'dove' }).
-// In einem Satz stehen nur Wörter früherer Lektionen, GRUNDWOERTER, Eigennamen und Wörter
-// dieser Lektion, die in der Liste vorher kommen. Prüfen: node werkzeuge/saetze-pruefen.js
+// In einem Satz stehen nur Wörter früherer Lektionen, GRUNDWOERTER, Wörter aus
+// schon-bekannt.js (kennt Nicole schon), Eigennamen und Wörter dieser Lektion,
+// die in der Liste vorher kommen. Prüfen: node werkzeuge/saetze-pruefen.js
+// Ziel: natürliche Sätze aus kleinen Alltagsszenen, wechselnde Personen, verschiedene Satzarten.
 
 const SAETZE = {};
 
@@ -19,86 +21,87 @@ const SAETZE = {};
 SAETZE.l01c = [
   // Päckchen 1
   { wort: 'salve', saetze: [
-    { it: 'Salve! Mi chiamo Luca, e tu?', de: 'Hallo! Ich heiße Luca, und du?' },
-    { it: 'Salve, io sono Giulia, di Roma.', de: 'Guten Tag, ich bin Giulia, aus Rom.' },
-    { it: 'Salve! Lei è italiano?', de: 'Guten Tag! Sind Sie Italiener?' },
+    { it: 'Salve! Sono la nuova vicina, mi chiamo Elena.', de: 'Hallo! Ich bin die neue Nachbarin, ich heiße Elena.' },
+    { it: 'Salve! Scusi, dov’è la stazione?', de: 'Guten Tag! Entschuldigung, wo ist der Bahnhof?' },
+    { it: 'Salve a tutti! Io sono Paolo, il nuovo collega.', de: 'Hallo zusammen! Ich bin Paolo, der neue Kollege.' },
   ] },
   { wort: 'come va?', saetze: [
-    { it: 'Ciao Marco! Come va?', de: 'Hallo Marco! Wie geht’s?' },
-    { it: 'Come va? – Bene, grazie, e tu?', de: 'Wie geht’s? – Gut, danke, und dir?' },
-    { it: 'Salve, Anna! Come va in Germania?', de: 'Hallo, Anna! Wie läuft’s in Deutschland?' },
-    { it: 'Come va l’italiano?', de: 'Wie läuft’s mit dem Italienischen?' },
+    { it: 'Ciao Sara! Come va? – Bene, grazie. E tu?', de: 'Hallo Sara! Wie geht’s? – Gut, danke. Und dir?' },
+    { it: 'Come va il nuovo lavoro?', de: 'Wie läuft die neue Arbeit?' },
+    { it: 'Come va a scuola, Matteo?', de: 'Wie läuft’s in der Schule, Matteo?' },
+    { it: 'Allora, come va con la tua coinquilina?', de: 'Und, wie klappt’s mit deiner Mitbewohnerin?' },
   ] },
   { wort: 'scusi', saetze: [
-    { it: 'Scusi, come si chiama?', de: 'Entschuldigung, wie heißen Sie?' },
-    { it: 'Scusi, lei è italiano?', de: 'Entschuldigen Sie, sind Sie Italiener?' },
-    { it: 'Scusi, non sono di Roma.', de: 'Tut mir leid, ich bin nicht aus Rom.' },
-    { it: 'Ah, scusi! Lei è tedesca?', de: 'Ach, Entschuldigung! Sind Sie Deutsche?' },
+    { it: 'Scusi, che ore sono?', de: 'Entschuldigung, wie spät ist es?' },
+    { it: 'Scusi, è libero questo posto?', de: 'Entschuldigung, ist dieser Platz frei?' },
+    { it: 'Scusi, signora, dov’è la farmacia?', de: 'Entschuldigen Sie, wo ist die Apotheke?' },
+    { it: 'Ah, scusi! È il suo cane?', de: 'Oh, Entschuldigung! Ist das Ihr Hund?' },
   ] },
   { wort: 'il cognome', saetze: [
-    { it: 'Mi chiamo Anna, di cognome Rossi.', de: 'Ich heiße Anna, mit Nachnamen Rossi.' },
-    { it: 'Scusi, come si chiama di cognome?', de: 'Entschuldigung, wie heißen Sie mit Nachnamen?' },
-    { it: 'Il mio cognome è tedesco, non italiano.', de: 'Mein Nachname ist deutsch, nicht italienisch.' },
-    { it: 'Il cognome Bianchi è italiano, Müller è tedesco.', de: 'Der Nachname Bianchi ist italienisch, Müller ist deutsch.' },
+    { it: 'Mi chiamo Sara, e il mio cognome è Rossi.', de: 'Ich heiße Sara, und mein Nachname ist Rossi.' },
+    { it: 'Come si scrive il suo cognome?', de: 'Wie schreibt man Ihren Nachnamen?' },
+    { it: 'Il cognome, per favore? – Bianchi.', de: 'Den Nachnamen, bitte? – Bianchi.' },
+    { it: 'Mia nonna ha un cognome tedesco.', de: 'Meine Oma hat einen deutschen Nachnamen.' },
   ] },
   { wort: 'buona giornata', saetze: [
-    { it: 'Arrivederci e buona giornata!', de: 'Auf Wiedersehen und einen schönen Tag!' },
-    { it: 'Buona giornata, Marco! – Grazie, ciao!', de: 'Schönen Tag, Marco! – Danke, tschüss!' },
-    { it: 'Grazie, buona giornata a lei!', de: 'Danke, Ihnen einen schönen Tag!' },
+    { it: 'Ecco il suo caffè. Buona giornata!', de: 'Hier ist Ihr Kaffee. Einen schönen Tag noch!' },
+    { it: 'Vado in ufficio. Buona giornata a tutti!', de: 'Ich gehe ins Büro. Einen schönen Tag euch allen!' },
+    { it: 'Ciao Paolo, buona giornata! – Anche a te!', de: 'Tschüss Paolo, schönen Tag! – Dir auch!' },
   ] },
 
   // Päckchen 2
   { wort: 'il telefono', saetze: [
-    { it: 'Scusi, dov’è il telefono?', de: 'Entschuldigung, wo ist das Telefon?', formen: { "dov'": 'dove' } },
-    { it: 'Il mio telefono non va.', de: 'Mein Telefon geht nicht.' },
-    { it: 'Questo è il telefono di Marco, non il mio.', de: 'Das ist Marcos Telefon, nicht meins.' },
+    { it: 'Il telefono suona: è la mamma.', de: 'Das Telefon klingelt: Es ist Mama.' },
+    { it: 'Non trovo il mio telefono!', de: 'Ich finde mein Telefon nicht!' },
+    { it: 'Scusi, posso usare il telefono?', de: 'Entschuldigung, darf ich das Telefon benutzen?' },
+    { it: 'Al telefono parlo solo italiano.', de: 'Am Telefon spreche ich nur Italienisch.' },
   ] },
   { wort: 'grazie mille', saetze: [
-    { it: 'Il mio telefono! Grazie mille!', de: 'Mein Telefon! Vielen Dank!' },
-    { it: 'Grazie mille e buona giornata!', de: 'Vielen Dank und einen schönen Tag!' },
-    { it: 'Per me? Grazie mille!', de: 'Für mich? Vielen Dank!' },
+    { it: 'Ecco la tua chiave. – Grazie mille!', de: 'Hier ist dein Schlüssel. – Vielen Dank!' },
+    { it: 'Grazie mille per il regalo, è molto bello!', de: 'Vielen Dank für das Geschenk, es ist sehr schön!' },
+    { it: 'Grazie mille, è molto gentile.', de: 'Vielen Dank, Sie sind sehr nett.' },
   ] },
   { wort: 'di niente', saetze: [
-    { it: 'Grazie mille! – Di niente.', de: 'Vielen Dank! – Gern geschehen.' },
-    { it: 'Grazie, Marco! – Di niente, ciao!', de: 'Danke, Marco! – Gern geschehen, tschüss!' },
-    { it: 'Prego, di niente!', de: 'Bitte, gern geschehen!' },
+    { it: 'Grazie per l’aiuto! – Di niente!', de: 'Danke für die Hilfe! – Gern geschehen!' },
+    { it: 'Scusa il ritardo. – Di niente, va bene.', de: 'Entschuldige die Verspätung. – Keine Ursache, alles gut.' },
+    { it: 'Grazie mille, Davide! – Ma di niente!', de: 'Vielen Dank, Davide! – Aber gern doch!' },
   ] },
   { wort: 'a domani', saetze: [
-    { it: 'Ciao Giulia, a domani!', de: 'Tschüss Giulia, bis morgen!' },
-    { it: 'A domani, Luca! – Sì, a domani!', de: 'Bis morgen, Luca! – Ja, bis morgen!' },
-    { it: 'Grazie mille e a domani!', de: 'Vielen Dank und bis morgen!' },
+    { it: 'Ora vado a casa. A domani!', de: 'Jetzt gehe ich nach Hause. Bis morgen!' },
+    { it: 'A domani in ufficio, Chiara!', de: 'Bis morgen im Büro, Chiara!' },
+    { it: 'Ci vediamo a scuola? – Sì, a domani!', de: 'Sehen wir uns in der Schule? – Ja, bis morgen!' },
   ] },
   { wort: 'buona serata', saetze: [
-    { it: 'Grazie, buona serata!', de: 'Danke, einen schönen Abend noch!' },
-    { it: 'Buona serata, Marco, e a domani!', de: 'Schönen Abend, Marco, und bis morgen!' },
-    { it: 'Buona serata a te e a Giulia!', de: 'Einen schönen Abend dir und Giulia!' },
+    { it: 'Il ristorante chiude. Buona serata a tutti!', de: 'Das Restaurant schließt. Einen schönen Abend allen!' },
+    { it: 'Vai al concerto? Buona serata!', de: 'Gehst du ins Konzert? Schönen Abend!' },
+    { it: 'Grazie della cena e buona serata!', de: 'Danke für das Abendessen und einen schönen Abend!' },
   ] },
 
   // Päckchen 3
   { wort: 'la via', saetze: [
-    { it: 'Scusi, dov’è via Roma?', de: 'Entschuldigung, wo ist die Via Roma?', formen: { "dov'": 'dove' } },
-    { it: 'Sono in via Garibaldi, e tu dove sei?', de: 'Ich bin in der Via Garibaldi – und wo bist du?' },
-    { it: 'Via Dante? È quella, non questa.', de: 'Die Via Dante? Das ist die da, nicht diese hier.' },
+    { it: 'Abito in via Dante, vicino al parco.', de: 'Ich wohne in der Via Dante, in der Nähe des Parks.' },
+    { it: 'Scusi, dov’è via Garibaldi? – Sempre dritto.', de: 'Entschuldigung, wo ist die Via Garibaldi? – Immer geradeaus.' },
+    { it: 'In questa via ci sono molti negozi.', de: 'In dieser Straße gibt es viele Geschäfte.', formen: { negozi: 'negozio' } },
   ] },
   { wort: 'a dopo', saetze: [
-    { it: 'Sono in via Roma, a dopo!', de: 'Ich bin in der Via Roma, bis später!' },
-    { it: 'A dopo, Anna! – Sì, ciao!', de: 'Bis später, Anna! – Ja, tschüss!' },
-    { it: 'Va bene, a dopo!', de: 'Okay, bis später!' },
+    { it: 'Vado al supermercato. A dopo!', de: 'Ich gehe zum Supermarkt. Bis später!' },
+    { it: 'A dopo, al bar in piazza!', de: 'Bis später, in der Bar am Platz!' },
+    { it: 'Adesso non posso, a dopo!', de: 'Jetzt kann ich nicht, bis später!' },
   ] },
   { wort: 'benvenuto', saetze: [
-    { it: 'Benvenuto in Italia, Marco!', de: 'Willkommen in Italien, Marco!' },
-    { it: 'Benvenuta, Anna! Come va?', de: 'Willkommen, Anna! Wie geht’s?', form: 'benvenuta' },
-    { it: 'Ciao, sono Luca. Benvenuti!', de: 'Hallo, ich bin Luca. Willkommen!', form: 'benvenuti' },
+    { it: 'Benvenuto a casa nostra, Paolo!', de: 'Willkommen bei uns zu Hause, Paolo!' },
+    { it: 'Benvenuta in Italia, signora Weber!', de: 'Willkommen in Italien, Frau Weber!', form: 'benvenuta' },
+    { it: 'Ragazzi, benvenuti a Roma!', de: 'Leute, willkommen in Rom!', form: 'benvenuti' },
   ] },
   { wort: 'auguri', saetze: [
-    { it: 'Diciotto anni? Auguri!', de: 'Achtzehn Jahre? Herzlichen Glückwunsch!' },
-    { it: 'Tanti auguri, Giulia!', de: 'Alles Gute, Giulia!' },
-    { it: 'Grazie mille per gli auguri!', de: 'Vielen Dank für die Glückwünsche!' },
+    { it: 'Oggi è il tuo compleanno? Auguri!', de: 'Heute ist dein Geburtstag? Herzlichen Glückwunsch!' },
+    { it: 'Tanti auguri, nonna!', de: 'Alles Gute, Oma!' },
+    { it: 'Auguri per l’esame!', de: 'Viel Glück für die Prüfung!' },
   ] },
   { wort: 'buonanotte', saetze: [
-    { it: 'Buonanotte, a domani!', de: 'Gute Nacht, bis morgen!' },
-    { it: 'Buonanotte, Anna! – Buonanotte a te, Marco!', de: 'Gute Nacht, Anna! – Gute Nacht, Marco!' },
-    { it: 'Grazie della serata e buonanotte!', de: 'Danke für den Abend und gute Nacht!' },
+    { it: 'Sono stanca, vado a letto. Buonanotte!', de: 'Ich bin müde, ich gehe ins Bett. Gute Nacht!' },
+    { it: 'Buonanotte, ragazzi, a domani!', de: 'Gute Nacht, Leute, bis morgen!' },
+    { it: 'Mamma, mi leggi un libro? – Sì, e poi buonanotte!', de: 'Mama, liest du mir ein Buch vor? – Ja, und dann gute Nacht!' },
   ] },
 ];
 
@@ -106,113 +109,112 @@ SAETZE.l01c = [
 SAETZE.l02 = [
   // Päckchen 1
   { wort: 'il bar', saetze: [
-    { it: 'Il bar è in via Roma.', de: 'Die Bar ist in der Via Roma.' },
-    { it: 'Scusi, c’è un bar in via Garibaldi?', de: 'Entschuldigung, gibt es eine Bar in der Via Garibaldi?' },
-    { it: 'Sono al bar, a dopo!', de: 'Ich bin in der Bar, bis später!' },
+    { it: 'La mattina prendo un caffè al bar.', de: 'Morgens trinke ich einen Kaffee in der Bar.' },
+    { it: 'C’è un bar qui vicino?', de: 'Gibt es hier in der Nähe eine Bar?' },
+    { it: 'Il bar in piazza è sempre pieno.', de: 'Die Bar am Platz ist immer voll.' },
   ] },
   { wort: 'il caffè', saetze: [
-    { it: 'Buongiorno! Un caffè, per favore.', de: 'Guten Morgen! Einen Kaffee, bitte.' },
-    { it: 'Due caffè, per favore!', de: 'Zwei Kaffee, bitte!' },
-    { it: 'Scusi, il caffè è per me.', de: 'Entschuldigung, der Kaffee ist für mich.' },
+    { it: 'Un caffè, per favore! – Va bene!', de: 'Einen Kaffee, bitte! – In Ordnung!' },
+    { it: 'Il caffè italiano è molto forte.', de: 'Der italienische Kaffee ist sehr stark.' },
+    { it: 'Prendiamo un caffè insieme?', de: 'Trinken wir zusammen einen Kaffee?' },
   ] },
   { wort: 'bere', saetze: [
-    { it: 'Al bar bevo un caffè.', de: 'In der Bar trinke ich einen Kaffee.', form: 'bevo', formen: { bevo: 'bere' } },
-    { it: 'Cosa bevi, Anna?', de: 'Was trinkst du, Anna?', form: 'bevi', formen: { bevi: 'bere' } },
-    { it: 'Lui non beve caffè.', de: 'Er trinkt keinen Kaffee.', form: 'beve', formen: { beve: 'bere' } },
-    { it: 'Beviamo un caffè al bar?', de: 'Trinken wir einen Kaffee in der Bar?', form: 'beviamo', formen: { beviamo: 'bere' } },
+    { it: 'Ho sete, bevo un po’ d’acqua.', de: 'Ich habe Durst, ich trinke ein bisschen Wasser.', form: 'bevo', formen: { bevo: 'bere' } },
+    { it: 'Cosa bevi? – Un tè freddo.', de: 'Was trinkst du? – Einen Eistee.', form: 'bevi', formen: { bevi: 'bere' } },
+    { it: 'Mio padre beve solo vino rosso.', de: 'Mein Vater trinkt nur Rotwein.', form: 'beve', formen: { beve: 'bere' } },
+    { it: 'Stasera beviamo qualcosa insieme?', de: 'Trinken wir heute Abend zusammen etwas?', form: 'beviamo', formen: { beviamo: 'bere' } },
   ] },
   { wort: 'ecco', saetze: [
-    { it: 'Ecco il caffè, prego!', de: 'Hier ist der Kaffee, bitte sehr!' },
-    { it: 'Ecco il bar di Marco.', de: 'Da ist Marcos Bar.' },
-    { it: 'Ecco il mio telefono.', de: 'Hier ist mein Telefon.' },
+    { it: 'Ecco il conto, prego.', de: 'Hier ist die Rechnung, bitte sehr.' },
+    { it: 'Ecco Sara, finalmente!', de: 'Da ist Sara, endlich!' },
+    { it: 'Ecco le chiavi della macchina.', de: 'Hier sind die Autoschlüssel.' },
   ] },
   { wort: 'sei', saetze: [
-    { it: 'Contiamo: quattro, cinque, sei!', de: 'Wir zählen: vier, fünf, sechs!' },
-    { it: 'Sono sei euro, grazie.', de: 'Das macht sechs Euro, danke.' },
-    { it: 'E Luca? Ha sei anni.', de: 'Und Luca? Er ist sechs.' },
+    { it: 'Il treno parte alle sei.', de: 'Der Zug fährt um sechs ab.' },
+    { it: 'Siamo in sei a cena stasera.', de: 'Wir sind heute Abend zu sechst beim Essen.' },
+    { it: 'Sei uova e un po’ di farina.', de: 'Sechs Eier und ein bisschen Mehl.' },
   ] },
 
   // Päckchen 2
   { wort: 'il cornetto', saetze: [
-    { it: 'Un caffè e un cornetto, per favore.', de: 'Einen Kaffee und ein Hörnchen, bitte.' },
-    { it: 'Un cornetto? Sì, grazie!', de: 'Ein Hörnchen? Ja, gerne!' },
-    { it: 'Ecco i cornetti!', de: 'Hier sind die Hörnchen!', form: 'cornetti' },
+    { it: 'Un cappuccino e un cornetto, per favore.', de: 'Einen Cappuccino und ein Hörnchen, bitte.' },
+    { it: 'Questo cornetto è ancora caldo!', de: 'Dieses Hörnchen ist noch warm!' },
+    { it: 'Ci sono ancora cornetti?', de: 'Gibt es noch Hörnchen?', form: 'cornetti' },
   ] },
   { wort: 'mangiare', saetze: [
-    { it: 'Bevo un caffè e mangio un cornetto.', de: 'Ich trinke einen Kaffee und esse ein Hörnchen.', form: 'mangio', formen: { bevo: 'bere' } },
-    { it: 'Cosa mangi al bar?', de: 'Was isst du in der Bar?', form: 'mangi', formen: { mangi: 'mangiare' } },
-    { it: 'Ecco Marco: mangia due cornetti!', de: 'Da ist Marco – er isst zwei Hörnchen!', form: 'mangia' },
-    { it: 'Mangiamo al bar?', de: 'Essen wir in der Bar?', form: 'mangiamo', formen: { mangiamo: 'mangiare' } },
+    { it: 'Ho fame! Mangiamo una pizza?', de: 'Ich habe Hunger! Essen wir eine Pizza?', form: 'mangiamo', formen: { mangiamo: 'mangiare' } },
+    { it: 'Mia sorella non mangia carne.', de: 'Meine Schwester isst kein Fleisch.', form: 'mangia' },
+    { it: 'Cosa mangi a pranzo?', de: 'Was isst du zu Mittag?', form: 'mangi', formen: { mangi: 'mangiare' } },
+    { it: 'La sera mangio poco.', de: 'Abends esse ich wenig.', form: 'mangio' },
   ] },
   { wort: 'pagare', saetze: [
-    { it: 'Il caffè? No, no, pago io!', de: 'Der Kaffee? Nein, nein, ich bezahle!', form: 'pago' },
-    { it: 'Scusi, dove pago?', de: 'Entschuldigung, wo bezahle ich?', form: 'pago' },
-    { it: 'Lui paga il caffè e il cornetto.', de: 'Er bezahlt den Kaffee und das Hörnchen.', form: 'paga' },
+    { it: 'Scusi, posso pagare con la carta di credito?', de: 'Entschuldigung, kann ich mit Kreditkarte bezahlen?' },
+    { it: 'Oggi pago io!', de: 'Heute bezahle ich!', form: 'pago' },
+    { it: 'Paghiamo alla cassa?', de: 'Bezahlen wir an der Kasse?', form: 'paghiamo', formen: { paghiamo: 'pagare' } },
   ] },
   { wort: 'quanto costa?', saetze: [
-    { it: 'Scusi, quanto costa un cornetto?', de: 'Entschuldigung, wie viel kostet ein Hörnchen?' },
-    { it: 'Quanto costa? – Due euro.', de: 'Wie viel kostet das? – Zwei Euro.' },
-    { it: 'E il caffè, quanto costa?', de: 'Und der Kaffee, was kostet der?' },
+    { it: 'Questa borsa è bella. Quanto costa?', de: 'Diese Tasche ist schön. Wie viel kostet sie?' },
+    { it: 'Scusi, quanto costa il biglietto?', de: 'Entschuldigung, was kostet die Fahrkarte?' },
+    { it: 'Quanto costa una camera per due?', de: 'Was kostet ein Zimmer für zwei?' },
   ] },
   { wort: 'sette', saetze: [
-    { it: 'Sei più uno fa sette.', de: 'Sechs plus eins ist sieben.' },
-    { it: 'E Luca beve sette caffè!', de: 'Und Luca trinkt sieben Kaffee!', formen: { beve: 'bere' } },
-    { it: 'Sono le sette.', de: 'Es ist sieben Uhr.' },
+    { it: 'La settimana ha sette giorni.', de: 'Die Woche hat sieben Tage.' },
+    { it: 'Alle sette vado in palestra.', de: 'Um sieben gehe ich ins Fitnessstudio.' },
+    { it: 'Sette euro per una pizza? Va bene!', de: 'Sieben Euro für eine Pizza? In Ordnung!' },
   ] },
 
   // Päckchen 3
   { wort: 'anche', saetze: [
-    { it: 'Un caffè, per favore. – Anche per me!', de: 'Einen Kaffee, bitte. – Für mich auch!' },
-    { it: 'Pago anche il cornetto.', de: 'Ich bezahle auch das Hörnchen.' },
-    { it: 'Buona serata! – Grazie, anche a lei!', de: 'Schönen Abend! – Danke, Ihnen auch!' },
-    { it: 'Anche tu sei tedesca?', de: 'Bist du auch Deutsche?' },
+    { it: 'Prendo un caffè. – Anche io!', de: 'Ich nehme einen Kaffee. – Ich auch!' },
+    { it: 'Parlo inglese e anche un po’ di italiano.', de: 'Ich spreche Englisch und auch ein bisschen Italienisch.' },
+    { it: 'Anche oggi piove!', de: 'Auch heute regnet es!' },
   ] },
   { wort: "l'acqua", saetze: [
-    { it: 'Per me niente caffè: un’acqua, per favore.', de: 'Für mich keinen Kaffee – ein Wasser, bitte.' },
-    { it: 'Ecco l’acqua, Marco!', de: 'Hier ist das Wasser, Marco!' },
-    { it: 'Anche un’acqua, per favore!', de: 'Und noch ein Wasser, bitte!' },
+    { it: 'Ho sete. C’è dell’acqua?', de: 'Ich habe Durst. Gibt es Wasser?' },
+    { it: 'Un bicchiere d’acqua, per favore.', de: 'Ein Glas Wasser, bitte.' },
+    { it: 'L’acqua del lago è fredda.', de: 'Das Wasser im See ist kalt.' },
   ] },
   { wort: 'la mattina', saetze: [
-    { it: 'Buongiorno! Come va questa mattina?', de: 'Guten Morgen! Wie geht’s heute Morgen?' },
-    { it: 'La mattina bevo un caffè.', de: 'Morgens trinke ich einen Kaffee.', formen: { bevo: 'bere' } },
-    { it: 'Io non mangio la mattina.', de: 'Ich esse morgens nichts.' },
+    { it: 'La mattina vado al lavoro in bicicletta.', de: 'Morgens fahre ich mit dem Fahrrad zur Arbeit.' },
+    { it: 'Domani mattina ho un esame.', de: 'Morgen früh habe ich eine Prüfung.' },
+    { it: 'Che bella mattina!', de: 'Was für ein schöner Morgen!' },
   ] },
   { wort: 'la colazione', saetze: [
-    { it: 'A colazione mangio un cornetto.', de: 'Zum Frühstück esse ich ein Hörnchen.' },
-    { it: 'Anche Marco fa colazione al bar.', de: 'Auch Marco frühstückt in der Bar.' },
-    { it: 'La colazione italiana: caffè e cornetto.', de: 'Das italienische Frühstück: Kaffee und Hörnchen.' },
+    { it: 'A colazione bevo un cappuccino.', de: 'Zum Frühstück trinke ich einen Cappuccino.', formen: { bevo: 'bere' } },
+    { it: 'Facciamo colazione in hotel?', de: 'Frühstücken wir im Hotel?' },
+    { it: 'La colazione è pronta!', de: 'Das Frühstück ist fertig!' },
   ] },
   { wort: 'nove', saetze: [
-    { it: 'Cinque più quattro fa nove.', de: 'Fünf plus vier ist neun.' },
-    { it: 'Sono le nove: colazione!', de: 'Es ist neun Uhr: Frühstück!' },
-    { it: 'Nove euro? Pago io.', de: 'Neun Euro? Ich bezahle.' },
+    { it: 'Il negozio apre alle nove.', de: 'Das Geschäft öffnet um neun.' },
+    { it: 'Mio nipote ha nove anni.', de: 'Mein Neffe ist neun Jahre alt.' },
+    { it: 'Nove euro e cinquanta, grazie.', de: 'Neun Euro fünfzig, danke.' },
   ] },
 
   // Päckchen 4
   { wort: 'il latte', saetze: [
-    { it: 'La mattina bevo latte, non caffè.', de: 'Morgens trinke ich Milch, keinen Kaffee.', formen: { bevo: 'bere' } },
-    { it: 'C’è latte per il caffè?', de: 'Gibt es Milch für den Kaffee?' },
-    { it: 'Lui beve tanto latte.', de: 'Er trinkt viel Milch.', formen: { beve: 'bere' } },
+    { it: 'Un caffè con un po’ di latte, per favore.', de: 'Einen Kaffee mit etwas Milch, bitte.' },
+    { it: 'Non c’è più latte nel frigorifero.', de: 'Es gibt keine Milch mehr im Kühlschrank.' },
+    { it: 'Mio figlio beve latte freddo.', de: 'Mein Sohn trinkt kalte Milch.', formen: { beve: 'bere' } },
   ] },
   { wort: 'il tè', saetze: [
-    { it: 'Non bevo caffè, bevo tè.', de: 'Ich trinke keinen Kaffee, ich trinke Tee.', formen: { bevo: 'bere' } },
-    { it: 'Per Anna un tè, per me un caffè.', de: 'Für Anna einen Tee, für mich einen Kaffee.' },
-    { it: 'Un tè alle cinque? Sì!', de: 'Ein Tee um fünf? Ja!' },
+    { it: 'Fa freddo: prendo un tè caldo.', de: 'Es ist kalt: Ich nehme einen heißen Tee.' },
+    { it: 'Preferisci il tè o il caffè?', de: 'Magst du lieber Tee oder Kaffee?' },
+    { it: 'Mia nonna beve il tè alle cinque.', de: 'Meine Oma trinkt um fünf Tee.', formen: { beve: 'bere' } },
   ] },
   { wort: 'la birra', saetze: [
-    { it: 'Una birra tedesca, per favore.', de: 'Ein deutsches Bier, bitte.' },
-    { it: 'Una birra di mattina? No, grazie!', de: 'Ein Bier am Morgen? Nein, danke!' },
-    { it: 'Io bevo un tè, Marco una birra.', de: 'Ich trinke einen Tee, Marco ein Bier.', formen: { bevo: 'bere' } },
+    { it: 'Una birra piccola, per favore!', de: 'Ein kleines Bier, bitte!' },
+    { it: 'Stasera beviamo una birra al pub?', de: 'Trinken wir heute Abend ein Bier im Pub?', formen: { beviamo: 'bere' } },
+    { it: 'La birra tedesca è famosa.', de: 'Das deutsche Bier ist berühmt.' },
   ] },
   { wort: 'otto', saetze: [
-    { it: 'Quattro più quattro? Otto!', de: 'Vier plus vier? Acht!' },
-    { it: 'La mattina alle otto bevo un caffè.', de: 'Morgens um acht trinke ich einen Kaffee.', formen: { bevo: 'bere' } },
-    { it: 'Otto euro? Ecco, grazie.', de: 'Acht Euro? Hier, danke.' },
+    { it: 'La lezione inizia alle otto.', de: 'Der Unterricht beginnt um acht.' },
+    { it: 'Siamo in otto: c’è un tavolo?', de: 'Wir sind zu acht: Gibt es einen Tisch?' },
+    { it: 'Otto più due fa dieci.', de: 'Acht plus zwei ist zehn.' },
   ] },
   { wort: 'dieci', saetze: [
-    { it: 'Sette, otto, nove, dieci!', de: 'Sieben, acht, neun, zehn!' },
-    { it: 'Ecco dieci euro, grazie.', de: 'Hier sind zehn Euro, danke.' },
-    { it: 'Dieci euro per un cornetto?', de: 'Zehn Euro für ein Hörnchen?' },
+    { it: 'Il treno è in ritardo di dieci minuti.', de: 'Der Zug hat zehn Minuten Verspätung.' },
+    { it: 'Ho solo dieci euro.', de: 'Ich habe nur zehn Euro.' },
+    { it: 'Ci vediamo alle dieci in piazza.', de: 'Wir sehen uns um zehn auf dem Platz.' },
   ] },
 ];
 
@@ -221,82 +223,83 @@ SAETZE.l02 = [
 SAETZE.l02a = [
   // Päckchen 1
   { wort: 'avere sete', saetze: [
-    { it: 'Ho sete! Un’acqua, per favore.', de: 'Ich habe Durst! Ein Wasser, bitte.', form: 'ho sete' },
-    { it: 'Hai sete? C’è acqua.', de: 'Hast du Durst? Es gibt Wasser.', form: 'hai sete', formen: { hai: 'avere' } },
-    { it: 'Lui ha sete e beve una birra.', de: 'Er hat Durst und trinkt ein Bier.', form: 'ha sete', formen: { beve: 'bere' } },
+    { it: 'Fa caldo e ho sete! Un’acqua, per favore.', de: 'Es ist heiß und ich habe Durst! Ein Wasser, bitte.', form: 'ho sete' },
+    { it: 'Hai sete? In frigorifero c’è una bibita.', de: 'Hast du Durst? Im Kühlschrank ist ein Getränk.', form: 'hai sete' },
+    { it: 'Dopo la partita i ragazzi hanno sete.', de: 'Nach dem Spiel haben die Jungs Durst.', form: 'hanno sete' },
+    { it: 'Abbiamo sete: andiamo al bar?', de: 'Wir haben Durst: Gehen wir in die Bar?', form: 'abbiamo sete' },
   ] },
   { wort: 'il succo', saetze: [
-    { it: 'Ho sete: un succo, per favore.', de: 'Ich habe Durst – einen Saft, bitte.' },
-    { it: 'Ecco il succo per Anna.', de: 'Hier ist der Saft für Anna.' },
-    { it: 'Il succo è per me, il latte per Marco.', de: 'Der Saft ist für mich, die Milch für Marco.' },
+    { it: 'Per me un succo di frutta, per favore.', de: 'Für mich einen Fruchtsaft, bitte.' },
+    { it: 'A colazione bevo un succo d’arancia.', de: 'Zum Frühstück trinke ich einen Orangensaft.', formen: { bevo: 'bere' } },
+    { it: 'Questo succo è troppo dolce.', de: 'Dieser Saft ist zu süß.' },
   ] },
   { wort: 'il cappuccino', saetze: [
-    { it: 'A colazione: un cappuccino e un cornetto.', de: 'Zum Frühstück: einen Cappuccino und ein Hörnchen.' },
-    { it: 'Un cappuccino e un tè, per favore.', de: 'Einen Cappuccino und einen Tee, bitte.' },
-    { it: 'Due cappuccini, per favore.', de: 'Zwei Cappuccino, bitte.', form: 'cappuccini' },
+    { it: 'Vorrei un cappuccino e un cornetto.', de: 'Ich hätte gern einen Cappuccino und ein Hörnchen.' },
+    { it: 'In Italia il cappuccino si beve solo la mattina.', de: 'In Italien trinkt man Cappuccino nur morgens.', formen: { beve: 'bere' } },
+    { it: 'Due cappuccini caldi, per favore.', de: 'Zwei heiße Cappuccino, bitte.', form: 'cappuccini' },
   ] },
   { wort: "l'acqua frizzante", saetze: [
-    { it: 'Un’acqua frizzante, per favore. Ho sete!', de: 'Ein Sprudelwasser, bitte. Ich habe Durst!' },
-    { it: 'Non bevo acqua frizzante.', de: 'Ich trinke kein Sprudelwasser.', formen: { bevo: 'bere' } },
-    { it: 'C’è acqua frizzante?', de: 'Gibt es Sprudelwasser?' },
+    { it: 'Per me acqua frizzante, per favore.', de: 'Für mich Sprudelwasser, bitte.' },
+    { it: 'Al ristorante ordino sempre acqua frizzante.', de: 'Im Restaurant bestelle ich immer Sprudelwasser.' },
+    { it: 'Mia figlia non beve acqua frizzante.', de: 'Meine Tochter trinkt kein Sprudelwasser.', formen: { beve: 'bere' } },
   ] },
   { wort: 'il bancone', saetze: [
-    { it: 'Al bar bevo il caffè al bancone.', de: 'In der Bar trinke ich den Kaffee an der Theke.', formen: { bevo: 'bere' } },
-    { it: 'Al bancone il caffè costa un euro.', de: 'An der Theke kostet der Kaffee einen Euro.' },
-    { it: 'Scusi, si paga al bancone?', de: 'Entschuldigung, bezahlt man an der Theke?' },
+    { it: 'Al bancone il caffè costa meno.', de: 'An der Theke kostet der Kaffee weniger.' },
+    { it: 'Paghiamo alla cassa e poi andiamo al bancone.', de: 'Wir bezahlen an der Kasse und gehen dann zur Theke.', formen: { paghiamo: 'pagare' } },
+    { it: 'Prendiamo il caffè al bancone o al tavolo?', de: 'Trinken wir den Kaffee an der Theke oder am Tisch?' },
   ] },
 
   // Päckchen 2
   { wort: 'la spremuta', saetze: [
-    { it: 'Un succo? No, una spremuta, per favore!', de: 'Einen Saft? Nein, einen frisch gepressten, bitte!' },
-    { it: 'La spremuta è buona!', de: 'Der frisch gepresste Saft ist lecker!' },
-    { it: 'Una spremuta e un cappuccino, per favore.', de: 'Einen frisch gepressten Saft und einen Cappuccino, bitte.' },
+    { it: 'Una spremuta d’arancia, per favore!', de: 'Einen frisch gepressten Orangensaft, bitte!' },
+    { it: 'Una spremuta di pompelmo per me.', de: 'Für mich einen frisch gepressten Grapefruitsaft.' },
+    { it: 'Che buona questa spremuta!', de: 'Dieser frisch gepresste Saft ist lecker!' },
   ] },
   { wort: 'il macchiato', saetze: [
-    { it: 'Per Marco un macchiato, non un cappuccino.', de: 'Für Marco einen Macchiato, keinen Cappuccino.' },
-    { it: 'Il macchiato? Sì, per me!', de: 'Der Macchiato? Ja, für mich!' },
-    { it: 'Due macchiati al bancone, per favore.', de: 'Zwei Macchiato an der Theke, bitte.', form: 'macchiati' },
+    { it: 'Un macchiato: un caffè con un po’ di latte.', de: 'Ein Macchiato: ein Kaffee mit etwas Milch.' },
+    { it: 'Per me un macchiato, per mio marito un cappuccino.', de: 'Für mich einen Macchiato, für meinen Mann einen Cappuccino.' },
+    { it: 'Al bar il signor Rossi prende sempre un macchiato.', de: 'In der Bar nimmt Herr Rossi immer einen Macchiato.' },
   ] },
   { wort: "l'acqua naturale", saetze: [
-    { it: 'Non frizzante: acqua naturale, per favore.', de: 'Kein Sprudel – stilles Wasser, bitte.' },
-    { it: 'L’acqua naturale costa un euro.', de: 'Das stille Wasser kostet einen Euro.' },
-    { it: 'Per me acqua naturale, per Anna frizzante.', de: 'Für mich stilles Wasser, für Anna Sprudel.' },
+    { it: 'Acqua frizzante o naturale? – Naturale, grazie.', de: 'Sprudel oder still? – Still, danke.', form: 'naturale' },
+    { it: 'In frigorifero c’è solo acqua naturale.', de: 'Im Kühlschrank gibt es nur stilles Wasser.' },
+    { it: 'Un’acqua naturale e un macchiato, per favore.', de: 'Ein stilles Wasser und einen Macchiato, bitte.' },
   ] },
   { wort: 'il ghiaccio', saetze: [
-    { it: 'Ghiaccio nell’acqua? Sì, grazie!', de: 'Eiswürfel ins Wasser? Ja, danke!' },
-    { it: 'Non c’è ghiaccio?', de: 'Gibt es kein Eis?' },
-    { it: 'Per me tanto ghiaccio, per favore.', de: 'Für mich viel Eis, bitte.' },
+    { it: 'Fa caldo: una bibita con tanto ghiaccio!', de: 'Es ist heiß: ein Getränk mit viel Eis!' },
+    { it: 'Il ghiaccio è nel freezer.', de: 'Das Eis ist im Gefrierschrank.' },
+    { it: 'Vuoi il ghiaccio nel succo?', de: 'Willst du Eis im Saft?' },
   ] },
   { wort: 'la lattina', saetze: [
-    { it: 'La birra in lattina costa due euro.', de: 'Das Bier in der Dose kostet zwei Euro.' },
-    { it: 'Ecco una lattina di succo.', de: 'Hier ist eine Dose Saft.' },
-    { it: 'Due lattine, per favore.', de: 'Zwei Dosen, bitte.', form: 'lattine' },
+    { it: 'Al supermercato compro sei lattine di birra.', de: 'Im Supermarkt kaufe ich sechs Dosen Bier.', form: 'lattine' },
+    { it: 'La lattina è vuota.', de: 'Die Dose ist leer.' },
+    { it: 'Bevi dalla lattina o dal bicchiere?', de: 'Trinkst du aus der Dose oder aus dem Glas?', formen: { bevi: 'bere' } },
   ] },
 
   // Päckchen 3
   { wort: "l'aranciata", saetze: [
-    { it: 'L’aranciata italiana è buona.', de: 'Die italienische Orangenlimonade ist gut.' },
-    { it: 'Due aranciate e un’acqua, per favore.', de: 'Zwei Orangenlimonaden und ein Wasser, bitte.', form: 'aranciate' },
-    { it: 'Al bancone Marco beve un’aranciata.', de: 'An der Theke trinkt Marco eine Orangenlimonade.', formen: { beve: 'bere' } },
+    { it: 'Per i ragazzi due aranciate, per favore.', de: 'Für die Jungs zwei Orangenlimonaden, bitte.', form: 'aranciate' },
+    { it: 'L’aranciata è troppo dolce per me.', de: 'Die Orangenlimonade ist mir zu süß.' },
+    { it: 'D’estate bevo un’aranciata con ghiaccio.', de: 'Im Sommer trinke ich eine Orangenlimonade mit Eis.', formen: { bevo: 'bere' } },
   ] },
   { wort: 'la cannuccia', saetze: [
-    { it: 'Scusi, c’è una cannuccia?', de: 'Entschuldigung, gibt es einen Strohhalm?' },
-    { it: 'La cannuccia è nella lattina.', de: 'Der Strohhalm steckt in der Dose.' },
-    { it: 'Una cannuccia per la spremuta, per favore.', de: 'Einen Strohhalm für den Saft, bitte.' },
+    { it: 'Una cannuccia per il succo, per favore.', de: 'Einen Strohhalm für den Saft, bitte.' },
+    { it: 'Il cameriere mette una cannuccia nella spremuta.', de: 'Der Kellner steckt einen Strohhalm in den Saft.' },
+    { it: 'Non mi piace bere con la cannuccia.', de: 'Ich trinke nicht gern mit Strohhalm.' },
   ] },
   { wort: 'la cioccolata', saetze: [
-    { it: 'La mattina Anna beve una cioccolata.', de: 'Morgens trinkt Anna eine heiße Schokolade.', formen: { beve: 'bere' } },
-    { it: 'Una cioccolata e due cornetti, per favore.', de: 'Eine heiße Schokolade und zwei Hörnchen, bitte.' },
-    { it: 'La cioccolata è per Anna, il tè per me.', de: 'Die heiße Schokolade ist für Anna, der Tee für mich.' },
+    { it: 'D’inverno bevo una cioccolata calda.', de: 'Im Winter trinke ich eine heiße Schokolade.', formen: { bevo: 'bere' } },
+    { it: 'La cioccolata in questo bar è molto buona.', de: 'Die heiße Schokolade in dieser Bar ist sehr gut.' },
+    { it: 'Mamma, posso avere una cioccolata?', de: 'Mama, darf ich eine heiße Schokolade haben?' },
   ] },
   { wort: "l'aperitivo", saetze: [
-    { it: 'Alle sette: aperitivo al bar!', de: 'Um sieben: Aperitif in der Bar!' },
-    { it: 'Sono all’aperitivo, ciao!', de: 'Ich bin beim Aperitif, tschüss!' },
-    { it: 'L’aperitivo è alle otto, a dopo!', de: 'Der Aperitif ist um acht, bis später!' },
+    { it: 'Venerdì sera facciamo un aperitivo con i colleghi.', de: 'Freitagabend machen wir einen Aperitif mit den Kollegen.', formen: { colleghi: 'collega' } },
+    { it: 'L’aperitivo inizia alle sette.', de: 'Der Aperitif beginnt um sieben.' },
+    { it: 'Andiamo all’aperitivo in piazza?', de: 'Gehen wir zum Aperitif auf dem Platz?' },
   ] },
   { wort: 'lo spritz', saetze: [
-    { it: 'Per l’aperitivo uno spritz!', de: 'Zum Aperitif einen Spritz!' },
-    { it: 'Due spritz e due aranciate, per favore.', de: 'Zwei Spritz und zwei Orangenlimonaden, bitte.' },
-    { it: 'Lo spritz costa sei euro.', de: 'Der Spritz kostet sechs Euro.' },
+    { it: 'Per me uno spritz, per lei un’acqua frizzante.', de: 'Für mich einen Spritz, für sie ein Sprudelwasser.' },
+    { it: 'Lo spritz è arancione e molto famoso.', de: 'Der Spritz ist orange und sehr berühmt.' },
+    { it: 'Due spritz con tanto ghiaccio, per favore!', de: 'Zwei Spritz mit viel Eis, bitte!' },
   ] },
 ];

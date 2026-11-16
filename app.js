@@ -630,14 +630,31 @@ function wegRundenSchritte(s) {
   const neueste = [...ids].reverse().filter((id) => karten[id]);
   const jungeIds = neueste.filter(jung).slice(0, 6);
   const schritte = [
-    ...(jungeIds.length >= 2 ? [{ art: 'paare', ids: mischen(jungeIds).slice(0, 5) }] : []),
+    ...(jungeIds.length ? [{ art: 'paare', ids: mischen(jungeIds).slice(0, 5) }] : []),
     ...mischen(jungeIds).map((id) => ({ art: 'waehlen', id, modus: modus(id) })),
   ];
   for (const id of neueste.filter((x) => !jung(x))) {
-    if (schritte.length >= 9) break;
+    if (schritte.length >= 7) break;
     schritte.push({ art: 'deutsch', id, ohneWertung: true });
   }
+  // Damit Altes nicht vergessen wird: 3 Wörter aus früheren Lektionen oder „kenne ich“,
+  // die schwächsten zuerst (niedriges Fach), mal lesen, mal schreiben – ändert keine Fächer
+  for (const id of alteWoerter(ids, 3)) {
+    schritte.push({ art: Math.random() < 0.5 ? 'deutsch' : 'frage', id, ohneWertung: true });
+  }
   return [schritte[0], ...mischen(schritte.slice(1))].filter(Boolean);
+}
+
+// anzahl gelernte Wörter außerhalb von ohne: zufällig aus den 12 schwächsten (Fach, dann am längsten nicht dran)
+function alteWoerter(ohne, anzahl) {
+  const karten = Speicher.daten.karten;
+  const nicht = new Set(ohne);
+  const kandidaten = Object.entries(karten)
+    .filter(([id, k]) => !nicht.has(id) && !Vokabeln.istJung(k) && Vokabeln.wort(id))
+    .sort((a, b) => (a[1].fach || 1) - (b[1].fach || 1) || String(a[1].faellig).localeCompare(String(b[1].faellig)))
+    .slice(0, 12)
+    .map(([id]) => id);
+  return mischen(kandidaten).slice(0, anzahl);
 }
 
 // optionen.ids: nur diese Wörter üben (z. B. einer erledigten Lektion) – zählt nicht für den Karteikasten
@@ -815,12 +832,9 @@ function zeigeSchritt() {
     const rechts = el('runde-paare-de');
     links.innerHTML = '';
     rechts.innerHTML = '';
-    const woerter = schritt.ids.map((id) => Vokabeln.wort(id));
-    // Bei weniger als 3 Wörtern ein paar bekannte dazunehmen, damit es ein Spiel wird
-    for (const x of WORTSCHATZ) {
-      if (woerter.length >= 3) break;
-      if (!woerter.some((y) => y.id === x.id)) woerter.push(x);
-    }
+    const woerter = schritt.ids.map((id) => Vokabeln.wort(id)).filter(Boolean);
+    // Bis 5 Paare mit Wörtern auffüllen, die du schon gelernt hast – jedes Mal zufällig andere
+    for (const x of paarFueller(woerter.map((w) => w.id), 5 - woerter.length)) woerter.push(x);
     const kurz = (de) => de.replace(/\s*\([^)]*\)/g, '').split(';')[0].trim();
     const knopf = (text, id, seite) => {
       const b = document.createElement('button');
@@ -916,6 +930,27 @@ function waehlen(knopf, richtig, w) {
   if (richtig) autoWeiter(1800);
 }
 
+// anzahl Wörter zum Auffüllen der Wortpaare: erst gelernte Wörter (Karte, nicht mehr jung),
+// dann Wörter aus Lektionen bis zur aktuellen, notfalls A1-Wörter – immer zufällig gemischt.
+function paarFueller(schonDa, anzahl) {
+  if (anzahl <= 0) return [];
+  const karten = Speicher.daten.karten;
+  const nicht = new Set(schonDa);
+  const gelernt = Object.keys(karten).filter((id) => !Vokabeln.istJung(karten[id]));
+  const akt = Lektionen.aktuelle();
+  const bisher = Lektionen.alle().filter((l) => !akt || l.nr <= akt.nr).flatMap((l) => l.wortIds);
+  const a1 = WORTSCHATZ.filter((w) => w.stufe === 'A1').map((w) => w.id);
+  const ergebnis = [];
+  for (const id of [...mischen(gelernt), ...mischen(bisher), ...mischen(a1)]) {
+    if (ergebnis.length >= anzahl) break;
+    const w = Vokabeln.wort(id);
+    if (!w || nicht.has(id) || ergebnis.some((x) => x.it === w.it)) continue;
+    nicht.add(id);
+    ergebnis.push(w);
+  }
+  return ergebnis;
+}
+
 function rundePaarTippen(b) {
   const vorher = abfrage.gewaehlt;
   if (!vorher || vorher.dataset.seite === b.dataset.seite) {
@@ -980,12 +1015,12 @@ function pruefen(weissNicht = false) {
   // Nur der erste Versuch zählt für den Karteikasten.
   if (!abfrage.gewertet.has(w.id)) {
     abfrage.gewertet.add(w.id);
-    if (!abfrage.ohneWertung) Vokabeln.eintragen(w.id, gewusst, 'it');
+    if (!abfrage.ohneWertung && !schritt.ohneWertung) Vokabeln.eintragen(w.id, gewusst, 'it');
     Vokabeln.ergebnisZaehlen(gewusst);
     if (gewusst) abfrage.aufAnhieb += 1;
   }
   // Nicht gewusst: am Ende der Runde noch einmal fragen.
-  if (!gewusst) abfrage.schritte.push({ art: 'frage', id: w.id });
+  if (!gewusst) abfrage.schritte.push({ art: 'frage', id: w.id, ohneWertung: schritt.ohneWertung });
 
   const box = el('rueckmeldung');
   box.classList.toggle('falsch', !gewusst);
@@ -1020,8 +1055,20 @@ function autoWeiter(ms = 1200) {
   const pos = abfrage.pos;
   clearTimeout(abfrage.autoZeit);
   abfrage.autoZeit = setTimeout(() => {
-    if (abfrage.pos === pos && abfrage.geprueft && !el('screen-runde').hidden) weiter();
+    if (abfrage.pos === pos && abfrage.geprueft && !el('screen-runde').hidden) { tippSperre(); weiter(); }
   }, ms);
+}
+
+// Geht die App von selbst weiter, wollte man vielleicht gerade „Weiter“ tippen – dieser Tipp
+// würde sonst die nächste Aufgabe treffen (z. B. „Weiß ich nicht“). Kurz alle Tipps ignorieren.
+let tippGesperrtBis = 0;
+function tippSperre(ms = 700) { tippGesperrtBis = Date.now() + ms; }
+for (const id of ['screen-runde', 'screen-aufgaben']) {
+  for (const art of ['click', 'submit']) {
+    el(id).addEventListener(art, (e) => {
+      if (Date.now() < tippGesperrtBis) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+  }
 }
 
 function weiter() {
@@ -2659,7 +2706,7 @@ function aufgabePruefen() {
     const nr = aufg.nr;
     clearTimeout(aufg.autoZeit);
     aufg.autoZeit = setTimeout(() => {
-      if (aufg.nr === nr && aufg.geprueft && !aufg.ende && !el('screen-aufgaben').hidden) aufgabeWeiter();
+      if (aufg.nr === nr && aufg.geprueft && !aufg.ende && !el('screen-aufgaben').hidden) { tippSperre(); aufgabeWeiter(); }
     }, 1200);
   }
 }

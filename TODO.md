@@ -9,6 +9,8 @@
 ## 🟢 Jetzt
 
 - [x] **Lektion als Weg, Etappe 1 bauen lassen:** Erledigt am 16.11.2026.
+- [ ] **Verbesserungen nach deinem Test ansehen:** (1) Springt die Seite noch, wenn du „Weiter“ tippst? (2) Wortpaare: Kommen jetzt 5 Paare mit Wörtern, die du schon kennst – jedes Mal andere? (3) Bei „Wörter üben“ kommen jedes Mal 3 alte Wörter mit. Reicht dir das?
+- [ ] **Mit Claude planen:** Kacheln im Satz verschieben, mehr Übungsarten, neue Wörter in Sätzen, mehr Sätze. Dafür einfach sagen: „Lass uns die Übungen planen“.
 - [ ] **Lektion als Weg ausprobieren** (auf dem iPhone, Lektion 1–2): „Los“ bringt erst fällige Wörter, dann fällige Grammatik, dann den nächsten Schritt. Fragen an dich:
       1. Sind die Schritte kurz genug (3–5 Minuten)?
       2. Passt es, dass alle 3 Schritte neue Wörter kommen?

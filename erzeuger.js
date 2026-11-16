@@ -176,6 +176,12 @@ const Erzeuger = (() => {
     return Boolean(k && !(typeof k.kennen === 'number' && k.kennen < Vokabeln.KENNEN_FERTIG));
   }
 
+  // Höchstens 30 Einträge, deren Wörter am längsten nicht dran waren (Vokabelkasten: „lange nicht gesehen“)
+  function langeNicht(liste, idVon) {
+    const nach = new Map(liste.map((x) => [idVon(x), x]));
+    return Vokabeln.langeNichtGesehen([...nach.keys()], 30).map((id) => nach.get(id));
+  }
+
   // Reihenfolge der Wörter im Lernweg: Wort-ID → Nummer der Lektion
   function lektionsNr() {
     const m = new Map();
@@ -198,12 +204,13 @@ const Erzeuger = (() => {
   function auswahl(liste, mindestens) {
     const da = liste.filter((it) => eintrag(it));
     const gekannt = da.filter(bekannt);
-    if (gekannt.length >= mindestens) return gekannt;
+    if (gekannt.length >= mindestens) return langeNicht(gekannt, (it) => wortId(it));
     return fruehe(da, (it) => wortId(it), mindestens) || da;
   }
 
   function verbAufgabe(verben, zeitName, form) {
     const inf = zufall(auswahl(verben, 4));
+    Vokabeln.gesehen(wortId(inf));
     const p = Math.floor(Math.random() * 6);
     const wer = p === 2 ? zufall(['lui', 'lei']) : PERSONEN[p];
     const ergebnis = form(inf, p, wer);
@@ -228,11 +235,19 @@ const Erzeuger = (() => {
       .filter(Boolean);
   }
 
-  function nomenAuswahl() {
-    const alle = nomen();
+  // passt: nur bestimmte Nomen (z. B. nur Einzahl) – wird vor der Auswahl angewendet
+  function nomenAuswahl(passt = () => true) {
+    const alle = nomen().filter(passt);
     const gekannt = alle.filter((n) => bekannt(n.w.it));
-    if (gekannt.length >= 10) return gekannt;
+    if (gekannt.length >= 10) return langeNicht(gekannt, (n) => n.w.id);
     return fruehe(alle, (n) => n.w.id, 10) || alle;
+  }
+
+  // Ein Nomen für eine Aufgabe – und merken, dass es dran war (Vokabelkasten)
+  function nomenWaehlen(passt) {
+    const n = zufall(nomenAuswahl(passt));
+    Vokabeln.gesehen(n.w.id);
+    return n;
   }
 
   function lueckeVor(artikel, rest) {
@@ -240,7 +255,7 @@ const Erzeuger = (() => {
   }
 
   function artikelAufgabe() {
-    const n = zufall(nomenAuswahl());
+    const n = nomenWaehlen();
     return {
       art: 'luecke',
       de: "Welcher Artikel? (il, lo, la, l', i, gli, le)",
@@ -253,7 +268,7 @@ const Erzeuger = (() => {
   const UNBESTIMMT = { il: 'un', lo: 'uno', la: 'una' };
 
   function einAufgabe() {
-    const n = zufall(nomenAuswahl().filter((x) => UNBESTIMMT[x.artikel]));
+    const n = nomenWaehlen((x) => UNBESTIMMT[x.artikel]);
     return {
       art: 'luecke',
       de: "Ein oder eine? (un, uno, una, un')",
@@ -272,7 +287,7 @@ const Erzeuger = (() => {
   };
 
   function praepAufgabe() {
-    const n = zufall(nomenAuswahl());
+    const n = nomenWaehlen();
     const p = zufall(Object.keys(PRAEP));
     return {
       art: 'luecke',

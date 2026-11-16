@@ -14,6 +14,7 @@
   --schatten: 0 1px 2px rgba(60, 50, 20, 0.06), 0 4px 14px rgba(60, 50, 20, 0.06);
   --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
   --radius: 16px;
+  --kasten-farbe: #d9822b;   /* Symbol „Vokabelkasten“ unter Üben */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1264,3 +1265,29 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 .knopf-zweit,
 .knopf-zurueck,
 .knopf-neu { border-radius: 999px; }
+
+/* ---------- Vokabelkasten (wie Phase 6: Fächer mit Anzahl, antippen = vorziehen) ---------- */
+.symbol-orange { background: var(--kasten-farbe); color: #fffdf6; }
+.kasten-faecher { display: flex; flex-direction: column; gap: 8px; }
+.kasten-fach {
+  display: grid;
+  grid-template-columns: 64px 1fr 48px 72px;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 14px;
+  border: 1px solid var(--rand);
+  border-radius: 14px;
+  background: var(--flaeche);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+}
+.kasten-fach:active { opacity: 0.85; }
+.kasten-fach:disabled { opacity: 0.5; }
+.kasten-fach-name { font-weight: 600; }
+.kasten-balken { height: 8px; border-radius: 4px; background: var(--rand); overflow: hidden; }
+.kasten-balken span { display: block; height: 100%; border-radius: 4px; background: var(--akzent); }
+.kasten-fach-zahl { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.kasten-fach-faellig { text-align: right; font-size: 14px; color: var(--text-leise); }

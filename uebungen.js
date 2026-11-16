@@ -101,17 +101,17 @@ const Uebungen = (() => {
 
   // ---------- Wortpaare ----------
 
-  // 5 Paare aus deinem Karteikasten (am liebsten Wörter, die noch nicht sicher sitzen).
+  // 5 Paare aus deinem Karteikasten – am liebsten Wörter, die lange nicht dran waren.
   // Sind noch zu wenige Wörter drin, kommen die ersten Wörter des Grundwortschatzes dazu.
   // ids: nur diese Wörter verwenden (z. B. die Wörter einer Lektion)
   function paare(anzahl = 5, ids = null) {
     const kurzDe = (de) => de.replace(/\s*\([^)]*\)/g, '').split(';')[0].trim();
-    const karten = ids ? mischen(ids.map((id) => Vokabeln.wort(id)).filter(Boolean)) : Object.entries(Speicher.daten.karten)
-      .map(([id, k]) => ({ w: Vokabeln.wort(id), fach: k.fach }))
-      .filter((x) => x.w)
-      .sort((a, b) => a.fach - b.fach || Math.random() - 0.5)
-      .map((x) => x.w);
-    const kandidaten = ids ? karten : [...mischen(karten.slice(0, 12)), ...WORTSCHATZ];
+    const gelernt = Object.entries(Speicher.daten.karten)
+      .filter(([id, k]) => !Vokabeln.istJung(k) && Vokabeln.wort(id))
+      .map(([id]) => id);
+    const karten = ids ? mischen(ids.map((id) => Vokabeln.wort(id)).filter(Boolean))
+      : Vokabeln.langeNichtGesehen(gelernt, 12).map((id) => Vokabeln.wort(id));
+    const kandidaten = ids ? karten : [...karten, ...WORTSCHATZ];
     const liste = [];
     const deSchon = new Set();
     for (const w of kandidaten) {
@@ -144,11 +144,12 @@ const Uebungen = (() => {
     return lektionVonCache;
   }
 
-  // Passt der Satz zum Stand bis Lektion nr? (kein Wort aus einer späteren Lektion)
+  // Passt der Satz zum Stand bis Lektion nr? (kein Wort aus einer späteren Lektion –
+  // außer Nicole kennt es schon aus Duolingo, siehe schon-bekannt.js)
   function bekanntBis(satz, nr) {
     const von = lektionVonWort();
     return satz.it.toLowerCase().replace(/[.,!?;:«»"–]/g, ' ').split(/\s+/).filter(Boolean)
-      .every((w) => !von.has(w) || von.get(w) <= nr);
+      .every((w) => !von.has(w) || von.get(w) <= nr || SchonBekannt.wortBekannt(w));
   }
 
   // optionen.lektion: nur Sätze aus Kapiteln und Texten dieser und früherer Lektionen,

@@ -5,7 +5,7 @@
 const REITER_VON = {
   start: 'heute',
   lektionen: 'lektionen', lektion: 'lektionen',
-  ueben: 'ueben', texte: 'ueben', grammatik: 'ueben', kapitel: 'ueben', woerterbuch: 'ueben',
+  ueben: 'ueben', kasten: 'ueben', texte: 'ueben', grammatik: 'ueben', kapitel: 'ueben', woerterbuch: 'ueben',
   fortschritt: 'stand', woerter: 'stand',
   einstellungen: 'einst', daten: 'einst',
 };
@@ -53,7 +53,7 @@ document.getElementById('knopf-oben-zurueck').addEventListener('click', () => {
 function oeffneReiter(reiter) {
   if (reiter === 'lektionen') { zeigeLektionen(); zeige('lektionen'); }
   else if (reiter === 'ueben') {
-    zeigeLesenStand(); zeigeGrammatikStand(); zeigeHoerenStand();
+    zeigeLesenStand(); zeigeGrammatikStand(); zeigeHoerenStand(); zeigeKastenStand();
     Begleiter.zeigen(el('begleiter-ueben'), Begleiter.uebenNachricht());
     zeige('ueben');
   }
@@ -119,6 +119,7 @@ dateiFeld.addEventListener('change', async () => {
     await Speicher.ausDateiLaden(datei);
     zeigeZuletztGesichert();
     Lektionen.uebergang();
+    Vokabeln.duolingoUebernehmen();   // ältere Sicherung ohne Merker: Duolingo-Wörter noch einmal übernehmen
     meldung('Geladen. Dein Lernstand ist wiederhergestellt.');
   } catch (fehler) {
     meldung(fehler.message, true);
@@ -705,6 +706,22 @@ function alteWoerter(ohne, anzahl) {
 // optionen.weg: Schritt des Wegs (siehe wegRundenSchritte); optionen.nurFaellig: nur fällige Wörter
 function starteRunde(optionen = {}) {
   abfrage.weg = Boolean(optionen.weg);
+  abfrage.zurueck = optionen.zurueck || '';     // 'kasten': nach der Runde zurück zum Vokabelkasten
+  if (optionen.ids && optionen.wertung) {
+    // Vokabelkasten „vorziehen“: wie fällige Wörter, zählt für die Fächer
+    abfrage.schritte = optionen.ids.filter((id) => Vokabeln.wort(id))
+      .map((id) => ({ art: Vokabeln.richtungFuer(id) === 'de' ? 'deutsch' : 'frage', id }));
+    abfrage.ohneWertung = false;
+    abfrage.pos = 0;
+    abfrage.gewertet = new Set();
+    abfrage.aufAnhieb = 0;
+    abfrage.kennen = new Set();
+    abfrage.zweiterVersuch = new Set();
+    if (!abfrage.schritte.length) return;
+    zeige('runde');
+    zeigeSchritt();
+    return;
+  }
   if (optionen.weg) {
     abfrage.schritte = wegRundenSchritte(optionen.weg);
     abfrage.ohneWertung = false;
@@ -1158,12 +1175,12 @@ function paarFueller(schonDa, anzahl) {
   if (anzahl <= 0) return [];
   const karten = Speicher.daten.karten;
   const nicht = new Set(schonDa);
-  const gelernt = Object.keys(karten).filter((id) => !Vokabeln.istJung(karten[id]));
+  const gelernt = Vokabeln.langeNichtGesehen(Object.keys(karten).filter((id) => !Vokabeln.istJung(karten[id])), anzahl * 2);
   const akt = Lektionen.aktuelle();
   const bisher = Lektionen.alle().filter((l) => !akt || l.nr <= akt.nr).flatMap((l) => l.wortIds);
   const a1 = WORTSCHATZ.filter((w) => w.stufe === 'A1').map((w) => w.id);
   const ergebnis = [];
-  for (const id of [...mischen(gelernt), ...mischen(bisher), ...mischen(a1)]) {
+  for (const id of [...gelernt, ...mischen(bisher), ...mischen(a1)]) {
     if (ergebnis.length >= anzahl) break;
     const w = Vokabeln.wort(id);
     if (!w || nicht.has(id) || ergebnis.some((x) => x.it === w.it)) continue;
@@ -1187,6 +1204,7 @@ function rundePaarTippen(b) {
   if (vorher.dataset.id === b.dataset.id) {
     vorher.classList.add('passt');
     b.classList.add('passt');
+    Vokabeln.gesehen(b.dataset.id);          // Vokabelkasten: kam gerade dran
     if (!document.querySelector('#runde-paare .paar:not(.passt)')) rundePaareFertig();
   } else {
     abfrage.paarFehler.add(vorher.dataset.id);
@@ -1312,6 +1330,11 @@ function beendeRunde() {
   clearTimeout(abfrage.autoZeit);
   const zuEnde = abfrage.pos >= abfrage.schritte.length;
   if (zuEnde) stelleVergessen('runde');   // „Beenden“ mittendrin: Stelle bleibt
+  if (abfrage.zurueck === 'kasten') {
+    const n = abfrage.gewertet.size;
+    zeigeKasten(n ? `Gerade geübt: ${n} ${n === 1 ? 'Wort' : 'Wörter'}, ${abfrage.aufAnhieb} davon auf Anhieb gewusst.` : '');
+    return;
+  }
   // Schritt des Wegs: zu Ende gespielt → Schritt gemacht; mittendrin beendet → Startseite (Weitermachen)
   if (abfrage.weg) {
     if (!zuEnde) { zeigeStart(); return; }
@@ -1856,6 +1879,62 @@ const gram = { kapitel: null, zurueckZu: 'grammatik', liste: [], nr: 0, richtig:
 function gramUebungen() {
   return gram.zusatz ? gram.kapitel.zusatz.uebungen : gram.kapitel.uebungen;
 }
+
+// ---------- Vokabelkasten ----------
+
+const anzahlText = (n) => `${n} ${n === 1 ? 'Wort' : 'Wörter'}`;
+
+function zeigeKastenStand() {
+  const u = Vokabeln.fachUebersicht();
+  const alle = u.reduce((s, x) => s + x.anzahl, 0);
+  const faellig = u.reduce((s, x) => s + x.faellig, 0);
+  el('kasten-stand-ueben').textContent = alle
+    ? `${anzahlText(alle)} · ${faellig} fällig`
+    : 'Deine Wörter in 5 Fächern';
+}
+
+// zuletzt: kurze Zeile nach einer Runde („Gerade geübt: …“)
+function zeigeKasten(zuletzt = '') {
+  const u = Vokabeln.fachUebersicht();
+  const alle = u.reduce((s, x) => s + x.anzahl, 0);
+  const faellig = u.reduce((s, x) => s + x.faellig, 0);
+  const groesstes = Math.max(1, ...u.map((x) => x.anzahl));
+  el('kasten-zusammen').textContent = alle
+    ? `${anzahlText(alle)} im Kasten · ${faellig} heute fällig`
+    : 'Noch keine Wörter im Kasten. Sie kommen mit den Lektionen dazu.';
+  el('kasten-zuletzt').hidden = !zuletzt;
+  el('kasten-zuletzt').textContent = zuletzt;
+
+  const box = el('kasten-faecher');
+  box.innerHTML = '';
+  for (const f of u) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'kasten-fach';
+    b.disabled = !f.anzahl;
+    b.innerHTML = '<span class="kasten-fach-name"></span><span class="kasten-balken"><span></span></span>'
+      + '<span class="kasten-fach-zahl"></span><span class="kasten-fach-faellig"></span>';
+    b.querySelector('.kasten-fach-name').textContent = `Fach ${f.fach}`;
+    b.querySelector('.kasten-balken span').style.width = `${Math.round((f.anzahl / groesstes) * 100)}%`;
+    b.querySelector('.kasten-fach-zahl').textContent = f.anzahl;
+    b.querySelector('.kasten-fach-faellig').textContent = f.faellig ? `${f.faellig} fällig` : '';
+    b.setAttribute('aria-label', `Fach ${f.fach}: ${anzahlText(f.anzahl)}, ${f.faellig} fällig – antippen zum Vorziehen`);
+    b.addEventListener('click', () => {
+      const ids = Vokabeln.langeNichtGesehen(Vokabeln.fachIds(f.fach), 20);
+      if (ids.length) starteRunde({ ids, wertung: true, zurueck: 'kasten' });
+    });
+    box.appendChild(b);
+  }
+
+  const knopf = el('knopf-kasten-faellig');
+  const runde = Math.min(faellig, 20);
+  knopf.disabled = !faellig;
+  knopf.textContent = faellig ? `Fällige üben (${runde})` : 'Heute ist nichts fällig.';
+  zeige('kasten');
+}
+
+el('knopf-kasten').addEventListener('click', () => zeigeKasten());
+el('knopf-kasten-faellig').addEventListener('click', () => starteRunde({ nurFaellig: true, zurueck: 'kasten' }));
 
 function zeigeGrammatikStand() {
   const n = Grammatik.anzahlGeuebt();
@@ -2668,6 +2747,7 @@ function paarTippen(b) {
   if (vorher.dataset.id === b.dataset.id) {
     vorher.classList.add('passt');
     b.classList.add('passt');
+    Vokabeln.gesehen(b.dataset.id);          // Vokabelkasten: kam gerade dran
     if (!document.querySelector('#paare .paar:not(.passt)')) paareFertig();
   } else {
     hoer.fehler += 1;
@@ -3082,7 +3162,7 @@ function stelleMerken(art) {
     Object.assign(d, {
       schritte: abfrage.schritte, pos: abfrage.pos, gewertet: [...abfrage.gewertet], aufAnhieb: abfrage.aufAnhieb,
       kennen: [...abfrage.kennen], zweiterVersuch: [...abfrage.zweiterVersuch], ohneWertung: Boolean(abfrage.ohneWertung),
-      rundeWeg: Boolean(abfrage.weg),
+      rundeWeg: Boolean(abfrage.weg), zurueck: abfrage.zurueck || '',
     });
   } else if (art === 'aufgaben') {
     Object.assign(d, { liste: aufg.liste, nr: aufg.nr, richtig: aufg.richtig, fehler: aufg.fehler, titel: aufg.titel, info: aufg.info });
@@ -3147,6 +3227,7 @@ function weitermachen() {
       schritte: d.schritte, pos: d.pos, gewertet: new Set(d.gewertet), aufAnhieb: d.aufAnhieb,
       kennen: new Set(d.kennen), zweiterVersuch: new Set(d.zweiterVersuch), ohneWertung: d.ohneWertung,
       geprueft: false, gewaehlt: null, paarFehler: new Set(), weg: Boolean(d.rundeWeg && wegAktiv),
+      zurueck: d.zurueck || '',
     });
     zeige('runde');
     zeigeSchritt();
@@ -3270,6 +3351,7 @@ if (typeof MutationObserver !== 'undefined') {
 
 setzeGruss();
 Lektionen.uebergang();
+Vokabeln.duolingoUebernehmen();     // einmalig: Duolingo-Wörter als bekannt in den Karteikasten
 zeigeStart();
 Woerterbuch.laden().then(() => {
   if (!el('screen-woerterbuch').hidden) { zeigeSuchHinweis(); suchen(); }

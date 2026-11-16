@@ -150,5 +150,20 @@ const SchonBekannt = (() => {
     return !NICHT_VORMERKEN.has(g) && (menge.has(g) || menge.has(klein(it)));
   }
 
-  return { LISTE, enthaelt, grundform };
+  // Einzelne Wörter aus allen Einträgen („grazie mille“ → grazie, mille; „dov'è“ → dov', è)
+  const einzeln = new Set();
+  for (const eintrag of LISTE) {
+    for (const t of klein(eintrag).split(/\s+/)) {
+      einzeln.add(t);
+      const i = t.indexOf("'");
+      if (i > 0) { einzeln.add(t.slice(0, i + 1)); einzeln.add(t.slice(i + 1)); }
+    }
+  }
+
+  // Kennt Nicole dieses einzelne Wort (so wie es im Satz steht)?
+  function wortBekannt(form) {
+    return einzeln.has(klein(form));
+  }
+
+  return { LISTE, enthaelt, grundform, wortBekannt };
 })();

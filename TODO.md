@@ -12,6 +12,7 @@
 - [ ] **Verbesserungen nach deinem Test ansehen:** (1) Springt die Seite noch, wenn du „Weiter“ tippst? (2) Wortpaare: Kommen jetzt 5 Paare mit Wörtern, die du schon kennst – jedes Mal andere? (3) Bei „Wörter üben“ kommen jedes Mal 3 alte Wörter mit. Reicht dir das?
 - [x] **Übungen planen:** Erledigt am 16.11.2026 – „Neue Wörter in Sätzen“ ist geplant (erst Lektion 4–6 zum Testen).
 - [x] **Bauplan „Neue Wörter in Sätzen“ freigeben:** Erledigt am 16.11.2026 – gebaut für Lektion 4–6.
+- [ ] **Vokabelkasten ausprobieren:** Üben → „Vokabelkasten“. Ab morgen sind jeden Tag 20 deiner Duolingo-Wörter fällig („Fällige üben“ oder einfach „Los“). Fach antippen = Wörter vorziehen. Fragen: Sind 20 am Tag zu viel oder zu wenig? Ist „Fach antippen“ verständlich? Sitzen die Duolingo-Wörter wirklich so gut?
 - [ ] **Duolingo-Wörter vorgemerkt:** Bei „Kennst du die schon?“ stehen Wörter aus deiner Duolingo-Liste jetzt schon auf „kenne ich“. Passt das, oder sind Wörter dabei, die du doch nicht kannst? Dann einfach auf „neu“ tippen.
 - [ ] **Neue Sätze ansehen (Lektion 4–6):** Die Sätze sind neu geschrieben – natürlicher, mit Alltagsszenen und mehr Abwechslung, auch mit Wörtern, die du von Duolingo kennst. Klingen sie jetzt besser? Komische Sätze bitte aufschreiben.
 - [ ] **Neue Wörter in Sätzen ausprobieren** (auf dem iPhone, Lektion 4–6; du kommst dahin, wenn Lektion 3 fertig ist). Neue Wörter kommen jetzt zuerst in einem Satz. Fragen an dich:

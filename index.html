@@ -59,6 +59,13 @@
         <span class="begleiter-blase"><span class="begleiter-text"></span></span>
       </div>
 
+      <button class="karte karte-knopf ueben-karte" id="knopf-kasten" type="button">
+        <span class="ueben-symbol symbol-orange" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9.5h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM4 9.5 6 4.5h12l2 5M9.5 13.5h5"/></svg></span>
+        <span class="karte-titel">Vokabelkasten</span>
+        <span class="karte-text" id="kasten-stand-ueben">Deine Wörter in 5 Fächern</span>
+        <span class="pfeil" aria-hidden="true">›</span>
+      </button>
+
       <button class="karte karte-knopf ueben-karte" id="knopf-lesen" type="button">
         <span class="ueben-symbol symbol-gelb" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6.5C10 5 7 4.5 4 5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v13"/></svg></span>
         <span class="karte-titel">Lesen</span>
@@ -86,6 +93,23 @@
         <span class="karte-text">Italienisch – Deutsch, offline</span>
         <span class="pfeil" aria-hidden="true">›</span>
       </button>
+    </section>
+
+    <!-- Vokabelkasten (unter „Üben“): Fächer, fällige üben, Fach vorziehen -->
+    <section class="screen" id="screen-kasten" hidden>
+      <header class="kopf">
+        <h1>Vokabelkasten</h1>
+      </header>
+      <p class="karte-text" id="kasten-zusammen"></p>
+      <p class="meldung" id="kasten-zuletzt" hidden></p>
+
+      <div class="kasten-faecher" id="kasten-faecher"></div>
+      <p class="karte-text klein">Fach antippen: Wörter daraus vorziehen und üben.</p>
+
+      <div class="knopf-gruppe">
+        <button class="knopf-haupt" id="knopf-kasten-faellig" type="button">Fällige üben</button>
+        <button class="knopf-zurueck" data-zurueck="ueben" type="button">Zurück zu Üben</button>
+      </div>
     </section>
 
     <!-- Reiter „Lektionen“ -->

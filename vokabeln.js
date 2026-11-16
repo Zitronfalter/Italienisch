@@ -358,7 +358,80 @@ const Vokabeln = (() => {
     return bestes;
   }
 
+  // ---------- Vokabelkasten: Duolingo-Wörter, Fächer, „lange nicht gesehen“ ----------
+
+  // Einmalig: Wörter aus Nicoles Duolingo-Liste (schon-bekannt.js) kommen als bekannt in Fach 3.
+  // Damit nicht alles an einem Tag fällig ist: 20 pro Tag ab morgen, frühe Lektionen zuerst.
+  // Vorhandene Karten bleiben unverändert. Rückgabe: Anzahl neuer Karten (0, wenn schon geschehen).
+  const DUOLINGO_FACH = 3;
+  const DUOLINGO_PRO_TAG = 20;
+  function duolingoUebernehmen() {
+    const d = Speicher.daten;
+    if (d.duolingo && d.duolingo.uebernommen) return 0;
+    const reihenfolge = new Map();
+    for (const l of Lektionen.alle()) {
+      for (const id of l.wortIds || []) if (!reihenfolge.has(id)) reihenfolge.set(id, reihenfolge.size);
+    }
+    const rang = (id) => (reihenfolge.has(id) ? reihenfolge.get(id) : Infinity);
+    const ids = [...new Set(WORTSCHATZ
+      .filter((w) => !karten()[w.id] && SchonBekannt.enthaelt(w.it))
+      .map((w) => w.id))]                       // ein Wort kann im Wortschatz zweimal stehen (zwei Themen)
+      .sort((a, b) => rang(a) - rang(b));
+    ids.forEach((id, i) => {
+      karten()[id] = {
+        fach: DUOLINGO_FACH,
+        faellig: inTagen(1 + Math.floor(i / DUOLINGO_PRO_TAG)),
+        richtig: 0,
+        falsch: 0,
+        quelle: 'duolingo',
+      };
+    });
+    d.duolingo = { uebernommen: heute(), anzahl: ids.length };
+    Speicher.speichern();
+    return ids.length;
+  }
+
+  // Wort kam in einer Übung vor (Wortpaar, erzeugte Aufgabe): nur das Datum merken, Fach bleibt.
+  function gesehen(id) {
+    const k = karten()[id];
+    if (!k) return;
+    k.zuletzt = heute();
+    Speicher.speichern();
+  }
+
+  // n Wörter, die am längsten nicht dran waren (ohne Datum = am ältesten), die ältesten zuerst.
+  // Bei gleichem Datum zufällig. Wer ein Wort benutzt, setzt danach `zuletzt` (eintragen/gesehen) –
+  // so kommen beim nächsten Mal andere dran.
+  function langeNichtGesehen(ids, n) {
+    const datum = (id) => (karten()[id] && karten()[id].zuletzt) || '';
+    const zufall = new Map([...new Set(ids)].map((id) => [id, Math.random()]));
+    return [...zufall.keys()]
+      .sort((a, b) => datum(a).localeCompare(datum(b)) || zufall.get(a) - zufall.get(b))
+      .slice(0, n);
+  }
+
+  // Karten eines Fachs (ohne Wörter, die noch kennengelernt werden)
+  function fachIds(fach) {
+    return Object.entries(karten())
+      .filter(([id, k]) => k.fach === fach && !istJung(k) && wort(id))
+      .map(([id]) => id);
+  }
+
+  // Für die Vokabelkasten-Seite: [{ fach, anzahl, faellig }] für Fach 1–5
+  function fachUebersicht() {
+    const h = heute();
+    return [1, 2, 3, 4, 5].map((fach) => {
+      const ids = fachIds(fach);
+      return { fach, anzahl: ids.length, faellig: ids.filter((id) => karten()[id].faellig <= h).length };
+    });
+  }
+
   return {
+    duolingoUebernehmen,
+    gesehen,
+    langeNichtGesehen,
+    fachIds,
+    fachUebersicht,
     wort,
     faellige,
     neue,

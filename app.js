@@ -3215,6 +3215,32 @@ if (typeof MutationObserver !== 'undefined') {
   }
 }
 
+// „Prüfen“ geht erst, wenn etwas eingetippt oder mindestens eine Kachel gelegt ist.
+// „Weiß ich nicht“ bleibt immer möglich. Gilt nur, solange der Knopf „Prüfen“ heißt.
+const PRUEFEN_KNOEPFE = ['knopf-pruefen', 'knopf-uebung', 'knopf-aufgabe', 'knopf-hoeren'];
+function pruefenSperren() {
+  for (const id of PRUEFEN_KNOEPFE) {
+    const knopf = el(id);
+    const seite = knopf.closest('.screen');
+    if (knopf.textContent.trim() !== 'Prüfen') { knopf.disabled = false; continue; }
+    // sichtbar innerhalb der Seite (die Seite selbst darf noch versteckt sein)
+    const sichtbar = (x) => { const h = x.closest('[hidden]'); return !h || h === seite; };
+    const felder = [...seite.querySelectorAll('input.eingabe-feld')].filter(sichtbar);
+    const ablagen = [...seite.querySelectorAll('.kachel-ablage')].filter(sichtbar);
+    if (!felder.length && !ablagen.length) { knopf.disabled = false; continue; }
+    const etwasDa = felder.some((f) => f.value.trim()) || ablagen.some((a) => a.children.length);
+    knopf.disabled = !etwasDa;
+  }
+}
+if (typeof MutationObserver !== 'undefined') {
+  const sperrBeobachter = new MutationObserver(pruefenSperren);
+  for (const id of PRUEFEN_KNOEPFE) {
+    const seite = el(id).closest('.screen');
+    sperrBeobachter.observe(seite, { childList: true, characterData: true, attributes: true, subtree: true, attributeFilter: ['hidden'] });
+    seite.addEventListener('input', pruefenSperren);
+  }
+}
+
 setzeGruss();
 Lektionen.uebergang();
 zeigeStart();

@@ -1,4 +1,4 @@
-// Tests für „nichts doppelt an einem Tag“ und „mehr neue Wörter“.
+// Tests für „nichts doppelt an einem Tag“.
 // Ausführen: node --test "werkzeuge/test/*.test.js"
 
 const test = require('node:test');
@@ -61,13 +61,4 @@ test('Aufgabenrunde: heute gelöste Aufgaben fallen weg', () => {
   for (const a of erst) k.Wiederholung.fehlerMerken(a, true);
   const dann = k.Lektionen.aufgabenFuer(l, 10);
   assert.ok(dann.every((a) => !k.Wiederholung.heuteGeloest(a)));
-});
-
-test('mehrHolen: heute 3 neue Wörter mehr, morgen wieder normal', () => {
-  const k = frisch();
-  const vorher = k.Vokabeln.neuGrenze();
-  k.Vokabeln.mehrHolen();
-  assert.strictEqual(k.Vokabeln.neuGrenze(), vorher + 3);
-  k.Speicher.daten.fortschritt.neuExtra.datum = gestern(k);
-  assert.strictEqual(k.Vokabeln.neuGrenze(), vorher);
 });

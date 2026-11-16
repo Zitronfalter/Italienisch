@@ -182,6 +182,24 @@ const Saetze = (() => {
     };
   }
 
+  // Aufgaben für die Festigen-Runde (ohne Wertung). Junge Wörter werden noch nicht geschrieben:
+  // ohne Sätze „wählen“, mit Sätzen ihre eigene Stufe (mindestens 1). Gelernte Wörter abwechselnd
+  // Italienisch → Deutsch und Italienisch schreiben, mit Sätzen Stufe 1–3 reihum.
+  function festigenAufgaben(ids) {
+    let n = 0;
+    return ids.map((id) => {
+      const k = Speicher.daten.karten[id];
+      if (Vokabeln.istJung(k)) {
+        return hat(id)
+          ? aufgabe(id, Math.max(1, k.kennen), { ohneWertung: true })
+          : { art: 'waehlen', id, modus: 'de', ohneWertung: true };
+      }
+      const i = n++;
+      if (hat(id)) return aufgabe(id, 1 + (i % 3), { ohneWertung: true });
+      return { art: i % 2 ? 'frage' : 'deutsch', id, ohneWertung: true };
+    }).filter(Boolean);
+  }
+
   // Vor dem Zeigen: passt die gemerkte Aufgabe noch zur Stufe des Worts?
   // (Die Runde wird am Anfang gebaut; ist Stufe 0 danebengegangen, wäre Stufe 1 zu früh.)
   // Ergebnis: dieselbe Aufgabe, eine neue mit der aktuellen Stufe oder null (Wort ist fertig → überspringen).
@@ -239,7 +257,7 @@ const Saetze = (() => {
   }
 
   return {
-    reihenfolge, hat, stufe, aufgabe, aufgabenFuerJunge, rundenAufgaben, aktualisieren, stufeGeschafft, hinweis, lueckenSatz, pruefe, pruefeLuecke,
+    reihenfolge, hat, stufe, aufgabe, aufgabenFuerJunge, rundenAufgaben, festigenAufgaben, aktualisieren, stufeGeschafft, hinweis, lueckenSatz, pruefe, pruefeLuecke,
     fundstelle, satzKacheln,
   };
 })();

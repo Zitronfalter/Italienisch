@@ -6,12 +6,10 @@ const Vokabeln = (() => {
   const ABSTAND = { 1: 1, 2: 3, 3: 7, 4: 16, 5: 35 };
   const SICHER_AB_FACH = 4;          // ab Fach 4 gilt ein Wort als „sitzt“
   const MAX_FAELLIG = 20;            // höchstens so viele Wiederholungen pro Runde
-  // Neue Wörter pro Tag: selbst einstellbar (Fortschritt), Standard 3.
-  // Es kommen nur neue, wenn die alten gut laufen (siehe rundeZusammenstellen).
-  const NEU_WAHL = [1, 2, 3, 5];
-  const NEU_STANDARD = 3;
-  const PAUSE_FAELLIG = 15;          // so viele fällige Wörter → heute keine neuen
-  const PAUSE_SCHWER = 8;            // so viele Wörter in Fach 1, die schon falsch waren → keine neuen
+  // Neue Wörter kommen über die Schritte der Lektion (kein Tageslimit mehr).
+  // Ohne offene Lektion: höchstens so viele neue pro Runde – und keine, solange viele noch jung sind.
+  const NEU_PRO_RUNDE = 3;
+  const JUNG_GENUG = 4;
 
   // ---------- Datum (Ortszeit, als Text JJJJ-MM-TT) ----------
 
@@ -88,32 +86,13 @@ const Vokabeln = (() => {
 
   function anzahlJung() { return jungeWoerter().length; }
 
-  // ---------- Neue Wörter pro Tag ----------
-
-  function neuProTag() {
-    const n = Number((Speicher.daten.einstellungen || {}).neuProTag);
-    return NEU_WAHL.includes(n) ? n : NEU_STANDARD;
-  }
-
-  function neuProTagWaehlen(wert) {
-    Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), neuProTag: Number(wert) };
-    Speicher.speichern();
-  }
-
-  // Wie viele neue Wörter heute schon dazugekommen sind
-  function neuHeute() {
-    const z = Speicher.daten.fortschritt.neuHeute;
-    return z && z.datum === heute() ? z.anzahl : 0;
-  }
-
   // ---------- Wie gut läuft es gerade? ----------
   //
   // Jede Antwort (Vokabeln, Grammatik, Hören) wird pro Tag gezählt: fortschritt.tage[datum] = [richtig, von].
-  // Daraus die Trefferquote der letzten 7 Tage. Läuft es schwer, kommen weniger neue Wörter.
+  // Daraus die Trefferquote der letzten 7 Tage. Läuft es schwer, kommt vor neuen Wörtern eine Festigen-Runde.
   const QUOTE_TAGE = 7;
   const QUOTE_MIN_ANTWORTEN = 20;    // vorher keine Anpassung
-  const QUOTE_RUHIGER = 0.7;         // darunter: höchstens 1 neues Wort am Tag
-  const QUOTE_PAUSE = 0.55;          // darunter: heute keine neuen Wörter
+  const QUOTE_PAUSE = 0.55;          // darunter: vor neuen Wörtern erst festigen
 
   function ergebnisZaehlen(gut) {
     const f = Speicher.daten.fortschritt;
@@ -136,63 +115,48 @@ const Vokabeln = (() => {
     return von >= QUOTE_MIN_ANTWORTEN ? richtig / von : null;
   }
 
-  // Neue Wörter heute: die eigene Höchstzahl, bei schwerer Lage weniger
-  function neuGrenze() {
-    const n = neuProTag() + neuExtra();
+  // ---------- Festigen (sanfte Bremse im Weg) ----------
+  //
+  // Wäre im Weg als Nächstes „Neue Wörter“ dran und läuft es gerade schwer (Quote unter 55 %),
+  // kommt vorher einmal eine Festigen-Runde – höchstens einmal je Schritt (fortschritt.festigen).
+  function festigenNoetig(lektionId, nr) {
     const q = trefferQuote();
-    if (q === null || q >= QUOTE_RUHIGER) return n;
-    return q < QUOTE_PAUSE ? 0 : 1 + neuExtra();
+    if (q === null || q >= QUOTE_PAUSE) return false;
+    const f = Speicher.daten.fortschritt.festigen;
+    return !(f && f.lektion === lektionId && f.nr === nr);
   }
 
-  // „Mehr neue Wörter holen“: heute 3 neue Wörter zusätzlich (nur auf Wunsch, gilt nur heute)
-  const MEHR_ANZAHL = 3;
-  function neuExtra() {
-    const z = Speicher.daten.fortschritt.neuExtra;
-    return z && z.datum === heute() ? z.anzahl : 0;
-  }
-  function mehrHolen() {
-    Speicher.daten.fortschritt.neuExtra = { datum: heute(), anzahl: neuExtra() + MEHR_ANZAHL };
+  function festigenGemacht(lektionId, nr) {
+    Speicher.daten.fortschritt.festigen = { lektion: lektionId, nr };
     Speicher.speichern();
   }
 
-  // Warum heute keine neuen Wörter kommen – oder null.
-  //   'tag'     → die neuen Wörter für heute sind schon da
-  //   'jung'    → erst die Wörter kennenlernen, die gerade neu sind
-  //   'faellig' → viele Wörter sind zum Wiederholen dran
-  //   'schwer'  → einige Wörter sitzen noch nicht (Fach 1, schon falsch gewesen)
-  function pauseGrund(faelligAnzahl, jungAnzahl) {
-    const n = neuProTag();
-    if (neuGrenze() === 0) return 'schwer';
-    if (neuHeute() >= neuGrenze()) return 'tag';
-    if (jungAnzahl >= Math.max(4, n * 2)) return 'jung';
-    if (faelligAnzahl >= PAUSE_FAELLIG) return 'faellig';
-    const schwer = Object.values(karten()).filter((k) => !istJung(k) && k.fach === 1 && k.falsch > 0).length;
-    if (schwer >= PAUSE_SCHWER) return 'schwer';
-    return null;
+  // Die Wörter, die gerade am schwersten sind: Fach 1 mit Fehlern, dann junge, dann niedrige Fächer
+  function schwersteWoerter(anzahl = 7) {
+    const rang = (k) => (!istJung(k) && k.fach === 1 && k.falsch > 0 ? 0 : istJung(k) ? 1 : 2);
+    return Object.entries(karten())
+      .filter(([id]) => wort(id))
+      .sort(([, a], [, b]) => rang(a) - rang(b) || (a.fach || 1) - (b.fach || 1)
+        || String(a.faellig).localeCompare(String(b.faellig)))
+      .slice(0, anzahl)
+      .map(([id]) => id);
   }
 
   // Liste für eine Runde: fällige Wörter zum Schreiben, junge Wörter zum Kennenlernen,
-  // dann – wenn es gut läuft – ein paar neue (höchstens neuProTag() am Tag).
-  // pause: Grund, warum keine neuen kommen (nur wenn es noch neue gäbe)
+  // dann ein paar neue (nur ohne offene Lektion wichtig – sonst kommen neue über den Weg).
   function rundeZusammenstellen() {
     const h = heute();
     const alleFaellig = faellige().filter((id) => !istJung(karten()[id]));
     const wiederholen = alleFaellig.slice(0, MAX_FAELLIG);
     const jung = jungeWoerter().slice(0, 10);
-    const warten = neue();
-    const grund = warten.length ? pauseGrund(alleFaellig.length, jungeWoerter().length) : null;
-    const neu = grund ? [] : warten.slice(0, neuGrenze() - neuHeute());
-    return { wiederholen, jung, neu, pause: grund, heute: h };
+    const neu = jungeWoerter().length >= JUNG_GENUG ? [] : neue().slice(0, NEU_PRO_RUNDE);
+    return { wiederholen, jung, neu, heute: h };
   }
 
   // Ein Wort kommt in den Karteikasten – erst zum Kennenlernen.
-  // optionen.neu: ein neues Wort aus der Runde (zählt für „neue Wörter pro Tag“)
-  function aufnehmen(id, optionen = {}) {
+  function aufnehmen(id) {
     if (!karten()[id]) {
       karten()[id] = { fach: 1, faellig: heute(), richtig: 0, falsch: 0, kennen: 0 };
-      if (optionen.neu) {
-        Speicher.daten.fortschritt.neuHeute = { datum: heute(), anzahl: neuHeute() + 1 };
-      }
       Speicher.speichern();
     }
   }
@@ -441,15 +405,11 @@ const Vokabeln = (() => {
     kennenGelernt,
     KENNEN_FERTIG,
     rundeZusammenstellen,
-    neuProTag,
-    neuProTagWaehlen,
-    neuGrenze,
-    neuExtra,
-    mehrHolen,
     ergebnisZaehlen,
     trefferQuote,
-    neuHeute,
-    NEU_WAHL,
+    festigenNoetig,
+    festigenGemacht,
+    schwersteWoerter,
     aufnehmen,
     eintragen,
     pruefe,

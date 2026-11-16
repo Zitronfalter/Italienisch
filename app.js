@@ -64,8 +64,6 @@ function oeffneReiter(reiter) {
 
 function zeigeEinstellungen() {
   fuelleStimmWahl();
-  el('neu-pro-tag').value = String(Vokabeln.neuProTag());
-  zeigeNeuHeute();
   zeige('einstellungen');
 }
 
@@ -151,14 +149,6 @@ function naechsterInhalt() {
   return kreis[(i + 1) % kreis.length];
 }
 
-// „Mehr neue Wörter holen“ anbieten? Nur wenn heute nichts mehr zu üben ist und die
-// neuen Wörter wegen des Tageslimits pausieren (nicht bei „viel fällig“ oder „läuft schwer“).
-function mehrWoerterMoeglich() {
-  if (Lektionen.aktuelle()) return false;      // neue Wörter kommen über die Schritte der Lektion
-  const r = Vokabeln.rundeZusammenstellen();
-  return r.pause === 'tag' && !r.wiederholen.length && !r.jung.length;
-}
-
 // Nach den Vokabeln: fällige Grammatik, dann der nächste Schritt der aktuellen Lektion – oder,
 // wenn keine Lektion offen ist, etwas aus „Frei üben“ (naechsterInhalt).
 
@@ -184,6 +174,10 @@ function naechsterSchritt() {
     const l = Lektionen.aktuelle();
     if (!l) break;
     const w = Lektionen.naechsterWegSchritt(l);
+    // Läuft es gerade schwer, kommt vor neuen Wörtern einmal eine Festigen-Runde (zählt nicht als Schritt)
+    if (w && w.schritt.art === 'woerter' && Vokabeln.festigenNoetig(l.id, w.nr) && Vokabeln.schwersteWoerter(1).length) {
+      return { art: 'festigen', lektion: l, nr: w.nr, name: 'Erst festigen, was gerade schwer ist – dann kommen neue Wörter.' };
+    }
     if (w) {
       return {
         art: 'weg', lektion: l, nr: w.nr, schritt: w.schritt,
@@ -197,6 +191,7 @@ function naechsterSchritt() {
 
 function oeffneNaechstes(n) {
   if (n.art === 'weg') { starteWegSchritt(n.lektion, n.nr); return; }
+  if (n.art === 'festigen') { starteFestigen(n); return; }
   if (n.art === 'wiederholen') { starteGrammatikWiederholung(); return; }
   if (n.art === 'woerter') {
     woerterAnsicht.verdeckt = true;
@@ -540,7 +535,7 @@ function naechstesAnbieten(n) {
   el('ende-naechstes-text').textContent = n.name;
   el('knopf-naechstes').textContent = n.art === 'weg'
     ? `Weiter: Schritt ${n.nr + 1}`
-    : { text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben', uebungen: 'Übungen', wiederholen: 'Grammatik wiederholen', woerter: 'Meine Wörter' }[n.art];
+    : { festigen: 'Festigen', text: 'Text lesen', kapitel: 'Grammatik ansehen', hoeren: 'Hören & Üben', uebungen: 'Übungen', wiederholen: 'Grammatik wiederholen', woerter: 'Meine Wörter' }[n.art];
   el('knopf-naechstes').onclick = () => oeffneNaechstes(n);
 }
 
@@ -562,29 +557,68 @@ function zeigeWegEnde(info = '') {
   }
   const n = naechsterSchritt();
   naechstesAnbieten(n);
-  el('knopf-mehr-woerter').hidden = true;
+  el('knopf-vorschlag').hidden = true;
   el('knopf-ende-start').textContent = n ? 'Für heute reicht’s' : 'Zur Startseite';
+  zeige('ende');
+}
+
+// ---------- Festigen (vor neuen Wörtern, wenn es gerade schwer läuft) ----------
+
+// Kurze Runde mit den schwersten Wörtern – ändert keine Fächer. Gilt als gemacht, sobald sie startet.
+function starteFestigen(n) {
+  Vokabeln.festigenGemacht(n.lektion.id, n.nr);
+  const ids = Vokabeln.schwersteWoerter(7);
+  if (!ids.length) { zeigeStart(); return; }
+  lekt.offen = n.lektion;
+  abfrage.weg = false;
+  abfrage.festigen = true;
+  abfrage.zurueck = '';
+  abfrage.schritte = Saetze.festigenAufgaben(ids);
+  abfrage.ohneWertung = true;
+  abfrage.pos = 0;
+  abfrage.gewertet = new Set();
+  abfrage.aufAnhieb = 0;
+  abfrage.kennen = new Set();
+  abfrage.zweiterVersuch = new Set();
+  zeige('runde');
+  zeigeSchritt();
+}
+
+// Nach dem Festigen: weiter zu den neuen Wörtern – und Limo schlägt eine Übung unter „Üben“ vor
+function zeigeFestigenEnde() {
+  abfrage.festigen = false;
+  const g = new Set([...abfrage.gewertet, ...abfrage.kennen]).size;   // „wählen“ zählt in kennen
+  el('ende-titel').textContent = 'Gefestigt';
+  el('ende-text').textContent = `${g} ${g === 1 ? 'Wort' : 'Wörter'} gefestigt, ${abfrage.aufAnhieb} davon auf Anhieb gewusst.`;
+  el('ende-sicher').textContent = Vokabeln.anzahlSicher();
+  const v = Wiederholung.festigenVorschlag();
+  const k = v.art === 'kapitel' ? Grammatik.kapitel(v.kapitel) : null;
+  const vorschlag = k
+    ? { name: `Grammatik „${k.titel}“`, knopf: 'Grammatik üben', los: () => oeffneKapitel(k, 'grammatik') }
+    : v.art === 'hoeren'
+      ? { name: 'Hören & Üben', knopf: 'Hören & Üben', los: () => starteHoeren() }
+      : { name: 'deine Vokabeln im Vokabelkasten', knopf: 'Vokabelkasten', los: () => zeigeKasten() };
+  Begleiter.zeigen(el('begleiter-ende'), {
+    stimmung: 'freut',
+    text: `Gut gefestigt! Wenn du magst, probier noch ${vorschlag.name} – oder mach gleich mit neuen Wörtern weiter.`,
+  });
+  naechstesAnbieten(naechsterSchritt());
+  el('knopf-vorschlag').hidden = false;
+  el('knopf-vorschlag').textContent = vorschlag.knopf;
+  el('knopf-vorschlag').onclick = vorschlag.los;
+  el('knopf-ende-start').textContent = 'Für heute reicht’s';
   zeige('ende');
 }
 
 // ---------- Startseite ----------
 
-// Warum heute keine neuen Wörter kommen (siehe Vokabeln.rundeZusammenstellen)
-const PAUSE_TEXT = {
-  tag: 'Die neuen Wörter für heute hast du schon – morgen kommen weitere.',
-  jung: 'Neue Wörter kommen, sobald du die aktuellen kennengelernt hast.',
-  faellig: 'Heute keine neuen Wörter – erst die fälligen wiederholen.',
-  schwer: 'Heute keine neuen Wörter – erst festigen, was du schon hast. Das macht es leichter.',
-};
-
 function zeigeStart() {
   const r = Vokabeln.rundeZusammenstellen();
   const { wiederholen } = r;
-  // Mit offener Lektion kommen neue Wörter über die Schritte – kein Tageslimit, keine Pause-Gründe
+  // Mit offener Lektion kommen neue Wörter über die Schritte
   const mitWeg = Boolean(Lektionen.aktuelle());
   const jung = mitWeg ? [] : r.jung;
   const neu = mitWeg ? [] : r.neu;
-  const pause = mitWeg ? null : r.pause;
   const teile = [];
   if (wiederholen.length) teile.push(`${wiederholen.length} ${wiederholen.length === 1 ? 'Vokabel' : 'Vokabeln'} zum Wiederholen`);
   if (jung.length) teile.push(`${jung.length} zum Kennenlernen`);
@@ -593,7 +627,6 @@ function zeigeStart() {
   document.getElementById('heute-text').textContent = (teile.length
     ? teile.join(', ') + '.'
     : mitWeg ? '' : 'Keine Vokabeln fällig.')
-    + (PAUSE_TEXT[pause] ? ` ${PAUSE_TEXT[pause]}` : '')
     + (n ? ` ${teile.length ? 'Danach' : 'Als Nächstes'}: ${n.name}` : '');
   // „Jetzt dran“: nur die aktuelle Lektion (alle anderen im Reiter „Lektionen“)
   const jetzt = Lektionen.aktuelle();
@@ -706,6 +739,7 @@ function alteWoerter(ohne, anzahl) {
 // optionen.weg: Schritt des Wegs (siehe wegRundenSchritte); optionen.nurFaellig: nur fällige Wörter
 function starteRunde(optionen = {}) {
   abfrage.weg = Boolean(optionen.weg);
+  abfrage.festigen = false;
   abfrage.zurueck = optionen.zurueck || '';     // 'kasten': nach der Runde zurück zum Vokabelkasten
   if (optionen.ids && optionen.wertung) {
     // Vokabelkasten „vorziehen“: wie fällige Wörter, zählt für die Fächer
@@ -848,7 +882,7 @@ function zeigeSchritt() {
     zeigeSatz(schritt);
   } else if (schritt.art === 'neu') {
     const w = Vokabeln.wort(schritt.id);
-    Vokabeln.aufnehmen(w.id, { neu: !abfrage.weg });   // im Weg zählt kein Tageslimit
+    Vokabeln.aufnehmen(w.id);
     el('frage-art').textContent = 'Neues Wort – erst einmal nur ansehen und anhören';
     el('frage-wort').textContent = w.de;
     el('loesung-neu').textContent = w.it;
@@ -1002,7 +1036,7 @@ function satzAnzeigen(a) {
 }
 
 function zeigeSatz(a) {
-  if (a.modus === 'kennen') Vokabeln.aufnehmen(a.id, { neu: !abfrage.weg });   // im Weg zählt kein Tageslimit
+  if (a.modus === 'kennen') Vokabeln.aufnehmen(a.id);
   el('knopf-weiss-nicht').hidden = false;
   if (a.modus === 'kennen' || a.modus === 'de') {
     el('frage-art').textContent = a.modus === 'kennen'
@@ -1335,6 +1369,11 @@ function beendeRunde() {
     zeigeKasten(n ? `Gerade geübt: ${n} ${n === 1 ? 'Wort' : 'Wörter'}, ${abfrage.aufAnhieb} davon auf Anhieb gewusst.` : '');
     return;
   }
+  el('knopf-vorschlag').hidden = true;
+  if (abfrage.festigen) {
+    if (zuEnde) zeigeFestigenEnde(); else zeigeStart();
+    return;
+  }
   // Schritt des Wegs: zu Ende gespielt → Schritt gemacht; mittendrin beendet → Startseite (Weitermachen)
   if (abfrage.weg) {
     if (!zuEnde) { zeigeStart(); return; }
@@ -1371,30 +1410,23 @@ function beendeRunde() {
   }
   el('ende-sicher').textContent = Vokabeln.anzahlSicher();
   lektionenPruefen();
-  // Heute nichts mehr zu üben, neue Wörter nur wegen des Tageslimits in Pause → „Mehr neue Wörter holen“
-  const mehr = mehrWoerterMoeglich();
   const allesGeuebt = anzahl === 0 && kennen === 0;
   if (allesGeuebt) {
     el('ende-titel').textContent = 'Für heute alles geübt';
-    el('ende-text').textContent = mehr
-      ? 'Alle Wörter für heute sind geübt. Wenn du magst, holst du dir noch 3 neue dazu.'
-      : 'Alle Wörter für heute sind geübt. Morgen geht es weiter.';
+    el('ende-text').textContent = 'Alle Wörter für heute sind geübt. Morgen geht es weiter.';
   }
   if (!geschafftZeigen(el('begleiter-ende'))) {
     Begleiter.zeigen(el('begleiter-ende'), anzahl
       ? Begleiter.endeNachricht(anzahl, abfrage.aufAnhieb)
       : kennen
         ? { stimmung: 'freut', text: 'Schön! Neue Wörter erst kennenlernen – geschrieben wird später.' }
-        : mehr
-          ? { stimmung: 'freut', text: 'Für heute hast du alles geübt – brava! Lust auf mehr? Hol dir neue Wörter oder probier meinen Vorschlag.' }
-          : { stimmung: 'ruhig', text: 'Für heute hast du alles geübt. Morgen kommt Neues – bis dahin passt mein Vorschlag.' });
+        : { stimmung: 'ruhig', text: 'Für heute hast du alles geübt. Morgen kommt Neues – bis dahin passt mein Vorschlag.' });
   }
 
   // Teil 2 der Runde: der nächste Teil der Lektion (oder etwas zum freien Üben)
   const n = naechsterSchritt();
   naechstesAnbieten(n);
-  el('knopf-mehr-woerter').hidden = !mehr;
-  el('knopf-ende-start').textContent = n || mehr ? 'Für heute reicht’s' : 'Zur Startseite';
+  el('knopf-ende-start').textContent = n ? 'Für heute reicht’s' : 'Zur Startseite';
   if (n && anzahl > 0) el('ende-titel').textContent = 'Vokabeln geschafft';
   zeige('ende');
 }
@@ -1406,11 +1438,6 @@ el('abfrage-form').addEventListener('submit', (e) => {
   abfrage.geprueft ? weiter() : pruefen();
 });
 el('knopf-beenden').addEventListener('click', beendeRunde);
-// Heute 3 neue Wörter mehr – gleich eine Runde (mit „kenne ich / neu“, falls die Lektion neu ist)
-el('knopf-mehr-woerter').addEventListener('click', () => {
-  Vokabeln.mehrHolen();
-  losKlick();
-});
 
 // ---------- Lesen ----------
 
@@ -2387,22 +2414,6 @@ function balken(liste, name, zahl, max) {
   liste.appendChild(zeile);
 }
 
-function zeigeNeuHeute() {
-  const heute = Vokabeln.neuHeute();
-  const q = Vokabeln.trefferQuote();
-  const grenze = Vokabeln.neuGrenze();
-  const ruhiger = grenze < Vokabeln.neuProTag()
-    ? ` Gerade etwas ruhiger: heute höchstens ${grenze}, bis es wieder leichter läuft.` : '';
-  el('neu-pro-tag-text').textContent = `Heute: ${heute} von ${Vokabeln.neuProTag()}.${ruhiger}`
-    + (q === null ? '' : ` Letzte 7 Tage: ${Math.round(q * 100)} % richtig.`)
-    + ' Neue Wörter kommen nur, wenn die anderen gut laufen – so hast du Zeit, sie ein paar Tage zu üben.';
-}
-
-el('neu-pro-tag').addEventListener('change', (e) => {
-  Vokabeln.neuProTagWaehlen(e.target.value);
-  zeigeNeuHeute();
-});
-
 function zeigeFortschritt() {
   const karten = Object.values(Speicher.daten.karten);
   const sicher = Vokabeln.anzahlSicher();
@@ -3162,7 +3173,7 @@ function stelleMerken(art) {
     Object.assign(d, {
       schritte: abfrage.schritte, pos: abfrage.pos, gewertet: [...abfrage.gewertet], aufAnhieb: abfrage.aufAnhieb,
       kennen: [...abfrage.kennen], zweiterVersuch: [...abfrage.zweiterVersuch], ohneWertung: Boolean(abfrage.ohneWertung),
-      rundeWeg: Boolean(abfrage.weg), zurueck: abfrage.zurueck || '',
+      rundeWeg: Boolean(abfrage.weg), zurueck: abfrage.zurueck || '', festigen: Boolean(abfrage.festigen),
     });
   } else if (art === 'aufgaben') {
     Object.assign(d, { liste: aufg.liste, nr: aufg.nr, richtig: aufg.richtig, fehler: aufg.fehler, titel: aufg.titel, info: aufg.info });
@@ -3227,7 +3238,7 @@ function weitermachen() {
       schritte: d.schritte, pos: d.pos, gewertet: new Set(d.gewertet), aufAnhieb: d.aufAnhieb,
       kennen: new Set(d.kennen), zweiterVersuch: new Set(d.zweiterVersuch), ohneWertung: d.ohneWertung,
       geprueft: false, gewaehlt: null, paarFehler: new Set(), weg: Boolean(d.rundeWeg && wegAktiv),
-      zurueck: d.zurueck || '',
+      zurueck: d.zurueck || '', festigen: Boolean(d.festigen),
     });
     zeige('runde');
     zeigeSchritt();

@@ -38,24 +38,13 @@ test('Hör-Sätze und erzeugte Übungen werden auch gemerkt, Vokabeln nicht', ()
   assert.strictEqual(W.anzahlFehler(), 2);
 });
 
-test('Trefferquote: erst ab 20 Antworten, dann weniger neue Wörter', () => {
+test('Trefferquote: erst ab 20 Antworten', () => {
   const k = laden();
   const V = k.Vokabeln;
   for (let i = 0; i < 10; i++) V.ergebnisZaehlen(false);
   assert.strictEqual(V.trefferQuote(), null);
-  assert.strictEqual(V.neuGrenze(), 3);
-
   for (let i = 0; i < 15; i++) V.ergebnisZaehlen(true);          // 15 von 25 = 60 %
   assert.ok(Math.abs(V.trefferQuote() - 0.6) < 1e-9);
-  assert.strictEqual(V.neuGrenze(), 1);
-  assert.strictEqual(V.rundeZusammenstellen().neu.length, 1);
-
-  for (let i = 0; i < 30; i++) V.ergebnisZaehlen(false);         // 15 von 55
-  assert.strictEqual(V.neuGrenze(), 0);
-  assert.strictEqual(V.rundeZusammenstellen().pause, 'schwer');
-
-  for (let i = 0; i < 200; i++) V.ergebnisZaehlen(true);         // gut gelaufen
-  assert.strictEqual(V.neuGrenze(), 3);
 });
 
 test('alte Tage zählen nicht mehr', () => {

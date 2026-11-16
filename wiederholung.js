@@ -218,8 +218,38 @@ const Wiederholung = (() => {
     return v;
   }
 
+  // ---------- Limos Vorschlag nach der Festigen-Runde ----------
+  //
+  // Reihum Grammatik → Hören & Üben → Vokabeln (Vokabelkasten). Grammatik: das Kapitel mit dem
+  // neuesten Fehler, sonst das zuletzt geübte; gibt es keins, kommt die nächste Art dran.
+  const VORSCHLAG_KREIS = ['kapitel', 'hoeren', 'woerter'];
+
+  function vorschlagKapitel() {
+    const fehler = fehlerListe().filter((x) => x.art !== 'hoeren' && Grammatik.kapitel(x.kapitel));
+    if (fehler.length) return fehler[fehler.length - 1].kapitel;
+    const geuebt = Object.entries(Speicher.daten.fortschritt.grammatik || {})
+      .filter(([id, s]) => s && s.geuebt && Grammatik.kapitel(id))
+      .sort(([, a], [, b]) => String(b.datum || '').localeCompare(String(a.datum || '')));
+    return geuebt.length ? geuebt[0][0] : null;
+  }
+
+  function festigenVorschlag() {
+    const f = Speicher.daten.fortschritt;
+    let i = VORSCHLAG_KREIS.indexOf(f.festigenVorschlag);
+    for (let n = 0; n < VORSCHLAG_KREIS.length; n++) {
+      i = (i + 1) % VORSCHLAG_KREIS.length;
+      const art = VORSCHLAG_KREIS[i];
+      const kapitel = art === 'kapitel' ? vorschlagKapitel() : null;
+      if (art === 'kapitel' && !kapitel) continue;
+      f.festigenVorschlag = art;
+      Speicher.speichern();
+      return kapitel ? { art, kapitel } : { art };
+    }
+    return { art: 'woerter' };
+  }
+
   return {
     einsortieren, faellige, fuerRunde, rundeAufgaben, aufgabenFuer, eintragen, fach, anzahlSicher, verteilung, ABSTAND,
-    fehlerMerken, faelligeFehler, anzahlFehler, etwasFaellig, heuteGeloest,
+    fehlerMerken, faelligeFehler, anzahlFehler, etwasFaellig, heuteGeloest, festigenVorschlag,
   };
 })();

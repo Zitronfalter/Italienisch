@@ -14,7 +14,7 @@
 - [x] **Bauplan „Neue Wörter in Sätzen“ freigeben:** Erledigt am 16.11.2026 – gebaut für Lektion 4–6.
 - [ ] **Vokabelkasten ausprobieren:** Üben → „Vokabelkasten“. Ab morgen sind jeden Tag 20 deiner Duolingo-Wörter fällig („Fällige üben“ oder einfach „Los“). Fach antippen = Wörter vorziehen. Fragen: Sind 20 am Tag zu viel oder zu wenig? Ist „Fach antippen“ verständlich? Sitzen die Duolingo-Wörter wirklich so gut?
 - [ ] **Duolingo-Wörter vorgemerkt:** Bei „Kennst du die schon?“ stehen Wörter aus deiner Duolingo-Liste jetzt schon auf „kenne ich“. Passt das, oder sind Wörter dabei, die du doch nicht kannst? Dann einfach auf „neu“ tippen.
-- [ ] **Neue Sätze ansehen (Lektion 4–6):** Die Sätze sind neu geschrieben – natürlicher, mit Alltagsszenen und mehr Abwechslung, auch mit Wörtern, die du von Duolingo kennst. Klingen sie jetzt besser? Komische Sätze bitte aufschreiben.
+- [x] **Neue Sätze ansehen (Lektion 4–6):** Erledigt am 16.11.2026 – die Sätze sind deutlich besser.
 - [ ] **Neue Wörter in Sätzen ausprobieren** (auf dem iPhone, Lektion 4–6; du kommst dahin, wenn Lektion 3 fertig ist). Neue Wörter kommen jetzt zuerst in einem Satz. Fragen an dich:
       1. Reichen die Sätze pro Wort, oder sind es zu viele?
       2. Ist die Treppe (Satz kennenlernen → ins Deutsche legen → hören → Lücke oder Italienisch legen) zu schnell oder zu langsam?
@@ -25,14 +25,11 @@
 - [ ] **Grammatik in der Lektion ansehen:** Lektionen → Lektion antippen. Oben steht jetzt die Grammatik der Lektion, antippen zeigt Regel und Tabelle. Passt das so? Und: Sind die Wortpaare jetzt gleich hoch? Springt beim Kacheln-Legen noch etwas (die Ablage hat jetzt zwei Zeilen mit Linien)?
 - [x] **Glas-Design entscheiden:** Erledigt am 16.11.2026 – ohne Glas.
 - [x] **Stimmen Luca und Paola fehlen in der App:** Erledigt am 16.11.2026 – Safari gibt Webseiten auf dem iPhone nur Alice; bleibt so (keine tiefere Stimme für männliche Wörter).
-- [ ] **Knöpfe in Pillenform ansehen:** „Los“, „Prüfen“, „Weiter“ und die umrandeten Knöpfe haben jetzt ganz runde Enden. Gefällt dir das?
+- [x] **Knöpfe in Pillenform ansehen:** Erledigt am 16.11.2026 – gefällt dir.
 - [ ] **Noch planen:** Kacheln im Satz verschieben.
-- [ ] **Lektion als Weg ausprobieren** (auf dem iPhone, Lektion 1–2): „Los“ bringt erst fällige Wörter, dann fällige Grammatik, dann den nächsten Schritt. Fragen an dich:
-      1. Sind die Schritte kurz genug (3–5 Minuten)?
-      2. Passt es, dass alle 3 Schritte neue Wörter kommen?
-      3. Ist „Weiter: Schritt …“ / „Für heute reicht’s“ angenehm? Stört der Pausen-Tipp von Limo nach jedem 3. Schritt?
-      4. Unter **Lektionen** → Lektion antippen: Ist der Weg als Liste verständlich?
-      Hinweis: „Neue Wörter pro Tag“ in den Einstellungen wirkt jetzt nicht mehr, solange eine Lektion offen ist. Es fällt nach deinem Test weg (Etappe 2).
+- [x] **Lektion als Weg ausprobieren:** Erledigt am 16.11.2026 – passt so. Als Nächstes baut Claude Etappe 2.
+- [ ] **Festigen ausprobieren:** Wenn in den letzten 7 Tagen weniger als gut die Hälfte richtig war (unter 55 %), kommt vor neuen Wörtern einmal eine kurze Runde „Erst festigen“ mit deinen schwersten Wörtern. Danach schlägt Limo etwas vor (Grammatik, Hören & Üben oder Vokabelkasten). Fragen: Hilft dir das? Kommt es zu oft oder zu selten? Passen Limos Vorschläge?
+- [ ] **Kleinigkeiten im Blick behalten:** „Prüfen“ erst mit Antwort, Grammatik in der Lektion, gelbes Symbol in der Leiste unten. Fällt dir etwas auf? Einfach Claude sagen.
 
 - [x] **Begleiter:** Erledigt am 15.11.2026 – statt Roboter ist jetzt **Limo** da, die kleine Zitrone (aus deinem Entwurf, aufrecht, Blätter als Haarschopf). Die App-Farben passen jetzt zu Limo, Terrakotta ist raus, das App-Symbol zeigt Limo.
 - [ ] **Limo und die neuen Farben auf dem iPhone ansehen:** Gefallen dir Gelb, Grün und das ruhige Blau bei „noch nicht“? Ist Limo gut zu erkennen? Hinweis: Das App-Symbol auf dem Home-Bildschirm wechselt evtl. erst, wenn du die App einmal entfernst und neu „Zum Home-Bildschirm“ hinzufügst.
@@ -43,7 +40,7 @@
       3. In Safari https://zitronfalter.github.io/Italienisch/ öffnen → **Teilen** → **„Zum Home-Bildschirm“**.
       4. Neue App öffnen: Einstellungen → Sichern & Laden → **Laden** → die Datei aus Schritt 1 wählen.
 - [ ] **Neues Menü ausprobieren:** Unten gibt es jetzt die Leiste mit Heute, Lektionen, Üben, Mein Stand. Findest du alles? Fehlt dir etwas auf „Heute“?
-- [ ] **Nichts doppelt ausprobieren:** Mehrmals am Tag „Los“ drücken. Kommen noch Aufgaben doppelt, die du richtig hattest? Wenn alles geübt ist: Gefällt dir „Mehr neue Wörter holen (+3)“ und Limos Vorschlag?
+- [ ] **Nichts doppelt ausprobieren:** Mehrmals am Tag „Los“ drücken. Kommen noch Aufgaben doppelt, die du richtig hattest? Wenn alles geübt ist: Gefällt dir Limos Vorschlag?
 - [ ] **Menü, Schritt 2 ansehen:** Jetzt 5 Reiter, „Einstellungen“ ganz rechts. „‹ Zurück“ steht immer oben links. Passt „Heute“ so ohne Scrollen? Fehlt dir oben etwas?
 - [ ] **Vorlesen einstellen:** Einstellungen → „Vorlesen“. (1) Tempo: Hörst du jetzt einen Unterschied zwischen „sehr langsam“ und „normal“? Wenn nicht: andere Stimme wählen und noch mal probieren – und Claude sagen, welche Stimme es war. (2) Bei „Stimme für männliche Wörter“ eine Männerstimme wählen (z. B. Luca), bei „weibliche Wörter“ eine Frauenstimme (z. B. Alice). Hörprobe kommt sofort.
 - [ ] **Apple-Design – Frage an dich:** Welche Apple-App benutzt du gern, und was gefällt dir daran besser als an unserer App? Danach plant Claude das neue Design (mit „‹ Zurück“ oben).
@@ -57,7 +54,7 @@
       Am schnellsten über **Frei üben → Lesen** und **Frei üben → Grammatik** (dort stehen jetzt auch B1 und B2).
 - [ ] **Zusatzübungen ausprobieren:** Mach in einem Grammatik-Kapitel absichtlich ein paar Fehler. Am Ende erscheint „Leichtere Zusatzübungen“ – erst ein Tipp in kleinen Schritten, dann leichte Aufgaben. Gefällt dir das so?
 - [ ] **Grammatik-Wiederholung ausprobieren:** Kapitel, die du geübt hast, kommen jetzt nach ein paar Tagen von selbst wieder (nach den Vokabeln, „Grammatik wiederholen“). Sind die Aufgaben verständlich? Sind 2 Kapitel mit je 3 Aufgaben gut so – oder zu viel / zu wenig?
-- [ ] **Neue Wörter pro Tag einstellen:** Unter **Fortschritt** → „Neue Wörter pro Tag“ (1, 2, 3 oder 5; Standard 3). Passt die Menge zu deinen 15 Minuten?
+- [x] **Neue Wörter pro Tag einstellen:** Entfällt seit 16.11.2026 – neue Wörter kommen jetzt über die Schritte der Lektion.
 - [ ] **Neu ausprobieren:** (1) Richtige Antwort → es geht nach einer Sekunde von selbst weiter. Ist das Tempo gut? (2) Mitten in einer Runde die App schließen und wieder öffnen → „Weitermachen“. (3) Falsche Übungen kommen am nächsten Tag unter „Wiederholen“ wieder.
 - [ ] **Neue kurze Lektionen A1 ansehen:** Nach jeder Lektion 1–8 kommen jetzt 3 kurze Wort-Lektionen (Zahlen, Länder, Getränke, Familie, Hobbys, Stadt, Obst, Möbel, Kleidung, Berufe …). Die Lektionen sind neu durchgezählt: Deine alte „Lektion 2“ heißt jetzt „Lektion 5“. Hast du schon Lektionen erledigt, kommen die neuen kurzen danach dran – was du schon kannst, kannst du mit „Kann ich schon“ überspringen. Passt die Menge? Sind die Texte gut?
 - [ ] **Neue kurze Lektionen A2 ansehen** (nach den A2-Lektionen): 30 Stück, z. B. Strand, Berge, Gewürze, Schule, Körper, Feiertage, Umwelt, Technik. Passen Themen und Texte?

@@ -1256,3 +1256,11 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 .grammatik-kurz .karte-titel { margin: 0; font-family: var(--serif); font-size: 20px; }
 .grammatik-kurz .karte-text { font-size: 16px; }
 .grammatik-kurz-mehr { margin-top: 6px; font-size: 16px; font-weight: 600; color: var(--akzent-linie); }
+
+/* ---------- Pillenform für Knöpfe (ganz runde Enden, wie bei Apple) ----------
+   Nur Knöpfe – Karten, Kacheln und Wortpaare behalten ihre leicht runden Ecken. */
+.knopf-los,
+.knopf-haupt,
+.knopf-zweit,
+.knopf-zurueck,
+.knopf-neu { border-radius: 999px; }

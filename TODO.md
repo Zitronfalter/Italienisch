@@ -21,6 +21,8 @@
 - [ ] **„Prüfen“ erst mit Antwort ansehen:** Der Knopf „Prüfen“ ist blass, solange nichts eingetippt oder keine Kachel gelegt ist. Fühlt sich das richtig an?
 - [ ] **Grammatik in der Lektion ansehen:** Lektionen → Lektion antippen. Oben steht jetzt die Grammatik der Lektion, antippen zeigt Regel und Tabelle. Passt das so? Und: Sind die Wortpaare jetzt gleich hoch? Springt beim Kacheln-Legen noch etwas (die Ablage hat jetzt zwei Zeilen mit Linien)?
 - [x] **Glas-Design entscheiden:** Erledigt am 16.11.2026 – ohne Glas.
+- [ ] **Stimmen Luca und Paola fehlen in der App:** (1) iPhone einmal neu starten, App öffnen → Einstellungen → Vorlesen. (2) Wenn sie immer noch fehlen: die Adresse https://zitronfalter.github.io/Italienisch/ in einem normalen Safari-Tab öffnen und dort unter Einstellungen → Vorlesen nachsehen. Claude sagen, wo du welche Stimmen siehst.
+- [ ] **Knöpfe in Pillenform ansehen:** „Los“, „Prüfen“, „Weiter“ und die umrandeten Knöpfe haben jetzt ganz runde Enden. Gefällt dir das?
 - [ ] **Noch planen:** Kacheln im Satz verschieben.
 - [ ] **Lektion als Weg ausprobieren** (auf dem iPhone, Lektion 1–2): „Los“ bringt erst fällige Wörter, dann fällige Grammatik, dann den nächsten Schritt. Fragen an dich:
       1. Sind die Schritte kurz genug (3–5 Minuten)?

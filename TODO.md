@@ -8,7 +8,13 @@
 
 ## 🟢 Jetzt
 
-- [ ] **Morgen (16.11.):** Claude sagen: „Bau Lektion als Weg, Etappe 1“. Entwurf und Bauplan sind abgestimmt (siehe ROADMAP). Danach Lektion 1–2 auf dem iPhone ausprobieren.
+- [x] **Lektion als Weg, Etappe 1 bauen lassen:** Erledigt am 16.11.2026.
+- [ ] **Lektion als Weg ausprobieren** (auf dem iPhone, Lektion 1–2): „Los“ bringt erst fällige Wörter, dann fällige Grammatik, dann den nächsten Schritt. Fragen an dich:
+      1. Sind die Schritte kurz genug (3–5 Minuten)?
+      2. Passt es, dass alle 3 Schritte neue Wörter kommen?
+      3. Ist „Weiter: Schritt …“ / „Für heute reicht’s“ angenehm? Stört der Pausen-Tipp von Limo nach jedem 3. Schritt?
+      4. Unter **Lektionen** → Lektion antippen: Ist der Weg als Liste verständlich?
+      Hinweis: „Neue Wörter pro Tag“ in den Einstellungen wirkt jetzt nicht mehr, solange eine Lektion offen ist. Es fällt nach deinem Test weg (Etappe 2).
 
 - [x] **Begleiter:** Erledigt am 15.11.2026 – statt Roboter ist jetzt **Limo** da, die kleine Zitrone (aus deinem Entwurf, aufrecht, Blätter als Haarschopf). Die App-Farben passen jetzt zu Limo, Terrakotta ist raus, das App-Symbol zeigt Limo.
 - [ ] **Limo und die neuen Farben auf dem iPhone ansehen:** Gefallen dir Gelb, Grün und das ruhige Blau bei „noch nicht“? Ist Limo gut zu erkennen? Hinweis: Das App-Symbol auf dem Home-Bildschirm wechselt evtl. erst, wenn du die App einmal entfernst und neu „Zum Home-Bildschirm“ hinzufügst.

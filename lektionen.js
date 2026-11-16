@@ -2,7 +2,8 @@
 //
 // Die Inhalte stehen in lektionen-inhalt.js (LEKTIONEN). Hier steht nur die Logik.
 // Lernstand: Speicher.daten.fortschritt.lektionen[id] =
-//   { begonnen, erledigt, uebersprungen, woerterGeprueft, hoerenErledigt }
+//   { begonnen, erledigt, uebersprungen, woerterGeprueft, hoerenErledigt, schritt }
+// schritt = Anzahl gemachter Schritte des Wegs (siehe weg()); der Weg selbst wird immer neu erzeugt.
 // Hör-Ergebnisse: Speicher.daten.fortschritt.hoeren.lektionen[id] = { richtig, von, datum }
 
 const Lektionen = (() => {
@@ -93,12 +94,97 @@ const Lektionen = (() => {
     return Boolean(gespeichert(l.id).erledigt);
   }
 
-  // Setzt „erledigt“ bei allen fertigen Lektionen; gibt die neu erledigten zurück.
+  // Setzt „erledigt“ bei allen Lektionen, deren Weg zu Ende ist; gibt die neu erledigten zurück.
   function aktualisieren() {
-    const neu = alle().filter((l) => !istErledigt(l) && allesFertig(l));
+    const neu = alle().filter((l) => !istErledigt(l) && schrittNr(l) >= weg(l).length);
     for (const l of neu) stand(l.id).erledigt = Vokabeln.heute();
     if (neu.length) Speicher.speichern();
     return neu;
+  }
+
+  // Alte Regel (vor dem Weg): erledigt, wenn alle Teile fertig sind. Nur noch für den Übergang.
+  function altAktualisieren() {
+    for (const l of alle().filter((x) => !istErledigt(x) && allesFertig(x))) stand(l.id).erledigt = Vokabeln.heute();
+  }
+
+  // ---------- Der Weg: kurze Schritte ----------
+  //
+  // Wörter der Lektion in Päckchen zu 4–5. Je Päckchen: Neue Wörter, Üben, Festigen.
+  // Festigen-Plätze der Reihe nach: Kapitel, Texte, Hören; frei → Üben gemischt; Rest → eigene Schritte.
+  // Zuletzt der Abschluss. Wiederholung: Übungen und Text.
+
+  function paeckchen(ids) {
+    const anzahl = Math.ceil(ids.length / 5);
+    const ergebnis = [];
+    let start = 0;
+    for (let i = 0; i < anzahl; i++) {
+      const groesse = Math.floor(ids.length / anzahl) + (i < ids.length % anzahl ? 1 : 0);
+      ergebnis.push(ids.slice(start, start + groesse));
+      start += groesse;
+    }
+    return ergebnis;
+  }
+
+  function kapitelSchritt(id) {
+    const k = Grammatik.kapitel(id);
+    return { art: 'kapitel', kapitel: id, name: 'Grammatik' + (k ? ': ' + k.titel : '') };
+  }
+
+  function textSchritt(id) {
+    const t = LESETEXTE.find((x) => x.id === id);
+    return { art: 'text', text: id, name: 'Text' + (t ? ': ' + t.titel : '') };
+  }
+
+  function weg(l) {
+    const texte = l.texte.map(textSchritt);
+    if (l.art === 'ripasso') return [{ art: 'uebungen', name: 'Gemischte Übungen' }, ...texte];
+    const festigen = [...l.kapitel.map(kapitelSchritt), ...texte, { art: 'hoeren', name: 'Hören' }];
+    const schritte = [];
+    const bisher = [];
+    paeckchen(l.wortIds).forEach((p, i) => {
+      bisher.push(...p);
+      schritte.push({ art: 'woerter', ids: p, name: 'Neue Wörter ' + (i + 1) });
+      schritte.push({ art: 'ueben', ids: [...bisher], name: 'Wörter üben' });
+      schritte.push(festigen.shift() || { art: 'ueben', ids: [...bisher], name: 'Wörter üben gemischt' });
+    });
+    schritte.push(...festigen, { art: 'abschluss', name: 'Abschluss' });
+    return schritte;
+  }
+
+  function schrittNr(l) {
+    return gespeichert(l.id).schritt || 0;
+  }
+
+  // Ist der Inhalt eines Schritts schon fertig (z. B. aus einer früheren Lektion)? Dann wird er übersprungen.
+  function schrittErledigt(l, s) {
+    if (s.art === 'woerter') return s.ids.every((id) => Speicher.daten.karten[id]);
+    if (s.art === 'kapitel') return Boolean((Grammatik.stand(s.kapitel) || {}).geuebt);
+    if (s.art === 'text') return Boolean((Lesen.stand(s.text) || {}).verstanden);
+    return false;
+  }
+
+  // Nächster Schritt, der noch zu tun ist (fertige werden übersprungen und gezählt). null: Weg zu Ende.
+  function naechsterWegSchritt(l) {
+    const w = weg(l);
+    const alt = schrittNr(l);
+    let nr = alt;
+    while (nr < w.length && schrittErledigt(l, w[nr])) nr++;
+    if (nr > alt) {
+      stand(l.id).schritt = nr;
+      if (nr >= w.length && !istErledigt(l)) stand(l.id).erledigt = Vokabeln.heute();
+      Speicher.speichern();
+    }
+    return nr < w.length ? { nr, schritt: w[nr] } : null;
+  }
+
+  // Schritt nr ist gemacht. Ein früherer Schritt nochmal gemacht ändert nichts.
+  function schrittGemacht(lektionId, nr) {
+    const l = finde(lektionId);
+    const s = stand(lektionId);
+    s.begonnen = s.begonnen || Vokabeln.heute();
+    s.schritt = Math.max(s.schritt || 0, nr + 1);
+    if (s.schritt >= weg(l).length && !s.erledigt) s.erledigt = Vokabeln.heute();
+    Speicher.speichern();
   }
 
   // ---------- Welche Lektion ist dran? ----------
@@ -259,18 +345,37 @@ const Lektionen = (() => {
     Speicher.speichern();
   }
 
-  // ---------- Übergang vom alten Lernstand (Format 1) ----------
+  // ---------- Übergang vom alten Lernstand ----------
   //
-  // Lektionen, deren Wörter, Grammatik und Text schon fertig sind, gelten auch beim Hören als fertig.
+  // Format 1 → 2: Lektionen, deren Wörter, Grammatik und Text schon fertig sind, gelten auch beim Hören als fertig.
+  // Format 2 → 3: begonnene Lektionen bekommen `schritt` = erster Schritt des Wegs, der nach altem Stand offen ist.
+
+  function altFertig(l, s) {
+    if (s.art === 'woerter' || s.art === 'kapitel' || s.art === 'text') return schrittErledigt(l, s);
+    if (s.art === 'ueben') return s.ids.every((id) => Speicher.daten.karten[id] && !Vokabeln.istJung(Speicher.daten.karten[id]));
+    if (s.art === 'hoeren') return teilHoeren(l) === 'fertig';
+    if (s.art === 'uebungen') return teilUebungen(l) === 'fertig';
+    return false;
+  }
 
   function uebergang() {
-    if ((Speicher.daten.format || 1) >= 2) return;
-    for (const l of alle()) {
-      const t = teile(l);
-      if (t.woerter === 'fertig' && t.grammatik === 'fertig' && t.text === 'fertig') stand(l.id).hoerenErledigt = true;
+    const format = Speicher.daten.format || 1;
+    if (format >= 3) return;
+    if (format < 2) {
+      for (const l of alle()) {
+        const t = teile(l);
+        if (t.woerter === 'fertig' && t.grammatik === 'fertig' && t.text === 'fertig') stand(l.id).hoerenErledigt = true;
+      }
     }
-    Speicher.daten.format = 2;
-    aktualisieren();
+    altAktualisieren();
+    for (const l of alle()) {
+      if (istErledigt(l) || !gespeichert(l.id).begonnen) continue;
+      const w = weg(l);
+      let nr = 0;
+      while (nr < w.length && altFertig(l, w[nr])) nr++;
+      if (nr) stand(l.id).schritt = nr;
+    }
+    Speicher.daten.format = 3;
     Speicher.speichern();
   }
 
@@ -278,5 +383,6 @@ const Lektionen = (() => {
     alle, finde, anzeigeNr, teile, istErledigt, aktualisieren, aktuelle, beginnen,
     brauchtWortCheck, woerterEinordnen, neueWoerter, naechsterTeil, hoerenSpeichern, uebergang,
     aufgabenFuer, ueberspringen, ripassoSpeichern,
+    weg, schrittNr, schrittErledigt, naechsterWegSchritt, schrittGemacht,
   };
 })();

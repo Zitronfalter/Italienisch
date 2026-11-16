@@ -58,10 +58,12 @@ test('teile: Hören fertig ab 80 %', () => {
   assert.strictEqual(k.Lektionen.teile(lek(k, 'l01')).hoeren, 'fertig');
 });
 
-test('aktualisieren markiert und meldet neu erledigte', () => {
+test('aktualisieren markiert und meldet neu erledigte (Weg zu Ende)', () => {
   const k = frisch();
   l01Fertig(k);
   k.Lektionen.hoerenSpeichern('l01', 5, 5);
+  assert.deepStrictEqual([...k.Lektionen.aktualisieren()], []);   // alle Teile fertig reicht nicht mehr
+  k.Speicher.daten.fortschritt.lektionen = { l01: { schritt: k.Lektionen.weg(lek(k, 'l01')).length } };
   const neu = k.Lektionen.aktualisieren();
   assert.deepStrictEqual([...neu.map((l) => l.id)], ['l01']);
   assert.ok(k.Lektionen.istErledigt(lek(k, 'l01')));
@@ -191,7 +193,7 @@ test('uebergang: Format-1-Stand wird übernommen', () => {
   assert.ok(k.Lektionen.istErledigt(lek(k, 'l01')));
   assert.strictEqual(k.Speicher.daten.fortschritt.lektionen.l01.hoerenErledigt, true);
   assert.ok(!k.Lektionen.istErledigt(lek(k, 'l02')));
-  assert.strictEqual(k.Speicher.daten.format, 2);
+  assert.strictEqual(k.Speicher.daten.format, 3);
   assert.deepStrictEqual(JSON.parse(JSON.stringify(k.Speicher.daten.karten)), vorlage.karten);
 });
 
@@ -202,7 +204,7 @@ test('uebergang läuft nach ausDateiLaden', async () => {
   assert.strictEqual(k.Speicher.daten.format, 1);
   k.Lektionen.uebergang();
   assert.ok(k.Lektionen.istErledigt(lek(k, 'l01')));
-  assert.strictEqual(k.Speicher.daten.format, 2);
+  assert.strictEqual(k.Speicher.daten.format, 3);
 });
 
 test('uebergang zweimal ändert nichts mehr', () => {
@@ -223,9 +225,9 @@ test('uebergang: Hören nicht geschenkt, wenn nur ein Teil fehlt', () => {
     k.Speicher.daten.fortschritt.lektionen.l01.hoerenErledigt));
 });
 
-test('neuer leerer Stand hat Format 2', () => {
+test('neuer leerer Stand hat Format 3', () => {
   const k = frisch();
-  assert.strictEqual(k.Speicher.daten.format, 2);
+  assert.strictEqual(k.Speicher.daten.format, 3);
 });
 
 // ---------- Kann ich schon / Wiederholung ----------
@@ -287,7 +289,8 @@ test('Wiederholung: Übungen fertig ab 80 %, dann erledigt', () => {
   assert.strictEqual(k.Lektionen.teile(r).uebungen, 'angefangen');
   k.Lektionen.ripassoSpeichern('r1', 8, 10);
   assert.strictEqual(k.Lektionen.teile(r).uebungen, 'fertig');
-  assert.ok(k.Lektionen.aktualisieren().some((l) => l.id === 'r1'));
+  k.Lektionen.schrittGemacht('r1', k.Lektionen.weg(r).length - 1);
+  assert.ok(k.Lektionen.istErledigt(r));
 });
 
 test('Wiederholung: naechsterTeil sind die Übungen, keine neuen Wörter', () => {

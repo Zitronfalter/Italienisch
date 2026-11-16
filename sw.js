@@ -3,7 +3,7 @@
 //
 // WICHTIG: Bei jeder Änderung an den Dateien die Versionsnummer erhöhen.
 // Dann lädt das iPhone beim nächsten Start die neuen Dateien.
-const VERSION = 'v52';
+const VERSION = 'v53';
 const CACHE = 'italienisch-' + VERSION;
 
 const DATEIEN = [

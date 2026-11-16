@@ -43,7 +43,8 @@ test('Übungen kommen erst, wenn die Wörter gelernt sind', () => {
   assert.strictEqual(t.lektion.id, 'l01a');
   k.Lektionen.ripassoSpeichern('l01a', 9, 10);
   assert.strictEqual(k.Lektionen.teile(l).uebungen, 'fertig');
-  assert.deepStrictEqual([...k.Lektionen.aktualisieren().map((x) => x.id)], ['l01a']);
+  k.Lektionen.schrittGemacht('l01a', k.Lektionen.weg(l).length - 1);
+  assert.ok(k.Lektionen.istErledigt(l));
 });
 
 test('gemischte Übungen einer Wort-Lektion: Wörter und Grammatik der Lektion davor', () => {

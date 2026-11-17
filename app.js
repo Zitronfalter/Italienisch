@@ -828,7 +828,8 @@ function auswahlFuer(w) {
   const falsche = [];
   for (const x of [...mischen(gleich), ...mischen(andere)]) {
     if (falsche.length === 3) break;
-    if (x.it !== w.it && !falsche.some((f) => f.it === x.it)) falsche.push(x);
+    // nie ein Wort mit gleicher Bedeutung (sonst wären zwei Antworten richtig)
+    if (x.it !== w.it && !falsche.some((f) => f.it === x.it) && !Vokabeln.mehrdeutig(x, [w, ...falsche])) falsche.push(x);
   }
   return mischen([w, ...falsche]);
 }
@@ -1209,6 +1210,7 @@ function paarFueller(schonDa, anzahl) {
   if (anzahl <= 0) return [];
   const karten = Speicher.daten.karten;
   const nicht = new Set(schonDa);
+  const schonWoerter = schonDa.map((id) => Vokabeln.wort(id)).filter(Boolean);
   const gelernt = Vokabeln.langeNichtGesehen(Object.keys(karten).filter((id) => !Vokabeln.istJung(karten[id])), anzahl * 2);
   const akt = Lektionen.aktuelle();
   const bisher = Lektionen.alle().filter((l) => !akt || l.nr <= akt.nr).flatMap((l) => l.wortIds);
@@ -1218,6 +1220,7 @@ function paarFueller(schonDa, anzahl) {
     if (ergebnis.length >= anzahl) break;
     const w = Vokabeln.wort(id);
     if (!w || nicht.has(id) || ergebnis.some((x) => x.it === w.it)) continue;
+    if (Vokabeln.mehrdeutig(w, [...schonWoerter, ...ergebnis])) continue;   // zwei gleiche deutsche Seiten wären verwirrend
     nicht.add(id);
     ergebnis.push(w);
   }
@@ -1291,7 +1294,19 @@ function pruefen(weissNicht = false) {
   const text = eingabe.value.trim();
   if (!weissNicht && !text) { eingabe.focus(); return; }
 
-  const ergebnis = weissNicht ? { stufe: 'falsch', hinweis: '' } : Vokabeln.pruefe(text, w);
+  const ergebnis = weissNicht ? { stufe: 'falsch', hinweis: '' } : Vokabeln.pruefeUebersetzung(text, w);
+  // Anderes Wort mit gleicher Bedeutung, aber die Frage meint ein bestimmtes: nicht falsch – noch einmal versuchen
+  if (ergebnis.stufe === 'andere') {
+    const box = el('rueckmeldung');
+    box.classList.remove('falsch');
+    el('rueck-titel').textContent = 'Gute Idee!';
+    el('rueck-text').innerHTML = `<strong lang="it">${ergebnis.wort}</strong> heißt auch so – hier ist ein anderes Wort gemeint`
+      + `${ergebnis.tipp ? ` (${ergebnis.tipp})` : ''}. Versuch es noch einmal.`;
+    el('rueck-text').hidden = false;
+    box.hidden = false;
+    eingabe.select();
+    return;
+  }
   const gewusst = ergebnis.stufe !== 'falsch';
 
   // Nur der erste Versuch zählt für den Karteikasten.
@@ -1307,9 +1322,13 @@ function pruefen(weissNicht = false) {
   const box = el('rueckmeldung');
   box.classList.toggle('falsch', !gewusst);
   const loesung = `<strong lang="it">${w.it}</strong>`;
+  const auch = ergebnis.auch ? ` Gesucht war ${loesung} – <span lang="it">${ergebnis.auch}</span> passt auch.` : '';
   if (ergebnis.stufe === 'richtig') {
     el('rueck-titel').textContent = 'Richtig.';
-    el('rueck-text').innerHTML = '';
+    el('rueck-text').innerHTML = auch.trim();
+  } else if (ergebnis.auch) {
+    el('rueck-titel').textContent = 'Fast richtig – zählt.';
+    el('rueck-text').innerHTML = `${ergebnis.hinweis}${auch}`;
   } else if (ergebnis.stufe === 'fast') {
     el('rueck-titel').textContent = 'Fast richtig – zählt.';
     el('rueck-text').innerHTML = `${ergebnis.hinweis} Genau: ${loesung}`;
@@ -1328,7 +1347,7 @@ function pruefen(weissNicht = false) {
   el('knopf-pruefen').textContent = 'Weiter';
   el('knopf-pruefen').focus();
   abfrage.geprueft = true;
-  if (ergebnis.stufe === 'richtig') autoWeiter();
+  if (ergebnis.stufe === 'richtig') autoWeiter(ergebnis.auch ? 2500 : 1200);
 }
 
 // Richtig gelöst: nach kurzer Pause geht es von selbst weiter.

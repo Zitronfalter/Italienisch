@@ -29,6 +29,7 @@
 - [ ] **Noch planen:** Kacheln im Satz verschieben.
 - [x] **Lektion als Weg ausprobieren:** Erledigt am 16.11.2026 – passt so. Als Nächstes baut Claude Etappe 2.
 - [ ] **Festigen ausprobieren:** Wenn in den letzten 7 Tagen weniger als gut die Hälfte richtig war (unter 55 %), kommt vor neuen Wörtern einmal eine kurze Runde „Erst festigen“ mit deinen schwersten Wörtern. Danach schlägt Limo etwas vor (Grammatik, Hören & Üben oder Vokabelkasten). Fragen: Hilft dir das? Kommt es zu oft oder zu selten? Passen Limos Vorschläge?
+- [ ] **Mehrere Übersetzungen ansehen:** Beim Italienisch-Schreiben gilt jetzt auch ein anderes Wort mit gleicher Bedeutung (z. B. *salve* für „hallo“). Steht in der Frage ein Hinweis in Klammern (z. B. „die Straße (in der Adresse)“), sagt Limo bei *strada* „Gute Idee! … Versuch es noch einmal“ – das zählt nicht als Fehler. Passt das so? Fällt dir ein Wort auf, bei dem die Frage nicht eindeutig ist? Dann Claude sagen.
 - [ ] **Kleinigkeiten im Blick behalten:** „Prüfen“ erst mit Antwort, Grammatik in der Lektion, gelbes Symbol in der Leiste unten. Fällt dir etwas auf? Einfach Claude sagen.
 
 - [x] **Begleiter:** Erledigt am 15.11.2026 – statt Roboter ist jetzt **Limo** da, die kleine Zitrone (aus deinem Entwurf, aufrecht, Blätter als Haarschopf). Die App-Farben passen jetzt zu Limo, Terrakotta ist raus, das App-Symbol zeigt Limo.

@@ -322,6 +322,54 @@ const Vokabeln = (() => {
     return bestes;
   }
 
+  // ---------- Mehrere Übersetzungen ----------
+  //
+  // Bedeutungen eines Worts (durch „;“ getrennt): voll = mit Hinweis in Klammern, kern = ohne.
+  // „die Straße“ und „die Straße (in der Adresse)“ sind im Kern gleich, voll verschieden.
+  const klein = (t) => t.toLowerCase().replace(/\s+/g, ' ').trim();
+  function bedeutungen(de) {
+    return String(de || '').split(';').map((b) => ({
+      voll: klein(b),
+      kern: klein(b.replace(/\([^)]*\)/g, ' ')),
+      tipp: (b.match(/\(([^)]*)\)/) || [])[1] || '',
+    })).filter((b) => b.kern);
+  }
+
+  // 'voll' (eine Bedeutung genau gleich), 'kern' (nur ohne Klammer-Hinweis gleich) oder null
+  function gleicheBedeutung(a, b) {
+    if (!a || !b || a.it === b.it) return null;
+    const ba = bedeutungen(a.de);
+    const bb = bedeutungen(b.de);
+    if (ba.some((x) => bb.some((y) => x.voll === y.voll))) return 'voll';
+    if (ba.some((x) => bb.some((y) => x.kern === y.kern))) return 'kern';
+    return null;
+  }
+
+  // Hat w mit einem der anderen Wörter eine Bedeutung gemeinsam? (Wählen, Wortpaare: dann nicht zusammen zeigen)
+  function mehrdeutig(w, andere) {
+    return andere.some((x) => gleicheBedeutung(w, x));
+  }
+
+  // Italienisch schreiben: wie pruefe – dazu gelten Wörter mit gleicher Bedeutung.
+  //   gleiche Bedeutung → wie richtig, mit auch: das getippte Wort
+  //   nur im Kern gleich (die Frage hat einen anderen Hinweis) → stufe 'andere' (nicht falsch, noch einmal versuchen)
+  function pruefeUebersetzung(eingabe, w) {
+    const eigen = pruefe(eingabe, w);
+    if (eigen.stufe !== 'falsch' || typeof WORTSCHATZ === 'undefined') return eigen;
+    let andere = null;
+    for (const x of WORTSCHATZ) {
+      const art = gleicheBedeutung(w, x);
+      if (!art) continue;
+      const r = pruefe(eingabe, x);           // „fast“ (z. B. ohne Artikel) zählt hier auch
+      if (r.stufe === 'falsch') continue;
+      // Nur im Kern gleich: hat die Frage selbst keinen Hinweis, war sie nicht eindeutig → gilt auch
+      const frage = bedeutungen(w.de).find((b) => bedeutungen(x.de).some((y) => y.kern === b.kern));
+      if (art === 'voll' || !frage.tipp) return { ...r, auch: x.it };
+      if (!andere) andere = { stufe: 'andere', hinweis: r.hinweis, wort: x.it, tipp: frage.tipp };
+    }
+    return andere || eigen;
+  }
+
   // ---------- Vokabelkasten: Duolingo-Wörter, Fächer, „lange nicht gesehen“ ----------
 
   // Einmalig: Wörter aus Nicoles Duolingo-Liste (schon-bekannt.js) kommen als bekannt in Fach 3.
@@ -410,6 +458,9 @@ const Vokabeln = (() => {
     festigenNoetig,
     festigenGemacht,
     schwersteWoerter,
+    gleicheBedeutung,
+    mehrdeutig,
+    pruefeUebersetzung,
     aufnehmen,
     eintragen,
     pruefe,

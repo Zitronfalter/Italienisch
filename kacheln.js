@@ -114,8 +114,14 @@ const Kacheln = (() => {
     const r = ablage.getBoundingClientRect();
     const drin = x >= r.left - RAND && x <= r.right + RAND && y >= r.top - RAND && y <= r.bottom + RAND;
     if (!drin) { l.luecke.remove(); return; }
+    // Gemessen wird ohne die Lücke: Sonst schiebt die Lücke die Kacheln weg, und die Stelle
+    // springt am Zeilenende zwischen zwei Möglichkeiten hin und her.
+    const vorher = l.luecke.nextElementSibling;
+    const warDrin = l.luecke.parentNode === ablage;
+    l.luecke.remove();
     const kacheln = [...ablage.querySelectorAll('.kachel:not(.kachel-gezogen)')];
     const i = einfuegeStelle(kacheln.map((k) => k.getBoundingClientRect()), x, y);
+    if (warDrin) ablage.insertBefore(l.luecke, vorher);
     const vor = kacheln[i] || null;
     if (l.luecke.parentNode !== ablage || l.luecke.nextElementSibling !== vor) ablage.insertBefore(l.luecke, vor);
   }

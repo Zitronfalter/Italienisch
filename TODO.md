@@ -46,7 +46,7 @@
 - [ ] **Nichts doppelt ausprobieren:** Mehrmals am Tag „Los“ drücken. Kommen noch Aufgaben doppelt, die du richtig hattest? Wenn alles geübt ist: Gefällt dir Limos Vorschlag?
 - [ ] **Menü, Schritt 2 ansehen:** Jetzt 5 Reiter, „Einstellungen“ ganz rechts. „‹ Zurück“ steht immer oben links. Passt „Heute“ so ohne Scrollen? Fehlt dir oben etwas?
 - [ ] **Vorlesen einstellen:** Einstellungen → „Vorlesen“. (1) Tempo: Hörst du jetzt einen Unterschied zwischen „sehr langsam“ und „normal“? Wenn nicht: andere Stimme wählen und noch mal probieren – und Claude sagen, welche Stimme es war. (2) Bei „Stimme für männliche Wörter“ eine Männerstimme wählen (z. B. Luca), bei „weibliche Wörter“ eine Frauenstimme (z. B. Alice). Hörprobe kommt sofort.
-- [ ] **Apple-Design – Frage an dich:** Welche Apple-App benutzt du gern, und was gefällt dir daran besser als an unserer App? Danach plant Claude das neue Design (mit „‹ Zurück“ oben).
+- [ ] **Später (zurückgestellt 17.11.): Apple-Design – Frage an dich:** Welche Apple-App benutzt du gern, und was gefällt dir daran besser als an unserer App? Danach plant Claude das neue Design (mit „‹ Zurück“ oben).
 - [ ] **Meine Wörter ausprobieren:** Mein Stand → „Alle Wörter ansehen“. Filter antippen, Wort antippen (wird vorgelesen), „Deutsch verdecken“ einschalten und dich selbst prüfen. Passt das so?
 - [ ] **Limo in den Übungen ansehen:** Nach jeder Antwort steht jetzt eine kleine Limo im Kasten (freut sich / macht Mut). Zu groß, zu klein, zu oft?
 - [ ] **Lektion 1–8 ausprobieren:** Passt die neue Startseite? Ist „kenne ich / neu“ angenehm? Sind die Texte zu leicht oder zu schwer?

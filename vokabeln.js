@@ -135,7 +135,7 @@ const Vokabeln = (() => {
   function schwersteWoerter(anzahl = 7) {
     const rang = (k) => (!istJung(k) && k.fach === 1 && k.falsch > 0 ? 0 : istJung(k) ? 1 : 2);
     return Object.entries(karten())
-      .filter(([id]) => wort(id))
+      .filter(([id, k]) => wort(id) && (istJung(k) || (k.fach || 1) < SICHER_AB_FACH))   // was sitzt, braucht kein Festigen
       .sort(([, a], [, b]) => rang(a) - rang(b) || (a.fach || 1) - (b.fach || 1)
         || String(a.faellig).localeCompare(String(b.faellig)))
       .slice(0, anzahl)

@@ -47,6 +47,23 @@ test('schwersteWoerter: Fach 1 mit Fehlern zuerst, dann junge, dann der Rest', (
   assert.deepStrictEqual([...k.Vokabeln.schwersteWoerter(2)], [b, c]);
 });
 
+test('schwersteWoerter: Wörter, die sitzen (ab Fach 4), kommen nicht', () => {
+  const k = laden();
+  const [a, b] = k.WORTSCHATZ.slice(0, 2).map((w) => w.id);
+  const h = k.Vokabeln.heute();
+  k.Speicher.daten.karten[a] = { fach: 4, faellig: h, richtig: 5, falsch: 0 };
+  k.Speicher.daten.karten[b] = { fach: 5, faellig: h, richtig: 7, falsch: 1 };
+  assert.deepStrictEqual([...k.Vokabeln.schwersteWoerter(7)], []);
+});
+
+test('Vorschlag: kein Kapitel aus einer späteren Lektion', () => {
+  const k = laden();
+  const spaet = k.Lektionen.alle().find((l) => l.kapitel.length && l.nr > 5).kapitel[0];
+  k.Wiederholung.fehlerMerken({ art: 'grammatik', kapitel: spaet, nr: 0 }, false);
+  const v = k.Wiederholung.festigenVorschlag();   // aktuelle Lektion ist die erste
+  assert.notStrictEqual(v.kapitel, spaet);
+});
+
 test('schwersteWoerter leer ohne Karten', () => {
   const k = laden();
   assert.deepStrictEqual([...k.Vokabeln.schwersteWoerter(7)], []);
@@ -81,6 +98,7 @@ test('festigenAufgaben: junge Wörter werden nicht geschrieben', () => {
 
 test('Vorschlag reihum Grammatik, Hören, Vokabeln', () => {
   const k = laden();
+  k.Lektionen.beginnen('l04');   // Kapitel bis Lektion 4 sind dran
   k.Wiederholung.fehlerMerken({ art: 'grammatik', kapitel: 'artikel', nr: 0 }, false);
   const W = k.Wiederholung;
   assert.deepStrictEqual({ ...W.festigenVorschlag() }, { art: 'kapitel', kapitel: 'artikel' });
@@ -99,6 +117,7 @@ test('Vorschlag ohne Grammatik-Stand überspringt Grammatik', () => {
 
 test('Vorschlag nimmt sonst das zuletzt geübte Kapitel', () => {
   const k = laden();
+  k.Lektionen.beginnen('l04');   // Kapitel bis Lektion 4 sind dran
   k.Speicher.daten.fortschritt.grammatik = {
     artikel: { geuebt: true, datum: '2026-11-01' },
     'verben-are': { geuebt: true, datum: '2026-11-10' },

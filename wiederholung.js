@@ -224,11 +224,20 @@ const Wiederholung = (() => {
   // neuesten Fehler, sonst das zuletzt geübte; gibt es keins, kommt die nächste Art dran.
   const VORSCHLAG_KREIS = ['kapitel', 'hoeren', 'woerter'];
 
+  // Kapitel der aktuellen und früheren Lektionen (keine offene Lektion: alle)
+  function kapitelBisJetzt() {
+    const akt = Lektionen.aktuelle();
+    if (!akt) return null;
+    return new Set(Lektionen.alle().filter((l) => l.nr <= akt.nr).flatMap((l) => l.kapitel || []));
+  }
+
   function vorschlagKapitel() {
-    const fehler = fehlerListe().filter((x) => x.art !== 'hoeren' && Grammatik.kapitel(x.kapitel));
+    const bis = kapitelBisJetzt();
+    const passt = (id) => Grammatik.kapitel(id) && (!bis || bis.has(id));
+    const fehler = fehlerListe().filter((x) => x.art !== 'hoeren' && passt(x.kapitel));
     if (fehler.length) return fehler[fehler.length - 1].kapitel;
     const geuebt = Object.entries(Speicher.daten.fortschritt.grammatik || {})
-      .filter(([id, s]) => s && s.geuebt && Grammatik.kapitel(id))
+      .filter(([id, s]) => s && s.geuebt && passt(id))
       .sort(([, a], [, b]) => String(b.datum || '').localeCompare(String(a.datum || '')));
     return geuebt.length ? geuebt[0][0] : null;
   }

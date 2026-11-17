@@ -3117,7 +3117,7 @@ function stelleBeschreibung(d) {
   if (d.art === 'runde') {
     const zaehlt = d.schritte.filter((s) => s.art !== 'neu').length;
     const erledigt = d.schritte.slice(0, d.pos).filter((s) => s.art !== 'neu').length;
-    return `Vokabeln – ${Math.min(erledigt + 1, zaehlt)} von ${zaehlt}`;
+    return `${d.festigen ? 'Festigen' : 'Vokabeln'} – ${Math.min(erledigt + 1, zaehlt)} von ${zaehlt}`;
   }
   if (d.art === 'aufgaben') return `${d.titel} – Aufgabe ${d.nr + 1} von ${d.liste.length}`;
   if (d.art === 'uebung') {

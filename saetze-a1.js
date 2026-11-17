@@ -303,3 +303,298 @@ SAETZE.l02a = [
     { it: 'Due spritz con tanto ghiaccio, per favore!', de: 'Zwei Spritz mit viel Eis, bitte!' },
   ] },
 ];
+
+// Lektion 7 „La merenda“ – Brötchen-Wörter (panino / tramezzino / toast) und
+// Süßes aufs Brot (marmellata / miele) auf verschiedene Päckchen verteilt
+SAETZE.l02b = [
+  // Päckchen 1
+  { wort: 'la merenda', saetze: [
+    { it: 'Alle quattro i ragazzi mangiano la merenda.', de: 'Um vier essen die Kinder ihren Nachmittagssnack.' },
+    { it: 'Che cosa c’è per merenda, mamma?', de: 'Was gibt es zum Nachmittagssnack, Mama?' },
+    { it: 'Oggi la merenda è al parco con gli amici.', de: 'Heute gibt es den Snack im Park mit den Freunden.' },
+  ] },
+  { wort: 'il gelato', saetze: [
+    { it: 'Fa caldo: andiamo a prendere un gelato!', de: 'Es ist heiß: Holen wir uns ein Eis!' },
+    { it: 'Un gelato al cioccolato o alla fragola?', de: 'Ein Schokoladeneis oder ein Erdbeereis?' },
+    { it: 'D’estate Marco mangia un gelato ogni giorno.', de: 'Im Sommer isst Marco jeden Tag ein Eis.' },
+  ] },
+  { wort: 'il panino', saetze: [
+    { it: 'Ho fame: prendo un panino al bar.', de: 'Ich habe Hunger: Ich nehme ein belegtes Brötchen in der Bar.' },
+    { it: 'Per pranzo mangio solo un panino.', de: 'Zu Mittag esse ich nur ein belegtes Brötchen.' },
+    { it: 'Due panini e due acque, per favore.', de: 'Zwei belegte Brötchen und zwei Wasser, bitte.', form: 'panini' },
+  ] },
+  { wort: 'la marmellata', saetze: [
+    { it: 'A colazione mangio un cornetto con la marmellata.', de: 'Zum Frühstück esse ich ein Hörnchen mit Marmelade.' },
+    { it: 'La marmellata della nonna è la migliore.', de: 'Omas Marmelade ist die beste.' },
+    { it: 'C’è ancora marmellata di fragole?', de: 'Gibt es noch Erdbeermarmelade?' },
+  ] },
+  { wort: 'salato', saetze: [
+    { it: 'Dolce o salato? – Per me salato, grazie.', de: 'Süß oder salzig? – Für mich salzig, danke.' },
+    { it: 'Questa pasta è troppo salata!', de: 'Diese Nudeln sind zu salzig!', form: 'salata' },
+    { it: 'A merenda i ragazzi preferiscono qualcosa di salato.', de: 'Zum Nachmittagssnack mögen die Kinder lieber etwas Salziges.' },
+  ] },
+
+  // Päckchen 2
+  { wort: 'il prosciutto', saetze: [
+    { it: 'Un panino con prosciutto e formaggio, per favore.', de: 'Ein Brötchen mit Schinken und Käse, bitte.' },
+    { it: 'Il prosciutto di Parma è famoso.', de: 'Der Parmaschinken ist berühmt.' },
+    { it: 'Sono vegetariana, non mangio il prosciutto.', de: 'Ich bin Vegetarierin, ich esse keinen Schinken.' },
+  ] },
+  { wort: 'il biscotto', saetze: [
+    { it: 'Con il caffè mangio sempre due biscotti.', de: 'Zum Kaffee esse ich immer zwei Kekse.', form: 'biscotti' },
+    { it: 'Questi biscotti sono della nonna.', de: 'Diese Kekse sind von Oma.', form: 'biscotti' },
+    { it: 'Vuoi un biscotto con il latte?', de: 'Willst du einen Keks zur Milch?' },
+  ] },
+  { wort: 'il miele', saetze: [
+    { it: 'Un tè caldo con miele e limone, per favore.', de: 'Einen heißen Tee mit Honig und Zitrone, bitte.' },
+    { it: 'Il miele è dolce.', de: 'Der Honig ist süß.' },
+    { it: 'Questo miele è italiano.', de: 'Dieser Honig ist aus Italien.' },
+  ] },
+  { wort: 'buonissimo', saetze: [
+    { it: 'Questo gelato è buonissimo!', de: 'Dieses Eis ist sehr lecker!' },
+    { it: 'La pasta della nonna è sempre buonissima.', de: 'Omas Nudeln sind immer sehr lecker.', form: 'buonissima' },
+    { it: 'Questi biscotti sono buonissimi!', de: 'Diese Kekse sind sehr lecker!', form: 'buonissimi' },
+  ] },
+  { wort: 'la pizza', saetze: [
+    { it: 'Stasera mangiamo una pizza a Napoli.', de: 'Heute Abend essen wir eine Pizza in Neapel.', formen: { mangiamo: 'mangiare' } },
+    { it: 'Una pizza e una birra, per favore.', de: 'Eine Pizza und ein Bier, bitte.' },
+    { it: 'La pizza è buonissima ma è troppo grande per me.', de: 'Die Pizza ist sehr lecker, aber zu groß für mich.' },
+  ] },
+
+  // Päckchen 3
+  { wort: 'il tramezzino', saetze: [
+    { it: 'Al bar prendo un tramezzino con formaggio e pomodoro.', de: 'In der Bar nehme ich ein Sandwich mit Käse und Tomate.' },
+    { it: 'Il tramezzino è un piccolo panino.', de: 'Das Tramezzino ist ein kleines Sandwich.' },
+    { it: 'A Venezia i tramezzini sono famosi.', de: 'In Venedig sind die Tramezzini berühmt.', form: 'tramezzini' },
+  ] },
+  { wort: 'lo yogurt', saetze: [
+    { it: 'Nel frigorifero c’è uno yogurt alla fragola.', de: 'Im Kühlschrank ist ein Erdbeerjoghurt.' },
+    { it: 'A colazione Anna mangia yogurt e frutta.', de: 'Zum Frühstück isst Anna Joghurt und Obst.' },
+    { it: 'Questo yogurt è buonissimo con il miele.', de: 'Dieser Joghurt ist mit Honig sehr lecker.' },
+  ] },
+  { wort: 'il cioccolato', saetze: [
+    { it: 'Il cioccolato svizzero è molto famoso.', de: 'Die Schweizer Schokolade ist sehr berühmt.' },
+    { it: 'Un po’ di cioccolato con il caffè?', de: 'Etwas Schokolade zum Kaffee?' },
+    { it: 'I ragazzi mangiano troppo cioccolato.', de: 'Die Kinder essen zu viel Schokolade.' },
+  ] },
+  { wort: 'il toast', saetze: [
+    { it: 'Un toast con prosciutto e formaggio, per favore.', de: 'Einen Toast mit Schinken und Käse, bitte.' },
+    { it: 'Il toast è troppo caldo!', de: 'Der Toast ist zu heiß!' },
+    { it: 'Per merenda faccio un toast ai ragazzi.', de: 'Zum Nachmittagssnack mache ich den Kindern einen Toast.' },
+  ] },
+  { wort: 'il pasticcino', saetze: [
+    { it: 'La domenica compriamo i pasticcini per la nonna.', de: 'Am Sonntag kaufen wir Gebäck für Oma.', form: 'pasticcini' },
+    { it: 'Un caffè e un pasticcino, per favore.', de: 'Einen Kaffee und ein Gebäckstück, bitte.' },
+    { it: 'Questi pasticcini sono troppo dolci per me.', de: 'Diese Gebäckstücke sind mir zu süß.', form: 'pasticcini' },
+  ] },
+];
+
+// Lektion 8 „Alla cassa“ – Geld-Wörter (moneta / banconota / centesimo) und
+// Orte im Bar (al tavolo / al banco) auf verschiedene Päckchen verteilt
+SAETZE.l02c = [
+  // Päckchen 1
+  { wort: 'la cassa', saetze: [
+    { it: 'Prima paghi alla cassa, poi prendi il caffè.', de: 'Zuerst bezahlst du an der Kasse, dann nimmst du den Kaffee.' },
+    { it: 'Paghi tu alla cassa?', de: 'Bezahlst du an der Kasse?', formen: { paghi: 'pagare' } },
+    { it: 'Scusi, dov’è la cassa?', de: 'Entschuldigung, wo ist die Kasse?' },
+  ] },
+  { wort: 'quanto fa?', saetze: [
+    { it: 'Un caffè e un cornetto: quanto fa?', de: 'Ein Kaffee und ein Hörnchen: Wie viel macht das?', form: 'quanto fa' },
+    { it: 'Quanto fa? – Tre euro, grazie.', de: 'Wie viel macht das? – Drei Euro, danke.', form: 'quanto fa' },
+    { it: 'Scusi, quanto fa in tutto?', de: 'Entschuldigung, wie viel macht das insgesamt?', form: 'quanto fa' },
+  ] },
+  { wort: 'la moneta', saetze: [
+    { it: 'Ho solo tre monete.', de: 'Ich habe nur drei Münzen.', form: 'monete' },
+    { it: 'Questa moneta è da due euro.', de: 'Diese Münze ist zwei Euro wert.' },
+    { it: 'Hai una moneta da un euro?', de: 'Hast du eine Ein-Euro-Münze?' },
+  ] },
+  { wort: 'per me', saetze: [
+    { it: 'Per me un cappuccino, per lei un tè.', de: 'Für mich einen Cappuccino, für sie einen Tee.' },
+    { it: 'E per me? – Per te c’è un gelato!', de: 'Und für mich? – Für dich gibt es ein Eis!' },
+    { it: 'Questo regalo è per me? Grazie!', de: 'Ist dieses Geschenk für mich? Danke!' },
+  ] },
+  { wort: 'al tavolo', saetze: [
+    { it: 'Al bancone o al tavolo? – Al tavolo, grazie.', de: 'An der Theke oder am Tisch? – Am Tisch, danke.' },
+    { it: 'Al tavolo il caffè costa di più.', de: 'Am Tisch kostet der Kaffee mehr.' },
+    { it: 'Il cameriere porta le bibite al tavolo.', de: 'Der Kellner bringt die Getränke an den Tisch.' },
+  ] },
+
+  // Päckchen 2
+  { wort: 'la banconota', saetze: [
+    { it: 'Ho solo una banconota da cinquanta euro.', de: 'Ich habe nur einen Fünfzig-Euro-Schein.' },
+    { it: 'Scusi, non ho monete, solo banconote.', de: 'Entschuldigung, ich habe keine Münzen, nur Scheine.', form: 'banconote' },
+    { it: 'Questa banconota è nuova.', de: 'Dieser Geldschein ist neu.' },
+  ] },
+  { wort: 'in contanti', saetze: [
+    { it: 'Paga con la carta o in contanti?', de: 'Zahlen Sie mit Karte oder bar?', formen: { paga: 'pagare' } },
+    { it: 'Al mercato pago sempre in contanti.', de: 'Auf dem Markt zahle ich immer bar.', formen: { pago: 'pagare' } },
+    { it: 'Mi dispiace, qui solo in contanti.', de: 'Tut mir leid, hier nur bar.' },
+  ] },
+  { wort: 'il cassiere', saetze: [
+    { it: 'Il cassiere prende i soldi.', de: 'Der Kassierer nimmt das Geld.' },
+    { it: 'Il cassiere del supermercato è gentile.', de: 'Der Kassierer im Supermarkt ist nett.' },
+    { it: 'Scusi, il cassiere dov’è?', de: 'Entschuldigung, wo ist der Kassierer?' },
+  ] },
+  { wort: 'da portare via', saetze: [
+    { it: 'Due pizze da portare via, per favore.', de: 'Zwei Pizzas zum Mitnehmen, bitte.' },
+    { it: 'Qui o da portare via? – Da portare via.', de: 'Hier oder zum Mitnehmen? – Zum Mitnehmen.' },
+    { it: 'Un caffè da portare via, per favore.', de: 'Einen Kaffee zum Mitnehmen, bitte.' },
+  ] },
+  { wort: 'gratis', saetze: [
+    { it: 'L’acqua è gratis, il caffè no.', de: 'Das Wasser ist kostenlos, der Kaffee nicht.' },
+    { it: 'La domenica il museo è gratis.', de: 'Sonntags ist das Museum kostenlos.' },
+    { it: 'Per i ragazzi il gelato è gratis!', de: 'Für die Kinder ist das Eis kostenlos!' },
+  ] },
+
+  // Päckchen 3
+  { wort: 'il centesimo', saetze: [
+    { it: 'Un euro ha cento centesimi.', de: 'Ein Euro hat hundert Cent.', form: 'centesimi' },
+    { it: 'Il caffè costa un euro e venti centesimi.', de: 'Der Kaffee kostet einen Euro und zwanzig Cent.', form: 'centesimi' },
+    { it: 'Ho solo cinquanta centesimi.', de: 'Ich habe nur fünfzig Cent.', form: 'centesimi' },
+  ] },
+  { wort: 'il bancomat', saetze: [
+    { it: 'Non ho contanti: dov’è un bancomat?', de: 'Ich habe kein Bargeld: Wo ist ein Geldautomat?' },
+    { it: 'Posso pagare con il bancomat?', de: 'Kann ich mit der Bankkarte bezahlen?' },
+    { it: 'Il bancomat è vicino alla stazione.', de: 'Der Geldautomat ist in der Nähe vom Bahnhof.' },
+  ] },
+  { wort: 'al banco', saetze: [
+    { it: 'Prendo il caffè al banco: costa meno.', de: 'Ich trinke den Kaffee an der Theke: Das kostet weniger.' },
+    { it: 'Al banco o al tavolo, signora?', de: 'An der Theke oder am Tisch, meine Dame?' },
+    { it: 'Gli italiani bevono il caffè al banco.', de: 'Die Italiener trinken den Kaffee an der Theke.', formen: { bevono: 'bere' } },
+  ] },
+  { wort: 'il portafoglio', saetze: [
+    { it: 'I soldi sono nel portafoglio.', de: 'Das Geld ist im Geldbeutel.' },
+    { it: 'Dov’è il mio portafoglio?', de: 'Wo ist mein Geldbeutel?' },
+    { it: 'Nel portafoglio ho solo dieci euro.', de: 'Im Geldbeutel habe ich nur zehn Euro.' },
+  ] },
+  { wort: 'lo sconto', saetze: [
+    { it: 'Oggi c’è uno sconto del venti per cento.', de: 'Heute gibt es zwanzig Prozent Rabatt.' },
+    { it: 'Per gli studenti c’è uno sconto.', de: 'Für Studenten gibt es einen Rabatt.' },
+    { it: 'Mi fa uno sconto, per favore?', de: 'Geben Sie mir bitte einen Rabatt?' },
+  ] },
+];
+
+// Lektion 9 „La mia famiglia“ – Paare (madre / padre, figlio / figlia, fratello / sorella,
+// marito / moglie, nonno / nonna) auf verschiedene Päckchen verteilt; Verben früh, damit
+// die Sätze mit ihnen gebaut werden können
+SAETZE.l03 = [
+  // Päckchen 1
+  { wort: 'la famiglia', saetze: [
+    { it: 'La domenica pranzo sempre con la famiglia.', de: 'Sonntags esse ich immer mit der Familie zu Mittag.' },
+    { it: 'La famiglia di Luca è molto simpatica.', de: 'Lucas Familie ist sehr sympathisch.' },
+    { it: 'Questa è la foto della famiglia.', de: 'Das ist das Familienfoto.' },
+  ] },
+  { wort: 'la madre', saetze: [
+    { it: 'La madre di Anna si chiama Giulia.', de: 'Annas Mutter heißt Giulia.' },
+    { it: 'Mia madre è italiana.', de: 'Meine Mutter ist Italienerin.' },
+    { it: 'Chiamo mia madre ogni sera.', de: 'Ich rufe jeden Abend meine Mutter an.' },
+  ] },
+  { wort: 'avere', saetze: [
+    { it: 'Ho un cane e un gatto.', de: 'Ich habe einen Hund und eine Katze.', form: 'ho' },
+    { it: 'Quanti anni hai? – Ho venti anni.', de: 'Wie alt bist du? – Ich bin zwanzig.', form: 'hai' },
+    { it: 'Anche Marco ha due fratelli.', de: 'Auch Marco hat zwei Brüder.', form: 'ha' },
+  ] },
+  { wort: 'il figlio', saetze: [
+    { it: 'La signora Rossi ha un figlio, si chiama Luca.', de: 'Frau Rossi hat einen Sohn, er heißt Luca.' },
+    { it: 'Mio figlio ha dieci anni.', de: 'Mein Sohn ist zehn Jahre alt.' },
+    { it: 'Hai figli? – Sì, due.', de: 'Hast du Kinder? – Ja, zwei.', form: 'figli' },
+  ] },
+  { wort: 'la sorella', saetze: [
+    { it: 'Ho un fratello e una sorella.', de: 'Ich habe einen Bruder und eine Schwester.' },
+    { it: 'Mia sorella abita a Roma.', de: 'Meine Schwester wohnt in Rom.' },
+    { it: 'La sorella di Marco è molto simpatica.', de: 'Marcos Schwester ist sehr sympathisch.' },
+  ] },
+
+  // Päckchen 2
+  { wort: 'il padre', saetze: [
+    { it: 'Il padre di Luca si chiama Paolo.', de: 'Lucas Vater heißt Paolo.' },
+    { it: 'Mio padre ha due sorelle.', de: 'Mein Vater hat zwei Schwestern.' },
+    { it: 'Domenica è la festa del padre.', de: 'Sonntag ist Vatertag.' },
+  ] },
+  { wort: 'abitare', saetze: [
+    { it: 'Dove abiti? – Abito a Milano.', de: 'Wo wohnst du? – Ich wohne in Mailand.', form: 'abiti' },
+    { it: 'Mia figlia abita da sola.', de: 'Meine Tochter wohnt allein.', form: 'abita' },
+    { it: 'Abitiamo vicino alla stazione.', de: 'Wir wohnen in der Nähe vom Bahnhof.', form: 'abitiamo' },
+  ] },
+  { wort: 'la figlia', saetze: [
+    { it: 'Ho una figlia e un figlio.', de: 'Ich habe eine Tochter und einen Sohn.' },
+    { it: 'La figlia di Anna va a scuola.', de: 'Annas Tochter geht zur Schule.' },
+    { it: 'Mia figlia si chiama Sofia.', de: 'Meine Tochter heißt Sofia.' },
+  ] },
+  { wort: 'il marito', saetze: [
+    { it: 'Questo è Paolo, mio marito.', de: 'Das ist Paolo, mein Mann.' },
+    { it: 'Il marito di Anna lavora a Roma.', de: 'Annas Mann arbeitet in Rom.' },
+    { it: 'Mio marito cucina molto bene.', de: 'Mein Mann kocht sehr gut.' },
+  ] },
+  { wort: 'il nonno', saetze: [
+    { it: 'Il padre di mio padre è mio nonno.', de: 'Der Vater meines Vaters ist mein Großvater.' },
+    { it: 'Il nonno abita da solo.', de: 'Opa wohnt allein.' },
+    { it: 'I ragazzi sono dai nonni.', de: 'Die Kinder sind bei den Großeltern.', form: 'nonni' },
+  ] },
+
+  // Päckchen 3
+  { wort: 'lavorare', saetze: [
+    { it: 'Lavoro in un ufficio dalle nove alle cinque.', de: 'Ich arbeite von neun bis fünf in einem Büro.', form: 'lavoro' },
+    { it: 'Dove lavori? – In un ristorante.', de: 'Wo arbeitest du? – In einem Restaurant.', form: 'lavori' },
+    { it: 'Mia madre lavora in ospedale.', de: 'Meine Mutter arbeitet im Krankenhaus.', form: 'lavora' },
+  ] },
+  { wort: 'il fratello', saetze: [
+    { it: 'Mio fratello è più grande di me.', de: 'Mein Bruder ist älter als ich.' },
+    { it: 'Hai fratelli o sorelle?', de: 'Hast du Geschwister?', form: 'fratelli' },
+    { it: 'Il fratello di Sofia lavora in banca.', de: 'Sofias Bruder arbeitet in einer Bank.' },
+  ] },
+  { wort: 'la moglie', saetze: [
+    { it: 'La moglie di Paolo si chiama Anna.', de: 'Paolos Frau heißt Anna.' },
+    { it: 'Mia moglie lavora in una scuola.', de: 'Meine Frau arbeitet in einer Schule.' },
+    { it: 'Ti presento mia moglie, Giulia.', de: 'Ich stelle dir meine Frau Giulia vor.' },
+  ] },
+  { wort: 'la casa', saetze: [
+    { it: 'Dopo il lavoro vado a casa.', de: 'Nach der Arbeit gehe ich nach Hause.' },
+    { it: 'La casa dei nonni ha un giardino.', de: 'Das Haus der Großeltern hat einen Garten.' },
+    { it: 'Oggi lavoro da casa.', de: 'Heute arbeite ich von zu Hause.' },
+  ] },
+
+  // Päckchen 4
+  { wort: 'grande', saetze: [
+    { it: 'La nostra casa è grande: ha cinque stanze.', de: 'Unser Haus ist groß: Es hat fünf Zimmer.' },
+    { it: 'Abitiamo in una città grande.', de: 'Wir wohnen in einer großen Stadt.' },
+    { it: 'Il gatto è piccolo, il cane è grande.', de: 'Die Katze ist klein, der Hund ist groß.' },
+  ] },
+  { wort: 'la nonna', saetze: [
+    { it: 'La nonna fa la pasta in casa la domenica.', de: 'Oma macht sonntags die Nudeln selbst.' },
+    { it: 'Mia nonna abita in montagna.', de: 'Meine Oma wohnt in den Bergen.' },
+    { it: 'Mia nonna ha un gatto nero.', de: 'Meine Oma hat eine schwarze Katze.' },
+  ] },
+  { wort: 'il gatto', saetze: [
+    { it: 'Il gatto dorme sul divano.', de: 'Die Katze schläft auf dem Sofa.' },
+    { it: 'Hai un gatto o un cane?', de: 'Hast du eine Katze oder einen Hund?' },
+    { it: 'I gatti della nonna sono tre.', de: 'Oma hat drei Katzen.', form: 'gatti' },
+  ] },
+  { wort: 'molto', saetze: [
+    { it: 'Mio padre lavora molto.', de: 'Mein Vater arbeitet viel.' },
+    { it: 'La pizza è molto buona.', de: 'Die Pizza ist sehr gut.' },
+    { it: 'Ho molti cugini.', de: 'Ich habe viele Cousins.', form: 'molti' },
+  ] },
+
+  // Päckchen 5
+  { wort: 'sempre', saetze: [
+    { it: 'La domenica mangiamo sempre dalla nonna.', de: 'Sonntags essen wir immer bei Oma.', formen: { mangiamo: 'mangiare' } },
+    { it: 'Mio fratello arriva sempre tardi.', de: 'Mein Bruder kommt immer zu spät.' },
+    { it: 'Il gatto dorme sempre sul letto.', de: 'Die Katze schläft immer auf dem Bett.' },
+  ] },
+  { wort: 'mio', saetze: [
+    { it: 'Questo è mio fratello, e questa è mia sorella.', de: 'Das ist mein Bruder, und das ist meine Schwester.' },
+    { it: 'Il mio gatto si chiama Leo.', de: 'Meine Katze heißt Leo.' },
+    { it: 'I miei nonni abitano in Sicilia.', de: 'Meine Großeltern wohnen in Sizilien.', form: 'miei' },
+  ] },
+  { wort: 'tuo', saetze: [
+    { it: 'Come si chiama tuo fratello?', de: 'Wie heißt dein Bruder?' },
+    { it: 'Dove abita tua sorella?', de: 'Wo wohnt deine Schwester?', form: 'tua' },
+    { it: 'Il tuo gatto è molto bello!', de: 'Deine Katze ist sehr schön!' },
+  ] },
+  { wort: 'noi', saetze: [
+    { it: 'Noi abitiamo a Roma, e voi?', de: 'Wir wohnen in Rom, und ihr?' },
+    { it: 'Stasera la nonna mangia da noi.', de: 'Heute Abend isst Oma bei uns.' },
+    { it: 'Noi abbiamo due figli.', de: 'Wir haben zwei Kinder.' },
+  ] },
+];

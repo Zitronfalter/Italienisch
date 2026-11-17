@@ -15,7 +15,8 @@
 - [ ] **Vokabelkasten ausprobieren:** Üben → „Vokabelkasten“. Ab morgen sind jeden Tag 20 deiner Duolingo-Wörter fällig („Fällige üben“ oder einfach „Los“). Fach antippen = Wörter vorziehen. Fragen: Sind 20 am Tag zu viel oder zu wenig? Ist „Fach antippen“ verständlich? Sitzen die Duolingo-Wörter wirklich so gut?
 - [ ] **Duolingo-Wörter vorgemerkt:** Bei „Kennst du die schon?“ stehen Wörter aus deiner Duolingo-Liste jetzt schon auf „kenne ich“. Passt das, oder sind Wörter dabei, die du doch nicht kannst? Dann einfach auf „neu“ tippen.
 - [x] **Neue Sätze ansehen (Lektion 4–6):** Erledigt am 16.11.2026 – die Sätze sind deutlich besser.
-- [ ] **Neue Wörter in Sätzen ausprobieren** (auf dem iPhone, Lektion 4–6; du kommst dahin, wenn Lektion 3 fertig ist). Neue Wörter kommen jetzt zuerst in einem Satz. Fragen an dich:
+- [ ] **Neue Sätze in Lektion 7–9 ansehen** (La merenda, Alla cassa, La mia famiglia): Klingen sie natürlich? Komische Sätze bitte aufschreiben und Claude sagen. Gefällt es dir, kommen die nächsten Lektionen dran.
+- [ ] **Neue Wörter in Sätzen ausprobieren** (auf dem iPhone, Lektion 4–9; du kommst dahin, wenn Lektion 3 fertig ist). Neue Wörter kommen jetzt zuerst in einem Satz. Fragen an dich:
       1. Reichen die Sätze pro Wort, oder sind es zu viele?
       2. Ist die Treppe (Satz kennenlernen → ins Deutsche legen → hören → Lücke oder Italienisch legen) zu schnell oder zu langsam?
       3. Passt der Abstand, in dem neue Wörter kommen?

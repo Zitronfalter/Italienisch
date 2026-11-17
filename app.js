@@ -905,19 +905,7 @@ function zeigeSchritt() {
     el('frage-wort').textContent = w.it;
     el('frage-wort').lang = 'it';
     el('runde-hoer').hidden = !Lesen.kannSprechen;
-    const ablage = el('runde-ablage');
-    const vorrat = el('runde-vorrat');
-    ablage.innerHTML = '';
-    ablage.classList.remove('fertig');
-    vorrat.innerHTML = '';
-    for (const wort of Vokabeln.deutschKacheln(w).kacheln) {
-      const k = document.createElement('button');
-      k.type = 'button';
-      k.className = 'kachel';
-      k.textContent = wort;
-      k.addEventListener('click', () => rundeKachelLegen(k));
-      vorrat.appendChild(k);
-    }
+    Kacheln.fuellen(el('runde-vorrat'), el('runde-ablage'), Vokabeln.deutschKacheln(w).kacheln, () => abfrage.geprueft);
     el('runde-kacheln').hidden = false;
     el('knopf-weiss-nicht').hidden = false;
   } else if (schritt.art === 'waehlen') {
@@ -977,21 +965,9 @@ function zeigeSchritt() {
 
 // Kacheln in den Vorrat legen (lang: Sprache der Kacheln)
 function rundeKachelnFuellen(woerter, lang) {
-  const ablage = el('runde-ablage');
-  const vorrat = el('runde-vorrat');
-  ablage.innerHTML = '';
-  ablage.classList.remove('fertig');
-  ablage.lang = lang;
-  vorrat.innerHTML = '';
-  vorrat.lang = lang;
-  for (const wort of woerter) {
-    const k = document.createElement('button');
-    k.type = 'button';
-    k.className = 'kachel';
-    k.textContent = wort;
-    k.addEventListener('click', () => rundeKachelLegen(k));
-    vorrat.appendChild(k);
-  }
+  el('runde-ablage').lang = lang;
+  el('runde-vorrat').lang = lang;
+  Kacheln.fuellen(el('runde-vorrat'), el('runde-ablage'), woerter, () => abfrage.geprueft);
   el('runde-kacheln').hidden = false;
 }
 
@@ -1125,22 +1101,6 @@ function pruefenSatz(weissNicht) {
   abfrage.geprueft = true;
   if (a.modus !== 'hoeren' && a.modus !== 'kennen') sprichWort(a.satz.it, false, false);
   if (gut) autoWeiter(3000);
-}
-
-// Italienisch → Deutsch: Kachel antippen legt sie ab, nochmal antippen nimmt sie zurück
-function rundeKachelLegen(kachel) {
-  if (abfrage.geprueft || kachel.classList.contains('benutzt')) return;
-  kachel.classList.add('benutzt');
-  const gelegt = document.createElement('button');
-  gelegt.type = 'button';
-  gelegt.className = 'kachel';
-  gelegt.textContent = kachel.textContent;
-  gelegt.addEventListener('click', () => {
-    if (abfrage.geprueft) return;
-    gelegt.remove();
-    kachel.classList.remove('benutzt');
-  });
-  el('runde-ablage').appendChild(gelegt);
 }
 
 function pruefenDeutsch(weissNicht) {
@@ -2174,20 +2134,7 @@ function zeigeUebung() {
     feld.focus();
   } else {
     el('uebung-art').textContent = 'Bau den Satz auf Italienisch.';
-    const ablage = el('kachel-ablage');
-    const vorrat = el('kachel-vorrat');
-    ablage.innerHTML = '';
-    ablage.classList.remove('fertig');
-    vorrat.innerHTML = '';
-    mischen(Grammatik.kacheln(u)).forEach((wort, i) => {
-      const k = document.createElement('button');
-      k.type = 'button';
-      k.className = 'kachel';
-      k.textContent = wort;
-      k.dataset.i = i;
-      k.addEventListener('click', () => kachelLegen(k));
-      vorrat.appendChild(k);
-    });
+    Kacheln.fuellen(el('kachel-vorrat'), el('kachel-ablage'), mischen(Grammatik.kacheln(u)), () => gram.geprueft);
   }
 }
 
@@ -2208,21 +2155,6 @@ el('luecke-eingabe').addEventListener('input', (e) => {
   const u = gramUebungen()[gram.liste[gram.nr]];
   zeigeLueckenSatz(u.satz, e.target.value);
 });
-
-function kachelLegen(kachel) {
-  if (gram.geprueft) return;
-  kachel.classList.add('benutzt');
-  const gelegt = document.createElement('button');
-  gelegt.type = 'button';
-  gelegt.className = 'kachel';
-  gelegt.textContent = kachel.textContent;
-  gelegt.addEventListener('click', () => {
-    if (gram.geprueft) return;
-    gelegt.remove();
-    kachel.classList.remove('benutzt');
-  });
-  el('kachel-ablage').appendChild(gelegt);
-}
 
 // wahlKnopf: bei Auswahl-Übungen die angetippte Antwort
 function uebungPruefen(wahlKnopf) {
@@ -2246,7 +2178,7 @@ function uebungPruefen(wahlKnopf) {
     loesungText = u.satz.replace(/\s*\([^)]*\)\s*$/, '').replace('___', u.loesung);
     el('luecke-eingabe').readOnly = true;
   } else {
-    const woerter = [...el('kachel-ablage').children].map((k) => k.textContent);
+    const woerter = [...el('kachel-ablage').querySelectorAll('.kachel')].map((k) => k.textContent);
     if (!woerter.length) return;
     ergebnis = Grammatik.pruefeKacheln(woerter, u);
     loesungText = u.it;
@@ -2711,19 +2643,7 @@ function zeigeHoerAufgabe() {
     feld.focus();
   } else if (a.art === 'kacheln') {
     el('hoeren-art').textContent = 'Hör zu und leg den Satz mit den Wörtern.';
-    const ablage = el('hoer-ablage');
-    const vorrat = el('hoer-vorrat');
-    ablage.innerHTML = '';
-    ablage.classList.remove('fertig');
-    vorrat.innerHTML = '';
-    for (const wort of a.kacheln) {
-      const k = document.createElement('button');
-      k.type = 'button';
-      k.className = 'kachel';
-      k.textContent = wort;
-      k.addEventListener('click', () => hoerKachelLegen(k));
-      vorrat.appendChild(k);
-    }
+    Kacheln.fuellen(el('hoer-vorrat'), el('hoer-ablage'), a.kacheln, () => hoer.geprueft);
     hoerVorlesen();
   } else {
     el('hoeren-art').textContent = 'Finde die Paare: erst links, dann rechts antippen.';
@@ -2747,20 +2667,6 @@ function zeigeHoerAufgabe() {
   }
 }
 
-function hoerKachelLegen(kachel) {
-  if (hoer.geprueft) return;
-  kachel.classList.add('benutzt');
-  const gelegt = document.createElement('button');
-  gelegt.type = 'button';
-  gelegt.className = 'kachel';
-  gelegt.textContent = kachel.textContent;
-  gelegt.addEventListener('click', () => {
-    if (hoer.geprueft) return;
-    gelegt.remove();
-    kachel.classList.remove('benutzt');
-  });
-  el('hoer-ablage').appendChild(gelegt);
-}
 
 // Wortpaare: erst ein Wort wählen, dann das passende auf der anderen Seite
 function paarTippen(b) {
@@ -2815,7 +2721,7 @@ function hoerPruefen() {
     el('diktat-eingabe').readOnly = true;
     el('diktat-eingabe').blur();
   } else {
-    const woerter = [...el('hoer-ablage').children].map((k) => k.textContent);
+    const woerter = [...el('hoer-ablage').querySelectorAll('.kachel')].map((k) => k.textContent);
     if (!woerter.length) return;
     gut = Uebungen.pruefeKacheln(woerter, a.satz.it);
     el('hoer-ablage').classList.add('fertig');
@@ -2925,34 +2831,9 @@ function aufgabeSprechen(langsam = false) {
 }
 
 function aufgabeKacheln(woerter, sprache) {
-  const ablage = el('aufgabe-ablage');
-  const vorrat = el('aufgabe-vorrat');
-  ablage.innerHTML = '';
-  vorrat.innerHTML = '';
-  ablage.lang = sprache;
-  vorrat.lang = sprache;
-  ablage.classList.remove('fertig');
-  for (const wort of woerter) {
-    const k = document.createElement('button');
-    k.type = 'button';
-    k.className = 'kachel';
-    k.textContent = wort;
-    k.addEventListener('click', () => {
-      if (aufg.geprueft || k.classList.contains('benutzt')) return;
-      k.classList.add('benutzt');
-      const gelegt = document.createElement('button');
-      gelegt.type = 'button';
-      gelegt.className = 'kachel';
-      gelegt.textContent = wort;
-      gelegt.addEventListener('click', () => {
-        if (aufg.geprueft) return;
-        gelegt.remove();
-        k.classList.remove('benutzt');
-      });
-      ablage.appendChild(gelegt);
-    });
-    vorrat.appendChild(k);
-  }
+  el('aufgabe-ablage').lang = sprache;
+  el('aufgabe-vorrat').lang = sprache;
+  Kacheln.fuellen(el('aufgabe-vorrat'), el('aufgabe-ablage'), woerter, () => aufg.geprueft);
   el('aufgabe-kacheln').hidden = false;
 }
 
@@ -3366,7 +3247,7 @@ function pruefenSperren() {
     const felder = [...seite.querySelectorAll('input.eingabe-feld')].filter(sichtbar);
     const ablagen = [...seite.querySelectorAll('.kachel-ablage')].filter(sichtbar);
     if (!felder.length && !ablagen.length) { knopf.disabled = false; continue; }
-    const etwasDa = felder.some((f) => f.value.trim()) || ablagen.some((a) => a.children.length);
+    const etwasDa = felder.some((f) => f.value.trim()) || ablagen.some((a) => a.querySelector('.kachel'));
     knopf.disabled = !etwasDa;
   }
 }

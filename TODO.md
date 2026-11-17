@@ -26,7 +26,8 @@
 - [x] **Glas-Design entscheiden:** Erledigt am 16.11.2026 – ohne Glas.
 - [x] **Stimmen Luca und Paola fehlen in der App:** Erledigt am 16.11.2026 – Safari gibt Webseiten auf dem iPhone nur Alice; bleibt so (keine tiefere Stimme für männliche Wörter).
 - [x] **Knöpfe in Pillenform ansehen:** Erledigt am 16.11.2026 – gefällt dir.
-- [ ] **Noch planen:** Kacheln im Satz verschieben.
+- [x] **Noch planen:** Kacheln im Satz verschieben – erledigt am 17.11.2026 (gebaut).
+- [ ] **Kacheln ziehen auf dem iPhone ausprobieren:** Eine gelegte Kachel festhalten und an eine andere Stelle ziehen. Eine Kachel von unten direkt zwischen zwei andere ziehen. Eine gelegte Kachel aus dem Satz herausziehen (geht zurück). Fragen: Klappt das mit dem Finger gut? Scrollt die Seite dabei ungewollt? Ist die gestrichelte Lücke gut zu sehen?
 - [x] **Lektion als Weg ausprobieren:** Erledigt am 16.11.2026 – passt so. Als Nächstes baut Claude Etappe 2.
 - [ ] **Festigen ausprobieren:** Wenn in den letzten 7 Tagen weniger als gut die Hälfte richtig war (unter 55 %), kommt vor neuen Wörtern einmal eine kurze Runde „Erst festigen“ mit deinen schwersten Wörtern. Danach schlägt Limo etwas vor (Grammatik, Hören & Üben oder Vokabelkasten). Fragen: Hilft dir das? Kommt es zu oft oder zu selten? Passen Limos Vorschläge?
 - [ ] **Mehrere Übersetzungen ansehen:** Beim Italienisch-Schreiben gilt jetzt auch ein anderes Wort mit gleicher Bedeutung (z. B. *salve* für „hallo“). Steht in der Frage ein Hinweis in Klammern (z. B. „die Straße (in der Adresse)“), sagt Limo bei *strada* „Gute Idee! … Versuch es noch einmal“ – das zählt nicht als Fehler. Passt das so? Fällt dir ein Wort auf, bei dem die Frage nicht eindeutig ist? Dann Claude sagen.

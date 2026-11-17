@@ -10,12 +10,12 @@ const WURZEL = path.join(__dirname, '..', '..');
 // Reihenfolge wie in index.html (ohne app.js, das die Oberfläche braucht)
 const STANDARD = [
   'speicher.js', 'wortschatz.js', 'vokabeln.js', 'texte.js', 'texte-b.js', 'texte-a1.js', 'texte-a2.js', 'texte-b1.js', 'texte-b2.js', 'lesen.js', 'grammatik.js', 'grammatik-b.js', 'zusatz.js', 'erzeuger.js', 'woerterbuch.js',
-  'lektionen-inhalt.js', 'lektionen-a1.js', 'lektionen-a2.js', 'lektionen-b1.js', 'lektionen-b2.js', 'saetze-a1.js', 'saetze.js', 'schon-bekannt.js', 'lektionen.js', 'woerterliste.js', 'uebungen.js', 'wiederholung.js',
+  'lektionen-inhalt.js', 'lektionen-a1.js', 'lektionen-a2.js', 'lektionen-b1.js', 'lektionen-b2.js', 'saetze-a1.js', 'saetze.js', 'schon-bekannt.js', 'lektionen.js', 'woerterliste.js', 'kacheln.js', 'uebungen.js', 'wiederholung.js',
 ];
 
 const NAMEN = [
   'Speicher', 'Vokabeln', 'Lesen', 'Grammatik', 'Uebungen', 'Lektionen',
-  'LEKTIONEN', 'WORTSCHATZ', 'WORTSCHATZ_THEMEN', 'KAPITEL', 'LESETEXTE', 'GRUNDWOERTER', 'wortId', 'ZUSATZ', 'Erzeuger', 'Wiederholung', 'SAETZE', 'Woerterbuch', 'Saetze', 'SchonBekannt',
+  'LEKTIONEN', 'WORTSCHATZ', 'WORTSCHATZ_THEMEN', 'KAPITEL', 'LESETEXTE', 'GRUNDWOERTER', 'wortId', 'ZUSATZ', 'Erzeuger', 'Wiederholung', 'SAETZE', 'Woerterbuch', 'Saetze', 'SchonBekannt', 'Kacheln',
 ];
 
 function platzhalter(gespeichert) {

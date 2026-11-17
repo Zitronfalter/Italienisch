@@ -567,6 +567,30 @@ button {
   font-size: 19px;
 }
 .kachel:active { transform: translateY(1px); }
+/* Ziehen mit dem Finger (kacheln.js): Seite scrollt dabei nicht, kein Markieren */
+.kachel {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+/* die Kachel am Finger – leicht angehoben und etwas darüber, damit der Finger das Wort nicht verdeckt */
+.kachel-schwebt {
+  position: fixed;
+  z-index: 100;
+  transform: translate(-50%, -110%);
+  pointer-events: none;
+  box-shadow: var(--schatten), 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+.kachel-gezogen { display: none; }
+/* hier landet die Kachel */
+.kachel-luecke {
+  display: inline-block;
+  width: 28px;
+  height: 48px;
+  border: 1.5px dashed var(--akzent-linie);
+  border-radius: 12px;
+}
 /* Benutzte Kachel bleibt als graue Lücke stehen, damit nichts verrutscht */
 .kachel.benutzt {
   color: transparent;

@@ -113,3 +113,28 @@ wortLektionenEinfuegen({
         'lo schermo', 'la tastiera', 'la stampante', 'stampare', 'la rete', 'cliccare', 'la radio'] },
   ],
 });
+
+// Urlaub und Rezepte (17.11.2026): je eine 4. Wort-Lektion hinter den vorhandenen (Nummer x.4)
+wortLektionenEinfuegen({
+  l10: [
+    { id: 'l10d', titel: 'Al lido e in città', situation: 'Urlaub: Strand und Stadt', uebenKapitel: ['passato-essere'], texte: ['a2-lido-centro'],
+      woerter: ['il lido', 'lo stabilimento balneare', 'il lungomare', 'la cabina', 'il molo', 'il pedalò', 'il lettino', 'il duomo',
+        'il belvedere', 'la ZTL', 'il biglietto cumulativo', 'il chiostro', 'il campanile', 'la scalinata', 'il vicolo'] },
+  ],
+  l11: [
+    { id: 'l11d', titel: 'Il risotto', situation: 'Rezepte lesen: Zubereiten', uebenKapitel: ['imperativ'], texte: ['a2-risotto'],
+      woerter: ['soffriggere', 'imbiondire', 'tostare', 'sfumare', 'mantecare', 'insaporire', 'dorare', 'scottare', 'sbollentare',
+        'amalgamare', 'incorporare', 'setacciare', 'a fuoco vivace', 'stufare', 'saltare in padella'] },
+  ],
+  l16: [
+    { id: 'l16d', titel: 'Un viaggio con imprevisti', situation: 'Urlaub: unterwegs und kleine Notfälle', uebenKapitel: ['imperfetto-passato'], texte: ['a2-imprevisti'],
+      woerter: ['la navetta', 'convalidare', 'gli spiccioli', 'il deposito bagagli', 'la colazione inclusa', 'la presa', "l'adattatore",
+        'il noleggio auto', 'la stazione di servizio', 'la gomma bucata', 'il soccorso stradale', 'smarrire', "l'ufficio oggetti smarriti",
+        'la guardia medica', 'rimborsare'] },
+  ],
+  l17: [
+    { id: 'l17d', titel: 'La carbonara', situation: 'Rezepte lesen: Zutaten und Mengen', uebenKapitel: ['si-impersonale'], texte: ['a2-carbonara'],
+      woerter: ['il guanciale', 'la pancetta', 'grattugiato', 'q.b.', 'a piacere', 'il rametto', 'la buccia', 'il pangrattato',
+        'il brodo vegetale', 'il dado', 'la passata di pomodoro', 'il concentrato di pomodoro', 'la fecola di patate', 'la ricotta', 'lo strutto'] },
+  ],
+});

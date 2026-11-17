@@ -19,6 +19,16 @@ test('Wort-Lektionen stehen hinter ihrer Lektion und werden fortlaufend gezählt
   assert.deepStrictEqual([...nr], [...nr].sort((a, b) => a - b));
 });
 
+test('vierte Wort-Lektion kommt hinter x.3 und bekommt x.4', () => {
+  const k = laden(undefined, `wortLektionenEinfuegen({ l01: [{ id: 'test01d', titel: 'Test', texte: [], woerter: [] }] });`);
+  const ids = k.LEKTIONEN.map((l) => l.id);
+  assert.deepStrictEqual([...ids.slice(0, 6)], ['l01', 'l01a', 'l01b', 'l01c', 'test01d', 'l02']);
+  assert.strictEqual(lek(k, 'test01d').nr, 1.4);
+  assert.strictEqual(lek(k, 'l01c').nr, 1.3);
+  const r1 = k.LEKTIONEN.find((l) => l.id === 'r1');
+  assert.ok(r1.lektionen.includes('test01d'));
+});
+
 test('Wiederholungen umfassen auch die Wort-Lektionen', () => {
   const k = laden();
   const r1 = k.LEKTIONEN.find((l) => l.id === 'r1');

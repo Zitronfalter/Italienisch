@@ -83,3 +83,12 @@ wortLektionenEinfuegen({
       woerter: ["l'ufficio postale", 'lo sportello', "la carta d'identità", 'il codice fiscale', 'la tessera sanitaria', 'rinnovare', 'scadere', 'presentarsi', 'la raccomandata', 'la marca da bollo', "l'anagrafe", 'il timbro', "l'attesa", 'il funzionario', 'la dichiarazione'] },
   ],
 });
+
+// Rezepte: Ofen und Geräte (17.11.2026) – 4. Wort-Lektion hinter Lektion 23 (Nummer 23.4)
+wortLektionenEinfuegen({
+  l23: [
+    { id: 'l23d', titel: 'La torta di mele', situation: 'Rezepte lesen: Ofen und Geräte', uebenKapitel: ['ci-ne'], texte: ['b1-torta-mele'],
+      woerter: ['preriscaldare', 'il forno ventilato', 'la tortiera', 'la carta forno', 'la frusta', 'la spatola', 'il cucchiaio di legno',
+        'la placca', 'il mattarello', 'il colino', 'lo scolapasta', 'al dente', 'dorato', 'tiepido', 'riposare'] },
+  ],
+});

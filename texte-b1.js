@@ -1551,3 +1551,56 @@ No, basta una firma e il timbro. Ecco la ricevuta!`,
     ],
   },
 );
+
+// Rezepte: Ofen und Geräte (17.11.2026): Text für die Wort-Lektion l23d
+LESETEXTE.push(
+  {
+    id: 'b1-torta-mele', titel: 'Torta di mele della nonna', art: 'Rezept', stufe: 'B1',
+    text: `Preriscalda il forno ventilato a 170 gradi.
+
+Metti la carta forno nella tortiera.
+
+Con la frusta sbatti le uova con lo zucchero, poi aggiungi la farina con il cucchiaio di legno.
+
+Taglia le mele a fette e mettile sulla torta.
+
+Inforna per 40 minuti, finché la torta è dorata.
+
+Lasciala riposare e servila tiepida.
+
+Con la spatola pulisci bene la ciotola: così non buttiamo niente!`,
+    woerter: {
+      'preriscalda': ['preriscaldare', 'heize vor!'],
+      'metti': ['mettere', 'leg!', 'legen'],
+      'gradi': ['il grado', 'Grad'],
+      'sbatti': ['sbattere', 'schlag auf!'],
+      'uova': ["l'uovo", 'Eier'],
+      'aggiungi': ['aggiungere', 'gib dazu!', 'hinzufügen'],
+      'mele': ['la mela', 'Äpfel'],
+      'fette': ['la fetta', 'Scheiben (a fette = in Scheiben)'],
+      'mettile': ['mettere', 'leg sie', 'legen'],
+      'inforna': ['infornare', 'schieb in den Ofen!'],
+      'finché': ['finché', 'bis', 'bis'],
+      'dorata': ['dorato', 'goldbraun'],
+      'lasciala': ['lasciare', 'lass ihn', 'lassen'],
+      'servila': ['servire', 'servier ihn', 'servieren'],
+      'tiepida': ['tiepido', 'lauwarm'],
+      'pulisci': ['pulire', 'putz!', 'putzen'],
+      'buttiamo': ['buttare', 'werfen weg', 'wegwerfen'],
+    },
+    uebersetzung: {
+      'Preriscalda il forno ventilato a 170 gradi.': 'Heize den Umluftofen auf 170 Grad vor.',
+      'Metti la carta forno nella tortiera.': 'Leg das Backpapier in die Kuchenform.',
+      'Con la frusta sbatti le uova con lo zucchero, poi aggiungi la farina con il cucchiaio di legno.': 'Schlage mit dem Schneebesen die Eier mit dem Zucker auf, dann gib das Mehl mit dem Kochlöffel dazu.',
+      'Taglia le mele a fette e mettile sulla torta.': 'Schneide die Äpfel in Scheiben und leg sie auf den Kuchen.',
+      'Inforna per 40 minuti, finché la torta è dorata.': 'Backe ihn 40 Minuten, bis der Kuchen goldbraun ist.',
+      'Lasciala riposare e servila tiepida.': 'Lass ihn ruhen und serviere ihn lauwarm.',
+      'Con la spatola pulisci bene la ciotola: così non buttiamo niente!': 'Kratze die Schüssel mit dem Teigschaber gut aus: So werfen wir nichts weg!',
+    },
+    fragen: [
+      { frage: 'Auf wie viel Grad wird der Ofen vorgeheizt?', antworten: ['170 Grad', '220 Grad', '100 Grad'] },
+      { frage: 'Was kommt in die Kuchenform?', antworten: ['Backpapier', 'Butter', 'Mehl'] },
+      { frage: 'Wie wird der Kuchen serviert?', antworten: ['Lauwarm', 'Eiskalt', 'Sehr heiß'] },
+    ],
+  },
+);

@@ -8,20 +8,24 @@
 // Weitere Stufen (lektionen-a2.js …) benutzen wortLektionenEinfuegen() von hier.
 
 // nach: { 'l01': [Lektion, …], … } – die Lektionen kommen hinter die genannte Lektion
+// (hat sie schon Wort-Lektionen, kommen die neuen dahinter: 1.4, 1.5 …)
 function wortLektionenEinfuegen(nach) {
   for (const [nachId, neue] of Object.entries(nach)) {
     const i = LEKTIONEN.findIndex((l) => l.id === nachId);
     if (i < 0) continue;
     const basis = LEKTIONEN[i];
+    let j = i + 1;
+    while (LEKTIONEN[j] && LEKTIONEN[j].wortLektion && LEKTIONEN[j].nr < basis.nr + 1) j++;
+    const schon = j - (i + 1);
     const lektionen = neue.map((l, n) => ({
       ...l,
-      nr: Math.round((basis.nr + (n + 1) / 10) * 10) / 10,   // 1.1, 1.2, 1.3
+      nr: Math.round((basis.nr + (schon + n + 1) / 10) * 10) / 10,   // 1.1, 1.2, 1.3 (, 1.4)
       stufe: basis.stufe,
       art: 'lektion',
       wortLektion: true,
       kapitel: [],
     }));
-    LEKTIONEN.splice(i + 1, 0, ...lektionen);
+    LEKTIONEN.splice(j, 0, ...lektionen);
     // Wiederholungen, die die Lektion umfassen, bekommen die Wort-Lektionen dazu
     for (const r of LEKTIONEN) {
       if (r.art === 'ripasso' && (r.lektionen || []).includes(nachId)) {

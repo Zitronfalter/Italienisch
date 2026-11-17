@@ -1431,3 +1431,200 @@ Alla fine il fratello l'ha aiutata. Lui dice: senza internet e senza rete non si
     ],
   },
 );
+
+// Urlaub und Rezepte (17.11.2026): Texte für die Wort-Lektionen l10d, l11d, l16d, l17d
+LESETEXTE.push(
+  {
+    id: 'a2-lido-centro', titel: 'Al lido e in città', art: 'Text', stufe: 'A2',
+    text: `La mattina siamo andati al lido.
+
+Allo stabilimento balneare abbiamo preso due lettini e un ombrellone.
+
+Mi sono cambiata in una cabina e poi abbiamo preso un pedalò.
+
+Nel pomeriggio siamo tornati in città, ma non in macchina: c'è la ZTL!
+
+Con il biglietto cumulativo abbiamo visto il duomo, il chiostro e il campanile.
+
+Dal belvedere, dopo una lunga scalinata, il panorama era bellissimo.
+
+La sera abbiamo mangiato in un piccolo vicolo e poi abbiamo fatto una passeggiata sul lungomare fino al molo.`,
+    woerter: {
+      'siamo': ['essere', 'sind (siamo andati = wir sind gegangen)', 'sein'],
+      'andati': ['andare', 'gegangen', 'gehen'],
+      'preso': ['prendere', 'genommen', 'nehmen'],
+      'lettini': ['il lettino', 'Liegen'],
+      'cambiata': ['cambiarsi', 'umgezogen (mi sono cambiata = ich habe mich umgezogen)', 'sich umziehen'],
+      'tornati': ['tornare', 'zurückgekehrt', 'zurückkehren'],
+      'visto': ['vedere', 'gesehen', 'sehen'],
+      'lunga': ['lungo', 'lang', 'lang'],
+      'bellissimo': ['bello', 'wunderschön', 'schön'],
+      'mangiato': ['mangiare', 'gegessen', 'essen'],
+      'fatto': ['fare', 'gemacht', 'machen'],
+      'fino': ['fino a', 'bis (fino al molo = bis zur Mole)', 'bis'],
+    },
+    uebersetzung: {
+      'La mattina siamo andati al lido.': 'Am Morgen sind wir ins Strandbad gegangen.',
+      'Allo stabilimento balneare abbiamo preso due lettini e un ombrellone.': 'Im Strandbad haben wir zwei Liegen und einen Sonnenschirm genommen.',
+      'Mi sono cambiata in una cabina e poi abbiamo preso un pedalò.': 'Ich habe mich in einer Kabine umgezogen, und dann haben wir ein Tretboot genommen.',
+      "Nel pomeriggio siamo tornati in città, ma non in macchina: c'è la ZTL!": 'Am Nachmittag sind wir in die Stadt zurück, aber nicht mit dem Auto: Da ist die verkehrsberuhigte Zone!',
+      'Con il biglietto cumulativo abbiamo visto il duomo, il chiostro e il campanile.': 'Mit dem Kombiticket haben wir den Dom, den Kreuzgang und den Glockenturm gesehen.',
+      'Dal belvedere, dopo una lunga scalinata, il panorama era bellissimo.': 'Vom Aussichtspunkt, nach einer langen Freitreppe, war der Blick wunderschön.',
+      'La sera abbiamo mangiato in un piccolo vicolo e poi abbiamo fatto una passeggiata sul lungomare fino al molo.': 'Am Abend haben wir in einer kleinen Gasse gegessen und danach einen Spaziergang auf der Strandpromenade bis zur Mole gemacht.',
+    },
+    fragen: [
+      { frage: 'Was haben sie im Strandbad genommen?', antworten: ['Zwei Liegen und einen Sonnenschirm', 'Ein Boot', 'Zwei Fahrräder'] },
+      { frage: 'Warum sind sie nicht mit dem Auto in die Stadt?', antworten: ['Wegen der verkehrsberuhigten Zone', 'Das Auto war kaputt', 'Es gab keinen Parkplatz'] },
+      { frage: 'Wo haben sie am Abend gegessen?', antworten: ['In einer kleinen Gasse', 'Am Strand', 'Im Hotel'] },
+    ],
+  },
+  {
+    id: 'a2-risotto', titel: 'Risotto ai funghi', art: 'Rezept', stufe: 'A2',
+    text: `Soffriggi la cipolla nell'olio e lasciala imbiondire.
+
+Aggiungi il riso e lascialo tostare per due minuti.
+
+Sfuma con il vino a fuoco vivace.
+
+Intanto salta in padella i funghi con l'aglio e lasciali insaporire.
+
+Aggiungi il brodo e mescola.
+
+Alla fine incorpora i funghi e manteca con il burro e il parmigiano.`,
+    woerter: {
+      'soffriggi': ['soffriggere', 'dünste an!'],
+      'vivace': ['a fuoco vivace', 'stark (a fuoco vivace = auf starker Hitze)'],
+      'cipolla': ['la cipolla', 'Zwiebel', 'die Zwiebel'],
+      'lasciala': ['lasciare', 'lass sie', 'lassen'],
+      'lascialo': ['lasciare', 'lass ihn', 'lassen'],
+      'lasciali': ['lasciare', 'lass sie', 'lassen'],
+      'aggiungi': ['aggiungere', 'gib dazu!', 'hinzufügen'],
+      'riso': ['il riso', 'Reis', 'der Reis'],
+      'sfuma': ['sfumare', 'lösche ab!'],
+      'vino': ['il vino', 'Wein', 'der Wein'],
+      'intanto': ['intanto', 'inzwischen', 'inzwischen'],
+      'salta': ['saltare in padella', 'schwenke (in der Pfanne)!'],
+      'brodo': ['il brodo', 'Brühe', 'die Brühe'],
+      'mescola': ['mescolare', 'rühr um!', 'umrühren'],
+      'fine': ['la fine', 'Ende (alla fine = zum Schluss)', 'das Ende'],
+      'incorpora': ['incorporare', 'hebe unter!'],
+      'manteca': ['mantecare', 'rühre cremig!'],
+      'burro': ['il burro', 'Butter', 'die Butter'],
+      'parmigiano': ['il parmigiano', 'Parmesan', 'der Parmesan'],
+    },
+    uebersetzung: {
+      "Soffriggi la cipolla nell'olio e lasciala imbiondire.": 'Dünste die Zwiebel im Öl an und lass sie hell werden.',
+      'Aggiungi il riso e lascialo tostare per due minuti.': 'Gib den Reis dazu und lass ihn zwei Minuten anrösten.',
+      'Sfuma con il vino a fuoco vivace.': 'Lösche bei starker Hitze mit dem Wein ab.',
+      "Intanto salta in padella i funghi con l'aglio e lasciali insaporire.": 'Schwenke inzwischen die Pilze mit dem Knoblauch in der Pfanne und lass sie Geschmack annehmen.',
+      "Aggiungi il brodo e mescola.": 'Gib die Brühe dazu und rühre um.',
+      'Alla fine incorpora i funghi e manteca con il burro e il parmigiano.': 'Zum Schluss hebe die Pilze unter und rühre alles mit Butter und Parmesan cremig.',
+    },
+    fragen: [
+      { frage: 'Womit wird der Reis abgelöscht?', antworten: ['Mit Wein', 'Mit Wasser', 'Mit Milch'] },
+      { frage: 'Was kommt nach dem Wein dazu?', antworten: ['Die Brühe', 'Die Milch', 'Das Wasser'] },
+      { frage: 'Womit wird am Ende cremig gerührt?', antworten: ['Mit Butter und Parmesan', 'Mit Sahne', 'Mit Olivenöl'] },
+    ],
+  },
+  {
+    id: 'a2-imprevisti', titel: 'Un viaggio con imprevisti', art: 'Text', stufe: 'A2',
+    text: `Siamo arrivati all'aeroporto e abbiamo preso la navetta per la città.
+
+In stazione abbiamo lasciato le valigie al deposito bagagli e abbiamo convalidato il biglietto.
+
+Per il caffè avevo solo spiccioli.
+
+In albergo la colazione era inclusa, ma la presa era diversa: per fortuna avevo un adattatore.
+
+Il giorno dopo abbiamo preso una macchina al noleggio auto.
+
+Vicino a una stazione di servizio avevamo una gomma bucata e abbiamo chiamato il soccorso stradale.
+
+La sera mio marito ha smarrito il portafoglio, ma l'ufficio oggetti smarriti lo aveva!
+
+Poi io avevo la febbre e siamo andati alla guardia medica.
+
+Alla fine il noleggio auto ci ha rimborsato una parte del prezzo.`,
+    woerter: {
+      'siamo': ['essere', 'sind (siamo arrivati = wir sind angekommen)', 'sein'],
+      'arrivati': ['arrivare', 'angekommen', 'ankommen'],
+      'preso': ['prendere', 'genommen', 'nehmen'],
+      'lasciato': ['lasciare', 'gelassen', 'lassen'],
+      'valigie': ['la valigia', 'Koffer'],
+      'convalidato': ['convalidare', 'entwertet'],
+      'avevo': ['avere', 'hatte', 'haben'],
+      'avevamo': ['avere', 'hatten', 'haben'],
+      'aveva': ['avere', 'hatte', 'haben'],
+      'diversa': ['diverso', 'anders', 'anders'],
+      'fortuna': ['la fortuna', 'Glück (per fortuna = zum Glück)', 'das Glück'],
+      'chiamato': ['chiamare', 'gerufen', 'rufen'],
+      'smarrito': ['smarrire', 'verloren'],
+      'andati': ['andare', 'gegangen', 'gehen'],
+      'fine': ['la fine', 'Ende (alla fine = am Ende)', 'das Ende'],
+      'rimborsato': ['rimborsare', 'erstattet'],
+      'parte': ['la parte', 'Teil', 'der Teil'],
+    },
+    uebersetzung: {
+      "Siamo arrivati all'aeroporto e abbiamo preso la navetta per la città.": 'Wir sind am Flughafen angekommen und haben den Shuttlebus in die Stadt genommen.',
+      'In stazione abbiamo lasciato le valigie al deposito bagagli e abbiamo convalidato il biglietto.': 'Am Bahnhof haben wir die Koffer bei der Gepäckaufbewahrung gelassen und die Fahrkarte entwertet.',
+      'Per il caffè avevo solo spiccioli.': 'Für den Kaffee hatte ich nur Kleingeld.',
+      'In albergo la colazione era inclusa, ma la presa era diversa: per fortuna avevo un adattatore.': 'Im Hotel war das Frühstück inklusive, aber die Steckdose war anders: Zum Glück hatte ich einen Adapter.',
+      'Il giorno dopo abbiamo preso una macchina al noleggio auto.': 'Am nächsten Tag haben wir ein Auto bei der Autovermietung genommen.',
+      'Vicino a una stazione di servizio avevamo una gomma bucata e abbiamo chiamato il soccorso stradale.': 'In der Nähe einer Raststätte hatten wir einen Platten und haben die Pannenhilfe gerufen.',
+      "La sera mio marito ha smarrito il portafoglio, ma l'ufficio oggetti smarriti lo aveva!": 'Am Abend hat mein Mann den Geldbeutel verloren, aber das Fundbüro hatte ihn!',
+      'Poi io avevo la febbre e siamo andati alla guardia medica.': 'Dann hatte ich Fieber, und wir sind zum ärztlichen Notdienst gegangen.',
+      'Alla fine il noleggio auto ci ha rimborsato una parte del prezzo.': 'Am Ende hat uns die Autovermietung einen Teil des Preises erstattet.',
+    },
+    fragen: [
+      { frage: 'Wo haben sie die Koffer gelassen?', antworten: ['Bei der Gepäckaufbewahrung', 'Im Hotel', 'Im Auto'] },
+      { frage: 'Was war mit dem Auto?', antworten: ['Ein platter Reifen', 'Kein Benzin', 'Ein Unfall'] },
+      { frage: 'Wo war der Geldbeutel?', antworten: ['Im Fundbüro', 'Im Hotel', 'Im Zug'] },
+    ],
+  },
+  {
+    id: 'a2-carbonara', titel: 'Spaghetti alla carbonara', art: 'Rezept', stufe: 'A2',
+    text: `Ingredienti: spaghetti, guanciale, quattro tuorli, pecorino grattugiato e pepe q.b.
+
+Se non trovi il guanciale, va bene anche la pancetta.
+
+Taglia il guanciale a strisce e fallo dorare in padella.
+
+Sbatti i tuorli con il pecorino e il pepe.
+
+Cuoci la pasta in acqua salata e scolala al dente.
+
+Mescola la pasta con il guanciale e poi con le uova.
+
+Ancora un po' di pecorino a piacere.`,
+    woerter: {
+      'tuorli': ['il tuorlo', 'Eigelb'],
+      'piacere': ['a piacere', 'Belieben (a piacere = nach Belieben)'],
+      'dente': ['al dente', 'bissfest (al dente)'],
+      'pecorino': ['il pecorino', 'Pecorino (Schafskäse)', 'der Pecorino'],
+      'trovi': ['trovare', 'findest', 'finden'],
+      'strisce': ['la striscia', 'Streifen (a strisce = in Streifen)', 'der Streifen'],
+      'fallo': ['fare', 'lass ihn (fallo dorare = brate ihn goldbraun)', 'machen'],
+      'sbatti': ['sbattere', 'schlag auf!'],
+      'cuoci': ['cuocere', 'koch!', 'kochen'],
+      'salata': ['salato', 'gesalzen'],
+      'scolala': ['scolare', 'gieß sie ab', 'abgießen'],
+      'mescola': ['mescolare', 'vermisch!', 'umrühren'],
+      'uova': ["l'uovo", 'Eier'],
+      "po'": ["un po'", 'ein bisschen', 'ein bisschen'],
+    },
+    uebersetzung: {
+      'Ingredienti: spaghetti, guanciale, quattro tuorli, pecorino grattugiato e pepe q.b.': 'Zutaten: Spaghetti, Backenspeck, vier Eigelb, geriebener Pecorino und Pfeffer nach Bedarf.',
+      'Se non trovi il guanciale, va bene anche la pancetta.': 'Wenn du keinen Backenspeck findest, geht auch Bauchspeck.',
+      'Taglia il guanciale a strisce e fallo dorare in padella.': 'Schneide den Backenspeck in Streifen und brate ihn in der Pfanne goldbraun.',
+      'Sbatti i tuorli con il pecorino e il pepe.': 'Schlage die Eigelb mit dem Pecorino und dem Pfeffer auf.',
+      'Cuoci la pasta in acqua salata e scolala al dente.': 'Koche die Nudeln in Salzwasser und gieße sie bissfest ab.',
+      'Mescola la pasta con il guanciale e poi con le uova.': 'Vermische die Nudeln mit dem Speck und dann mit den Eiern.',
+      "Ancora un po' di pecorino a piacere.": 'Noch etwas Pecorino nach Belieben.',
+    },
+    fragen: [
+      { frage: 'Was geht auch, wenn es keinen Guanciale gibt?', antworten: ['Pancetta', 'Schinken', 'Salami'] },
+      { frage: 'Womit werden die Eigelb aufgeschlagen?', antworten: ['Mit Pecorino und Pfeffer', 'Mit Milch', 'Mit Zucker'] },
+      { frage: 'Wie werden die Nudeln abgegossen?', antworten: ['Bissfest', 'Sehr weich', 'Gar nicht'] },
+    ],
+  },
+);

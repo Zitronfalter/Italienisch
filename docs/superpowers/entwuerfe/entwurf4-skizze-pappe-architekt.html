@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limo-Look Entwurf 4</title>
+<style>
+.handy {
+  --hintergrund: #f5f0e2; --flaeche: #fffcf3; --text: #2b2620; --text-leise: #6b6255;
+  --akzent: #f5cf45; --akzent-text: #2b2620; --linie: #2b2620; --richtig: #4f7a30;
+  --rand: #e3d9c2; --limo-tinte: #2b2620; --stift: #3a342c; --stift-leise: #a99e88;
+  --schatten: 0 1px 0 #e3d9c2, 0 6px 16px rgba(80, 60, 20, .10);
+  --struktur: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .36  0 0 0 0 .2  0 0 0 .10 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --raster: none;
+  --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+/* Pappe: Werte setzt der Regler (siehe Script) */
+.handy.pappe {
+  --struktur: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.95 .09' numOctaves='3' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .25  0 0 0 0 .2  0 0 0 0 .12  0 0 0 .16 -.02'/></filter><filter id='h'><feTurbulence type='fractalNoise' baseFrequency='.8 .1' numOctaves='2' seed='12' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 .95  0 0 0 .14 -.03'/></filter><filter id='s'><feTurbulence type='turbulence' baseFrequency='.5' numOctaves='1' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .25  0 0 0 0 .18  0 0 0 -2.2 1.1'/></filter><rect width='100%' height='100%' filter='url(%23f)'/><rect width='100%' height='100%' filter='url(%23h)'/><rect width='100%' height='100%' filter='url(%23s)' opacity='.35'/></svg>");
+  --schatten: 0 1px 0 rgba(0,0,0,.10), 0 5px 12px rgba(40, 30, 10, .14);
+}
+/* Architekten-Skizze */
+.handy.arch {
+  --hintergrund: #fbfaf5; --flaeche: rgba(255, 255, 255, .55); --rand: #2b2620; --schatten: none;
+  --raster-farbe: rgba(70, 110, 140, .10); --raster-stark: rgba(70, 110, 140, .20);
+  --raster: linear-gradient(var(--raster-stark) 1px, transparent 1px), linear-gradient(90deg, var(--raster-stark) 1px, transparent 1px),
+            linear-gradient(var(--raster-farbe) 1px, transparent 1px), linear-gradient(90deg, var(--raster-farbe) 1px, transparent 1px);
+}
+.handy.arch.pappe { --flaeche: rgba(255, 255, 255, .22); --raster-farbe: rgba(40, 30, 20, .08); --raster-stark: rgba(40, 30, 20, .16); }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: #e6e1d4; color: #2b2620; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+header.seite { max-width: 1320px; margin: 0 auto; padding: 28px 24px 4px; }
+header.seite h1 { font-family: ui-serif, "New York", Georgia, serif; margin: 0 0 6px; font-size: 30px; }
+header.seite p { margin: 0; opacity: .75; max-width: 800px; }
+.wahl { display: inline-flex; background: rgba(0,0,0,.08); border-radius: 12px; padding: 3px; margin-top: 14px; }
+.wahl button { border: 0; background: none; font: 600 15px system-ui, sans-serif; padding: 8px 18px; border-radius: 10px; cursor: pointer; color: inherit; }
+.wahl button.an { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.zeile-titel { max-width: 1320px; margin: 18px auto 0; padding: 0 24px; font: 600 15px system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; opacity: .6; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.zeile-titel label { text-transform: none; letter-spacing: 0; font-weight: 500; display: flex; gap: 8px; align-items: center; opacity: 1; }
+.reihe { max-width: 1320px; margin: 0 auto; padding: 12px 24px 24px; display: flex; gap: 28px; overflow-x: auto; }
+.vorschlag { flex: 0 0 auto; width: 393px; }
+.vorschlag > h2 { font-family: ui-serif, "New York", Georgia, serif; font-size: 20px; margin: 0 0 4px; }
+.vorschlag > .was { font-size: 14px; opacity: .75; margin: 0 0 12px; min-height: 40px; }
+
+.handy { width: 393px; height: 852px; border-radius: 48px; border: 10px solid #1b1a17; position: relative;
+  background-color: var(--hintergrund); background-image: var(--raster), var(--raster), var(--raster), var(--raster), var(--struktur);
+  color: var(--text); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,.18); }
+.handy:not(.arch) { background-image: var(--struktur); }
+.handy.arch { background-image: var(--raster), var(--struktur); background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px, auto; }
+.inhalt { flex: 1; padding: 56px 20px 16px; display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
+.leiste { display: flex; justify-content: space-around; padding: 8px 4px 22px; border-top: 1px solid var(--rand); font-size: 10px; color: var(--text-leise); }
+.leiste div { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.leiste div.an { color: var(--text); font-weight: 600; }
+.leiste i { width: 22px; height: 22px; border: 2px solid currentColor; border-radius: 7px; display: block; }
+.leiste .an i { background: var(--akzent); border-color: var(--linie); }
+h1.gross { font-family: var(--serif); font-size: 32px; margin: 0; line-height: 1.1; }
+.leise { color: var(--text-leise); font-size: 14px; }
+.karte { background-color: var(--flaeche); background-image: var(--struktur); border-radius: 14px; padding: 14px 16px; box-shadow: var(--schatten); position: relative; }
+.knopf { background: var(--akzent); color: var(--akzent-text); border-radius: 999px; padding: 16px; font: 600 19px var(--sans); text-align: center; box-shadow: 0 3px 0 rgba(0,0,0,.18); position: relative; }
+svg.limo { display: block; color: var(--limo-tinte); }
+
+/* Heute */
+.limo-buehne { position: relative; height: 290px; }
+.limo-buehne svg.limo { position: absolute; width: 190px; left: 0; bottom: 0; }
+.blase { position: absolute; right: 0; top: 18px; width: 200px; background-color: var(--flaeche); background-image: var(--struktur);
+  border: 2px solid var(--limo-tinte); border-radius: 18px 18px 18px 4px; padding: 10px 12px; font-size: 15px; line-height: 1.35; }
+.blase em { font-family: var(--serif); font-size: 17px; }
+.lektion h3 { font-family: var(--serif); font-size: 26px; margin: 2px 0; }
+.punkte { display: flex; gap: 5px; margin-top: 10px; }
+.punkte b { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--text-leise); }
+.punkte b.ja { background: var(--richtig); border-color: var(--richtig); }
+.punkte b.jetzt { background: var(--akzent); border-color: var(--linie); width: 22px; border-radius: 6px; }
+.masslinie { display: none; }
+
+/* Lektionen: Pfad als Bleistift-Skizze */
+.pfad { position: relative; height: 600px; flex: 0 0 auto; }
+.pfad svg.weg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.weg .gegangen { stroke: var(--stift); stroke-width: 2.4; fill: none; stroke-linecap: round; }
+.weg .gegangen.zwei { stroke-width: 1.2; opacity: .55; }
+.weg .offen { stroke: var(--stift-leise); stroke-width: 1.4; fill: none; stroke-linecap: round; }
+.weg .offen.zwei { stroke-dasharray: 22 9 6 9; opacity: .7; }
+.weg .kreis-fertig { stroke: var(--stift); stroke-width: 2; fill: none; }
+.weg .kreis-fertig.zwei { stroke-width: 1; opacity: .6; }
+.weg .haken { stroke: var(--richtig); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.weg .kreis-jetzt { fill: var(--akzent); stroke: var(--stift); stroke-width: 2.4; }
+.weg .kreis-offen { fill: none; stroke: var(--stift-leise); stroke-width: 1.4; }
+.weg text { font: 700 15px var(--sans); fill: #2b2620; }
+.weg text.leise { fill: var(--stift-leise); font-weight: 600; font-size: 12px; }
+.weg .achse { display: none; }
+.halt { position: absolute; transform: translate(26px, -20px); }
+.halt.unten { transform: translate(-50%, 18px); text-align: center; white-space: nowrap; }
+.halt.links { transform: translate(calc(-100% - 26px), -20px); text-align: right; }
+.halt .name { font-family: var(--serif); font-size: 18px; line-height: 1.15; }
+.halt .nr { font-size: 12px; color: var(--text-leise); }
+.halt.jetzt .name { font-size: 22px; font-weight: 600; }
+.halt.offen .name { color: var(--text-leise); }
+.stufe { font: 700 12px var(--sans); letter-spacing: .08em; color: var(--text-leise); }
+
+/* Übung */
+.oben { font-size: 15px; }
+.karteikarte { border-radius: 6px; padding: 18px 18px 22px; position: relative; transform: rotate(-.7deg); box-shadow: var(--schatten);
+  background-color: var(--flaeche);
+  background-image: linear-gradient(to bottom, transparent 46px, #e7a8a0 46px, #e7a8a0 47.5px, transparent 47.5px),
+                    repeating-linear-gradient(to bottom, transparent 0 33px, rgba(120,100,60,.16) 33px 34px), var(--struktur);
+  background-position: 0 0, 0 47px, 0 0; }
+.karteikarte .aufgabe { font-size: 13px; color: var(--text-leise); text-transform: uppercase; letter-spacing: .06em; height: 30px; }
+.karteikarte .it { font-family: var(--serif); font-size: 26px; line-height: 34px; margin-top: 20px; }
+.karteikarte svg.limo { position: absolute; width: 76px; right: 6px; bottom: -30px; }
+.ablage { min-height: 108px; border-bottom: 2px solid var(--rand); display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; padding: 6px 0; margin-top: 18px; }
+.vorrat { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.kachel { font-family: var(--serif); font-size: 21px; padding: 8px 14px; background-color: var(--flaeche); background-image: var(--struktur);
+  border: 1.5px solid var(--text); border-radius: 10px; box-shadow: 0 3px 0 var(--rand); cursor: pointer; user-select: none; position: relative; }
+.kachel.hops { animation: hops .32s ease-out; }
+@keyframes hops { 0% { transform: translateY(0) } 45% { transform: translateY(-6px) } 100% { transform: translateY(0) } }
+
+/* ===== Architekten-Skizze: Feinliner, überstehende Ecken, Raster, Schrift in Versalien ===== */
+.arch h1.gross { font-family: var(--sans); font-weight: 300; text-transform: uppercase; letter-spacing: .14em; font-size: 26px; }
+.arch .lektion h3, .arch .halt .name, .arch .karteikarte .it { font-family: var(--sans); font-weight: 400; letter-spacing: .02em; }
+.arch .lektion h3 { font-size: 24px; }
+.arch .leise, .arch .stufe, .arch .halt .nr, .arch .karteikarte .aufgabe { text-transform: uppercase; letter-spacing: .12em; font-size: 11px; }
+/* Rahmen: zwei Linienpaare, die über die Ecken hinausstehen */
+.arch .karte, .arch .kachel, .arch .knopf, .arch .karteikarte, .arch .blase {
+  border: none; border-radius: 0; box-shadow: none; background-image: none; transform: none; }
+.arch .karte::before, .arch .kachel::before, .arch .knopf::before, .arch .karteikarte::before, .arch .blase::before {
+  content: ""; position: absolute; inset: 0 -7px; border-top: 1.2px solid var(--text); border-bottom: 1.2px solid var(--text); pointer-events: none; }
+.arch .karte::after, .arch .kachel::after, .arch .knopf::after, .arch .karteikarte::after, .arch .blase::after {
+  content: ""; position: absolute; inset: -7px 0; border-left: 1.2px solid var(--text); border-right: 1.2px solid var(--text); pointer-events: none; }
+.arch .kachel::before { inset: 0 -4px; } .arch .kachel::after { inset: -4px 0; }
+.arch .knopf { background: repeating-linear-gradient(-45deg, var(--akzent) 0 2px, transparent 2px 6px); color: var(--text);
+  text-transform: uppercase; letter-spacing: .16em; font-weight: 600; font-size: 16px; }
+.arch .karteikarte { background-color: var(--flaeche); }
+.arch .blase { width: 190px; }
+.arch .kachel { font-family: var(--sans); font-size: 18px; letter-spacing: .03em; }
+.arch .ablage { border-bottom: 1.2px solid var(--text); }
+.arch .punkte { display: none; }
+.arch .masslinie { display: block; margin-top: 14px; }
+.arch .masslinie svg { width: 100%; height: 30px; display: block; overflow: visible; }
+.arch .masslinie line, .arch .masslinie path { stroke: var(--text); stroke-width: 1; }
+.arch .masslinie text { font: 10px var(--sans); fill: var(--text); letter-spacing: .1em; }
+.arch .weg .gegangen { stroke-width: 1.4; } .arch .weg .gegangen.zwei { stroke-width: .8; }
+.arch .weg .achse { display: inline; stroke: var(--text); stroke-width: .6; stroke-dasharray: 10 4 2 4; opacity: .55; }
+.arch .weg .kreis-jetzt { fill: url(#schraffur); }
+.arch .leiste i { border-radius: 0; border-width: 1.2px; }
+.arch .leiste .an i { background: repeating-linear-gradient(-45deg, var(--akzent) 0 2px, transparent 2px 5px); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="bleistift" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="5" result="r"/>
+      <feDisplacementMap in="SourceGraphic" in2="r" scale="4"/>
+    </filter>
+    <pattern id="schraffur" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#fff6d0"/><rect width="2.5" height="6" fill="#f5cf45"/>
+    </pattern>
+  </defs>
+</svg>
+
+<header class="seite">
+  <h1>Entwurf 4: Skizzen-Weg, Pappe, Architekten-Skizze</h1>
+  <p>Oben umschalten zwischen Papier und Architekten-Skizze. Jeweils oben hell, unten Pappe in deinem Grau. Mit dem Regler stellst du die Pappe heller oder dunkler.</p>
+  <div class="wahl"><button data-zeige="papier" class="an">Papier</button><button data-zeige="arch">Architekten-Skizze</button></div>
+</header>
+
+<div class="zeile-titel" id="titel-hell">Hell – Papier</div>
+<div class="reihe" id="hell">
+
+<section class="vorschlag">
+  <h2>Heute</h2>
+  <p class="was">Limo groß mit Sprechblase, darunter die Lektion und „Los“.</p>
+  <div class="handy">
+    <div class="inhalt">
+      <h1 class="gross">Buonasera!</h1>
+      <div class="limo-buehne">
+        <svg class="limo" viewBox="0 -12 200 234" aria-hidden="true">
+      <defs><filter id="limo-strich-1" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11" result="r"/>
+        <feDisplacementMap in="SourceGraphic" in2="r" scale="3.2"/>
+      </filter></defs>
+      <g filter="url(#limo-strich-1)">
+      <ellipse cx="100" cy="214" rx="46" ry="6" fill="currentColor" opacity="0.12"/>
+      <path d="M88 186 L85 206" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M112 186 L115 206" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <ellipse cx="80" cy="208" rx="8" ry="4" fill="currentColor"/>
+      <ellipse cx="120" cy="208" rx="8" ry="4" fill="currentColor"/>
+      <path d="M100 34 C 104 38, 108 42, 112 46 C 146 54, 166 86, 166 122 C 166 158, 142 186, 108 192 C 105 197, 103 200, 100 204 C 97 200, 95 197, 92 192 C 58 186, 34 158, 34 122 C 34 86, 54 54, 88 46 C 92 42, 96 38, 100 34 Z" fill="#F5CF45" transform="translate(4 4)"/>
+      <path d="M56 92 Q62 74 78 64" stroke="#FFF2B0" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="140" cy="80" r="1.6" fill="#D9A92A"/><circle cx="150" cy="100" r="1.4" fill="#D9A92A"/>
+      <circle cx="56" cy="150" r="1.6" fill="#D9A92A"/><circle cx="138" cy="168" r="1.4" fill="#D9A92A"/>
+      <circle cx="50" cy="118" r="1.3" fill="#D9A92A"/><circle cx="120" cy="70" r="1.3" fill="#D9A92A"/>
+      <path d="M100 34 C 104 38, 108 42, 112 46 C 146 54, 166 86, 166 122 C 166 158, 142 186, 108 192 C 105 197, 103 200, 100 204 C 97 200, 95 197, 92 192 C 58 186, 34 158, 34 122 C 34 86, 54 54, 88 46 C 92 42, 96 38, 100 34 Z" fill="none" stroke="#2B2620" stroke-width="3.4" stroke-linejoin="round"/>
+      <path d="M98 37 C 89 23, 72 19, 58 25 C 66 39, 86 43, 98 37 Z" fill="#6E9A48" transform="translate(3 3)"/>
+      <path d="M98 37 C 89 23, 72 19, 58 25 C 66 39, 86 43, 98 37 Z" fill="none" stroke="#2B2620" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M96 35 C 88 29, 76 26, 64 27" stroke="#2B2620" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M102 37 C 109 21, 128 13, 150 19 C 144 37, 122 45, 102 37 Z" fill="#7FA653" transform="translate(3 3)"/>
+      <path d="M102 37 C 109 21, 128 13, 150 19 C 144 37, 122 45, 102 37 Z" fill="none" stroke="#2B2620" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M104 35 C 115 27, 128 22, 144 21" stroke="#2B2620" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M100 40 C 99 30, 100 20, 103 10" stroke="#6B4A2B" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M103 10 L107 7" stroke="#6B4A2B" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 140 Q22 156 24 172" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M164 136 Q184 118 182 92" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M190 80 Q196 86 192 94" stroke="#7FA653" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M172 78 Q176 70 184 70" stroke="#7FA653" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="84" cy="112" r="6.5" fill="#2B2620"/><circle cx="86" cy="109.5" r="2" fill="#FFFFFF"/>
+      <circle cx="116" cy="111" r="6.5" fill="#2B2620"/><circle cx="118" cy="108.5" r="2" fill="#FFFFFF"/>
+      <ellipse cx="68" cy="130" rx="8.5" ry="4.5" fill="#EF8E6E" opacity="0.55"/>
+      <ellipse cx="132" cy="129" rx="8.5" ry="4.5" fill="#EF8E6E" opacity="0.55"/><path d="M91 128 Q100 138 110 127" stroke="#2B2620" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>
+        <div class="blase"><em>Prego</em> heißt nicht nur „bitte“ – man sagt es auch, wenn man jemandem den Vortritt lässt.</div>
+      </div>
+      <div class="karte lektion">
+        <div class="leise">Lektion 4 · A1 · jetzt dran</div>
+        <h3>La mia famiglia</h3>
+        <div class="leise">Familie, mein, dein</div>
+        <div class="punkte"><b class="ja"></b><b class="ja"></b><b class="ja"></b><b class="ja"></b><b class="jetzt"></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
+        <div class="masslinie">
+          <svg viewBox="0 0 300 30" preserveAspectRatio="none">
+            <line x1="0" y1="18" x2="300" y2="18"/>
+            <path d="M0 10 V26 M300 10 V26 M115 10 V26"/>
+            <path d="M-4 22 L4 14 M111 22 L119 14 M296 22 L304 14" stroke-width="1.6"/>
+            <text x="57" y="12" text-anchor="middle">5 SCHRITTE</text><text x="207" y="12" text-anchor="middle">8 OFFEN</text>
+          </svg>
+        </div>
+      </div>
+      <div style="flex:1"></div>
+      <div class="knopf">Los – Schritt 5: neue Wörter</div>
+    </div>
+    <div class="leiste"><div class="an"><i></i>Heute</div><div><i></i>Üben</div><div><i></i>Lektionen</div><div><i></i>Mein Stand</div><div><i></i>Einstellungen</div></div>
+  </div>
+</section>
+
+<section class="vorschlag">
+  <h2>Lektionen als Skizze</h2>
+  <p class="was">Der Weg mit Bleistift vorgezeichnet: gegangen kräftig und doppelt, vor dir nur leicht angedeutet.</p>
+  <div class="handy">
+    <div class="inhalt">
+      <h1 class="gross">Lektionen</h1>
+      <div class="stufe">A1 · Anfang</div>
+      <div class="pfad">
+        <svg class="weg" viewBox="0 0 333 600">
+          <g class="achse"><line x1="-20" y1="30" x2="380" y2="30"/><line x1="-20" y1="300" x2="380" y2="300"/><line x1="-20" y1="585" x2="380" y2="585"/><line x1="230" y1="-40" x2="230" y2="620"/></g>
+          <g filter="url(#bleistift)">
+            <path class="gegangen" d="M90 30 C 200 30, 260 70, 250 115 C 240 165, 110 160, 100 205 C 92 245, 200 260, 230 300"/>
+            <path class="gegangen zwei" d="M92 33 C 203 28, 263 74, 252 118 C 238 168, 107 157, 98 208 C 95 249, 203 258, 228 298"/>
+            <path class="offen" d="M230 300 C 262 345, 120 360, 110 400 C 100 445, 250 450, 250 495 C 250 535, 150 545, 120 585"/>
+            <path class="offen zwei" d="M233 302 C 259 349, 117 357, 113 403 C 97 448, 253 447, 247 498 C 254 532, 147 548, 122 582"/>
+            <circle class="kreis-fertig" cx="90" cy="30" r="13"/><ellipse class="kreis-fertig zwei" cx="91" cy="29" rx="15" ry="13"/>
+            <path class="haken" d="M84 30 l5 6 l9 -12"/>
+            <circle class="kreis-fertig" cx="250" cy="115" r="13"/><ellipse class="kreis-fertig zwei" cx="249" cy="116" rx="14" ry="15"/>
+            <path class="haken" d="M244 115 l5 6 l9 -12"/>
+            <circle class="kreis-fertig" cx="100" cy="205" r="13"/><ellipse class="kreis-fertig zwei" cx="101" cy="204" rx="15" ry="13"/>
+            <path class="haken" d="M94 205 l5 6 l9 -12"/>
+            <circle class="kreis-jetzt" cx="230" cy="300" r="20"/><ellipse cx="231" cy="299" rx="22" ry="20" fill="none" stroke="var(--stift)" stroke-width="1" opacity=".6"/>
+            <circle class="kreis-offen" cx="110" cy="400" r="11"/>
+            <circle class="kreis-offen" cx="250" cy="495" r="11"/>
+            <circle class="kreis-offen" cx="120" cy="585" r="11"/>
+          </g>
+          <text x="230" y="305" text-anchor="middle">4</text>
+          <text x="110" y="404" text-anchor="middle" class="leise">5</text>
+          <text x="250" y="499" text-anchor="middle" class="leise">6</text>
+          <text x="120" y="589" text-anchor="middle" class="leise">7</text>
+        </svg>
+        <div class="halt links" style="left:90px;top:30px"><span class="name">Ciao!</span><br><span class="nr">Lektion 1</span></div>
+        <div class="halt links" style="left:250px;top:115px"><span class="name">Numeri</span><br><span class="nr">Lektion 2</span></div>
+        <div class="halt links" style="left:100px;top:205px"><span class="name">Al bar</span><br><span class="nr">Lektion 3</span></div>
+        <div class="halt jetzt links" style="left:230px;top:300px"><span class="name">La mia famiglia</span><br><span class="nr">Schritt 5 von 13</span></div>
+        <div class="halt offen unten" style="left:110px;top:400px"><span class="name">Tempo libero</span></div>
+        <div class="halt offen unten" style="left:250px;top:495px"><span class="name">Wiederholung 1</span></div>
+        <div class="halt offen links" style="left:120px;top:585px"><span class="name">Alla stazione</span></div>
+        <div style="position:absolute;left:266px;top:236px;width:78px"><svg class="limo" viewBox="0 -12 200 234" aria-hidden="true">
+      <defs><filter id="limo-strich-4" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11" result="r"/>
+        <feDisplacementMap in="SourceGraphic" in2="r" scale="3.2"/>
+      </filter></defs>
+      <g filter="url(#limo-strich-4)">
+      <ellipse cx="100" cy="214" rx="46" ry="6" fill="currentColor" opacity="0.12"/>
+      <path d="M88 186 L85 206" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M112 186 L115 206" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <ellipse cx="80" cy="208" rx="8" ry="4" fill="currentColor"/>
+      <ellipse cx="120" cy="208" rx="8" ry="4" fill="currentColor"/>
+      <path d="M100 34 C 104 38, 108 42, 112 46 C 146 54, 166 86, 166 122 C 166 158, 142 186, 108 192 C 105 197, 103 200, 100 204 C 97 200, 95 197, 92 192 C 58 186, 34 158, 34 122 C 34 86, 54 54, 88 46 C 92 42, 96 38, 100 34 Z" fill="#F5CF45" transform="translate(4 4)"/>
+      <path d="M56 92 Q62 74 78 64" stroke="#FFF2B0" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="140" cy="80" r="1.6" fill="#D9A92A"/><circle cx="150" cy="100" r="1.4" fill="#D9A92A"/>
+      <circle cx="56" cy="150" r="1.6" fill="#D9A92A"/><circle cx="138" cy="168" r="1.4" fill="#D9A92A"/>
+      <circle cx="50" cy="118" r="1.3" fill="#D9A92A"/><circle cx="120" cy="70" r="1.3" fill="#D9A92A"/>
+      <path d="M100 34 C 104 38, 108 42, 112 46 C 146 54, 166 86, 166 122 C 166 158, 142 186, 108 192 C 105 197, 103 200, 100 204 C 97 200, 95 197, 92 192 C 58 186, 34 158, 34 122 C 34 86, 54 54, 88 46 C 92 42, 96 38, 100 34 Z" fill="none" stroke="#2B2620" stroke-width="3.4" stroke-linejoin="round"/>
+      <path d="M98 37 C 89 23, 72 19, 58 25 C 66 39, 86 43, 98 37 Z" fill="#6E9A48" transform="translate(3 3)"/>
+      <path d="M98 37 C 89 23, 72 19, 58 25 C 66 39, 86 43, 98 37 Z" fill="none" stroke="#2B2620" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M96 35 C 88 29, 76 26, 64 27" stroke="#2B2620" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M102 37 C 109 21, 128 13, 150 19 C 144 37, 122 45, 102 37 Z" fill="#7FA653" transform="translate(3 3)"/>
+      <path d="M102 37 C 109 21, 128 13, 150 19 C 144 37, 122 45, 102 37 Z" fill="none" stroke="#2B2620" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M104 35 C 115 27, 128 22, 144 21" stroke="#2B2620" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M100 40 C 99 30, 100 20, 103 10" stroke="#6B4A2B" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M103 10 L107 7" stroke="#6B4A2B" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 140 Q22 156 24 172" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M164 140 Q178 156 176 172" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M76 112 Q84 103 92 112" stroke="#2B2620" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 111 Q116 102 124 111" stroke="#2B2620" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <ellipse cx="68" cy="130" rx="8.5" ry="4.5" fill="#EF8E6E" opacity="0.7"/>
+      <ellipse cx="132" cy="129" rx="8.5" ry="4.5" fill="#EF8E6E" opacity="0.7"/><path d="M87 125 Q100 143 114 124" stroke="#2B2620" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg></div>
+      </div>
+    </div>
+    <div class="leiste"><div><i></i>Heute</div><div><i></i>Üben</div><div class="an"><i></i>Lektionen</div><div><i></i>Mein Stand</div><div><i></i>Einstellungen</div></div>
+  </div>
+</section>
+
+<section class="vorschlag">
+  <h2>Übung</h2>
+  <p class="was">Aufgabe auf der Karteikarte, Kacheln als Papierstücke. Antippen geht.</p>
+  <div class="handy">
+    <div class="inhalt">
+      <div class="oben">✕ Übung beenden</div>
+      <div class="karteikarte">
+        <div class="aufgabe">Bau den Satz</div>
+        <div class="it">Ich trinke einen Kaffee an der Bar.</div>
+        <svg class="limo" viewBox="0 -12 200 234" aria-hidden="true">
+      <defs><filter id="limo-strich-3" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11" result="r"/>
+        <feDisplacementMap in="SourceGraphic" in2="r" scale="3.2"/>
+      </filter></defs>
+      <g filter="url(#limo-strich-3)"><circle cx="44" cy="62" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="30" cy="46" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="16" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+      <ellipse cx="100" cy="214" rx="46" ry="6" fill="currentColor" opacity="0.12"/>
+      <path d="M88 186 L85 206" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M112 186 L115 206" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <ellipse cx="80" cy="208" rx="8" ry="4" fill="currentColor"/>
+      <ellipse cx="120" cy="208" rx="8" ry="4" fill="currentColor"/>
+      <path d="M100 34 C 104 38, 108 42, 112 46 C 146 54, 166 86, 166 122 C 166 158, 142 186, 108 192 C 105 197, 103 200, 100 204 C 97 200, 95 197, 92 192 C 58 186, 34 158, 34 122 C 34 86, 54 54, 88 46 C 92 42, 96 38, 100 34 Z" fill="#F5CF45" transform="translate(4 4)"/>
+      <path d="M56 92 Q62 74 78 64" stroke="#FFF2B0" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="140" cy="80" r="1.6" fill="#D9A92A"/><circle cx="150" cy="100" r="1.4" fill="#D9A92A"/>
+      <circle cx="56" cy="150" r="1.6" fill="#D9A92A"/><circle cx="138" cy="168" r="1.4" fill="#D9A92A"/>
+      <circle cx="50" cy="118" r="1.3" fill="#D9A92A"/><circle cx="120" cy="70" r="1.3" fill="#D9A92A"/>
+      <path d="M100 34 C 104 38, 108 42, 112 46 C 146 54, 166 86, 166 122 C 166 158, 142 186, 108 192 C 105 197, 103 200, 100 204 C 97 200, 95 197, 92 192 C 58 186, 34 158, 34 122 C 34 86, 54 54, 88 46 C 92 42, 96 38, 100 34 Z" fill="none" stroke="#2B2620" stroke-width="3.4" stroke-linejoin="round"/>
+      <path d="M98 37 C 89 23, 72 19, 58 25 C 66 39, 86 43, 98 37 Z" fill="#6E9A48" transform="translate(3 3)"/>
+      <path d="M98 37 C 89 23, 72 19, 58 25 C 66 39, 86 43, 98 37 Z" fill="none" stroke="#2B2620" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M96 35 C 88 29, 76 26, 64 27" stroke="#2B2620" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M102 37 C 109 21, 128 13, 150 19 C 144 37, 122 45, 102 37 Z" fill="#7FA653" transform="translate(3 3)"/>
+      <path d="M102 37 C 109 21, 128 13, 150 19 C 144 37, 122 45, 102 37 Z" fill="none" stroke="#2B2620" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M104 35 C 115 27, 128 22, 144 21" stroke="#2B2620" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M100 40 C 99 30, 100 20, 103 10" stroke="#6B4A2B" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M103 10 L107 7" stroke="#6B4A2B" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 140 Q22 156 24 172" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M164 142 Q150 164 116 150" stroke="currentColor" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="82" cy="107" r="6.5" fill="#2B2620"/><circle cx="80" cy="104" r="2" fill="#FFFFFF"/>
+           <circle cx="114" cy="106" r="6.5" fill="#2B2620"/><circle cx="112" cy="103" r="2" fill="#FFFFFF"/><path d="M73 93 L90 91" stroke="#2B2620" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M106 87 L123 92" stroke="#2B2620" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M93 131 Q100 128 108 132" stroke="#2B2620" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>
+      </div>
+      <div class="ablage"></div>
+      <div class="vorrat">
+        <span class="kachel">al</span><span class="kachel">Prendo</span><span class="kachel">caffè</span><span class="kachel">bar</span><span class="kachel">un</span><span class="kachel">una</span>
+      </div>
+      <div style="flex:1"></div>
+      <div class="knopf">Prüfen</div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="zeile-titel"><span id="titel-pappe">Pappe – statt dunkel</span>
+  <label>dunkler <input type="range" id="regler" min="30" max="86" value="80"> heller · <span id="farbe"></span></label></div>
+<div class="reihe" id="pappe"></div>
+
+<script>
+  const hell = document.getElementById('hell'), pappe = document.getElementById('pappe');
+  pappe.innerHTML = hell.innerHTML;
+  pappe.querySelectorAll('.handy').forEach(h => h.classList.add('pappe'));
+  pappe.querySelectorAll('.vorschlag > h2, .vorschlag > .was').forEach(e => e.remove());
+
+  // Pappe-Farbe aus dem Regler: warmes Grau wie Nicoles Muster (#d4cfc3 ≈ Helligkeit 80)
+  const regler = document.getElementById('regler');
+  function pappeFarbe() {
+    const L = +regler.value, dunkel = L < 55;
+    document.getElementById('farbe').textContent = 'Helligkeit ' + L + ' %';
+    pappe.querySelectorAll('.handy').forEach(h => {
+      const s = h.style;
+      s.setProperty('--hintergrund', `hsl(43 13% ${L}%)`);
+      s.setProperty('--flaeche', `hsl(43 18% ${Math.min(L + 8, 95)}%)`);
+      s.setProperty('--rand', `hsl(43 10% ${dunkel ? L + 10 : L - 10}%)`);
+      s.setProperty('--text', dunkel ? '#f3eee4' : '#2b2620');
+      s.setProperty('--text-leise', dunkel ? '#d2cabb' : '#5e564a');
+      s.setProperty('--limo-tinte', dunkel ? '#f3eee4' : '#2b2620');
+      s.setProperty('--stift', dunkel ? '#f3eee4' : '#3a342c');
+      s.setProperty('--stift-leise', `hsl(43 8% ${dunkel ? L + 25 : L - 28}%)`);
+      s.setProperty('--linie', dunkel ? '#f2cb45' : '#2b2620');
+    });
+  }
+  regler.addEventListener('input', pappeFarbe); pappeFarbe();
+
+  document.querySelectorAll('.handy').forEach(h => {
+    const ablage = h.querySelector('.ablage'), vorrat = h.querySelector('.vorrat');
+    if (!ablage) return;
+    h.querySelectorAll('.kachel').forEach(k => k.addEventListener('click', () => {
+      (k.parentElement === vorrat ? ablage : vorrat).appendChild(k);
+      k.classList.remove('hops'); void k.offsetWidth; k.classList.add('hops');
+    }));
+  });
+
+  document.querySelectorAll('.wahl button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.wahl button').forEach(x => x.classList.toggle('an', x === b));
+    const arch = b.dataset.zeige === 'arch';
+    document.querySelectorAll('.handy').forEach(h => h.classList.toggle('arch', arch));
+    document.getElementById('titel-hell').textContent = arch ? 'Hell – Transparentpapier mit Raster' : 'Hell – Papier';
+    document.getElementById('titel-pappe').textContent = arch ? 'Pappe mit Raster' : 'Pappe – statt dunkel';
+  }));
+</script>
+</body>
+</html>

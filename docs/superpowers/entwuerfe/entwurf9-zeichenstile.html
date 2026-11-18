@@ -1,0 +1,657 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf 9 Zeichenstile</title>
+<!-- Nur im Entwurf: freie Handschrift-Schriften (SIL Open Font License / Apache) zum Vergleich. In der App später als Datei mitliefern, nicht von Google laden. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@500;600&family=Gochi+Hand&family=Kalam:wght@400;700&family=Patrick+Hand&family=Shadows+Into+Light+Two&display=swap">
+<style>
+:root {
+  --papier: #fbfaf5; --tusche: #1f1c18; --text-leise: #6b6459;
+  --struktur: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .25  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+body.pappe { --papier: hsl(29 16% 80%); --text-leise: #5b5247; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #e4ddd2; color: #2b2620; font-family: var(--sans); }
+header { max-width: 1240px; margin: 0 auto; padding: 28px 16px 4px; }
+h1 { font-family: var(--serif); margin: 0 0 6px; font-size: 30px; }
+header p { margin: 0 0 8px; opacity: .8; max-width: 820px; line-height: 1.45; }
+.wahl { display: inline-flex; background: rgba(0,0,0,.08); border-radius: 12px; padding: 3px; margin-top: 8px; }
+.wahl button { border: 0; background: none; font: 600 15px var(--sans); padding: 8px 18px; border-radius: 10px; cursor: pointer; color: inherit; }
+.wahl button.an { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+/* Heute-Seiten */
+.handys { max-width: 1240px; margin: 0 auto; padding: 18px 16px 24px; display: flex; gap: 28px; overflow-x: auto; }
+.vorschau { flex: 0 0 auto; width: min(393px, calc(100vw - 32px)); }
+.vorschau h3 { font-family: var(--serif); font-size: 20px; margin: 0 0 8px; }
+.handy { height: 852px; border-radius: 48px; border: 10px solid #1b1a17; background-color: var(--papier); background-image: var(--struktur);
+  color: var(--tusche); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,.18); }
+.handy .inhalt { flex: 1; padding: 54px 22px 16px; display: flex; flex-direction: column; gap: 14px; }
+.kopf { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-leise); border-bottom: .7px solid rgba(0,0,0,.3); padding-bottom: 6px; }
+.gruss { font-family: var(--serif); font-size: 34px; margin: 0; line-height: 1.05; position: relative; display: inline-block; z-index: 0; }
+.gruss i { position: absolute; left: -6px; right: -12px; bottom: 3px; height: 12px; z-index: -1; transform: rotate(-1.5deg); background: var(--k-wasch); border-radius: 3px 8px 4px 9px; }
+.skizze-heute { margin: 0 -6px 8px; position: relative; }
+.skizze-heute svg { width: 100%; display: block; overflow: visible; }
+.skizze-heute span { position: absolute; left: 8px; bottom: -18px; font: italic 12px var(--serif); color: var(--text-leise); }
+.lektion-k { border: 1.6px solid var(--tusche); padding: 12px 16px 14px; position: relative; background: rgba(255,255,255,.18); }
+.lektion-k .klein { font: 600 11px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--text-leise); }
+.lektion-k h4 { font-family: var(--serif); font-size: 26px; margin: 4px 0 10px; font-weight: 600; }
+.balken { height: 8px; border: 1px solid var(--tusche); border-radius: 4px; overflow: hidden; }
+.balken b { display: block; height: 100%; width: 38%; background: var(--k-farbe); }
+.notiz-k { font-size: 14.5px; line-height: 1.4; padding: 10px 12px; transform: rotate(-1deg); background: rgba(255,255,255,.4); width: 82%; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.notiz-k em { font-family: var(--serif); font-size: 16px; }
+.knopf-k { margin-top: auto; padding: 17px; text-align: center; font: 700 15px var(--sans); letter-spacing: .14em; text-transform: uppercase;
+  background: var(--k-farbe); color: var(--k-text); border-radius: 3px 5px 4px 6px; box-shadow: 2px 3px 0 rgba(0,0,0,.12); }
+.knopf-neben { padding: 12px; text-align: center; font: 600 14px var(--sans); color: var(--k-linie); border: 1.4px solid var(--k-linie); border-radius: 3px 5px 4px 6px; }
+.leiste-k { display: flex; justify-content: space-around; padding: 10px 4px 22px; border-top: .7px solid var(--tusche); font: 600 9.5px var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--text-leise); }
+.leiste-k div { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.leiste-k i { width: 22px; height: 22px; border: 1.2px solid currentColor; display: block; border-radius: 3px; }
+.leiste-k .an { color: var(--tusche); }
+.leiste-k .an i { background: var(--k-farbe); border-color: var(--tusche); }
+.k-tusche { --k-farbe: #2b2620; --k-text: #fbf8ef; --k-linie: #2b2620; --k-wasch: rgba(43,38,32,.16); }
+.k-sepia { --k-farbe: #6e4b33; --k-text: #fbf4e6; --k-linie: #6e4b33; --k-wasch: rgba(140,95,60,.26); }
+.k-ocker { --k-farbe: #d6a24a; --k-text: #1f1c18; --k-linie: #8a6220; --k-wasch: rgba(214,162,74,.42); }
+.zwischen { padding-top: 18px; }
+.f-caveat .handy { --hand: 'Caveat', cursive; }
+.f-shadows .handy { --hand: 'Shadows Into Light Two', cursive; }
+:is(.f-caveat, .f-shadows) :is(.gruss, .lektion-k h4, .lektion-k .klein, .kopf, .knopf-k, .knopf-neben, .leiste-k) { font-family: var(--hand); text-transform: none; letter-spacing: .01em; }
+:is(.f-caveat, .f-shadows) .gruss { font-size: 42px; font-weight: 600; }
+:is(.f-caveat, .f-shadows) .lektion-k h4 { font-size: 32px; font-weight: 600; margin: 2px 0 8px; }
+:is(.f-caveat, .f-shadows) .lektion-k .klein { font-size: 16px; font-weight: 500; }
+:is(.f-caveat, .f-shadows) .kopf { font-size: 16px; }
+:is(.f-caveat, .f-shadows) .knopf-k { font-size: 24px; font-weight: 600; padding: 12px; }
+:is(.f-caveat, .f-shadows) .knopf-neben { font-size: 20px; padding: 8px; }
+:is(.f-caveat, .f-shadows) .leiste-k { font-size: 14px; font-weight: 600; }
+.f-shadows :is(.gruss, .lektion-k h4, .knopf-k) { font-weight: 400; }
+.f-shadows .gruss { font-size: 40px; }
+.schrift-karte .s-klein { color: var(--text-leise); letter-spacing: .04em; }
+.schrift-karte .s-name { margin: 2px 0 8px; line-height: 1.1; }
+.schrift-karte .s-gruss { line-height: 1.1; }
+.vorschau.auf-papier { --papier: #fbfaf5; --text-leise: #6b6459; }
+.vorschau.auf-pappe { --papier: hsl(29 16% 80%); --text-leise: #5b5247; }
+.k-ocker .knopf-k { border: 1.6px solid var(--tusche); }
+.hand-svg { display: inline-block; vertical-align: middle; overflow: visible; }
+.knopf-k .hand-svg, .knopf-neben .hand-svg { margin: -4px 0; }
+.leiste-k .hand-svg { margin-top: 2px; }
+[data-skizze] { position: relative; isolation: isolate; }
+[data-skizze]:not([data-skizze="linie"]) { border: none !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; }
+.leiste-k[data-skizze] { border-top: none; }
+.lektion-k[data-skizze] { background: rgba(255,255,255,.18) !important; }
+.skizze-svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: -1; }
+.zwischen h2 { font-family: var(--serif); font-size: 24px; margin: 0 0 4px; }
+.raster {max-width: 1240px; margin: 0 auto; padding: 18px 16px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 372px), 1fr)); gap: 24px; }
+.stil { background-color: var(--papier); background-image: var(--struktur); border-radius: 6px; padding: 16px 16px 18px; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 10px 30px rgba(0,0,0,.08); }
+.stil h2 { font-family: var(--serif); font-size: 23px; margin: 0; display: flex; gap: 10px; align-items: baseline; }
+.stil h2 span { font: 700 13px var(--sans); color: var(--text-leise); }
+.stil .was { font-size: 14.5px; line-height: 1.45; margin: 6px 0 12px; color: #3b352d; min-height: 64px; }
+.bild { position: relative; margin: 0 0 22px; }
+.bild svg { width: 100%; display: block; overflow: visible; }
+.bild figcaption { font-size: 12px; color: var(--text-leise); margin-top: 4px; font-style: italic; font-family: var(--serif); }
+.urteil { font-size: 13.5px; line-height: 1.45; border-top: .7px solid rgba(0,0,0,.25); padding-top: 8px; color: #3b352d; }
+.urteil b { font-weight: 600; }
+.fuss { max-width: 1240px; margin: 0 auto; padding: 0 16px 40px; font-size: 14px; opacity: .75; }
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="defs">
+  <filter id="tusche" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="8" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="3"/>
+  </filter>
+  <filter id="tusche-fein" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="3" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="1.3"/>
+  </filter>
+  <filter id="locker-a" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="21" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="4.5"/>
+  </filter>
+  <filter id="locker-b" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="44" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="6"/>
+  </filter>
+  <filter id="aquarell" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="3" seed="2" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="12" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="1.1"/>
+  </filter>
+  <filter id="aquarell-voll" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="5" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="15" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="1.4" result="b"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="7" result="w"/>
+    <feColorMatrix in="w" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.9 1.25" result="wa"/>
+    <feComposite in="b" in2="wa" operator="in"/>
+  </filter>
+  <filter id="bleistift" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="5" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="2.5" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="1" seed="9" result="k"/>
+    <feColorMatrix in="k" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.35" result="km"/>
+    <feComposite in="d" in2="km" operator="in"/>
+  </filter>
+  <filter id="tusche-linie" filterUnits="userSpaceOnUse" x="-40" y="-40" width="1200" height="400">
+    <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="3" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="1.3"/>
+  </filter>
+  <filter id="freihand" filterUnits="userSpaceOnUse" x="-40" y="-40" width="1200" height="400">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.02" numOctaves="1" seed="17" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="1.4"/>
+  </filter>
+  <filter id="krakel-klein" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.3" numOctaves="2" seed="23" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="0.4"/>
+  </filter>
+  <filter id="krakel" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.35" numOctaves="2" seed="11" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="0.55"/>
+  </filter>
+  <filter id="korn" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="6" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="2" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="1" seed="9" result="k"/>
+    <feColorMatrix in="k" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.3" result="km"/>
+    <feComposite in="d" in2="km" operator="in"/>
+  </filter>
+  <filter id="druck" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="13" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="2" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="4" result="k"/>
+    <feColorMatrix in="k" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.7 1.22" result="km"/>
+    <feComposite in="d" in2="km" operator="in"/>
+  </filter>
+  <pattern id="schraffur" width="3.4" height="3.4" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+    <line x1="0" y1="0" x2="0" y2="3.4" stroke="#55524c" stroke-width=".8"/>
+  </pattern>
+  <pattern id="schraffur-kreuz" width="3.4" height="3.4" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+    <line x1="0" y1="0" x2="0" y2="3.4" stroke="#4a463f" stroke-width=".7"/>
+  </pattern>
+  <linearGradient id="plakat-himmel" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8fc0db"/><stop offset=".75" stop-color="#f6e3a6"/>
+  </linearGradient>
+</defs></svg>
+
+<header>
+  <h1>Entwurf 9: Welcher Zeichenstil?</h1>
+  <p>Sechs Arten zu zeichnen – jedes Mal dieselben zwei Motive: eine <b>Landschaft</b> (Toskana mit Villa und Zypressen) und ein <b>Ding</b> (Espresso an der Bar). So siehst du, wie ein Stil bei weiten Bildern und bei kleinen Gegenständen wirkt. Der Stil muss später für alle Skizzen gleich bleiben, damit es wie aus einem Skizzenbuch aussieht.</p>
+  <div class="wahl"><button class="an" data-grund="papier">Papier (hell)</button><button data-grund="pappe">Pappe (warmes Grau)</button></div>
+</header>
+
+<header class="zwischen"><h2>Neu: Caveat oder Shadows Into Light Two</h2><p>Die beiden Favoriten auf der ganzen „Heute“-Seite, je auf Papier und Pappe. Kleine Beschriftungen sind hier etwas größer, damit sie gut lesbar bleiben.</p></header>
+<div class="handys" id="handys-font"></div>
+<header class="zwischen"><h2>Schriften zum Vergleich</h2><p>Sechs kostenlose Handschrift-Schriften (freie Lizenz) und zum Vergleich die eigene Blockschrift. Jede Karte zeigt Gruß, Lektion und Knopf mit Architekten-Strich und Ocker. Die Notiz bleibt in normaler Schrift.</p></header>
+<main class="raster" id="schriften"></main>
+<header class="zwischen"><h2>Ocker mit eigener Schrift</h2><p>Überschriften, Beschriftungen und Knöpfe in der selbst gezeichneten Blockschrift (aus Entwurf 5). Die Notiz und italienische Sätze bleiben in normaler Schrift, damit man sie gut lesen kann. Die Skizze liegt zwischen M1 und M2: alles ganz zart, Himmel, Villa und Zypressen etwas kräftiger. Links auf Papier, rechts auf Pappe.</p></header>
+<div class="handys" id="handys-neu"></div>
+<header class="zwischen"><h2>„Heute“ mit M2 – drei Knopffarben</h2><p>Die Mischung M2 auf der echten Seite. Der Hauptknopf, der Fortschritt und der aktive Reiter unten haben jeweils dieselbe Farbe: Tusche, Sepia oder Ocker.</p></header>
+<div class="handys" id="handys"></div>
+<header class="zwischen"><h2>Mischungen aus A und B</h2><p>Du mochtest A und B am liebsten. Hier drei Stufen dazwischen – von „fast A“ bis „fast B“.</p></header>
+<main class="raster" id="mischungen"></main>
+<header class="zwischen"><h2>Die sechs Stile vom Anfang</h2></header>
+<main class="raster" id="raster"></main>
+<p class="fuss">Alle Bilder sind selbst gezeichnet (SVG im Code), keine Fotos und keine fremden Bilder – es entstehen keine Kosten. Die wackelige Linie und das Papierkorn kommen von SVG-Filtern.</p>
+
+<script>
+// Limo-Blockschrift: Großbuchstaben aus einzelnen Tusche-Strichen.
+// Raster: Versalhöhe 10 Einheiten (y nach unten, 0 = oben, 10 = Grundlinie).
+const Handschrift = (() => {
+  const O = 'M3.6 0 Q0 0 0 5 Q0 10 3.6 10 Q7.2 10 7.2 5 Q7.2 0 3.6 0 Z';
+  const P = 'M0 10 L0 0 L3.8 0 Q6.3 0 6.3 2.7 Q6.3 5.4 3.8 5.4 L0 5.4';
+  const U = 'M0 0 L0 6.8 Q0 10 3.25 10 Q6.5 10 6.5 6.8 L6.5 0';
+  const A = 'M0 10 L3.5 0 L7 10 M1.3 6.4 L5.7 6.4';
+  const E = 'M6 0 L0 0 L0 10 L6 10 M0 5 L4.5 5';
+  const pkt = (x, y = -2) => ` M${x} ${y} L${x} ${y + 0.3}`;
+  const gravis = (x) => ` M${x - 0.8} -3 L${x + 0.8} -1.3`;
+  const akut = (x) => ` M${x - 0.8} -1.3 L${x + 0.8} -3`;
+  const Z = {
+    A: [A, 7], B: ['M0 0 L0 10 M0 0 L3.8 0 Q6 0 6 2.5 Q6 5 3.8 5 L0 5 M3.8 5 Q6.5 5 6.5 7.5 Q6.5 10 3.8 10 L0 10', 6.5],
+    C: ['M6.5 1.5 Q5.5 0 3.5 0 Q0 0 0 5 Q0 10 3.5 10 Q5.5 10 6.5 8.5', 6.5],
+    D: ['M0 0 L0 10 L3 10 Q6.5 10 6.5 5 Q6.5 0 3 0 Z', 6.5], E: [E, 6], F: ['M6 0 L0 0 L0 10 M0 5 L4.5 5', 6],
+    G: ['M6.5 1.5 Q5.5 0 3.5 0 Q0 0 0 5 Q0 10 3.5 10 Q6.5 10 6.5 6.5 L6.5 5.5 L4 5.5', 6.5],
+    H: ['M0 0 L0 10 M6.5 0 L6.5 10 M0 5 L6.5 5', 6.5], I: ['M0 0 L0 10', 0],
+    J: ['M4.5 0 L4.5 7.5 Q4.5 10 2.2 10 Q0 10 0 7.5', 4.5], K: ['M0 0 L0 10 M6 0 L0 6 M2 4.2 L6.3 10', 6.3],
+    L: ['M0 0 L0 10 L5.5 10', 5.5], M: ['M0 10 L0 0 L4 7 L8 0 L8 10', 8], N: ['M0 10 L0 0 L6.5 10 L6.5 0', 6.5],
+    O: [O, 7.2], P: [P, 6.3], Q: [O + ' M4.5 7.5 L7.4 10.6', 7.4], R: [P + ' M3 5.4 L6.5 10', 6.5],
+    S: ['M6 1.4 Q5 0 3.2 0 Q0.3 0 0.3 2.6 Q0.3 4.6 3.2 5 Q6.3 5.4 6.3 7.5 Q6.3 10 3.2 10 Q1 10 0 8.4', 6.3],
+    T: ['M0 0 L7 0 M3.5 0 L3.5 10', 7], U: [U, 6.5], V: ['M0 0 L3.5 10 L7 0', 7],
+    W: ['M0 0 L2.3 10 L4.6 2.5 L6.9 10 L9.2 0', 9.2], X: ['M0 0 L6.5 10 M6.5 0 L0 10', 6.5],
+    Y: ['M0 0 L3.4 5.2 L6.8 0 M3.4 5.2 L3.4 10', 6.8], Z: ['M0 0 L6.3 0 L0 10 L6.3 10', 6.3],
+    'Ä': [A + pkt(2.2) + pkt(4.8), 7], 'Ö': [O + pkt(2.4) + pkt(4.8), 7.2], 'Ü': [U + pkt(2) + pkt(4.5), 6.5],
+    'À': [A + gravis(3.5), 7], 'È': [E + gravis(3), 6], 'É': [E + akut(3), 6], 'Ì': ['M0 0 L0 10' + gravis(0), 0],
+    'Ò': [O + gravis(3.6), 7.2], 'Ù': [U + gravis(3.25), 6.5],
+    0: ['M3 0 Q0 0 0 5 Q0 10 3 10 Q6 10 6 5 Q6 0 3 0 Z', 6], 1: ['M0.5 2.2 L3 0 L3 10', 3],
+    2: ['M0.3 2 Q1 0 3 0 Q6 0 6 2.8 Q6 4.6 0 10 L6.2 10', 6.2],
+    3: ['M0.3 1.2 Q1.3 0 3 0 Q5.8 0 5.8 2.5 Q5.8 4.8 2.6 4.8 Q6.2 4.8 6.2 7.4 Q6.2 10 3 10 Q1 10 0 8.6', 6.2],
+    4: ['M4.6 10 L4.6 0 L0 7 L6.4 7', 6.4], 5: ['M5.8 0 L1 0 L0.5 4.5 Q1.8 3.8 3 3.8 Q6.2 3.8 6.2 6.9 Q6.2 10 3 10 Q1 10 0 8.6', 6.2],
+    6: ['M5.5 0.8 Q4.6 0 3.2 0 Q0 0 0 5.5 Q0 10 3.1 10 Q6.2 10 6.2 7 Q6.2 4 3.2 4 Q0.8 4 0 6', 6.2],
+    7: ['M0 0 L6.2 0 L2.2 10', 6.2],
+    8: ['M3.1 4.8 Q0.4 4.8 0.4 2.4 Q0.4 0 3.1 0 Q5.8 0 5.8 2.4 Q5.8 4.8 3.1 4.8 Q0 4.8 0 7.4 Q0 10 3.1 10 Q6.2 10 6.2 7.4 Q6.2 4.8 3.1 4.8 Z', 6.2],
+    9: ['M6 4.5 Q5.2 6 3 6 Q0 6 0 3 Q0 0 3 0 Q6 0 6 4.5 Q6 10 2.8 10 Q1.4 10 0.6 9.2', 6],
+    '!': ['M0 0 L0 6.8 M0 9.6 L0 10', 0], '?': ['M0 2 Q0.6 0 2.8 0 Q5.4 0 5.4 2.5 Q5.4 4.4 2.8 5.3 L2.8 7 M2.8 9.6 L2.8 10', 5.4],
+    '.': ['M0 9.6 L0 10', 0], ',': ['M0.4 9.4 L-0.4 11.4', 0.4], ':': ['M0 3.6 L0 4 M0 9.6 L0 10', 0],
+    '·': ['M0 4.8 L0 5.2', 0], '–': ['M0 5.5 L4.5 5.5', 4.5], '-': ['M0 5.5 L3 5.5', 3],
+    "'": ['M0.4 0 L0 2.2', 0.4], '’': ['M0.4 0 L0 2.2', 0.4], '/': ['M4 0 L0 10', 4],
+    '„': ['M0 9.4 L-0.5 11.2 M1.6 9.4 L1.1 11.2', 1.6], '“': ['M0.5 0 L0 1.8 M2.1 0 L1.6 1.8', 2.1],
+    '(': ['M2 -0.6 Q0 2 0 5 Q0 8 2 10.6', 2], ')': ['M0 -0.6 Q2 2 2 5 Q2 8 0 10.6', 2],
+    '✕': ['M0 2.5 L5 7.5 M5 2.5 L0 7.5', 5], '+': ['M0 5.5 L5 5.5 M2.5 3 L2.5 8', 5],
+  };
+  const ABSTAND = 2.1, WORT = 4.2;
+
+  // kleine, feste Unregelmäßigkeit je Buchstabe (gleich bei jedem Laden)
+  function zufall(n) { const x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); }
+
+  function svg(text, { hoehe = 20, staerke = 1.6 } = {}) {
+    const zeichen = [...text.toUpperCase().replace(/ß/g, 'SS')];
+    let x = 0, teile = '';
+    zeichen.forEach((z, i) => {
+      if (z === ' ') { x += WORT; return; }
+      const g = Z[z]; if (!g) { x += WORT; return; }
+      const r = zufall(i + text.length * 7);
+      // Architekten-Schrift: sitzt sauber auf der Linie, nur leicht handschriftlich (kaum gedreht, Breite variiert ein wenig)
+      const s = 0.97 + zufall(i + 11) * 0.06, dreh = (r - 0.5) * 1.6, dy = (zufall(i + 3) - 0.5) * 0.12 - 10 * (s - 1);   // größer/kleiner, aber Fuß auf der Linie
+      teile += `<path d="${g[0]}" transform="translate(${x.toFixed(2)} ${dy.toFixed(2)}) rotate(${dreh.toFixed(2)} ${g[1] / 2} 5) scale(${s.toFixed(3)})"/>`;
+      x += g[1] + ABSTAND;
+    });
+    const einheit = hoehe / 10, breite = Math.max(x - ABSTAND, 0) + 2;
+    const sw = (staerke / einheit).toFixed(3);
+    return `<svg class="hand-svg" viewBox="-1 -3.6 ${breite.toFixed(2)} 16" width="${(breite * einheit).toFixed(1)}" height="${(16 * einheit).toFixed(1)}" aria-label="${text}" role="img">
+      <g fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" filter="url(#${hoehe >= 15 ? 'krakel' : 'krakel-klein'})">${teile}</g></svg>`;
+  }
+
+  // Elemente mit class="hand" umwandeln; Versalhöhe ≈ 0.72 × Schriftgröße
+  function anwenden(wurzel = document) {
+    wurzel.querySelectorAll('.hand').forEach(el => {
+      if (el.dataset.fertig) return;
+      const fs = parseFloat(getComputedStyle(el).fontSize);
+      const staerke = parseFloat(el.dataset.staerke || Math.max(1, fs / 13));
+      const rest = [...el.childNodes].filter(n => n.nodeType === 1);   // z. B. Marker-Unterstrich behalten
+      const text = el.dataset.text || el.textContent.trim();
+      el.innerHTML = svg(text, { hoehe: fs * 0.72, staerke });
+      rest.forEach(n => el.appendChild(n));
+      el.dataset.fertig = '1';
+    });
+  }
+  return { svg, anwenden };
+})();
+
+// ---------- Motive: Flächen (in Zeichen-Reihenfolge) und Linien ----------
+const zypresse = (x, b, h) => {
+  const w = h * 0.13;
+  return {
+    form: `M${x} ${b} C${x - w} ${b - h * .25} ${x - w * 1.1} ${b - h * .75} ${x} ${b - h} C${x + w * 1.1} ${b - h * .75} ${x + w} ${b - h * .25} ${x} ${b}Z`,
+    schatten: `M${x} ${b} L${x} ${b - h} C${x + w * 1.1} ${b - h * .75} ${x + w} ${b - h * .25} ${x} ${b}Z`,
+  };
+};
+const ellipse = (cx, cy, rx, ry) => `M${cx - rx} ${cy} A${rx} ${ry} 0 1 0 ${cx + rx} ${cy} A${rx} ${ry} 0 1 0 ${cx - rx} ${cy}Z`;
+
+const ZYP = [[30, 214, 104], [49, 208, 80], [120, 200, 52], [146, 171, 36], [166, 152, 25], [182, 138, 17],
+             [182, 201, 52], [192, 171, 36], [200, 152, 25], [208, 138, 17], [290, 119, 15], [299, 120, 12]].map(z => zypresse(...z));
+
+const TOSKANA = {
+  titel: 'Colline toscane · la villa',
+  teile: [
+    { d: 'M0 0 H340 V124 H0Z', farbe: '#9fc3dc', plakat: 'url(#plakat-himmel)', tupfer: true, himmel: true },
+    { d: 'M0 116 Q50 98 110 106 Q170 86 236 100 Q290 90 340 99 V140 H0Z', farbe: '#aab8c4', plakat: '#7f9bb3' },
+    { d: 'M0 152 Q70 116 150 122 Q200 112 260 118 Q310 122 340 134 V220 H0Z', farbe: '#b8c47c', plakat: '#7fae4e' },
+    { d: 'M0 196 Q130 170 340 188 V220 H0Z', farbe: '#e4cb8e', plakat: '#e7b84a' },
+    { d: 'M118 220 Q150 170 204 124 L210 124 Q176 172 168 220Z', farbe: '#efe2bf', plakat: '#f5e6bd', deck: true },
+    { d: 'M196 98 H240 V124 H196Z', farbe: '#f3d77e', plakat: '#f6d24a', tupfer: true, deck: true },
+    { d: 'M240 98 L252 102 V124 H240Z', farbe: '#dcb662', plakat: '#d9a93a', deck: true },
+    { d: 'M226 78 H238 V98 H226Z', farbe: '#f3d77e', plakat: '#f6d24a', tupfer: true, deck: true },
+    { d: 'M192 99 L200 92 L238 92 L244 99Z M224 79 L231 72 L240 79Z', farbe: '#cf9a76', plakat: '#c4704f', deck: true },
+    { d: 'M244 99 L238 92 L250 96 L255 102Z', farbe: '#b9805f', plakat: '#a95c3f', deck: true },
+    { d: 'M240 98 L252 102 V124 H240Z M234 78 H238 V98 H234Z', schatten: true },
+    ...ZYP.map(z => ({ d: z.form, farbe: '#5b8a4c', plakat: '#2f5a35', tupfer: true, deck: true })),
+    { d: ZYP.map(z => z.schatten).join(' '), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 116 Q50 98 110 106 Q170 86 236 100 Q290 90 340 99', w: .7 },
+    { d: 'M0 152 Q70 116 150 122 Q200 112 260 118 Q310 122 340 134', w: 1.3 },
+    { d: 'M0 196 Q130 170 340 188', w: 1 },
+    { d: 'M118 220 Q150 170 204 124 M168 220 Q176 172 210 124', w: 1.1 },
+    { d: 'M196 98 H240 V124 H196Z M240 98 L252 102 V124 M226 78 H238 V98 M226 78 V92', w: 1.2 },
+    { d: 'M192 99 L200 92 L238 92 L244 99Z M244 99 L250 96 L255 102 L252 102 M238 92 L250 96 M224 79 L231 72 L240 79Z', w: 1.1 },
+    { d: 'M202 104 h5 v6 h-5Z M214 104 h5 v6 h-5Z M202 114 h5 v6 h-5Z M229 114 h5 v6 h-5Z M216 124 v-8 h5 v8 M230 83 h4 v6 h-4Z M244 106 l4 1 v6 l-4 -1Z', w: .8, detail: true },
+    ...ZYP.map(z => ({ d: z.form, w: 1 })),
+    ...[0, 1, 2, 3, 4, 5].map(i => ({ d: `M${232 + i * 6} ${134 + i * 9} Q${290 - i * 2} ${140 + i * 11} 340 ${147 + i * 13}`, w: .6, detail: true })),
+    ...[0, 1, 2, 3].map(i => ({ d: `M${62 + i * 4} ${164 + i * 8} Q${88} ${158 + i * 9} ${108 - i * 2} ${160 + i * 10}`, w: .6, detail: true })),
+    { d: 'M70 40 q4 -4 8 0 q4 -4 8 0 M96 54 q3 -3 6 0 q3 -3 6 0', w: .8, detail: true },
+  ],
+  plakatVorne: '<circle cx="96" cy="64" r="22" fill="#fbf3dc" filter="url(#druck)"/>',
+};
+
+const ESPRESSO = {
+  titel: 'Un caffè al banco',
+  teile: [
+    { d: 'M0 0 H340 V110 H0Z', farbe: '#efe1c2', plakat: '#2f5a35' },
+    { d: 'M0 60 H340 V110 H0Z', farbe: '#b9cfa0', plakat: '#24472a' },
+    { d: 'M0 110 H340 V220 H0Z', farbe: '#e6dccb', plakat: '#f1ebdd' },
+    { d: ellipse(184, 180, 84, 19), schatten: true },
+    { d: 'M52 176 L92 168 L98 186 L58 194Z', farbe: '#f6d24a', plakat: '#f6d24a', tupfer: true, deck: true },
+    { d: ellipse(170, 170, 80, 20), farbe: '#fbf8f0', plakat: '#ffffff', deck: true },
+    { d: 'M126 118 C128 150 144 166 170 166 C196 166 212 150 214 118Z M212 128 C236 124 238 152 204 152 L206 146 C226 146 226 132 210 134Z', farbe: '#fbf8f0', plakat: '#ffffff', deck: true },
+    { d: 'M196 126 C200 150 190 162 176 165 C200 162 210 148 212 122Z', schatten: true },
+    { d: ellipse(170, 118, 44, 11), farbe: '#fbf8f0', plakat: '#ffffff', deck: true },
+    { d: ellipse(170, 119, 38, 8), farbe: '#b9814b', plakat: '#b8783f', tupfer: true, deck: true },
+    { d: 'M224 175 L272 165.5 L272.6 168.5 L224.6 178Z ' + ellipse(282, 165, 10, 4.5), farbe: '#cdd2d4', plakat: '#aeb4b8', deck: true },
+  ],
+  linien: [
+    { d: 'M0 110 H340', w: 1.3 },
+    { d: 'M0 60 H340', w: .7 },
+    { d: 'M34 60 V110 M68 60 V110 M102 60 V110 M136 60 V110 M170 60 V110 M204 60 V110 M238 60 V110 M272 60 V110 M306 60 V110 M0 85 H340', w: .45, detail: true },
+    { d: 'M52 176 L92 168 L98 186 L58 194Z', w: 1 },
+    { d: 'M62 182 L86 177 M64 186 L80 183', w: .6, detail: true },
+    { d: ellipse(170, 170, 80, 20), w: 1.2 },
+    { d: ellipse(170, 167, 46, 10), w: .7, detail: true },
+    { d: 'M126 118 C128 150 144 166 170 166 C196 166 212 150 214 118', w: 1.3 },
+    { d: ellipse(170, 118, 44, 11), w: 1.2 },
+    { d: ellipse(170, 119, 38, 8), w: .7 },
+    { d: 'M212 128 C236 124 238 152 204 152 M210 134 C226 132 226 146 206 146', w: 1.1 },
+    { d: 'M224 176 L272 167', w: 1.6 },
+    { d: ellipse(282, 165, 10, 4.5), w: .9 },
+    { d: 'M160 104 c-6 -10 6 -14 0 -24 c-6 -10 6 -14 0 -22 M180 102 c-5 -9 5 -12 0 -20', w: .8, detail: true },
+  ],
+  plakatVorne: '',
+};
+
+// ---------- Hilfen ----------
+const dunkler = (hex, f = .78) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * f).toString(16).padStart(2, '0')).join('');
+const muster = new Set();
+function brauche(id, svgText) {
+  if (muster.has(id)) return; muster.add(id);
+  document.getElementById('defs').insertAdjacentHTML('beforeend', svgText);
+}
+function marker(farbe) {
+  const id = 'marker-' + farbe.slice(1);
+  brauche(id, `<pattern id="${id}" width="13" height="13" patternUnits="userSpaceOnUse" patternTransform="rotate(-14)"><rect width="13" height="13" fill="${farbe}"/><rect width="2.4" height="13" fill="${dunkler(farbe, .86)}"/></pattern>`);
+  return `url(#${id})`;
+}
+function stift(farbe) {
+  const id = 'stift-' + farbe.slice(1);
+  brauche(id, `<pattern id="${id}" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(-32)"><line x1="0" y1="0" x2="0" y2="2.6" stroke="${dunkler(farbe, .82)}" stroke-width="1.9"/></pattern>`);
+  return `url(#${id})`;
+}
+const pfad = (d, attr) => `<path d="${d}" ${attr}/>`;
+const linien = (m, attr, wf = 1, nur) => m.linien.filter(l => !nur || nur(l)).map(l => pfad(l.d, `stroke-width="${(l.w * wf).toFixed(2)}"`)).join('');
+const papierDeck = m => m.teile.filter(t => t.deck).map(t => pfad(t.d, 'style="fill:var(--papier)"')).join('');
+
+// ---------- Stile ----------
+const STILE = [
+  {
+    name: 'Tusche + Farbtupfer', nr: 'A',
+    was: 'Wie in Entwurf 8: klare, leicht zittrige Tuschelinie, nur zwei oder drei Farbflecken. Viel Papier bleibt frei.',
+    urteil: '<b>Wirkung:</b> ruhig, aufgeräumt, passt genau zum Architekten-Look. <b>Auf Pappe:</b> gut. <b>Gefahr:</b> kann auf Dauer etwas streng wirken.',
+    bild(m) {
+      const farbe = m.teile.filter(t => t.tupfer && !t.schatten).map(t => pfad(t.d, `fill="${t.farbe}" opacity="${t.himmel ? .38 : .7}"`)).join('');
+      return `<g filter="url(#aquarell)" style="mix-blend-mode:multiply">${farbe}</g>        <g filter="url(#tusche)" fill="none" stroke="#1f1c18" stroke-linecap="round" stroke-linejoin="round">${linien(m, '', 1.05)}</g>`;
+    },
+  },
+  {
+    name: 'Aquarell-Skizze', nr: 'B',
+    was: 'Wie ein echtes Urlaubs-Skizzenbuch: lockere braune Linie (doppelt, nicht genau), Wasserfarbe überall, sie läuft über die Linien hinaus.',
+    urteil: '<b>Wirkung:</b> am wärmsten und „nach Urlaub“. <b>Auf Pappe:</b> Farben werden etwas trüb. <b>Gefahr:</b> bunter, die Seite wird unruhiger.',
+    bild(m) {
+      const farbe = m.teile.filter(t => !t.schatten).map(t => pfad(t.d, `fill="${t.farbe}" opacity="${t.himmel ? .5 : .68}"`)).join('');
+      const schatten = m.teile.filter(t => t.schatten).map(t => pfad(t.d, 'fill="#55627f" opacity=".28"')).join('');
+      return `<g filter="url(#aquarell-voll)" style="mix-blend-mode:multiply" transform="translate(3 -2)">${farbe}${schatten}</g>
+        <g filter="url(#locker-a)" fill="none" stroke="#4b3a2b" stroke-linecap="round" stroke-linejoin="round">${linien(m, '', .85)}</g>
+        <g filter="url(#locker-b)" fill="none" stroke="#4b3a2b" stroke-linecap="round" opacity=".45" transform="translate(.9 .7)">${linien(m, '', .6, l => !l.detail)}</g>`;
+    },
+  },
+  {
+    name: 'Bleistift', nr: 'C',
+    was: 'Nur grauer Bleistift mit sichtbarem Korn. Schatten werden schraffiert, keine Farbe.',
+    urteil: '<b>Wirkung:</b> sehr ruhig, wie ein Notizbuch. <b>Auf Pappe:</b> eher blass. <b>Gefahr:</b> ohne Farbe fehlt das Italien-Gefühl (Sonne, Zitronen).',
+    bild(m) {
+      const schatten = m.teile.filter(t => t.schatten).map(t => pfad(t.d, 'fill="url(#schraffur)"')).join('');
+      return `<g>${papierDeck(m)}</g>
+        <g filter="url(#bleistift)">${schatten}</g>
+        <g filter="url(#bleistift)" fill="none" stroke="#4f4c47" stroke-linecap="round" stroke-linejoin="round">${linien(m, '', .9)}</g>
+        <g filter="url(#bleistift)" fill="none" stroke="#4f4c47" stroke-linecap="round" opacity=".35" transform="translate(.7 -.5)">${linien(m, '', .6, l => !l.detail)}</g>`;
+    },
+  },
+  {
+    name: 'Fineliner + Marker', nr: 'D',
+    was: 'Kräftige schwarze Linie, Flächen mit Copic-Markern (man sieht die Striche), Schatten mit grauem Marker. Wie eine Design-Präsentation.',
+    urteil: '<b>Wirkung:</b> klar und kräftig, passt zu den gelben Knöpfen. <b>Auf Pappe:</b> sehr gut. <b>Gefahr:</b> wirkt eher technisch als romantisch.',
+    bild(m) {
+      const farbe = m.teile.filter(t => !t.schatten).map(t => pfad(t.d, `fill="${marker(t.farbe)}" opacity="${t.himmel ? .55 : .92}"`)).join('');
+      const schatten = m.teile.filter(t => t.schatten).map(t => pfad(t.d, 'fill="#8a8478" opacity=".42"')).join('');
+      return `<g style="mix-blend-mode:multiply">${farbe}${schatten}</g>
+        <g filter="url(#tusche-fein)" fill="none" stroke="#1f1c18" stroke-linecap="round" stroke-linejoin="round">${linien(m, '', 1.3)}</g>`;
+    },
+  },
+  {
+    name: 'Reiseplakat', nr: 'E',
+    was: 'Keine Umrisse, nur flache Farbflächen mit Druck-Korn – wie die alten Italien-Plakate aus den 1950ern.',
+    urteil: '<b>Wirkung:</b> sehr italienisch, kräftig, sofort erkennbar. <b>Auf Pappe:</b> gut. <b>Gefahr:</b> zieht viel Blick auf sich und passt weniger zum Papier-/Skizzen-Look.',
+    bild(m) {
+      const farbe = m.teile.filter(t => !t.schatten).map(t => pfad(t.d, `fill="${t.plakat}"`)).join('');
+      const schatten = m.teile.filter(t => t.schatten).map(t => pfad(t.d, 'fill="#1f1c18" opacity=".2"')).join('');
+      return `<g filter="url(#druck)">${farbe}${m.plakatVorne}${schatten}</g>
+        <g filter="url(#druck)" fill="none" stroke="#1f1c18" stroke-opacity=".5" stroke-linecap="round">${linien(m, '', 1, l => l.detail)}</g>`;
+    },
+  },
+  {
+    name: 'Buntstift', nr: 'F',
+    was: 'Farbige Schraffur mit Buntstiften, Papierkorn schaut durch. Dünne dunkle Bleistiftlinie.',
+    urteil: '<b>Wirkung:</b> gemütlich und handgemacht. <b>Auf Pappe:</b> gut, wirkt wie Tonpapier. <b>Gefahr:</b> bei kleinen Bildern etwas krisselig.',
+    bild(m) {
+      const farbe = m.teile.filter(t => !t.schatten).map(t => pfad(t.d, `fill="${stift(t.farbe)}" opacity="${t.himmel ? .55 : .95}"`)).join('');
+      const schatten = m.teile.filter(t => t.schatten).map(t => pfad(t.d, 'fill="url(#schraffur-kreuz)" opacity=".8"')).join('');
+      return `<g>${papierDeck(m)}</g>
+        <g filter="url(#korn)" style="mix-blend-mode:multiply">${farbe}${schatten}</g>
+        <g filter="url(#bleistift)" fill="none" stroke="#3d3a35" stroke-linecap="round" stroke-linejoin="round">${linien(m, '', .85)}</g>`;
+    },
+  },
+];
+
+// ---------- Mischungen aus A und B ----------
+// welche: 'tupfer' = nur Tupfer-Flächen, 'alle' = alle Flächen
+// Architekten-Strich für die Zeichnung: jede Linie wird abgetastet (alle 3,5 Einheiten)
+// und bekommt ein feines, unregelmäßiges Zittern quer zur Richtung – im Ganzen bleibt sie, wie sie ist.
+const messPfad = (() => {
+  const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  s.setAttribute('width', 0); s.setAttribute('height', 0); s.style.position = 'absolute';
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  s.appendChild(p); document.body.appendChild(s); return p;
+})();
+function zitterD(d, amp, saat) {
+  const zz = x => { const v = Math.sin(x * 12.9898) * 43758.5453; return v - Math.floor(v); };
+  return d.split(/(?=M)/).map((teil, ti) => {
+    messPfad.setAttribute('d', teil);
+    const len = messPfad.getTotalLength(); if (len < 1) return teil;
+    const schritte = Math.max(2, Math.round(len / 3.5)), ph1 = zz(saat + ti) * 6.3, ph2 = zz(saat + ti + 50) * 6.3;
+    let out = '', vor = messPfad.getPointAtLength(0);
+    for (let s = 0; s <= schritte; s++) {
+      const l = len * s / schritte, pt = messPfad.getPointAtLength(l), nach = messPfad.getPointAtLength(Math.min(len, l + .5));
+      const dx = nach.x - vor.x, dy = nach.y - vor.y, n = Math.hypot(dx, dy) || 1;
+      const a = (s === 0 || s === schritte) ? 0 : (Math.sin(l * .19 + ph1) * .45 + Math.sin(l * .07 + ph2) * .35 + (zz(saat * 7 + ti * 131 + s) - .5) * .9) * amp;
+      out += `${s ? 'L' : 'M'}${(pt.x - dy / n * a).toFixed(1)} ${(pt.y + dx / n * a).toFixed(1)} `;
+      vor = messPfad.getPointAtLength(Math.max(0, l - .5));
+    }
+    return out + (/z\s*$/i.test(teil) ? 'Z' : '');
+  }).join('');
+}
+const zitterLinien = (m, wf = 1) => m.linien.map((l, i) => pfad(zitterD(l.d, l.detail ? .3 : .5, i * 17 + 3), `stroke-width="${(l.w * wf).toFixed(2)}"`)).join('');
+
+function mischung(m, { welche, deck, himmel, versatz, schatten, linie, doppelt, zitter }) {
+  const flaechen = m.teile.filter(t => !t.schatten && (welche === 'alle' || t.tupfer));
+  const farbe = flaechen.map(t => pfad(t.d, `fill="${t.farbe}" opacity="${t.himmel ? himmel : deck}"`)).join('');
+  const sch = schatten ? m.teile.filter(t => t.schatten).map(t => pfad(t.d, `fill="#55627f" opacity="${schatten}"`)).join('') : '';
+  return `<g filter="url(#aquarell-voll)" style="mix-blend-mode:multiply" transform="translate(${versatz})">${farbe}${sch}</g>
+    ${zitter
+      ? `<g fill="none" stroke="${linie}" stroke-linecap="round" stroke-linejoin="round">${zitterLinien(m, 1)}</g>`
+      : `<g filter="url(#tusche)" fill="none" stroke="${linie}" stroke-linecap="round" stroke-linejoin="round">${linien(m, '', 1)}</g>`}
+    ${doppelt ? `<g filter="url(#locker-b)" fill="none" stroke="${linie}" stroke-linecap="round" opacity=".3" transform="translate(.9 .7)">${linien(m, '', .55, l => !l.detail)}</g>` : ''}`;
+}
+const MISCHUNGEN = [
+  {
+    name: 'A mit etwas mehr Farbe', nr: 'M1',
+    was: 'Schwarze Tuschelinie wie A. Die Farbtupfer sind jetzt echte Wasserfarbe mit Rändern und laufen leicht über die Linie. Rest bleibt Papier.',
+    urteil: 'Am nächsten an Entwurf 8, nur weicher und lebendiger.',
+    bild: m => mischung(m, { welche: 'tupfer', deck: .62, himmel: .42, versatz: '2 -1', schatten: .14, linie: '#1f1c18' }),
+  },
+  {
+    name: 'Die Mitte', nr: 'M2',
+    was: 'Schwarze Tuschelinie, alles leicht laviert (helle, dünne Wasserfarbe). Die Tupfer-Farben (Himmel, Gelb, Zypressen) etwas kräftiger als der Rest.',
+    urteil: 'Ganzes Bild in Farbe, aber blass – die Linie führt, die Farbe begleitet.',
+    bild: m => mischung(m, { welche: 'alle', deck: .34, himmel: .4, versatz: '3 -2', schatten: .2, linie: '#1f1c18' })
+      + `<g filter="url(#aquarell-voll)" style="mix-blend-mode:multiply" transform="translate(3 -2)">${m.teile.filter(t => t.tupfer && !t.himmel).map(t => pfad(t.d, `fill="${t.farbe}" opacity=".35"`)).join('')}</g>`,
+  },
+  {
+    name: 'B mit Tusche', nr: 'M3',
+    was: 'Farbe kräftig wie B, aber eine klare dunkle Tuschelinie statt der lockeren braunen. Ein leichter zweiter Strich für den Skizzen-Charakter.',
+    urteil: 'Am meisten „Urlaubs-Skizzenbuch“, aber ordentlicher als B.',
+    bild: m => mischung(m, { welche: 'alle', deck: .6, himmel: .48, versatz: '3 -2', schatten: .26, linie: '#2a221b', doppelt: true }),
+  },
+];
+
+// ---------- Aufbau ----------
+function bauen(ziel, liste) {
+  const raster = document.getElementById(ziel);
+  for (const s of liste) {
+    const bilder = [TOSKANA, ESPRESSO].map(m =>
+      `<figure class="bild"><svg viewBox="0 0 340 220" role="img" aria-label="${m.titel}">${s.bild(m)}</svg><figcaption>${m.titel}</figcaption></figure>`).join('');
+    raster.insertAdjacentHTML('beforeend',
+      `<section class="stil"><h2><span>${s.nr}</span>${s.name}</h2><p class="was">${s.was}</p>${bilder}<div class="urteil">${s.urteil}</div></section>`);
+  }
+}
+const KNOEPFE = [
+  ['k-tusche', 'Tusche', 'Wie mit dem Stift ausgemalt. Ruhig, passt zu jeder Skizze.'],
+  ['k-sepia', 'Sepia', 'Warmes Braun. Weicher, mehr Reisetagebuch.'],
+  ['k-ocker', 'Ocker', 'Toskana-Erde. Am wärmsten, fällt am meisten auf.'],
+];
+const m2 = MISCHUNGEN[1].bild(TOSKANA);
+// zwischen M1 und M2: alles ganz zart laviert, Tupfer-Farben deutlich
+const m15 = mischung(TOSKANA, { welche: 'alle', deck: .2, himmel: .42, versatz: '2.5 -1.5', schatten: .16, linie: '#1f1c18', zitter: true })
+  + `<g filter="url(#aquarell-voll)" style="mix-blend-mode:multiply" transform="translate(2.5 -1.5)">${TOSKANA.teile.filter(t => t.tupfer && !t.himmel).map(t => pfad(t.d, `fill="${t.farbe}" opacity=".5"`)).join('')}</g>`;
+let eigeneSchrift = true;
+const h = (text, staerke) => staerke && eigeneSchrift ? `<span class="hand" data-staerke="${staerke}">${text}</span>` : text;
+function heuteSeite(bild, hand) {
+  return `<div class="handy"><div class="inhalt">
+      <div class="kopf"><span>${h('Mercoledì 18 novembre', hand && 1)}</span><span>${h('A2', hand && 1)}</span></div>
+      <div><h1 class="gruss ${hand && eigeneSchrift ? 'hand' : ''}" data-staerke="2.2">Buongiorno!<i></i></h1></div>
+      <div class="skizze-heute"><svg viewBox="0 0 340 220">${bild}</svg><span>Colline toscane · la villa</span></div>
+      <div class="lektion-k" ${hand ? 'data-skizze="rahmen"' : ''}>
+        <div class="klein">${h('Lektion 41 · jetzt dran', hand && 1)}</div>
+        <h4 class="${hand && eigeneSchrift ? 'hand' : ''}" data-staerke="1.8">In vacanza</h4>
+        <div class="balken" ${hand ? 'data-skizze="balken"' : ''}>${hand ? '' : '<b></b>'}</div>
+        <div class="klein" style="margin-top:6px">${h('Schritt 5 von 13 · neue Wörter', hand && 1)}</div>
+      </div>
+      <div class="notiz-k"><em>Che bello!</em> – sagt man, wenn einem etwas gefällt.</div>
+      <div class="knopf-k" ${hand ? 'data-skizze="knopf"' : ''}>${h('Los · Schritt 5', hand && 2)}</div>
+      <div class="knopf-neben" ${hand ? 'data-skizze="neben"' : ''}>${h('Wörter wiederholen', hand && 1.3)}</div>
+    </div>
+    <div class="leiste-k" ${hand ? 'data-skizze="linie"' : ''}>${['Heute', 'Üben', 'Lektionen', 'Stand', 'Einst.'].map((t, i) => `<div class="${i ? '' : 'an'}"><i ${hand ? 'data-skizze="icon"' : ''}></i>${h(t, hand && .9)}</div>`).join('')}</div>
+    </div>`;
+}
+document.getElementById('handys-neu').innerHTML = [['auf-papier', 'Papier'], ['auf-pappe', 'Pappe']].map(([grund, name]) => `
+  <section class="vorschau k-ocker ${grund}">
+    <h3>${name}</h3><p class="was" style="min-height:0;margin:0 0 10px;font-size:14px">Ocker, eigene Blockschrift, Skizze zwischen M1 und M2.</p>
+    ${heuteSeite(m15, true)}
+  </section>`).join('');
+eigeneSchrift = false;
+document.getElementById('handys-font').innerHTML = [
+  ['f-caveat', 'auf-papier', 'Caveat · Papier'], ['f-caveat', 'auf-pappe', 'Caveat · Pappe'],
+  ['f-shadows', 'auf-papier', 'Shadows Into Light Two · Papier'], ['f-shadows', 'auf-pappe', 'Shadows Into Light Two · Pappe'],
+].map(([schrift, grund, name]) => `
+  <section class="vorschau k-ocker ${grund} ${schrift}">
+    <h3>${name}</h3>
+    ${heuteSeite(m15, true)}
+  </section>`).join('');
+eigeneSchrift = true;
+document.getElementById('handys').innerHTML = KNOEPFE.map(([klasse, name, text]) => `
+  <section class="vorschau ${klasse}">
+    <h3>${name}</h3><p class="was" style="min-height:42px;margin:0 0 10px;font-size:14px">${text}</p>
+    ${heuteSeite(m2, false)}
+  </section>`).join('');
+Handschrift.anwenden();
+
+// Kästen, Knöpfe, Balken wie mit Tusche gezogen: Linien stehen an den Ecken über, nichts ist ganz gerade
+function skizzieren(wurzel = document) {
+  let n = 0;
+  const zz = x => { const v = Math.sin(x * 12.9898) * 43758.5453; return v - Math.floor(v); };
+  wurzel.querySelectorAll('[data-skizze]').forEach(el => {
+    if (el.querySelector(':scope > .skizze-svg')) return;
+    const art = el.dataset.skizze, w = el.offsetWidth, hh = el.offsetHeight; n++;
+    const j = (k, a) => (zz(n * 31 + k) - .5) * 2 * a;
+    const klein = art === 'icon' || art === 'balken';
+    const ue = klein ? 2.5 : 6, wack = klein ? .6 : 1.2;
+    // Architekten-Strich: freihand mit feinem Zittern, das sich ausgleicht – im Ganzen bleibt die Linie gerade
+    const welle = (x1, y1, x2, y2, k, start = true) => {
+      const ax = x1 + j(k, wack), ay = y1 + j(k + 1, wack), bx = x2 + j(k + 2, wack), by = y2 + j(k + 3, wack);
+      const len = Math.hypot(bx - ax, by - ay) || 1, nx = -(by - ay) / len, ny = (bx - ax) / len;
+      const amp = klein ? .3 : .5, schritte = Math.max(2, Math.round(len / 3.5));
+      const ph1 = zz(n * 31 + k + 4) * 6.3, ph2 = zz(n * 31 + k + 5) * 6.3;
+      let d = start ? `M${ax.toFixed(1)} ${ay.toFixed(1)}` : `L${ax.toFixed(1)} ${ay.toFixed(1)}`;
+      for (let s = 1; s < schritte; s++) {
+        const t = s / schritte, l = t * len;
+        const a = (Math.sin(l * .19 + ph1) * .45 + Math.sin(l * .07 + ph2) * .35 + (zz(n * 97 + k * 13 + s) - .5) * .9) * amp;
+        d += ` L${(ax + (bx - ax) * t + nx * a).toFixed(1)} ${(ay + (by - ay) * t + ny * a).toFixed(1)}`;
+      }
+      return d + ` L${bx.toFixed(1)} ${by.toFixed(1)} `;
+    };
+    const lin = (x1, y1, x2, y2, k) => welle(x1, y1, x2, y2, k);
+    let d = '', fuell = '', farbe = 'var(--tusche)', st = 1.6;
+    if (art === 'linie') {
+      d = lin(-4, 0, w + 4, 0, 50); st = .9;
+    } else {
+      d = lin(-ue - j(1, 2), 0, w + ue + j(2, 2), 0, 10) + lin(-ue + j(3, 2), hh, w + ue, hh, 20)
+        + lin(0, -ue + j(4, 2), 0, hh + ue, 30) + lin(w, -ue, w, hh + ue + j(5, 2), 40);
+    }
+    if (art === 'knopf') {
+      st = 2.2;
+      // Farbfläche frei Hand ausgemalt, nicht schräg: vier leicht gebogene Kanten, etwas nach rechts unten versetzt
+      fuell = `<path d="${welle(3, 3, w + 2, 3, 61)}${welle(w + 2, 3, w + 2, hh + 3, 62, false)}${welle(w + 2, hh + 3, 3, hh + 3, 63, false)}${welle(3, hh + 3, 3, 3, 64, false)}Z" fill="var(--k-farbe)" filter="url(#freihand)"/>`;
+    }
+    if (art === 'neben') { farbe = 'var(--k-linie)'; st = 1.4; }
+    if (art === 'balken') {
+      st = 1.1;
+      fuell = `<path d="M2 ${hh / 2 + .6} L${(w * .38).toFixed(1)} ${hh / 2 - .6}" stroke="var(--k-farbe)" stroke-width="${hh - 1}" stroke-linecap="round" filter="url(#freihand)"/>`;
+    }
+    if (art === 'icon') {
+      st = 1.2; farbe = 'currentColor';
+      if (el.closest('.an')) fuell = `<path d="M4 5 L${w + 3} 3 L${w + 2} ${hh + 3} L3 ${hh + 2}Z" fill="var(--k-farbe)" filter="url(#freihand)"/>`;
+    }
+    el.insertAdjacentHTML('afterbegin', `<svg class="skizze-svg" width="${w}" height="${hh}" viewBox="0 0 ${w} ${hh}" aria-hidden="true">${fuell}<path d="${d}" fill="none" stroke="${farbe}" stroke-width="${st}" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+  });
+}
+skizzieren();
+
+// ---------- Schriften zum Vergleich ----------
+const SCHRIFTEN = [
+  ['Architects Daughter', 'Nach echter Architekten-Beschriftung gezeichnet. Ruhig, gut lesbar, sitzt sauber auf der Linie.', 1, 'sans'],
+  ['Patrick Hand', 'Lockere Druckschrift, wie mit Filzstift. Sehr gut lesbar, freundlich.', 1.08, 'sans'],
+  ['Kalam', 'Etwas schwungvoller, wie mit Füller. Wirkt persönlich, fast wie ein Tagebuch.', 1, 'sans'],
+  ['Gochi Hand', 'Kräftig und fröhlich, etwas runder. Macht am meisten gute Laune.', 1.05, 'sans'],
+  ['Shadows Into Light Two', 'Schmal und leicht, wie mit feinem Stift schnell notiert.', 1, 'sans'],
+  ['Caveat', 'Verbundene Schreibschrift. Am meisten „echte Handschrift“, aber in klein schwerer lesbar.', 1.2, 'sans'],
+  ['eigen', 'Die eigene Blockschrift von bisher – zum Vergleich.', 1, ''],
+];
+document.getElementById('schriften').innerHTML = SCHRIFTEN.map(([name, text, gr]) => {
+  const eigen = name === 'eigen', st = eigen ? '' : `style="font-family:'${name}', cursive; font-size-adjust: none"`;
+  const t = (txt, staerke, cls = '') => eigen ? `<span class="hand ${cls}" data-staerke="${staerke}">${txt}</span>` : txt;
+  return `<section class="stil k-ocker schrift-karte" ${st} data-gr="${gr}">
+    <h2 style="font-family:var(--serif)">${eigen ? 'Eigene Blockschrift' : name}</h2><p class="was" style="font-family:var(--sans)">${text}</p>
+    <div class="s-gruss" style="font-size:${34 * gr}px">${eigen ? `<h1 class="gruss hand" data-staerke="2.2" style="font-size:34px">Buongiorno!<i></i></h1>` : `<span class="gruss" style="font-family:inherit;font-size:inherit">Buongiorno!<i></i></span>`}</div>
+    <div class="lektion-k" data-skizze="rahmen" style="margin-top:14px">
+      <div class="s-klein" style="font-size:${13 * gr}px">${t('Lektion 41 · jetzt dran', 1)}</div>
+      <div class="s-name" style="font-size:${28 * gr}px">${eigen ? `<h4 class="hand" data-staerke="1.8" style="margin:4px 0 10px">In vacanza</h4>` : 'In vacanza'}</div>
+      <div class="balken" data-skizze="balken"></div>
+      <div class="s-klein" style="font-size:${13 * gr}px;margin-top:6px">${t('Schritt 5 von 13 · neue Wörter', 1)}</div>
+    </div>
+    <div class="notiz-k" style="margin-top:16px;font-family:var(--sans)"><em style="font-family:var(--serif)">Che bello!</em> – sagt man, wenn einem etwas gefällt.</div>
+    <div class="knopf-k" data-skizze="knopf" style="margin-top:18px;font-size:${(eigen ? 15 : 19) * gr}px;${eigen ? '' : 'font-family:inherit;letter-spacing:.04em;font-weight:400;text-transform:none'}">${t('Los · Schritt 5', 2)}</div>
+  </section>`;
+}).join('');
+Handschrift.anwenden(document.getElementById('schriften'));
+document.fonts.ready.then(() => {
+  // Rahmen erst nach dem Laden der Schriften messen, sonst passen die Größen nicht
+  document.querySelectorAll('#handys-font .skizze-svg').forEach(s => s.remove());
+  skizzieren(document.getElementById('handys-font'));
+  skizzieren(document.getElementById('schriften'));
+});
+bauen('mischungen', MISCHUNGEN);
+bauen('raster', STILE);
+document.querySelectorAll('.wahl button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.wahl button').forEach(x => x.classList.toggle('an', x === b));
+  document.body.classList.toggle('pappe', b.dataset.grund === 'pappe');
+}));
+</script></body></html>

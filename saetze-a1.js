@@ -598,3 +598,248 @@ SAETZE.l03 = [
     { it: 'Noi abbiamo due figli.', de: 'Wir haben zwei Kinder.' },
   ] },
 ];
+
+// Lektion 10 „I parenti“ – Paare (zio / zia, cugino / cugina, fidanzato / fidanzata,
+// papà / mamma, sposato / divorziato) auf verschiedene Päckchen verteilt
+SAETZE.l03a = [
+  // Päckchen 1
+  { wort: 'i genitori', saetze: [
+    { it: 'I miei genitori abitano a Napoli, io a Milano.', de: 'Meine Eltern wohnen in Neapel, ich in Mailand.' },
+    { it: 'I genitori di Marco lavorano in un ristorante.', de: 'Marcos Eltern arbeiten in einem Restaurant.' },
+    { it: 'Stasera ceno dai miei genitori.', de: 'Heute Abend esse ich bei meinen Eltern.' },
+  ] },
+  { wort: 'lo zio', saetze: [
+    { it: 'Il fratello di mia madre è mio zio.', de: 'Der Bruder meiner Mutter ist mein Onkel.' },
+    { it: 'Mio zio ha un ristorante a Bologna.', de: 'Mein Onkel hat ein Restaurant in Bologna.' },
+    { it: 'Lo zio Paolo arriva sempre con un regalo.', de: 'Onkel Paolo kommt immer mit einem Geschenk.' },
+  ] },
+  { wort: 'sposato', saetze: [
+    { it: 'Mio fratello è sposato e ha due figli.', de: 'Mein Bruder ist verheiratet und hat zwei Kinder.' },
+    { it: 'Sei sposata? – No, non ancora.', de: 'Bist du verheiratet? – Nein, noch nicht.', form: 'sposata' },
+    { it: 'Mio zio non è sposato, abita da solo.', de: 'Mein Onkel ist nicht verheiratet, er wohnt allein.' },
+  ] },
+  { wort: 'il cugino', saetze: [
+    { it: 'Il figlio di mio zio è mio cugino.', de: 'Der Sohn meines Onkels ist mein Cousin.' },
+    { it: 'Mio cugino abita a Torino, vicino ai nonni.', de: 'Mein Cousin wohnt in Turin, in der Nähe der Großeltern.' },
+    { it: 'Ho tre cugini e una sorella.', de: 'Ich habe drei Cousins und eine Schwester.', form: 'cugini' },
+  ] },
+  { wort: 'la mamma', saetze: [
+    { it: 'Mamma, dov’è il mio telefono?', de: 'Mama, wo ist mein Telefon?' },
+    { it: 'La mamma di Sofia lavora in ospedale.', de: 'Sofias Mama arbeitet im Krankenhaus.' },
+    { it: 'Ciao mamma, arrivo alle otto!', de: 'Hallo Mama, ich komme um acht!' },
+  ] },
+
+  // Päckchen 2
+  { wort: 'il papà', saetze: [
+    { it: 'Papà, posso uscire stasera?', de: 'Papa, darf ich heute Abend ausgehen?' },
+    { it: 'Il papà di Luca fa il cuoco.', de: 'Lucas Papa ist Koch.' },
+    { it: 'Questo è il mio papà, si chiama Giorgio.', de: 'Das ist mein Papa, er heißt Giorgio.' },
+  ] },
+  { wort: 'la zia', saetze: [
+    { it: 'La sorella di mio padre è mia zia.', de: 'Die Schwester meines Vaters ist meine Tante.' },
+    { it: 'Mia zia abita in Sicilia, a Palermo.', de: 'Meine Tante wohnt auf Sizilien, in Palermo.' },
+    { it: 'La zia Maria fa una torta buonissima.', de: 'Tante Maria macht einen super leckeren Kuchen.' },
+  ] },
+  { wort: 'il fidanzato', saetze: [
+    { it: 'Questo è Marco, il mio fidanzato.', de: 'Das ist Marco, mein Freund.' },
+    { it: 'Il fidanzato di mia sorella è molto simpatico.', de: 'Der Freund meiner Schwester ist sehr sympathisch.' },
+    { it: 'Hai un fidanzato? – Sì, si chiama Paolo.', de: 'Hast du einen Freund? – Ja, er heißt Paolo.' },
+  ] },
+  { wort: 'il nipote', saetze: [
+    { it: 'Il figlio di mio fratello è mio nipote.', de: 'Der Sohn meines Bruders ist mein Neffe.' },
+    { it: 'La nonna ha cinque nipoti.', de: 'Oma hat fünf Enkel.', form: 'nipoti' },
+    { it: 'Mio nipote ha sei anni e va a scuola.', de: 'Mein Neffe ist sechs und geht zur Schule.' },
+  ] },
+  { wort: 'il gemello', saetze: [
+    { it: 'Ho un fratello gemello, si chiama Luca.', de: 'Ich habe einen Zwillingsbruder, er heißt Luca.' },
+    { it: 'Mia sorella ha due gemelli di tre anni.', de: 'Meine Schwester hat dreijährige Zwillinge.', form: 'gemelli' },
+    { it: 'Sei il gemello di Marco? – Sì, sono suo fratello.', de: 'Bist du Marcos Zwilling? – Ja, ich bin sein Bruder.' },
+  ] },
+
+  // Päckchen 3
+  { wort: 'la cugina', saetze: [
+    { it: 'La figlia di mia zia è mia cugina.', de: 'Die Tochter meiner Tante ist meine Cousine.' },
+    { it: 'Mia cugina studia a Bologna.', de: 'Meine Cousine studiert in Bologna.' },
+    { it: 'Stasera vado alla festa di mia cugina.', de: 'Heute Abend gehe ich zur Party meiner Cousine.' },
+  ] },
+  { wort: 'la suocera', saetze: [
+    { it: 'La madre di mio marito è mia suocera.', de: 'Die Mutter meines Mannes ist meine Schwiegermutter.' },
+    { it: 'Mia suocera cucina molto bene.', de: 'Meine Schwiegermutter kocht sehr gut.' },
+    { it: 'Arriva la suocera: pulisco la casa!', de: 'Die Schwiegermutter kommt: Ich putze das Haus!' },
+  ] },
+  { wort: 'divorziato', saetze: [
+    { it: 'I genitori di Luca sono divorziati.', de: 'Lucas Eltern sind geschieden.', form: 'divorziati' },
+    { it: 'Mia zia è divorziata da due anni.', de: 'Meine Tante ist seit zwei Jahren geschieden.', form: 'divorziata' },
+    { it: 'Sei sposata? – No, sono divorziata.', de: 'Bist du verheiratet? – Nein, ich bin geschieden.', form: 'divorziata' },
+  ] },
+  { wort: 'la fidanzata', saetze: [
+    { it: 'Mio cugino ha una nuova fidanzata, si chiama Sara.', de: 'Mein Cousin hat eine neue Freundin, sie heißt Sara.' },
+    { it: 'La fidanzata di mio fratello è di Roma.', de: 'Die Freundin meines Bruders ist aus Rom.' },
+    { it: 'Stasera ceno con la mia fidanzata.', de: 'Heute Abend esse ich mit meiner Freundin.' },
+  ] },
+  { wort: 'il parente', saetze: [
+    { it: 'A Natale ceno con tutti i parenti.', de: 'An Weihnachten esse ich mit allen Verwandten.', form: 'parenti' },
+    { it: 'Ho molti parenti in Sicilia.', de: 'Ich habe viele Verwandte auf Sizilien.', form: 'parenti' },
+    { it: 'È un parente di tua madre?', de: 'Ist er ein Verwandter deiner Mutter?' },
+  ] },
+];
+
+// Lektion 11 „Com’è?“ – Gegensätze (simpatico / antipatico, biondo / moro, allegro / serio,
+// timido / divertente) auf verschiedene Päckchen verteilt; i capelli früh für biondo / moro
+SAETZE.l03b = [
+  // Päckchen 1
+  { wort: 'i capelli', saetze: [
+    { it: 'Mia figlia ha i capelli neri, come la mamma.', de: 'Meine Tochter hat schwarze Haare, wie ihre Mama.' },
+    { it: 'Il nonno non ha più capelli.', de: 'Opa hat keine Haare mehr.' },
+    { it: 'Mio padre ha i capelli bianchi.', de: 'Mein Vater hat weiße Haare.' },
+  ] },
+  { wort: 'simpatico', saetze: [
+    { it: 'Il nuovo collega è molto simpatico.', de: 'Der neue Kollege ist sehr nett.' },
+    { it: 'Tua cugina è simpatica!', de: 'Deine Cousine ist nett!', form: 'simpatica' },
+    { it: 'I tuoi amici sono simpatici.', de: 'Deine Freunde sind nett.', form: 'simpatici' },
+  ] },
+  { wort: 'biondo', saetze: [
+    { it: 'Mio nipote ha i capelli biondi.', de: 'Mein Neffe hat blonde Haare.', form: 'biondi' },
+    { it: 'Mia cugina è bionda come sua madre.', de: 'Meine Cousine ist blond wie ihre Mutter.', form: 'bionda' },
+    { it: 'Chi è quel ragazzo biondo?', de: 'Wer ist der blonde Junge da?' },
+  ] },
+  { wort: 'timido', saetze: [
+    { it: 'Mio figlio è timido: non parla molto.', de: 'Mein Sohn ist schüchtern: Er redet nicht viel.' },
+    { it: 'Non essere timida, parla con noi!', de: 'Sei nicht schüchtern, rede mit uns!', form: 'timida' },
+    { it: 'Mio fratello è timido con le ragazze.', de: 'Mein Bruder ist bei Mädchen schüchtern.' },
+  ] },
+  { wort: 'magro', saetze: [
+    { it: 'Il gatto è magro: mangia poco.', de: 'Die Katze ist dünn: Sie frisst wenig.' },
+    { it: 'Mia zia è alta e magra.', de: 'Meine Tante ist groß und schlank.', form: 'magra' },
+    { it: 'Il cane del vicino è molto magro.', de: 'Der Hund des Nachbarn ist sehr dünn.' },
+  ] },
+
+  // Päckchen 2
+  { wort: 'gli occhiali', saetze: [
+    { it: 'Dove sono i miei occhiali?', de: 'Wo ist meine Brille?' },
+    { it: 'Non trovo gli occhiali e non vedo bene.', de: 'Ich finde die Brille nicht und sehe nicht gut.' },
+    { it: 'Il nonno porta gli occhiali per leggere.', de: 'Opa trägt zum Lesen eine Brille.' },
+  ] },
+  { wort: 'antipatico', saetze: [
+    { it: 'Il nuovo vicino è un po’ antipatico.', de: 'Der neue Nachbar ist ein bisschen unsympathisch.' },
+    { it: 'Non è antipatica, è solo timida.', de: 'Sie ist nicht unsympathisch, sie ist nur schüchtern.', form: 'antipatica' },
+    { it: 'Perché sei così antipatico oggi?', de: 'Warum bist du heute so unfreundlich?' },
+  ] },
+  { wort: 'carino', saetze: [
+    { it: 'Che carino il tuo cane!', de: 'Wie süß dein Hund ist!' },
+    { it: 'Il tuo fidanzato è molto carino.', de: 'Dein Freund ist sehr hübsch.' },
+    { it: 'Abitiamo in una casa piccola ma carina.', de: 'Wir wohnen in einem kleinen, aber hübschen Haus.', form: 'carina' },
+  ] },
+  { wort: 'allegro', saetze: [
+    { it: 'Mia nonna è sempre allegra.', de: 'Meine Oma ist immer fröhlich.', form: 'allegra' },
+    { it: 'Oggi sei molto allegro: perché?', de: 'Heute bist du sehr fröhlich: Warum?' },
+    { it: 'I miei figli sono sempre allegri.', de: 'Meine Kinder sind immer fröhlich.', form: 'allegri' },
+  ] },
+  { wort: 'intelligente', saetze: [
+    { it: 'Il mio cane è molto intelligente.', de: 'Mein Hund ist sehr klug.' },
+    { it: 'Tua figlia è intelligente e simpatica.', de: 'Deine Tochter ist klug und nett.' },
+    { it: 'È una domanda intelligente.', de: 'Das ist eine kluge Frage.' },
+  ] },
+
+  // Päckchen 3
+  { wort: 'la barba', saetze: [
+    { it: 'Mio padre ha la barba bianca.', de: 'Mein Vater hat einen weißen Bart.' },
+    { it: 'Il nuovo collega ha la barba e gli occhiali.', de: 'Der neue Kollege hat einen Bart und eine Brille.' },
+    { it: 'Ti fai la barba ogni mattina?', de: 'Rasierst du dich jeden Morgen?' },
+  ] },
+  { wort: 'moro', saetze: [
+    { it: 'Mia sorella è bionda, io sono mora.', de: 'Meine Schwester ist blond, ich bin dunkelhaarig.', form: 'mora' },
+    { it: 'Il fidanzato di Anna è alto e moro.', de: 'Annas Freund ist groß und dunkelhaarig.' },
+    { it: 'Nella mia famiglia siamo tutti mori.', de: 'In meiner Familie sind wir alle dunkelhaarig.', form: 'mori' },
+  ] },
+  { wort: 'cattivo', saetze: [
+    { it: 'Questo caffè è cattivo!', de: 'Dieser Kaffee schmeckt schlecht!' },
+    { it: 'Il cane non è cattivo, è solo grande.', de: 'Der Hund ist nicht böse, er ist nur groß.' },
+    { it: 'Questa pizza è cattiva.', de: 'Diese Pizza schmeckt nicht.', form: 'cattiva' },
+  ] },
+  { wort: 'serio', saetze: [
+    { it: 'Il professore è molto serio.', de: 'Der Lehrer ist sehr ernst.' },
+    { it: 'Sei serio? – Sì, è vero!', de: 'Meinst du das ernst? – Ja, es stimmt!' },
+    { it: 'Mia sorella è seria, io sono allegro.', de: 'Meine Schwester ist ernst, ich bin fröhlich.', form: 'seria' },
+  ] },
+  { wort: 'divertente', saetze: [
+    { it: 'Mio zio è molto divertente.', de: 'Mein Onkel ist sehr lustig.' },
+    { it: 'Il nonno è serio, ma anche divertente.', de: 'Opa ist ernst, aber auch lustig.' },
+    { it: 'È un gioco divertente per i ragazzi.', de: 'Das ist ein lustiges Spiel für die Kinder.' },
+  ] },
+];
+
+// Lektion 12 „Gli animali“ – Tiere und was man mit ihnen tut; dare da mangiare und
+// la gabbia früh, damit die Sätze damit gebaut werden können
+SAETZE.l03c = [
+  // Päckchen 1
+  { wort: 'il coniglio', saetze: [
+    { it: 'Mia figlia ha un coniglio bianco.', de: 'Meine Tochter hat ein weißes Kaninchen.' },
+    { it: 'Il coniglio mangia le carote.', de: 'Das Kaninchen frisst die Karotten.' },
+    { it: 'Come si chiama il tuo coniglio?', de: 'Wie heißt dein Kaninchen?' },
+  ] },
+  { wort: 'dare da mangiare', saetze: [
+    { it: 'La mattina do da mangiare al gatto.', de: 'Morgens füttere ich die Katze.', form: 'do da mangiare', formen: { do: 'dare' } },
+    { it: 'Chi dà da mangiare al coniglio?', de: 'Wer füttert das Kaninchen?', form: 'dà da mangiare', formen: { 'dà': 'dare' } },
+    { it: 'Puoi dare da mangiare al cane stasera?', de: 'Kannst du heute Abend den Hund füttern?' },
+  ] },
+  { wort: 'la gabbia', saetze: [
+    { it: 'Il coniglio dorme nella sua gabbia.', de: 'Das Kaninchen schläft in seinem Käfig.' },
+    { it: 'La gabbia è troppo piccola per il coniglio.', de: 'Der Käfig ist zu klein für das Kaninchen.' },
+    { it: 'Pulisco la gabbia ogni settimana.', de: 'Ich mache den Käfig jede Woche sauber.' },
+  ] },
+  { wort: 'il cavallo', saetze: [
+    { it: 'Mio zio ha tre cavalli.', de: 'Mein Onkel hat drei Pferde.', form: 'cavalli' },
+    { it: 'Il cavallo mangia una mela.', de: 'Das Pferd frisst einen Apfel.' },
+    { it: 'Ti piace andare a cavallo?', de: 'Reitest du gern?' },
+  ] },
+  { wort: 'il veterinario', saetze: [
+    { it: 'Il gatto sta male: andiamo dal veterinario.', de: 'Die Katze ist krank: Wir gehen zum Tierarzt.' },
+    { it: 'Il veterinario è molto bravo con i gatti.', de: 'Der Tierarzt kann sehr gut mit Katzen.' },
+    { it: 'Mia cugina fa la veterinaria.', de: 'Meine Cousine ist Tierärztin.', form: 'veterinaria' },
+  ] },
+
+  // Päckchen 2
+  { wort: "l'uccello", saetze: [
+    { it: 'C’è un uccello sul balcone.', de: 'Auf dem Balkon ist ein Vogel.' },
+    { it: 'La mattina gli uccelli cantano.', de: 'Morgens singen die Vögel.', form: 'uccelli' },
+    { it: 'Mia nonna ha un uccello giallo in gabbia.', de: 'Meine Oma hat einen gelben Vogel im Käfig.' },
+  ] },
+  { wort: 'il cucciolo', saetze: [
+    { it: 'Il nostro cane ha cinque cuccioli!', de: 'Unsere Hündin hat fünf Junge!', form: 'cuccioli' },
+    { it: 'Che carino questo cucciolo!', de: 'Wie süß dieser Welpe ist!' },
+    { it: 'Il cucciolo dorme vicino alla mamma.', de: 'Das Junge schläft neben der Mama.' },
+  ] },
+  { wort: 'accarezzare', saetze: [
+    { it: 'Posso accarezzare il tuo cane?', de: 'Darf ich deinen Hund streicheln?' },
+    { it: 'Mia figlia accarezza il coniglio.', de: 'Meine Tochter streichelt das Kaninchen.', form: 'accarezza' },
+    { it: 'Accarezzo il gatto e lui dorme.', de: 'Ich streichle die Katze, und sie schläft.', form: 'accarezzo' },
+  ] },
+  { wort: 'il criceto', saetze: [
+    { it: 'Mio figlio vuole un criceto.', de: 'Mein Sohn will einen Hamster.' },
+    { it: 'Il criceto corre nella gabbia.', de: 'Der Hamster rennt im Käfig herum.' },
+    { it: 'Di notte il criceto non dorme.', de: 'Nachts schläft der Hamster nicht.' },
+  ] },
+
+  // Päckchen 3
+  { wort: 'il pelo', saetze: [
+    { it: 'Il gatto ha il pelo nero e bianco.', de: 'Die Katze hat schwarz-weißes Fell.' },
+    { it: 'Il cane del nonno ha il pelo bianco.', de: 'Opas Hund hat weißes Fell.' },
+    { it: 'Il pelo del coniglio è molto bello.', de: 'Das Fell des Kaninchens ist sehr schön.' },
+  ] },
+  { wort: "l'acquario", saetze: [
+    { it: 'Nel salotto c’è un grande acquario.', de: 'Im Wohnzimmer steht ein großes Aquarium.' },
+    { it: 'Mio figlio ha un acquario con dieci pesci.', de: 'Mein Sohn hat ein Aquarium mit zehn Fischen.' },
+    { it: 'Ogni settimana pulisco l’acquario.', de: 'Jede Woche mache ich das Aquarium sauber.' },
+  ] },
+  { wort: 'portare fuori', saetze: [
+    { it: 'La sera porto fuori il cane.', de: 'Abends gehe ich mit dem Hund raus.', form: 'porto fuori' },
+    { it: 'Chi porta fuori il cane oggi?', de: 'Wer geht heute mit dem Hund raus?', form: 'porta fuori' },
+    { it: 'Puoi portare fuori il cane, per favore?', de: 'Kannst du bitte mit dem Hund rausgehen?' },
+  ] },
+  { wort: 'la tartaruga', saetze: [
+    { it: 'La tartaruga mangia l’insalata.', de: 'Die Schildkröte frisst den Salat.' },
+    { it: 'Mio nonno ha una tartaruga di cinquanta anni.', de: 'Mein Opa hat eine fünfzigjährige Schildkröte.' },
+    { it: 'La tartaruga dorme tutto l’inverno.', de: 'Die Schildkröte schläft den ganzen Winter.' },
+  ] },
+];

@@ -1362,6 +1362,11 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 .antwort.gewaehlt,
 .paar.gewaehlt,
 .filter-knopf[aria-pressed="true"] { --rahmen: var(--akzent-linie); }
+/* Gewählt deutlich zeigen (nur der Rahmen war auf dem iPhone kaum zu sehen) */
+.antwort.gewaehlt:not(.richtig):not(.falsch),
+.paar.gewaehlt { background: var(--akzent); color: var(--akzent-text); }
+/* Langes Drücken soll keinen Text markieren, sondern nur antippen */
+.antwort, .paar { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .antwort.richtig, .paar.passt, .wortcheck-wahl button.gewaehlt { --rahmen: var(--richtig); }
 .antwort.falsch, .paar.daneben { --rahmen: var(--fehler); }
 .knopf-plus:disabled { --rahmen: var(--rand); }

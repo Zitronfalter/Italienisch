@@ -908,15 +908,23 @@ button {
 /* Lektion als Weg: Fortschrittsbalken (Heute, Lektionen) und Liste der Schritte (Lektionsseite) */
 .weg-zeile { display: block; margin-top: 8px; }
 .weg-text { display: block; color: var(--text-leise); font-size: 15px; margin-top: 6px; }
+/* Handgezeichnet: Rahmen als Tusche-Maske (Gruppen unten), Füllung wie mit dem Stift ausgemalt */
 .weg-balken {
   display: block;
-  height: 9px;
-  border: 1px solid var(--text);
-  border-radius: 2px;
-  background: var(--flaeche);
-  overflow: hidden;
+  height: 12px;
+  margin: 0 3px;
+  border: 1px solid;
+  background: none;
 }
-.weg-balken > span { display: block; height: 100%; background: var(--akzent); }
+.weg-balken > span {
+  display: block;
+  height: 8px;
+  margin: 2px 0 0 1px;
+  max-width: calc(100% - 2px);
+  background: var(--akzent);
+  border-radius: 2px 5px 3px 6px / 4px 2px 5px 3px;
+  transform: rotate(-0.5deg);
+}
 
 .weg-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .weg-schritt-knopf {
@@ -1349,23 +1357,26 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 /* Rückmeldung nach dem Prüfen: feiner Rahmen in Grün (richtig) oder Blau (noch nicht) */
 .rueckmeldung { --rahmen: var(--richtig); --rahmen-bild: var(--rahmen-fein); }
 .rueckmeldung.falsch { --rahmen: var(--fehler); }
+/* Fortschrittsbalken der Lektion: feiner Tuscherahmen, dünner gezeichnet (der Balken ist nur 12 px hoch) */
+.weg-balken { --rahmen: var(--text); --rahmen-bild: var(--rahmen-fein); }
+.weg-balken::after { -webkit-mask-box-image: var(--rahmen-bild) 12 / 6px stretch !important; }
 /* Eingabefelder können kein ::after zeichnen: echter Rand in Tusche-leise, beim Tippen Ocker-Linie */
 .eingabe-feld { --rahmen: var(--text-leise); border-color: var(--rahmen); border-radius: 3px; }
 
 :is(.karte, .tabelle-rahmen, .treffer-liste, .woerter-gruppe, .wortcheck-liste, .kasten-fach, .weg-schritt-knopf,
     .knopf-haupt, .knopf-los, .knopf-klein-voll, .knopf-zweit, .knopf-klein, .knopf-plus,
-    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel:not(.kachel-schwebt), .farb-feld, .rueckmeldung) {
+    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel:not(.kachel-schwebt), .farb-feld, .rueckmeldung, .weg-balken) {
   position: relative;
 }
 :is(.karte, .tabelle-rahmen, .treffer-liste, .woerter-gruppe, .wortcheck-liste, .kasten-fach, .weg-schritt-knopf,
     .knopf-haupt, .knopf-los, .knopf-klein-voll, .knopf-zweit, .knopf-klein, .knopf-plus,
-    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel, .farb-feld, .rueckmeldung) {
+    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel, .farb-feld, .rueckmeldung, .weg-balken) {
   border-color: transparent !important;
   border-radius: 3px !important;
 }
 :is(.karte, .tabelle-rahmen, .treffer-liste, .woerter-gruppe, .wortcheck-liste, .kasten-fach, .weg-schritt-knopf,
     .knopf-haupt, .knopf-los, .knopf-klein-voll, .knopf-zweit, .knopf-klein, .knopf-plus,
-    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel, .farb-feld, .rueckmeldung)::after {
+    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel, .farb-feld, .rueckmeldung, .weg-balken)::after {
   content: '';
   position: absolute;
   inset: -3px;

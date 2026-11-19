@@ -287,19 +287,6 @@ button {
   border-left: 4px solid var(--richtig);
 }
 .rueckmeldung.falsch { border-left-color: var(--fehler); }
-/* kleine Limo oben rechts in der Aufgaben-Karte (begleiter.js: uebungLimo) */
-.frage-karte { display: flow-root; }
-.frage-limo {
-  float: right;
-  width: 84px;
-  height: 84px;
-  margin: -12px -8px 4px 12px;
-}
-.frage-limo .roboter {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
 .rueck-titel {
   margin: 0;
   font-weight: 600;
@@ -499,12 +486,13 @@ button {
 .regel p { margin: 0 0 10px; }
 .regel p:last-child { margin-bottom: 0; }
 
+/* gescrollt wird innen, damit der gezeichnete Rahmen stehen bleibt und seine Ecken nicht abgeschnitten werden */
 .tabelle-rahmen {
-  overflow-x: auto;
   border: 1px solid var(--rand);
   border-radius: var(--radius);
   background: var(--flaeche);
 }
+.tabelle-scroll { overflow-x: auto; border-radius: 3px; }
 .tabelle {
   width: 100%;
   border-collapse: collapse;
@@ -618,11 +606,7 @@ button {
   text-align: left;
 }
 
-/* ---------- Begleiter (Limo mit Sprechblase) ---------- */
-
-:root {
-  --limo-tinte: #1f1c18;   /* Tusche – auf Papier und Pappe gleich */
-}
+/* ---------- Begleiter (Notiz mit Tipp oder Ende-Nachricht) ---------- */
 
 .begleiter {
   display: flex;
@@ -637,16 +621,6 @@ button {
   text-align: left;
   font: inherit;
 }
-.begleiter-bild {
-  flex: none;
-  width: 76px;
-  height: 76px;
-}
-.begleiter-bild .roboter {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
 .begleiter-blase {
   position: relative;
   flex: 1;
@@ -657,31 +631,6 @@ button {
   box-shadow: var(--schatten);
   font-size: 16px;
   line-height: 1.4;
-}
-/* kleine Spitze der Sprechblase zu Limo hin */
-.begleiter-blase::before {
-  content: '';
-  position: absolute;
-  left: -7px;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  background: var(--flaeche);
-  border-left: 1px solid var(--rand);
-  border-bottom: 1px solid var(--rand);
-  transform: translateY(-50%) rotate(45deg);
-}
-
-/* Limo (limo.js): Linien neben der Zitrone nehmen diese Farbe */
-.limo { color: var(--limo-tinte); overflow: visible; }
-
-/* sanftes Hüpfen beim Jubeln – nur wenn das iPhone Bewegung erlaubt */
-@media (prefers-reduced-motion: no-preference) {
-  .begleiter[data-stimmung="jubelt"] .roboter { animation: huepfen 0.9s ease-in-out 2; }
-}
-@keyframes huepfen {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
 }
 
 /* ---------- Fortschritt ---------- */
@@ -738,7 +687,6 @@ button {
   border: 1px solid var(--rand);
   border-radius: var(--radius);
   background: var(--flaeche);
-  overflow: hidden;
 }
 .treffer-liste:empty { display: none; }
 .treffer {
@@ -1006,7 +954,6 @@ button.weg-schritt-knopf { cursor: pointer; }
   border: 1px solid var(--rand);
   border-radius: var(--radius);
   background: var(--flaeche);
-  overflow: hidden;
 }
 .wortcheck-zeile {
   display: flex;
@@ -1252,8 +1199,7 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 
 /* ---------- Heute: alles auf einen Blick, ohne Scrollen ---------- */
 .screen-heute { gap: 14px; }
-.screen-heute .begleiter-bild { width: 64px; height: 64px; }
-.screen-heute .begleiter-blase { font-size: 15px; }
+.screen-heute .begleiter-blase { font-size: 15px; padding: 5px 12px; }   /* lange Tipps (3 Zeilen) passen so ohne Scrollen */
 .heute-karte .karte-text { margin-top: 2px; }
 .weiter-teil { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rand); display: flex; flex-direction: column; }
 .weiter-teil .knopf-leise { margin-top: 2px; align-self: flex-start; padding-left: 0; }
@@ -1290,7 +1236,6 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 .symbol-stift { background: var(--text); color: var(--flaeche); }
 .ueben-karte .karte-text { font-size: 15px; }
 #screen-ueben { gap: 14px; }
-#screen-ueben .begleiter-bild { width: 64px; height: 64px; }
 #screen-ueben .begleiter-blase { font-size: 15px; }
 
 /* ---------- Grammatik der Lektion (kurz) ---------- */
@@ -1434,10 +1379,9 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   transform: rotate(-0.8deg);
 }
-.begleiter-blase::before { display: none; }
 
-/* Limo ist raus: kein Bildplatz neben der Notiz */
-.begleiter-bild, .frage-limo { display: none; }
+/* Limo ist raus (limo.js liegt ungenutzt bereit): kein Bildplatz neben der Notiz */
+.begleiter-bild { display: none; }
 .begleiter { margin: 0; }
 
 /* ---------- Reiseskizzen (skizzen.js) ---------- */

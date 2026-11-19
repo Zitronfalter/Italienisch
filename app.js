@@ -606,7 +606,7 @@ function starteFestigen(n) {
   zeigeSchritt();
 }
 
-// Nach dem Festigen: weiter zu den neuen Wörtern – und Limo schlägt eine Übung unter „Üben“ vor
+// Nach dem Festigen: weiter zu den neuen Wörtern – und die Notiz schlägt eine Übung unter „Üben“ vor
 function zeigeFestigenEnde() {
   abfrage.festigen = false;
   const g = new Set([...abfrage.gewertet, ...abfrage.kennen]).size;   // „wählen“ zählt in kennen

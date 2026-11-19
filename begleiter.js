@@ -2,21 +2,6 @@
 // nicht mehr zu sehen – die Texte bleiben. Die Zeichnung liegt weiter in limo.js, falls Limo zurückkommt.
 //
 // Regeln: freundlich, ruhig, nie traurig, kein Druck, keine Punkte.
-// Limo begrüßt, gibt Tipps und freut sich über echten Fortschritt (Meilensteine).
-//
-// BILDER: Solange hier null steht, zeichnet limo.js Limo als SVG.
-// Ein eigenes Bild kann eine Stimmung ersetzen, z. B. 'begleiter/winkt.png'
-// (Datei auch in sw.js bei DATEIEN aufnehmen).
-
-const BEGLEITER_BILDER = {
-  winkt: null,
-  freut: null,
-  denkt: null,
-  ruhig: null,
-  ueberrascht: null,
-  liest: null,
-  jubelt: null,
-};
 
 const BEGLEITER_TIPPS = [
   '„Prego“ heißt nicht nur „bitte“ – man sagt es auch, wenn man jemandem den Vortritt lässt.',
@@ -101,14 +86,6 @@ const Begleiter = (() => {
     return { stimmung: 'mut', text: 'Gut gemacht. Was noch nicht saß, kommt morgen wieder – ganz von selbst.' };
   }
 
-  // ---------- Bild ----------
-
-  function bildHtml(stimmung) {
-    const datei = BEGLEITER_BILDER[stimmung];
-    if (datei) return `<img class="roboter" src="${datei}" alt="" aria-hidden="true">`;
-    return typeof Limo !== 'undefined' ? Limo.svg(stimmung, { klasse: 'roboter limo' }) : '';
-  }
-
   // Zeigt die Notiz in einem Element: { stimmung, text } (ohne Bild)
   function zeigen(element, nachricht) {
     const bild = element.querySelector('.begleiter-bild');
@@ -117,23 +94,7 @@ const Begleiter = (() => {
     element.dataset.stimmung = nachricht.stimmung;
   }
 
-  // Kleine Limo in der Aufgaben-Karte einer Übung (.frage-karte), von Anfang an dabei:
-  // denkt mit (bei Hör-Aufgaben: hört zu), nach dem Prüfen freut sie sich oder macht Mut – nie traurig.
-  function uebungLimo(karte) {
-    // Limo ist raus: eine evtl. vorhandene Figur entfernen, nichts zeichnen
-    const alt = karte.querySelector('.frage-limo');
-    if (alt) alt.remove();
-  }
-
-  // Stimmung passend zur Übungsseite: Rückmeldung sichtbar → freut / mut, sonst denkt / hoert
-  function uebungStimmung(seite) {
-    const rueck = seite.querySelector('.rueckmeldung');
-    if (rueck && !rueck.hidden) return rueck.classList.contains('falsch') ? 'mut' : 'freut';
-    const hoeren = [...seite.querySelectorAll('.hoer-knoepfe')].some((h) => !h.hidden && h.offsetParent !== null);
-    return hoeren ? 'hoert' : 'denkt';
-  }
-
-  // Seite „Frei üben“: Limo lädt ein – ohne Druck, wechselt jedes Mal
+  // Seite „Frei üben“: die Notiz lädt ein – ohne Druck, wechselt jedes Mal
   const UEBEN_TEXTE = [
     { stimmung: 'liest', text: 'Worauf hast du Lust? Alles hier zählt – auch nur fünf Minuten.' },
     { stimmung: 'hoert', text: 'Hören trainiert das Ohr. Probier mal „Hören & Üben“!' },
@@ -152,5 +113,5 @@ const Begleiter = (() => {
     return { stimmung: 'jubelt', text: `Lektion „${titel}“ geschafft! Ottimo lavoro. Die nächste wartet, wann du magst.` };
   }
 
-  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft, uebungLimo, uebungStimmung, uebenNachricht };
+  return { startNachricht, endeNachricht, tipp, zeigen, lektionGeschafft, uebenNachricht };
 })();

@@ -1,4 +1,5 @@
-// Begleiter: Limo, die kleine Zitrone, mit Sprechblase (Zeichnung in limo.js)
+// Begleiter: kurze Notizen (Tipps, Ende-Nachrichten). Limo, die Zitrone, ist seit dem Look „Reiseskizze“ (18.11.2026)
+// nicht mehr zu sehen – die Texte bleiben. Die Zeichnung liegt weiter in limo.js, falls Limo zurückkommt.
 //
 // Regeln: freundlich, ruhig, nie traurig, kein Druck, keine Punkte.
 // Limo begrüßt, gibt Tipps und freut sich über echten Fortschritt (Meilensteine).
@@ -104,30 +105,24 @@ const Begleiter = (() => {
 
   function bildHtml(stimmung) {
     const datei = BEGLEITER_BILDER[stimmung];
-    return datei ? `<img class="roboter" src="${datei}" alt="" aria-hidden="true">` : Limo.svg(stimmung, { klasse: 'roboter limo' });
+    if (datei) return `<img class="roboter" src="${datei}" alt="" aria-hidden="true">`;
+    return typeof Limo !== 'undefined' ? Limo.svg(stimmung, { klasse: 'roboter limo' }) : '';
   }
 
-  // Zeigt den Begleiter in einem Element: { stimmung, text }
+  // Zeigt die Notiz in einem Element: { stimmung, text } (ohne Bild)
   function zeigen(element, nachricht) {
-    element.querySelector('.begleiter-bild').innerHTML = bildHtml(nachricht.stimmung);
+    const bild = element.querySelector('.begleiter-bild');
+    if (bild) bild.innerHTML = '';
     element.querySelector('.begleiter-text').textContent = nachricht.text;
     element.dataset.stimmung = nachricht.stimmung;
   }
 
   // Kleine Limo in der Aufgaben-Karte einer Übung (.frage-karte), von Anfang an dabei:
   // denkt mit (bei Hör-Aufgaben: hört zu), nach dem Prüfen freut sie sich oder macht Mut – nie traurig.
-  function uebungLimo(karte, stimmung) {
-    let bild = karte.querySelector('.frage-limo');
-    if (!bild) {
-      bild = document.createElement('span');
-      bild.className = 'frage-limo';
-      bild.setAttribute('aria-hidden', 'true');
-      karte.prepend(bild);
-    }
-    if (bild.dataset.stimmung !== stimmung) {
-      bild.innerHTML = bildHtml(stimmung);
-      bild.dataset.stimmung = stimmung;
-    }
+  function uebungLimo(karte) {
+    // Limo ist raus: eine evtl. vorhandene Figur entfernen, nichts zeichnen
+    const alt = karte.querySelector('.frage-limo');
+    if (alt) alt.remove();
   }
 
   // Stimmung passend zur Übungsseite: Rückmeldung sichtbar → freut / mut, sonst denkt / hoert

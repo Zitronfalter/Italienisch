@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Italienisch</title>
   <meta name="description" content="Italienisch lernen – ruhig, ohne Werbung, offline.">
-  <meta name="theme-color" content="#f7f3e8" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1e1c17" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#fbfaf5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#d4cbc0" media="(prefers-color-scheme: dark)">
 
   <!-- iPhone: als App vom Home-Bildschirm starten -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,6 +17,8 @@
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 
   <link rel="manifest" href="manifest.webmanifest">
+  <!-- Hintergrund (Papier/Pappe) vor dem Stil setzen, damit nichts aufblitzt -->
+  <script src="hintergrund.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,6 +29,12 @@
       <header class="kopf">
         <h1 id="gruss">Buongiorno!</h1>
       </header>
+
+      <!-- Reiseskizze der aktuellen Lektion (skizzen.js) -->
+      <figure class="skizze-heute" id="skizze-heute" hidden>
+        <div class="skizze-flaeche" id="skizze-heute-bild"></div>
+        <figcaption id="skizze-heute-titel" lang="it"></figcaption>
+      </figure>
 
       <button class="begleiter" id="begleiter-start" type="button" aria-label="Begleiter: nächster Tipp">
         <span class="begleiter-bild"></span>
@@ -515,6 +523,21 @@
       </header>
 
       <div class="karte">
+        <p class="karte-titel">Aussehen</p>
+        <label class="feld-label" for="einst-grund">Hintergrund</label>
+        <select class="eingabe-feld eingabe-klein" id="einst-grund">
+          <option value="auto">Wie iPhone</option>
+          <option value="papier">Papier</option>
+          <option value="pappe">Pappe</option>
+        </select>
+        <p class="karte-text klein" id="einst-grund-jetzt"></p>
+        <label class="feld-label" for="einst-hell">Helligkeit</label>
+        <input class="regler" id="einst-hell" type="range" min="0" max="100" step="1">
+        <label class="feld-label" for="einst-waerme">Wärme</label>
+        <input class="regler" id="einst-waerme" type="range" min="0" max="100" step="1">
+        <button class="knopf-klein" id="knopf-grund-zurueck" type="button">Zurücksetzen</button>
+      </div>
+      <div class="karte">
         <p class="karte-titel">Vorlesen</p>
         <label class="feld-label" for="stand-tempo">Tempo</label>
         <select class="eingabe-feld eingabe-klein" id="stand-tempo" data-tempo>
@@ -710,7 +733,6 @@
   <script src="erzeuger.js"></script>
   <script src="woerterbuch.js"></script>
   <script src="niveautest.js"></script>
-  <script src="limo.js"></script>
   <script src="begleiter.js"></script>
   <script src="kacheln.js"></script>
   <script src="uebungen.js"></script>
@@ -723,6 +745,8 @@
   <script src="saetze.js"></script>
   <script src="schon-bekannt.js"></script>
   <script src="lektionen.js"></script>
+  <script src="skizzen-zuordnung.js"></script>
+  <script src="skizzen.js"></script>
   <script src="woerterliste.js"></script>
   <script src="wiederholung.js"></script>
   <script src="app.js"></script>

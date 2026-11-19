@@ -32,12 +32,20 @@ const Speicher = (() => {
   }
 
   function speichern() {
+    const text = JSON.stringify(daten);
     try {
-      localStorage.setItem(SCHLUESSEL, JSON.stringify(daten));
+      localStorage.setItem(SCHLUESSEL, text);
       return true;
     } catch (fehler) {
-      console.warn('Speichern fehlgeschlagen:', fehler);
-      return false;
+      // Speicher voll? Der Lernstand hat Vorrang: gezeichnete Skizzen (nur Zwischenspeicher) wegwerfen und noch einmal
+      try {
+        localStorage.removeItem('italienisch-skizzen');
+        localStorage.setItem(SCHLUESSEL, text);
+        return true;
+      } catch (nochmal) {
+        console.warn('Speichern fehlgeschlagen:', nochmal);
+        return false;
+      }
     }
   }
 

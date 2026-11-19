@@ -3,7 +3,7 @@
 //
 // WICHTIG: Bei jeder Änderung an den Dateien die Versionsnummer erhöhen.
 // Dann lädt das iPhone beim nächsten Start die neuen Dateien.
-const VERSION = 'v73';
+const VERSION = 'v84';
 const CACHE = 'italienisch-' + VERSION;
 
 const DATEIEN = [
@@ -11,6 +11,12 @@ const DATEIEN = [
   'index.html',
   'style.css',
   'speicher.js',
+  'hintergrund.js',
+  'schriften/caveat-500.woff2',
+  'schriften/caveat-600.woff2',
+  'rahmen/kasten.svg',
+  'rahmen/knopf.svg',
+  'rahmen/fein.svg',
   'wortschatz.js',
   'vokabeln.js',
   'texte.js',
@@ -28,7 +34,6 @@ const DATEIEN = [
   'woerterbuch.js',
   'woerterbuch.json',
   'niveautest.js',
-  'limo.js',
   'begleiter.js',
   'kacheln.js',
   'uebungen.js',
@@ -41,6 +46,8 @@ const DATEIEN = [
   'saetze.js',
   'schon-bekannt.js',
   'lektionen.js',
+  'skizzen-zuordnung.js',
+  'skizzen.js',
   'woerterliste.js',
   'app.js',
   'manifest.webmanifest',

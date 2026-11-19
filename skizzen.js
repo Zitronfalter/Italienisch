@@ -1,0 +1,1838 @@
+// Reiseskizzen zu den Lektionen (Look „Reiseskizze“).
+// ERZEUGT von werkzeuge/skizzen-bauen.js aus docs/superpowers/entwuerfe/entwurf10-skizzen.html – nicht von Hand ändern.
+// Zeichnen braucht den Browser (Zitterstrich über getPointAtLength); Daten und Zuordnung gehen auch ohne.
+
+const Skizzen = (() => {
+// ---------- Hilfen ----------
+const ellipse = (cx, cy, rx, ry) => `M${cx - rx} ${cy} A${rx} ${ry} 0 1 0 ${cx + rx} ${cy} A${rx} ${ry} 0 1 0 ${cx - rx} ${cy}Z`;
+const kreis = (cx, cy, r) => ellipse(cx, cy, r, r);
+const rechteck = (x, y, w, h) => `M${x} ${y} h${w} v${h} h${-w}Z`;
+const pfad = (d, attr) => `<path d="${d}" ${attr}/>`;
+
+// Architekten-Strich: jede Linie wird abgetastet und bekommt ein feines, unregelmäßiges Zittern quer zur Richtung
+// unsichtbarer Pfad zum Abtasten der Linien (erst beim ersten Zeichnen angelegt)
+let messPfadEl = null;
+function messPfadHolen() {
+  if (!messPfadEl) {
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    s.setAttribute('width', 0); s.setAttribute('height', 0); s.setAttribute('aria-hidden', 'true');
+    s.style.position = 'absolute';
+    messPfadEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    s.appendChild(messPfadEl); document.body.appendChild(s);
+  }
+  return messPfadEl;
+}
+function zitterD(d, amp, saat) {
+  const messPfad = messPfadHolen();
+  const zz = x => { const v = Math.sin(x * 12.9898) * 43758.5453; return v - Math.floor(v); };
+  return d.split(/(?=M)/).map((teil, ti) => {
+    messPfad.setAttribute('d', teil);
+    const len = messPfad.getTotalLength(); if (len < 1) return teil;
+    const schritte = Math.max(2, Math.round(len / 3.5)), ph1 = zz(saat + ti) * 6.3, ph2 = zz(saat + ti + 50) * 6.3;
+    let out = '', vor = messPfad.getPointAtLength(0);
+    for (let s = 0; s <= schritte; s++) {
+      const l = len * s / schritte, pt = messPfad.getPointAtLength(l), nach = messPfad.getPointAtLength(Math.min(len, l + .5));
+      const dx = nach.x - vor.x, dy = nach.y - vor.y, n = Math.hypot(dx, dy) || 1;
+      const a = (s === 0 || s === schritte) ? 0 : (Math.sin(l * .19 + ph1) * .45 + Math.sin(l * .07 + ph2) * .35 + (zz(saat * 7 + ti * 131 + s) - .5) * .9) * amp;
+      out += `${s ? 'L' : 'M'}${(pt.x - dy / n * a).toFixed(1)} ${(pt.y + dx / n * a).toFixed(1)} `;
+      vor = messPfad.getPointAtLength(Math.max(0, l - .5));
+    }
+    return out + (/z\s*$/i.test(teil) ? 'Z' : '');
+  }).join('');
+}
+
+// Der gewählte Stil (zwischen M1 und M2, mit Zitterstrich) – für alle Skizzen gleich
+function skizze(m) {
+  const zart = m.teile.filter(t => !t.schatten).map(t => pfad(t.d, `fill="${t.farbe}" opacity="${t.himmel ? .42 : .2}"`)).join('');
+  const sch = m.teile.filter(t => t.schatten).map(t => pfad(t.d, 'fill="#55627f" opacity=".16"')).join('');
+  const tupfer = m.teile.filter(t => t.tupfer && !t.himmel && !t.schatten).map(t => pfad(t.d, `fill="${t.farbe}" opacity=".5"`)).join('');
+  const lin = m.linien.map((l, i) => pfad(zitterD(l.d, l.detail ? .3 : .5, i * 17 + 3), `stroke-width="${l.w.toFixed(2)}"`)).join('');
+  return `<g filter="url(#aquarell-voll)" style="mix-blend-mode:multiply" transform="translate(2.5 -1.5)">${zart}${sch}${tupfer}</g>
+    <g fill="none" stroke="#1f1c18" stroke-linecap="round" stroke-linejoin="round">${lin}</g>${m.extra || ''}`;
+}
+
+// ---------- Motive (340 × 220) ----------
+// teile: Farbflächen (tupfer = kräftiger, himmel = Himmel, schatten = blaugrauer Schatten)
+// linien: Tuschelinien (w = Stärke, detail = feiner)
+const HIMMEL = '#9fc3dc', OCKER = '#e8b77a', TERRA = '#d99a7a', CREME = '#efe2bf', PFLASTER = '#d8cdb8',
+      GRUEN = '#6f9a6a', GELB = '#f3d77e', ROT = '#d9614a', HOLZ = '#d7a86e', STAHL = '#cdd2d4', WEISS = '#fbf8f0';
+
+// 1 · Ciao! – Piazza mit Brunnen
+const fensterReihe = (xs, ys) => xs.flatMap(x => ys.map(y => [x, y]));
+const PIAZZA_F_L = fensterReihe([16, 52, 88], [60, 102]);
+const PIAZZA_F_R = fensterReihe([238, 278, 314], [50, 92]);
+const laeden = f => f.map(([x, y]) => rechteck(x - 8, y, 7, 24) + ' ' + rechteck(x + 17, y, 7, 24)).join(' ');
+const fenster = f => f.map(([x, y]) => rechteck(x, y, 16, 24)).join(' ');
+const PIAZZA = {
+  nr: 1, titel: 'Ciao!', bild: 'Una piazza con la fontana',
+  teile: [
+    { d: 'M0 0 H340 V170 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 40 H118 V170 H0Z', farbe: OCKER, tupfer: true },
+    { d: 'M118 80 L170 52 L222 80 V170 H118Z', farbe: CREME },
+    { d: 'M222 30 H340 V170 H222Z', farbe: TERRA, tupfer: true },
+    { d: 'M0 170 H340 V220 H0Z', farbe: PFLASTER },
+    { d: laeden(PIAZZA_F_L) + ' ' + laeden(PIAZZA_F_R), farbe: GRUEN, tupfer: true },
+    { d: 'M114 188 V198 A56 11 0 0 0 226 198 V188Z', farbe: STAHL },
+    { d: ellipse(170, 188, 50, 8), farbe: HIMMEL, tupfer: true },
+    { d: 'M0 40 H118 V48 H0Z M222 30 H340 V38 H222Z M200 80 L222 80 V170 H210Z', schatten: true },
+    { d: ellipse(176, 206, 62, 6), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 40 H118 V170 M222 170 V30 H340', w: 1.2 },
+    { d: 'M-2 36 H122 M218 26 H342', w: 1.4 },
+    { d: 'M118 80 L170 52 L222 80 M118 80 H222', w: 1.1 },
+    { d: 'M0 170 H140 M200 170 H340', w: 1.3 },
+    { d: fenster(PIAZZA_F_L) + ' ' + fenster(PIAZZA_F_R), w: .9 },
+    { d: laeden(PIAZZA_F_L) + ' ' + laeden(PIAZZA_F_R), w: .6, detail: true },
+    { d: 'M40 170 V150 Q52 136 64 150 V170 M236 170 V146 Q263 120 290 146 V170 M158 152 V132 Q170 120 182 132 V152', w: 1 },
+    { d: kreis(170, 100, 10) + ' M170 90 V110 M160 100 H180', w: .8 },
+    { d: ellipse(170, 188, 56, 11) + ' M114 188 V198 A56 11 0 0 0 226 198 V188', w: 1.2 },
+    { d: 'M164 184 V162 M176 184 V162 M146 158 Q170 172 194 158 Q170 152 146 158Z M170 156 V144', w: 1 },
+    { d: 'M170 146 Q160 140 152 152 M170 146 Q180 140 188 152 M158 188 q4 -10 0 -24 M182 188 q-4 -10 0 -24', w: .6, detail: true },
+    { d: 'M20 220 L80 172 M110 220 L130 172 M230 220 L214 172 M320 220 L262 172 M0 196 H112 M228 196 H340', w: .5, detail: true },
+    { d: 'M150 22 q4 -4 8 0 q4 -4 8 0 M180 36 q3 -3 6 0 q3 -3 6 0', w: .8, detail: true },
+  ],
+};
+
+// 5 · Al bar – Espresso (aus Entwurf 9)
+const ESPRESSO = {
+  nr: 5, titel: 'Al bar', bild: 'Un caffè al banco',
+  teile: [
+    { d: 'M0 0 H340 V110 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 60 H340 V110 H0Z', farbe: '#b9cfa0' },
+    { d: 'M0 110 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: ellipse(184, 180, 84, 19), schatten: true },
+    { d: 'M52 176 L92 168 L98 186 L58 194Z', farbe: GELB, tupfer: true },
+    { d: ellipse(170, 170, 80, 20), farbe: WEISS },
+    { d: 'M126 118 C128 150 144 166 170 166 C196 166 212 150 214 118Z M212 128 C236 124 238 152 204 152 L206 146 C226 146 226 132 210 134Z', farbe: WEISS },
+    { d: 'M196 126 C200 150 190 162 176 165 C200 162 210 148 212 122Z', schatten: true },
+    { d: ellipse(170, 119, 38, 8), farbe: '#b9814b', tupfer: true },
+    { d: 'M224 175 L272 165.5 L272.6 168.5 L224.6 178Z ' + ellipse(282, 165, 10, 4.5), farbe: STAHL },
+  ],
+  linien: [
+    { d: 'M0 110 H340', w: 1.3 },
+    { d: 'M0 60 H340', w: .7 },
+    { d: 'M34 60 V110 M68 60 V110 M102 60 V110 M136 60 V110 M170 60 V110 M204 60 V110 M238 60 V110 M272 60 V110 M306 60 V110 M0 85 H340', w: .45, detail: true },
+    { d: 'M52 176 L92 168 L98 186 L58 194Z', w: 1 },
+    { d: 'M62 182 L86 177 M64 186 L80 183', w: .6, detail: true },
+    { d: ellipse(170, 170, 80, 20), w: 1.2 },
+    { d: ellipse(170, 167, 46, 10), w: .7, detail: true },
+    { d: 'M126 118 C128 150 144 166 170 166 C196 166 212 150 214 118', w: 1.3 },
+    { d: ellipse(170, 118, 44, 11), w: 1.2 },
+    { d: ellipse(170, 119, 38, 8), w: .7 },
+    { d: 'M212 128 C236 124 238 152 204 152 M210 134 C226 132 226 146 206 146', w: 1.1 },
+    { d: 'M224 176 L272 167', w: 1.6 },
+    { d: ellipse(282, 165, 10, 4.5), w: .9 },
+    { d: 'M160 104 c-6 -10 6 -14 0 -24 c-6 -10 6 -14 0 -22 M180 102 c-5 -9 5 -12 0 -20', w: .8, detail: true },
+  ],
+};
+
+// 9 · La mia famiglia – Gasse mit Wäscheleine
+const GASSE = {
+  nr: 9, titel: 'La mia famiglia', bild: 'Il bucato nel vicolo',
+  teile: [
+    { d: 'M0 0 H340 L230 30 V60 H110 V30Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 0 L110 30 V200 L0 220Z', farbe: OCKER },
+    { d: 'M340 0 L230 30 V200 L340 220Z', farbe: TERRA },
+    { d: 'M110 60 H230 V200 H110Z', farbe: CREME },
+    { d: 'M0 220 L110 200 H230 L340 220Z', farbe: PFLASTER },
+    { d: 'M88 60 L114 62 L112 70 L106 70 L106 92 L94 92 L94 70 L88 70Z', farbe: HIMMEL, tupfer: true },   // Hemd
+    { d: 'M150 64 L180 64 L178 100 L152 100Z', farbe: GELB, tupfer: true },                             // Handtuch
+    { d: 'M214 62 L232 61 L236 70 L240 94 L208 94 L212 70Z', farbe: ROT, tupfer: true },                // Kleidchen
+    { d: 'M58 104 L84 106 L83 130 L60 128Z', farbe: GRUEN, tupfer: true },                              // kleines Tuch
+    { d: 'M128 110 L204 109 L202 150 L130 150Z', farbe: WEISS },                                        // Laken
+    { d: 'M30 46 L58 54 L58 82 L30 76Z M262 54 L290 46 L290 76 L262 82Z M24 132 L52 136 L52 166 L24 164Z', farbe: GRUEN, tupfer: true },  // Fensterläden
+    { d: 'M110 60 H230 V72 H110Z M0 0 L110 30 V44 L0 16Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 0 L110 30 V200 L0 220 M340 0 L230 30 V200 L340 220', w: 1.2 },
+    { d: 'M110 60 H230 M110 200 H230', w: 1.1 },
+    { d: 'M150 200 V172 Q170 156 190 172 V200', w: 1 },
+    { d: 'M128 84 h12 v18 h-12Z M200 84 h12 v18 h-12Z', w: .8 },
+    { d: 'M30 46 L58 54 L58 82 L30 76Z M262 54 L290 46 L290 76 L262 82Z M24 132 L52 136 L52 166 L24 164Z', w: .9 },
+    { d: 'M44 50 V79 M276 50 V79 M38 134 V165', w: .5, detail: true },
+    { d: 'M300 214 L300 150 Q312 140 324 150 L324 216', w: 1 },
+    { d: 'M40 50 Q170 84 300 46 M20 102 Q170 128 320 96', w: .7 },
+    { d: 'M88 60 L114 62 L112 70 L106 70 L106 92 L94 92 L94 70 L88 70Z', w: .9 },
+    { d: 'M150 64 L180 64 L178 100 L152 100Z', w: .9 },
+    { d: 'M214 62 L232 61 L236 70 L240 94 L208 94 L212 70Z', w: .9 },
+    { d: 'M58 104 L84 106 L83 130 L60 128Z M128 110 L204 109 L202 150 L130 150Z', w: .9 },
+    { d: 'M94 58 v4 M108 60 v4 M156 62 v4 M174 62 v4 M218 60 v4 M228 60 v4 M64 104 v4 M78 105 v4 M140 108 v4 M190 108 v4', w: .7, detail: true },
+    { d: 'M150 116 Q166 132 160 148 M176 114 Q186 130 184 148', w: .45, detail: true },
+    { d: 'M20 220 L118 202 M70 220 L140 202 M250 220 L210 202 M310 220 L222 202', w: .45, detail: true },
+  ],
+};
+
+// 13 · Tempo libero – Vespa vor der Hauswand
+const VESPA = {
+  nr: 13, titel: 'Tempo libero', bild: 'La Vespa davanti al portone',
+  teile: [
+    { d: 'M0 0 H340 V160 H0Z', farbe: '#ecd3a8' },
+    { d: 'M0 160 H340 V220 H0Z', farbe: PFLASTER },
+    { d: 'M240 50 H300 V160 H240Z', farbe: GRUEN, tupfer: true },
+    { d: 'M150 182 Q148 140 190 136 Q232 134 236 170 Q236 182 222 182Z M100 176 Q92 140 108 104 L118 104 Q106 140 118 176Z M80 172 Q95 150 112 172Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M160 132 Q190 120 224 128 Q222 137 160 138Z', farbe: '#7a5440', tupfer: true },
+    { d: ellipse(160, 202, 92, 7), schatten: true },
+    { d: 'M300 50 H306 V160 H300Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 160 H340', w: 1.2 },
+    { d: 'M240 160 V50 H300 V160 M270 50 V160', w: 1.1 },
+    { d: 'M248 62 h14 v40 h-14Z M278 62 h14 v40 h-14Z M248 114 h14 v38 h-14Z M278 114 h14 v38 h-14Z', w: .6, detail: true },
+    { d: 'M234 44 H306', w: 1.4 },
+    { d: kreis(95, 182, 18) + ' ' + kreis(205, 182, 18), w: 1.3 },
+    { d: kreis(95, 182, 6) + ' ' + kreis(205, 182, 6), w: .7, detail: true },
+    { d: 'M150 182 Q148 140 190 136 Q232 134 236 170 Q236 182 222 182', w: 1.2 },
+    { d: 'M118 176 L152 176 M100 176 Q92 140 108 104 L118 104 Q106 140 118 176', w: 1.2 },
+    { d: 'M80 172 Q95 150 112 172', w: 1 },
+    { d: 'M104 120 L96 182', w: 1 },
+    { d: 'M96 98 L134 96 M134 96 l6 -3', w: 1.2 },
+    { d: kreis(112, 92, 6), w: .9 },
+    { d: 'M160 132 Q190 120 224 128 Q222 137 160 138Z', w: 1 },
+    { d: 'M190 150 h22 M196 156 h18', w: .5, detail: true },
+    { d: 'M24 34 q10 -6 22 -1 q8 4 16 0 M30 44 h18 M150 24 q8 -5 18 0 q6 3 12 0 M40 128 q8 -4 14 0 M182 70 h14 M188 78 h10', w: .45, detail: true },
+    { d: 'M214 0 V150 M220 0 V150 M210 150 h14', w: .8 },
+    { d: 'M20 220 L60 162 M120 220 L130 162 M230 220 L222 162 M330 220 L300 162', w: .45, detail: true },
+  ],
+};
+
+// 17 · Alla stazione – Bahnhofsuhr
+const BAHNHOF = {
+  nr: 17, titel: 'Alla stazione', bild: "L'orologio del binario",
+  teile: [
+    { d: 'M0 0 H340 V170 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 30 L340 46 V60 L0 44Z', farbe: '#b9b4ab' },
+    { d: 'M46 44 H56 V172 H46Z M284 58 H294 V172 H284Z', farbe: '#a7a39c' },
+    { d: 'M0 170 H340 V184 H0Z', farbe: PFLASTER },
+    { d: 'M0 176 H340 V180 H0Z', farbe: GELB, tupfer: true },
+    { d: 'M0 184 H340 V220 H0Z', farbe: '#c9bfae' },
+    { d: kreis(200, 112, 34), farbe: WEISS },
+    { d: 'M90 72 H150 V88 H90Z', farbe: '#5f86b0', tupfer: true },
+    { d: 'M0 44 L340 60 V68 L0 52Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 30 L340 46 M0 44 L340 60', w: 1.3 },
+    { d: 'M46 44 V170 M56 44 V170 M284 58 V170 M294 58 V170', w: 1.1 },
+    { d: 'M0 170 H340 M0 184 H340', w: 1.2 },
+    { d: 'M0 176 H340 M0 180 H340', w: .5, detail: true },
+    { d: 'M0 200 H340 M0 212 H340', w: 1 },
+    { d: Array.from({ length: 12 }, (_, i) => `M${8 + i * 28} 196 l-4 20`).join(' '), w: .6, detail: true },
+    { d: 'M200 52 V78 M120 50 V72', w: .9 },
+    { d: kreis(200, 112, 34), w: 1.4 },
+    { d: kreis(200, 112, 29), w: .6, detail: true },
+    { d: Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6; return `M${(200 + Math.sin(a) * 25).toFixed(1)} ${(112 - Math.cos(a) * 25).toFixed(1)} L${(200 + Math.sin(a) * 29).toFixed(1)} ${(112 - Math.cos(a) * 29).toFixed(1)}`; }).join(' '), w: 1 },
+    { d: 'M200 112 L188 104 M200 112 L216 98', w: 1.6 },
+    { d: 'M90 72 H150 V88 H90Z', w: .9 },
+    { d: 'M115 76 q4 -1.5 7 0 q1.5 2.5 -3 4 q4.5 1 3 4 q-3 1.5 -7 0', w: 1.1 },
+    { d: 'M240 120 q4 -4 8 0 q4 -4 8 0 M260 134 q3 -3 6 0 q3 -3 6 0', w: .7, detail: true },
+  ],
+};
+
+// 21 · Bruschetta – Brett mit Bruschetta, Tomaten, Öl
+const bruschetta = (cx, cy) => ({ brot: ellipse(cx, cy, 28, 15), tomate: ellipse(cx - 1, cy - 2, 20, 8) });
+const BR = [bruschetta(90, 156), bruschetta(152, 150), bruschetta(214, 144)];
+const BRUSCHETTA = {
+  nr: 21, titel: 'Bruschetta', bild: 'Bruschette al pomodoro',
+  teile: [
+    { d: 'M0 0 H340 V90 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 90 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: 'M40 124 L252 108 Q264 108 265 120 L268 178 Q268 190 256 191 L52 200 Q40 200 40 188Z', farbe: HOLZ, tupfer: true },
+    ...BR.map(b => ({ d: b.brot, farbe: '#e9c98d' })),
+    ...BR.map(b => ({ d: b.tomate, farbe: ROT, tupfer: true })),
+    { d: 'M80 150 l6 -4 l2 6Z M144 144 l6 -4 l2 6Z M206 138 l6 -4 l2 6Z', farbe: GRUEN, tupfer: true },
+    { d: 'M290 112 V68 Q290 58 299 54 V34 H307 V54 Q316 58 316 68 V112Z', farbe: '#c9c46a', tupfer: true },
+    { d: kreis(300, 196, 14) + ' ' + kreis(326, 182, 10), farbe: ROT, tupfer: true },
+    { d: 'M48 200 L256 191 L262 204 L56 212Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 90 H340', w: 1.2 },
+    { d: 'M40 124 L252 108 Q264 108 265 120 L268 178 Q268 190 256 191 L52 200 Q40 200 40 188Z', w: 1.3 },
+    { d: 'M60 132 L240 120 M62 186 L250 178', w: .45, detail: true },
+    ...BR.map(b => ({ d: b.brot, w: 1 })),
+    ...BR.map(b => ({ d: b.tomate, w: .6, detail: true })),
+    { d: 'M80 150 l6 -4 l2 6Z M144 144 l6 -4 l2 6Z M206 138 l6 -4 l2 6Z', w: .6, detail: true },
+    { d: 'M290 112 V68 Q290 58 299 54 V34 H307 V54 Q316 58 316 68 V112 M299 34 V28 H307 V34 M286 112 H320', w: 1.1 },
+    { d: 'M294 84 H312 V100 H294Z', w: .5, detail: true },
+    { d: kreis(300, 196, 14) + ' ' + kreis(326, 182, 10), w: 1.1 },
+    { d: 'M296 183 l4 -4 l4 4 M323 173 l3 -3 l3 3', w: .7, detail: true },
+    { d: 'M20 0 V90 M110 0 V90 M200 0 V90 M0 45 H260', w: .35, detail: true },
+  ],
+};
+
+// 25 · In albergo – Klingel, Zimmerschlüssel, Schlüsselfächer
+const FAECHER = Array.from({ length: 12 }, (_, i) => [30 + (i % 6) * 46, 18 + Math.floor(i / 6) * 44]);
+const ALBERGO = {
+  nr: 25, titel: 'In albergo', bild: 'La chiave della camera 12',
+  teile: [
+    { d: 'M0 0 H340 V120 H0Z', farbe: '#e9dcc4' },
+    { d: 'M24 12 H312 V104 H24Z', farbe: HOLZ },
+    { d: 'M0 120 H340 V136 H0Z', farbe: '#c9935e', tupfer: true },
+    { d: 'M0 136 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: 'M70 168 Q70 140 100 140 Q130 140 130 168Z', farbe: GELB, tupfer: true },
+    { d: 'M150 178 L190 172 L198 202 L158 208Z', farbe: '#c58b5a', tupfer: true },
+    { d: 'M250 150 L330 146 L334 196 L254 200Z', farbe: WEISS },
+    { d: ellipse(104, 176, 40, 6) + ' M156 208 L198 202 L202 208 L160 214Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M24 12 H312 V104 H24Z', w: 1.1 },
+    { d: FAECHER.map(([x, y]) => rechteck(x, y, 40, 38)).join(' '), w: .6, detail: true },
+    { d: [0, 3, 7, 10].map(i => { const [x, y] = FAECHER[i]; return `M${x + 20} ${y + 6} v12 M${x + 17} ${y + 22} h6 v8 h-6Z`; }).join(' '), w: .7, detail: true },
+    { d: 'M0 120 H340 M0 136 H340', w: 1.3 },
+    { d: 'M70 168 Q70 140 100 140 Q130 140 130 168Z M64 168 H136 V174 H64Z', w: 1.1 },
+    { d: 'M100 140 V133 ' + kreis(100, 130, 3), w: .9 },
+    { d: 'M84 150 Q90 144 98 144', w: .5, detail: true },
+    { d: 'M150 178 L190 172 L198 202 L158 208Z', w: 1 },
+    { d: kreis(178, 182, 3), w: .7 },
+    { d: 'M166 190 l3 -2 v12 M174 190 q4 -3 7 0 q1 3 -7 9 h8', w: .8, detail: true },
+    { d: 'M178 179 Q190 164 206 166 ' + kreis(212, 166, 7) + ' M219 166 L250 160 M240 162 v5 M246 161 v5', w: 1 },
+    { d: 'M250 150 L330 146 L334 196 L254 200Z M292 148 L294 198', w: 1 },
+    { d: 'M262 160 h22 M262 168 h20 M263 176 h22 M300 158 h22 M300 166 h18 M301 174 h22', w: .45, detail: true },
+  ],
+};
+
+// 29 · Una giornata di Giulia – Moka auf dem Herd
+const MOKA = {
+  nr: 29, titel: 'Una giornata di Giulia', bild: 'La moka sul fornello',
+  teile: [
+    { d: 'M0 0 H340 V140 H0Z', farbe: '#e8eef0' },
+    { d: 'M0 140 H340 V220 H0Z', farbe: '#cfd2d0' },
+    { d: 'M138 168 L146 120 H194 L202 168Z M152 112 L144 64 H196 L188 112Z M144 64 L150 54 H190 L196 64Z M146 120 L152 112 H188 L194 120Z', farbe: STAHL, tupfer: true },
+    { d: 'M196 72 L214 76 Q220 78 218 86 L210 108 L190 106 L194 100 L204 100 L210 84 L196 82Z', farbe: '#3a3530' },
+    { d: 'M150 172 q4 -8 8 0 M164 172 q4 -8 8 0 M178 172 q4 -8 8 0', farbe: HIMMEL, tupfer: true },
+    { d: 'M250 160 Q252 182 270 182 Q288 182 290 160Z ' + ellipse(270, 186, 26, 5), farbe: WEISS },
+    { d: 'M254 166 Q256 178 270 178 Q284 178 286 166Z', farbe: '#b9814b', tupfer: true },
+    { d: 'M30 40 h50 v60 h-50Z', farbe: GELB, tupfer: true },
+    { d: 'M182 64 L188 112 L182 120 L194 120 L202 168 L194 168Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 140 H340', w: 1.3 },
+    { d: 'M0 35 H340 M0 70 H340 M0 105 H340 M40 0 V140 M80 0 V140 M120 0 V140 M160 0 V54 M200 0 V54 M240 0 V140 M280 0 V140 M320 0 V140', w: .35, detail: true },
+    { d: ellipse(170, 172, 58, 9) + ' ' + ellipse(170, 172, 40, 6), w: 1 },
+    { d: 'M138 168 L146 120 H194 L202 168Z', w: 1.2 },
+    { d: 'M146 120 L152 112 H188 L194 120', w: 1 },
+    { d: 'M152 112 L144 64 H196 L188 112', w: 1.2 },
+    { d: 'M144 64 L150 54 H190 L196 64 M164 54 Q170 44 176 54', w: 1.1 },
+    { d: 'M144 64 L130 57 L148 76', w: 1 },
+    { d: 'M196 72 L214 76 Q220 78 218 86 L210 108 L190 106', w: 1.2 },
+    { d: 'M160 120 L156 168 M180 120 L184 168 M160 64 L164 112 M180 64 L176 112', w: .5, detail: true },
+    { d: 'M128 52 c-6 -10 6 -14 0 -24 c-6 -10 6 -14 0 -20 M120 46 c-5 -9 5 -12 0 -18', w: .8, detail: true },
+    { d: 'M250 160 Q252 182 270 182 Q288 182 290 160Z ' + ellipse(270, 186, 26, 5) + ' M290 164 q10 0 8 8 q-2 6 -10 4', w: 1 },
+    { d: 'M30 40 h50 v60 h-50Z M55 40 V100 M30 70 H80', w: .9 },
+    { d: 'M20 220 V190 M320 220 V190', w: .5, detail: true },
+  ],
+};
+
+// 37 · In vacanza – Toskana (aus Entwurf 9)
+const zypresse = (x, b, h) => {
+  const w = h * 0.13;
+  return {
+    form: `M${x} ${b} C${x - w} ${b - h * .25} ${x - w * 1.1} ${b - h * .75} ${x} ${b - h} C${x + w * 1.1} ${b - h * .75} ${x + w} ${b - h * .25} ${x} ${b}Z`,
+    schatten: `M${x} ${b} L${x} ${b - h} C${x + w * 1.1} ${b - h * .75} ${x + w} ${b - h * .25} ${x} ${b}Z`,
+  };
+};
+const ZYP = [[30, 214, 104], [49, 208, 80], [120, 200, 52], [146, 171, 36], [166, 152, 25], [182, 138, 17],
+             [182, 201, 52], [192, 171, 36], [200, 152, 25], [208, 138, 17], [290, 119, 15], [299, 120, 12]].map(z => zypresse(...z));
+const TOSKANA = {
+  nr: 37, titel: 'In vacanza', bild: 'Colline toscane · la villa',
+  teile: [
+    { d: 'M0 0 H340 V124 H0Z', farbe: HIMMEL, himmel: true, tupfer: true },
+    { d: 'M0 116 Q50 98 110 106 Q170 86 236 100 Q290 90 340 99 V140 H0Z', farbe: '#aab8c4' },
+    { d: 'M0 152 Q70 116 150 122 Q200 112 260 118 Q310 122 340 134 V220 H0Z', farbe: '#b8c47c' },
+    { d: 'M0 196 Q130 170 340 188 V220 H0Z', farbe: '#e4cb8e' },
+    { d: 'M118 220 Q150 170 204 124 L210 124 Q176 172 168 220Z', farbe: CREME },
+    { d: 'M196 98 H240 V124 H196Z', farbe: GELB, tupfer: true },
+    { d: 'M240 98 L252 102 V124 H240Z', farbe: '#dcb662' },
+    { d: 'M226 78 H238 V98 H226Z', farbe: GELB, tupfer: true },
+    { d: 'M192 99 L200 92 L238 92 L244 99Z M224 79 L231 72 L240 79Z', farbe: '#cf9a76' },
+    { d: 'M244 99 L238 92 L250 96 L255 102Z', farbe: '#b9805f' },
+    { d: 'M240 98 L252 102 V124 H240Z M234 78 H238 V98 H234Z', schatten: true },
+    ...ZYP.map(z => ({ d: z.form, farbe: '#5b8a4c', tupfer: true })),
+    { d: ZYP.map(z => z.schatten).join(' '), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 116 Q50 98 110 106 Q170 86 236 100 Q290 90 340 99', w: .7 },
+    { d: 'M0 152 Q70 116 150 122 Q200 112 260 118 Q310 122 340 134', w: 1.3 },
+    { d: 'M0 196 Q130 170 340 188', w: 1 },
+    { d: 'M118 220 Q150 170 204 124 M168 220 Q176 172 210 124', w: 1.1 },
+    { d: 'M196 98 H240 V124 H196Z M240 98 L252 102 V124 M226 78 H238 V98 M226 78 V92', w: 1.2 },
+    { d: 'M192 99 L200 92 L238 92 L244 99Z M244 99 L250 96 L255 102 L252 102 M238 92 L250 96 M224 79 L231 72 L240 79Z', w: 1.1 },
+    { d: 'M202 104 h5 v6 h-5Z M214 104 h5 v6 h-5Z M202 114 h5 v6 h-5Z M229 114 h5 v6 h-5Z M216 124 v-8 h5 v8 M230 83 h4 v6 h-4Z M244 106 l4 1 v6 l-4 -1Z', w: .8, detail: true },
+    ...ZYP.map(z => ({ d: z.form, w: 1 })),
+    ...[0, 1, 2, 3, 4, 5].map(i => ({ d: `M${232 + i * 6} ${134 + i * 9} Q${290 - i * 2} ${140 + i * 11} 340 ${147 + i * 13}`, w: .6, detail: true })),
+    ...[0, 1, 2, 3].map(i => ({ d: `M${62 + i * 4} ${164 + i * 8} Q88 ${158 + i * 9} ${108 - i * 2} ${160 + i * 10}`, w: .6, detail: true })),
+    { d: 'M70 40 q4 -4 8 0 q4 -4 8 0 M96 54 q3 -3 6 0 q3 -3 6 0', w: .8, detail: true },
+  ],
+};
+
+// 4 · Buona giornata! – offene Fensterläden mit Blumenkasten
+const lamellen = (x1, x2, y1, y2, schief) => Array.from({ length: 9 }, (_, i) => { const y = y1 + 12 + i * 12; return `M${x1 + 4} ${y + (schief ? 1 : 0)} L${x2 - 4} ${y}`; }).join(' ');
+const FENSTER = {
+  bild: 'Le persiane aperte',
+  teile: [
+    { d: 'M0 0 H340 V220 H0Z', farbe: OCKER },
+    { d: 'M130 40 H210 V160 H130Z', farbe: '#7d93a3' },
+    { d: 'M130 40 L92 48 L92 168 L130 160Z M210 40 L248 48 L248 168 L210 160Z', farbe: GRUEN, tupfer: true },
+    { d: 'M116 160 H224 V180 H116Z', farbe: TERRA, tupfer: true },
+    { d: [126, 142, 160, 178, 196, 214].map((x, i) => kreis(x, 150 - (i % 2) * 6, 6)).join(' '), farbe: ROT, tupfer: true },
+    { d: 'M122 160 q6 -14 12 -2 q6 -12 12 0 q6 -14 14 -2 q6 -12 12 0 q6 -14 14 -2 q6 -12 12 0 q6 -12 12 4Z', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M130 40 H210 V52 H130Z M116 180 H224 V188 H116Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M130 40 H210 V160 H130Z', w: 1.3 },
+    { d: 'M170 40 V160 M130 100 H210', w: .8 },
+    { d: 'M124 34 H216 M124 34 V40 M216 34 V40', w: 1.1 },
+    { d: 'M130 40 L92 48 L92 168 L130 160 M210 40 L248 48 L248 168 L210 160', w: 1.1 },
+    { d: lamellen(92, 130, 48, 160, true) + ' ' + lamellen(210, 248, 48, 160, true), w: .45, detail: true },
+    { d: 'M116 160 H224 V180 H116Z', w: 1.1 },
+    { d: [126, 142, 160, 178, 196, 214].map((x, i) => kreis(x, 150 - (i % 2) * 6, 6)).join(' '), w: .7, detail: true },
+    { d: 'M30 30 q10 6 4 18 q-4 8 4 14 M290 170 q8 4 6 14 M300 60 h20 M296 66 h14 M40 190 h24 M44 196 h14', w: .45, detail: true },
+  ],
+};
+
+// 27 · La casa nuova – Koffer mit Aufklebern und Strohhut
+const KOFFER = {
+  bild: 'Valigie pronte',
+  teile: [
+    { d: 'M0 0 H340 V150 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 150 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M96 70 H194 Q200 70 200 76 V174 Q200 180 194 180 H96 Q90 180 90 174 V76 Q90 70 96 70Z', farbe: TERRA, tupfer: true },
+    { d: kreis(150, 106, 14), farbe: GELB, tupfer: true },
+    { d: 'M100 128 h28 v18 h-28Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M160 140 l26 -4 l3 16 l-26 4Z', farbe: GRUEN, tupfer: true },
+    { d: 'M214 150 H300 Q306 150 306 156 V186 Q306 192 300 192 H214 Q208 192 208 186 V156 Q208 150 214 150Z', farbe: HIMMEL, tupfer: true },
+    { d: ellipse(256, 148, 34, 6) + ' M238 148 Q240 128 256 128 Q272 128 274 148Z', farbe: GELB },
+    { d: ellipse(196, 196, 120, 7), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 150 H340', w: 1.2 },
+    { d: 'M96 70 H194 Q200 70 200 76 V174 Q200 180 194 180 H96 Q90 180 90 174 V76 Q90 70 96 70Z', w: 1.3 },
+    { d: 'M128 70 V58 Q128 54 132 54 H158 Q162 54 162 58 V70', w: 1.2 },
+    { d: 'M112 70 V180 M178 70 V180', w: .7 },
+    { d: kreis(150, 106, 14) + ' M100 128 h28 v18 h-28Z M160 140 l26 -4 l3 16 l-26 4Z', w: .8 },
+    { d: 'M143 106 h14 M150 99 v14 M106 134 h16 M106 140 h10', w: .5, detail: true },
+    { d: kreis(100, 185, 4) + ' ' + kreis(190, 185, 4), w: .9 },
+    { d: 'M214 150 H300 Q306 150 306 156 V186 Q306 192 300 192 H214 Q208 192 208 186 V156 Q208 150 214 150Z M208 168 H306', w: 1.2 },
+    { d: ellipse(256, 148, 34, 6) + ' M238 148 Q240 128 256 128 Q272 128 274 148 M240 142 Q256 146 272 142', w: 1 },
+    { d: 'M20 150 V0 M0 40 H60', w: .4, detail: true },
+  ],
+};
+
+// 16 · Lo sport – Fahrrad an der Steinmauer
+const FAHRRAD = {
+  bild: 'La bici contro il muro',
+  teile: [
+    { d: 'M0 0 H340 V160 H0Z', farbe: '#d9cdb5' },
+    { d: 'M0 160 H340 V220 H0Z', farbe: PFLASTER },
+    { d: 'M0 0 H150 Q140 18 118 16 Q100 32 76 22 Q56 40 30 28 Q14 36 0 30Z', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M228 96 H264 L258 120 H232Z', farbe: HOLZ, tupfer: true },
+    { d: 'M236 96 L252 76 L258 80 L244 96Z', farbe: GELB, tupfer: true },
+    { d: ellipse(176, 210, 100, 6), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 160 H340', w: 1.2 },
+    { d: 'M0 40 H90 M30 40 V70 M0 70 H150 M70 70 V100 M0 100 H170 M110 100 V130 M40 100 V130 M0 130 H340 M180 130 V160 M90 130 V160 M260 130 V160 M200 0 V40 M180 40 H340 M240 40 V70 M190 70 H340 M300 70 V100 M210 100 H340', w: .4, detail: true },
+    { d: kreis(110, 170, 36) + ' ' + kreis(240, 170, 36), w: 1.3 },
+    { d: kreis(110, 170, 31) + ' ' + kreis(240, 170, 31), w: .4, detail: true },
+    { d: 'M110 170 L170 172 L160 118 Z M160 118 L224 120 M170 172 L226 126 M224 120 L240 170', w: 1.3 },
+    { d: 'M224 120 L220 104 M208 104 Q220 98 234 104', w: 1.2 },
+    { d: 'M160 118 L158 110 M146 108 Q158 104 172 108 L170 112 H148Z', w: 1.1 },
+    { d: kreis(170, 172, 9) + ' M170 172 l8 12 M174 184 h8', w: .8 },
+    { d: 'M110 134 Q130 130 140 138 M228 96 H264 L258 120 H232Z', w: .9 },
+    { d: 'M236 96 L252 76 L258 80 L244 96', w: .8 },
+    { d: 'M232 104 h28 M234 112 h24', w: .4, detail: true },
+  ],
+};
+
+// 14 · Che ore sono? – Kirchturm mit Uhr
+const KIRCHTURM = {
+  bild: 'Il campanile',
+  teile: [
+    { d: 'M0 0 H340 V200 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M140 40 H200 V220 H140Z', farbe: CREME },
+    { d: 'M134 40 L170 6 L206 40Z', farbe: TERRA, tupfer: true },
+    { d: kreis(170, 112, 16), farbe: WEISS },
+    { d: 'M0 132 L70 116 L140 128 V220 H0Z', farbe: OCKER, tupfer: true },
+    { d: 'M200 140 L270 124 L340 136 V220 H200Z', farbe: TERRA },
+    { d: 'M0 132 L70 116 L140 128 L140 136 L70 124 L0 140Z M200 140 L270 124 L340 136 V144 L270 132 L200 148Z', farbe: '#c4704f', tupfer: true },
+    { d: 'M186 40 H200 V220 H186Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M140 220 V40 H200 V220', w: 1.3 },
+    { d: 'M134 40 L170 6 L206 40Z M134 40 H206', w: 1.2 },
+    { d: 'M150 80 V62 Q157 50 164 62 V80 M176 80 V62 Q183 50 190 62 V80 M140 86 H200', w: 1 },
+    { d: kreis(170, 112, 16), w: 1.2 },
+    { d: 'M170 112 L170 101 M170 112 L178 116', w: 1.3 },
+    { d: 'M156 150 h28 M140 190 H200 M160 170 v14 h20 v-14', w: .5, detail: true },
+    { d: 'M0 132 L70 116 L140 128 M200 140 L270 124 L340 136 M0 140 L70 124 L140 136 M200 148 L270 132 L340 144', w: 1 },
+    { d: 'M24 160 h14 v20 h-14Z M80 156 h14 v20 h-14Z M230 166 h14 v20 h-14Z M290 162 h14 v20 h-14Z', w: .8 },
+    { d: 'M240 50 q4 -4 8 0 q4 -4 8 0 M262 66 q3 -3 6 0 q3 -3 6 0 M60 60 q4 -4 8 0 q4 -4 8 0', w: .7, detail: true },
+  ],
+};
+
+// 56 · A scuola – Bücherstapel mit Lampe und Heft
+const BUECHER = {
+  bild: 'Libri e quaderno',
+  teile: [
+    { d: 'M0 0 H340 V140 H0Z', farbe: '#e9e2d0' },
+    { d: 'M0 140 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M80 120 H230 V140 H80Z', farbe: ROT, tupfer: true },
+    { d: 'M90 100 H220 V120 H90Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M100 84 H206 V100 H100Z', farbe: GRUEN, tupfer: true },
+    { d: 'M14 46 L40 28 L58 52Z', farbe: GELB, tupfer: true },
+    { d: 'M190 160 L300 154 L304 196 L194 202Z', farbe: WEISS },
+    { d: 'M80 140 H230 L236 148 H86Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 140 H340', w: 1.2 },
+    { d: 'M80 120 H230 V140 H80Z M90 100 H220 V120 H90Z M100 84 H206 V100 H100Z', w: 1.1 },
+    { d: 'M96 120 V140 M210 120 V140 M106 100 V120 M200 100 V120 M116 84 V100 M190 84 V100', w: .5, detail: true },
+    { d: kreis(140, 76, 8) + ' ' + kreis(162, 76, 8) + ' M148 76 h6 M132 76 l-10 4 M170 76 l10 4', w: .9 },
+    { d: ellipse(50, 140, 22, 4) + ' M50 140 L60 74 L36 40', w: 1.1 },
+    { d: 'M14 46 L40 28 L58 52Z', w: 1 },
+    { d: 'M190 160 L300 154 L304 196 L194 202Z M246 157 L249 199', w: 1 },
+    { d: 'M200 170 h38 M201 178 h36 M202 186 h38 M255 167 h38 M256 175 h36 M257 183 h38', w: .4, detail: true },
+    { d: 'M210 210 L290 204', w: 1.6 },
+    { d: 'M270 0 V140 M270 70 H340', w: .5, detail: true },
+  ],
+};
+
+// 24 · In cucina – gedeckter Tisch
+const glas = (x, rot) => ({ d: `M${x - 10} 100 Q${x - 10} 124 ${x} 124 Q${x + 10} 124 ${x + 10} 100Z M${x} 124 V138 ` + ellipse(x, 139, 8, 2), rot });
+const TISCH = {
+  bild: 'La tavola apparecchiata',
+  teile: [
+    { d: 'M0 0 H340 V100 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 100 H340 V220 H0Z', farbe: WEISS },
+    { d: 'M0 200 H340 V214 H0Z', farbe: HIMMEL, tupfer: true },
+    { d: ellipse(110, 160, 48, 14) + ' ' + ellipse(230, 160, 48, 14), farbe: WEISS },
+    { d: ellipse(110, 158, 26, 7), farbe: GELB, tupfer: true },
+    { d: 'M156 110 Q156 122 164 122 Q172 122 172 110Z', farbe: '#8e2f3b', tupfer: true },
+    { d: 'M186 128 V74 Q186 64 192 60 V40 H200 V60 Q206 64 206 74 V128Z', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M40 20 H120 V80 H40Z', farbe: HIMMEL, himmel: true },
+    { d: ellipse(114, 176, 50, 6) + ' ' + ellipse(234, 176, 50, 6), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 100 H340', w: 1.2 },
+    { d: 'M40 20 H120 V80 H40Z M80 20 V80 M40 50 H120', w: .9 },
+    { d: ellipse(110, 160, 48, 14) + ' ' + ellipse(230, 160, 48, 14), w: 1.1 },
+    { d: ellipse(110, 158, 26, 7) + ' ' + ellipse(230, 158, 26, 7), w: .6, detail: true },
+    { d: 'M52 150 L48 176 M48 150 V158 M56 150 V158 M170 150 L174 178 M288 150 L292 176 M284 150 V158 M292 150 V158 M50 150 L48 158', w: .9 },
+    { d: glas(164).d + ' ' + glas(270).d, w: 1 },
+    { d: 'M186 128 V74 Q186 64 192 60 V40 H200 V60 Q206 64 206 74 V128Z', w: 1.1 },
+    { d: 'M0 200 H340 M0 214 H340 M20 200 V214 M60 200 V214 M100 200 V214 M140 200 V214 M180 200 V214 M220 200 V214 M260 200 V214 M300 200 V214', w: .4, detail: true },
+  ],
+};
+
+// 11 · Com’è? – Kleiderständer mit Kleid, Bluse und Schal
+const KLEIDER = {
+  bild: "L'appendiabiti",
+  teile: [
+    { d: 'M0 0 H340 V170 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 170 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M118 66 H142 L146 90 L164 160 H96 L114 90Z', farbe: ROT, tupfer: true },
+    { d: 'M186 66 H214 L224 76 L216 86 L212 82 V132 H188 V82 L184 86 L176 76Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M226 50 Q232 74 226 114 L236 116 Q242 72 238 50Z', farbe: GELB, tupfer: true },
+    { d: ellipse(172, 192, 96, 5), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 170 H340', w: 1.2 },
+    { d: 'M90 50 H250 M96 50 V186 M244 50 V186 M80 186 H112 M228 186 H260', w: 1.3 },
+    { d: 'M130 50 q-1 6 0 6 M114 66 L130 56 L146 66 H114 M200 50 q-1 6 0 6 M184 68 L200 56 L216 68', w: .9 },
+    { d: 'M118 66 H142 L146 90 L164 160 H96 L114 90Z M114 90 H146', w: 1.1 },
+    { d: 'M124 96 L116 158 M136 96 L144 158 M130 96 V158', w: .4, detail: true },
+    { d: 'M186 66 H214 L224 76 L216 86 L212 82 V132 H188 V82 L184 86 L176 76Z M200 66 V132', w: 1.1 },
+    { d: 'M226 50 Q232 74 226 114 L236 116 Q242 72 238 50', w: 1 },
+    { d: 'M227 70 l10 1 M227 84 l10 1 M226 98 l10 1 M226 112 l2 8 M232 114 l1 8', w: .5, detail: true },
+    { d: 'M290 40 V60 M284 60 H296 M30 120 h20 M34 126 h12', w: .5, detail: true },
+  ],
+};
+
+// 15 · Gli hobby – Sessel am Fenster
+const STUHL = {
+  bild: 'La poltrona vicino alla finestra',
+  teile: [
+    { d: 'M0 0 H340 V160 H0Z', farbe: '#ecd3a8' },
+    { d: 'M0 160 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M210 30 H300 V128 H210Z', farbe: HIMMEL, himmel: true },
+    { d: 'M196 22 Q206 80 192 140 L208 140 Q214 80 208 22Z', farbe: WEISS },
+    { d: 'M80 72 Q80 56 96 56 H154 Q170 56 170 72 V130 H80Z M64 110 Q64 96 78 96 H86 V150 H64Z M164 96 H172 Q186 96 186 110 V150 H164Z M86 126 H164 V150 H86Z', farbe: GRUEN, tupfer: true },
+    { d: 'M100 122 L130 117 L132 125 L102 129Z', farbe: ROT, tupfer: true },
+    { d: 'M240 146 L244 126 H262 L266 146Z', farbe: TERRA, tupfer: true },
+    { d: 'M252 126 q-14 -8 -10 -24 q8 4 10 24 q2 -22 12 -28 q4 14 -12 28', farbe: '#5b8a4c', tupfer: true },
+    { d: ellipse(130, 178, 70, 6) + ' ' + ellipse(258, 182, 34, 4), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 160 H340', w: 1.2 },
+    { d: 'M210 30 H300 V128 H210Z M255 30 V128 M210 79 H300 M204 132 H306', w: 1 },
+    { d: 'M196 22 Q206 80 192 140 M208 22 Q214 80 208 140 M190 20 H220', w: .8 },
+    { d: 'M80 130 V72 Q80 56 96 56 H154 Q170 56 170 72 V130', w: 1.2 },
+    { d: 'M86 150 V104 Q86 96 78 96 Q64 96 64 110 V150 Z M164 150 V104 Q164 96 172 96 Q186 96 186 110 V150Z M86 126 H164 M64 150 H186', w: 1.2 },
+    { d: 'M70 150 V172 M180 150 V172 M92 150 V166 M158 150 V166', w: 1 },
+    { d: 'M100 122 L130 117 L132 125 L102 129Z', w: .8 },
+    { d: 'M222 146 H284 M228 146 V182 M278 146 V182', w: 1.1 },
+    { d: 'M240 146 L244 126 H262 L266 146 M252 126 q-14 -8 -10 -24 q8 4 10 24 q2 -22 12 -28 q4 14 -12 28', w: .9 },
+    { d: 'M0 190 H340 M60 160 L40 220 M160 160 L150 220 M260 160 L270 220', w: .4, detail: true },
+  ],
+};
+
+// 20 · In treno – Blick aus dem Zugfenster
+const ZUGFENSTER = {
+  bild: 'Dal finestrino del treno',
+  teile: [
+    { d: 'M40 30 H300 V112 H40Z', farbe: HIMMEL, himmel: true },
+    { d: 'M40 110 Q120 90 180 104 Q240 92 300 106 V170 H40Z', farbe: '#b8c47c' },
+    { d: 'M40 140 Q170 126 300 136 V170 H40Z', farbe: '#e4cb8e', tupfer: true },
+    { d: [70, 84, 98, 232, 246].map((x, i) => kreis(x, 104 - (i % 2) * 2, 6)).join(' '), farbe: '#5b8a4c', tupfer: true },
+    { d: 'M0 0 H340 V220 H0Z M50 30 Q40 30 40 40 V160 Q40 170 50 170 H290 Q300 170 300 160 V40 Q300 30 290 30Z', farbe: '#c9b79c' },
+    { d: 'M24 172 H316 V186 H24Z', farbe: HOLZ, tupfer: true },
+    { d: 'M252 172 V152 Q264 148 276 152 V172Z', farbe: WEISS },
+    { d: 'M24 186 H316 L310 196 H30Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M50 30 Q40 30 40 40 V160 Q40 170 50 170 H290 Q300 170 300 160 V40 Q300 30 290 30Z', w: 1.4 },
+    { d: 'M44 34 H296', w: .5, detail: true },
+    { d: 'M40 110 Q120 90 180 104 Q240 92 300 106', w: 1 },
+    { d: 'M40 140 Q170 126 300 136', w: .9 },
+    { d: 'M60 156 Q170 142 290 150 M80 166 Q170 156 280 162 M120 112 Q150 120 140 134 M200 108 Q220 120 214 134', w: .45, detail: true },
+    { d: [70, 84, 98, 232, 246].map((x, i) => kreis(x, 104 - (i % 2) * 2, 6)).join(' '), w: .7 },
+    { d: 'M150 170 V112 M146 116 H154 M260 170 V114 M256 118 H264 M40 120 Q95 128 150 116 Q205 126 260 118 Q280 122 300 120', w: .7 },
+    { d: 'M24 172 H316 V186 H24Z', w: 1.1 },
+    { d: 'M252 172 V152 Q264 148 276 152 V172 M276 158 q8 0 6 8 q-2 4 -6 2', w: .9 },
+    { d: 'M0 200 H340 M10 0 V220 M330 0 V220', w: .5, detail: true },
+    { d: 'M110 52 q4 -4 8 0 q4 -4 8 0', w: .7, detail: true },
+  ],
+};
+
+// 44 · Le spezie – Basilikum und Rosmarin auf der Fensterbank
+const blatt = (x, y, dx, dy) => `M${x} ${y} q${dx * .5 - dy * .45} ${dy * .5 + dx * .45} ${dx} ${dy} q${-dx * .5 - dy * .45} ${-dy * .5 + dx * .45} ${-dx} ${-dy}Z`;
+const BASILIKUM = [[107, 108, -22, -12], [107, 108, -14, -26], [107, 108, 2, -30], [107, 108, 16, -24], [107, 108, 24, -10], [107, 96, -18, -22], [107, 96, 14, -22]].map(b => blatt(...b)).join(' ');
+const KRAEUTER = {
+  bild: 'Basilico sul davanzale',
+  teile: [
+    { d: 'M0 0 H340 V220 H0Z', farbe: OCKER },
+    { d: 'M60 10 H280 V150 H60Z', farbe: HIMMEL, himmel: true },
+    { d: 'M40 150 H300 V164 H40Z', farbe: CREME },
+    { d: 'M90 150 L84 116 H130 L124 150Z M82 108 H132 V116 H82Z M186 150 L182 124 H214 L210 150Z', farbe: TERRA, tupfer: true },
+    { d: BASILIKUM, farbe: '#5b8a4c', tupfer: true },
+    { d: kreis(250, 143, 7) + ' ' + kreis(264, 145, 6), farbe: WEISS },
+    { d: [0, 1, 2, 3, 4].map(i => ellipse(292, 40 + i * 16, 3, 7)).join(' '), farbe: ROT, tupfer: true },
+    { d: 'M40 164 H300 L296 172 H44Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M60 150 V10 H280 V150 M170 10 V150 M60 80 H280', w: 1.1 },
+    { d: 'M40 150 H300 V164 H40Z', w: 1.2 },
+    { d: 'M90 150 L84 116 H130 L124 150 M82 108 H132 V116 H82Z', w: 1.1 },
+    { d: BASILIKUM, w: .8 },
+    { d: 'M186 150 L182 124 H214 L210 150 M180 118 H216 V124 H180Z', w: 1 },
+    { d: 'M190 118 L184 74 M198 118 V66 M206 118 L214 78 ' + [0, 1, 2, 3, 4, 5].map(i => `M${187 - i * .7} ${110 - i * 7} l-4 -3 M${187 - i * .7} ${110 - i * 7} l4 -3 M198 ${108 - i * 7} l-4 -3 M198 ${108 - i * 7} l4 -3 M${207 + i} ${110 - i * 6} l4 -3`).join(' '), w: .6, detail: true },
+    { d: kreis(250, 143, 7) + ' ' + kreis(264, 145, 6) + ' M250 136 v-4 M264 139 v-4', w: .8 },
+    { d: 'M292 14 V100 ' + [0, 1, 2, 3, 4].map(i => ellipse(292, 40 + i * 16, 3, 7)).join(' '), w: .7 },
+    { d: 'M20 190 q14 -6 24 2 M300 200 h24', w: .45, detail: true },
+  ],
+};
+
+// 32 · Che lavoro fai? – Schreibtisch mit grüner Lampe
+const SCHREIBTISCH = {
+  bild: 'La scrivania',
+  teile: [
+    { d: 'M0 0 H340 V130 H0Z', farbe: '#e9e2d0' },
+    { d: 'M0 130 H340 V220 H0Z', farbe: '#d8cdb8' },
+    { d: 'M20 130 H320 V142 H20Z M30 142 H110 V200 H30Z', farbe: HOLZ, tupfer: true },
+    { d: 'M60 30 H120 V90 H60Z', farbe: HIMMEL, himmel: true },
+    { d: 'M60 70 Q80 60 120 68 V90 H60Z', farbe: '#b8c47c' },
+    { d: 'M238 62 L256 46 L274 68Z', farbe: GRUEN, tupfer: true },
+    { d: 'M130 128 L190 124 L192 130 L132 134Z', farbe: WEISS },
+    { d: 'M200 128 V108 H216 V128Z', farbe: TERRA, tupfer: true },
+    { d: 'M110 142 H320 V150 H110Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M20 130 H320 V142 H20Z', w: 1.3 },
+    { d: 'M30 142 V200 H110 V142 M310 142 V206 M120 142 V206', w: 1.1 },
+    { d: 'M30 162 H110 M30 182 H110 M64 152 h12 M64 172 h12 M64 192 h12', w: .7 },
+    { d: 'M60 30 H120 V90 H60Z M54 24 H126 V96 H54Z', w: .9 },
+    { d: 'M60 70 Q80 60 120 68', w: .5, detail: true },
+    { d: ellipse(272, 130, 18, 3) + ' M272 128 L282 82 L258 58', w: 1.1 },
+    { d: 'M238 62 L256 46 L274 68Z', w: 1 },
+    { d: 'M130 128 L190 124 L192 130 L132 134Z M140 124 L196 120', w: .8 },
+    { d: 'M200 128 V108 H216 V128Z M204 108 L200 92 M210 108 V90 M214 108 L220 94', w: .9 },
+    { d: 'M160 0 V130 M0 110 H40', w: .35, detail: true },
+  ],
+};
+
+// 10 · I parenti – Kommode mit Radio, Fotos und Blumen
+const KOMMODE = {
+  bild: 'Il comò con le foto',
+  teile: [
+    { d: 'M0 0 H340 V200 H0Z', farbe: '#ecd3a8' },
+    { d: 'M0 200 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M60 110 H280 V196 H60Z M54 104 H286 V110 H54Z', farbe: '#b9814b', tupfer: true },
+    { d: 'M80 104 V70 Q80 60 90 60 H140 Q150 60 150 70 V104Z', farbe: CREME },
+    { d: 'M174 100 V70 H196 V100Z M214 100 V80 H230 V100Z', farbe: HIMMEL, himmel: true },
+    { d: 'M248 104 Q244 92 250 84 Q246 78 252 72 H264 Q270 78 266 84 Q272 92 268 104Z', farbe: HIMMEL, tupfer: true },
+    { d: kreis(246, 52, 6) + ' ' + kreis(262, 44, 6) + ' ' + kreis(276, 56, 6), farbe: GELB, tupfer: true },
+    { d: 'M60 196 H280 L284 204 H64Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M60 110 H280 V196 H60Z M54 104 H286 V110 H54Z', w: 1.2 },
+    { d: 'M70 120 H270 V146 H70Z M70 154 H270 V184 H70Z', w: .8 },
+    { d: kreis(170, 133, 3) + ' ' + kreis(170, 169, 3) + ' M66 196 V204 M274 196 V204', w: .8 },
+    { d: 'M80 104 V70 Q80 60 90 60 H140 Q150 60 150 70 V104', w: 1.1 },
+    { d: kreis(104, 84, 12) + ' M124 74 H142 V90 H124Z ' + kreis(128, 97, 2.5) + ' ' + kreis(138, 97, 2.5), w: .8 },
+    { d: 'M98 78 h12 M96 84 h16 M98 90 h12', w: .4, detail: true },
+    { d: 'M170 104 V66 H200 V104Z M174 100 V70 H196 V100Z M210 104 V76 H234 V104Z M214 100 V80 H230 V100Z', w: .9 },
+    { d: kreis(185, 82, 4) + ' M178 100 q7 -12 14 0 ' + kreis(222, 88, 3) + ' M217 100 q5 -8 10 0', w: .5, detail: true },
+    { d: 'M248 104 Q244 92 250 84 Q246 78 252 72 H264 Q270 78 266 84 Q272 92 268 104Z', w: 1 },
+    { d: 'M256 72 L246 58 M258 72 L262 50 M260 72 L276 62 ' + kreis(246, 52, 6) + ' ' + kreis(262, 44, 6) + ' ' + kreis(276, 56, 6), w: .7 },
+    { d: 'M0 200 H340', w: 1.1 },
+  ],
+};
+
+// 2 · I numeri – Abreißkalender an der Wand
+const KALENDER = {
+  bild: 'Il calendario',
+  teile: [
+    { d: 'M0 0 H340 V220 H0Z', farbe: '#efe1c2' },
+    { d: 'M140 40 H200 V70 H140Z', farbe: ROT, tupfer: true },
+    { d: 'M144 70 H196 V170 H144Z', farbe: WEISS },
+    { d: 'M40 60 H100 V110 H40Z', farbe: HIMMEL, himmel: true },
+    { d: 'M40 92 H100 V110 H40Z', farbe: '#7fb0c8', tupfer: true },
+    { d: 'M250 120 V96 H270 V120Z', farbe: GELB, tupfer: true },
+    { d: 'M282 120 V100 H300 V120Z', farbe: TERRA, tupfer: true },
+    { d: 'M196 74 H202 V174 H148 V170 H196Z', schatten: true },
+  ],
+  linien: [
+    { d: kreis(170, 22, 2) + ' M170 24 L146 40 M170 24 L194 40', w: .8 },
+    { d: 'M140 40 H200 V70 H140Z M144 70 H196 V170 H144Z', w: 1.2 },
+    { d: 'M150 50 h40 M154 58 h32', w: .5, detail: true },
+    { d: 'M156 100 l7 -6 V146 M178 100 q8 -6 14 0 q3 6 -7 10 q11 3 8 12 q-4 8 -15 2', w: 1.4 },
+    { d: 'M154 82 h32 M156 158 h28', w: .5, detail: true },
+    { d: 'M146 170 Q168 184 196 172', w: .8 },
+    { d: 'M40 60 H100 V110 H40Z M40 92 H100 M60 92 L66 80 L72 92', w: .9 },
+    { d: 'M240 120 H320 M240 120 l6 6 M320 120 l-6 6', w: 1.1 },
+    { d: 'M250 120 V96 H270 V120Z M248 92 H272 V96 H248Z M282 120 V100 H300 V120Z M280 96 H302 V100 H280Z', w: .9 },
+    { d: 'M0 200 H340 M20 0 V200', w: .4, detail: true },
+  ],
+};
+
+// 19 · Dov’è la banca? – Laterne mit Straßenschild
+const LATERNE = {
+  bild: "Il lampione all'angolo",
+  teile: [
+    { d: 'M0 0 H340 V200 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 30 H150 V200 H0Z', farbe: OCKER, tupfer: true },
+    { d: 'M150 30 L340 56 V200 H150Z', farbe: '#e3a487', tupfer: true },
+    { d: 'M0 200 H340 V220 H0Z', farbe: PFLASTER },
+    { d: 'M164 72 L232 80 V102 L164 94Z', farbe: WEISS },
+    { d: 'M48 70 H72 L66 100 H54Z', farbe: GELB, tupfer: true },
+    { d: 'M20 110 h10 v30 h-10Z M50 110 h10 v30 h-10Z M98 110 h10 v30 h-10Z M128 110 h10 v30 h-10Z', farbe: GRUEN, tupfer: true },
+    { d: 'M150 30 L340 56 V70 L150 44Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 30 H150 V200 M150 30 L340 56 M-2 26 H152', w: 1.2 },
+    { d: 'M0 200 H340', w: 1.2 },
+    { d: 'M164 72 L232 80 V102 L164 94Z', w: 1 },
+    { d: 'M172 82 l52 6 M176 89 l40 5', w: .6, detail: true },
+    { d: 'M130 60 H76 Q62 60 62 68 M60 68 L48 70 L60 62 L72 70Z M48 70 H72 L66 100 H54Z M60 100 V106', w: 1.1 },
+    { d: 'M30 110 h20 v30 h-20Z M108 110 h20 v30 h-20Z', w: .9 },
+    { d: 'M20 110 h10 v30 h-10Z M50 110 h10 v30 h-10Z M98 110 h10 v30 h-10Z M128 110 h10 v30 h-10Z', w: .6, detail: true },
+    { d: 'M60 200 V164 Q76 148 92 164 V200', w: 1 },
+    { d: 'M250 200 V130 L300 136 V200 M260 120 l24 3 M276 134 v66', w: 1 },
+    { d: 'M30 220 L60 202 M150 220 V202 M280 220 L260 202', w: .4, detail: true },
+  ],
+};
+
+// 23 · Un etto di salame – Marktstand mit Markise
+const STREIFEN = Array.from({ length: 8 }, (_, i) => i).filter(i => i % 2 === 0).map(i =>
+  `M${40 + i * 32.5} 40 H${40 + (i + 1) * 32.5} L${20 + (i + 1) * 37.5} 80 H${20 + i * 37.5}Z`).join(' ');
+const MARKT = {
+  bild: 'Al banco del mercato',
+  teile: [
+    { d: 'M0 0 H340 V80 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 80 H340 V196 H0Z', farbe: CREME },
+    { d: 'M40 40 H300 L320 80 H20Z', farbe: WEISS },
+    { d: STREIFEN, farbe: ROT, tupfer: true },
+    { d: 'M40 140 H300 V150 H40Z M50 150 H140 V196 H50Z M150 150 H240 V196 H150Z', farbe: HOLZ, tupfer: true },
+    { d: [70, 88, 106, 79, 97].map((x, i) => kreis(x, i < 3 ? 132 : 120, 8)).join(' '), farbe: ROT, tupfer: true },
+    { d: [170, 188, 206, 224, 179, 197, 215].map((x, i) => ellipse(x, i < 4 ? 133 : 122, 8, 6)).join(' '), farbe: GELB, tupfer: true },
+    { d: 'M250 140 Q248 118 270 116 Q292 118 290 140Z', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M0 196 H340 V220 H0Z', farbe: PFLASTER },
+    { d: 'M20 80 H320 V92 H20Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M40 40 H300 L320 80 H20Z', w: 1.2 },
+    { d: STREIFEN, w: .5, detail: true },
+    { d: Array.from({ length: 8 }, (_, i) => `M${20 + i * 37.5} 80 q18.75 10 37.5 0`).join(' '), w: .9 },
+    { d: 'M30 84 V196 M310 84 V196 M0 196 H340', w: 1.2 },
+    { d: 'M40 140 H300 V150 H40Z M50 150 H140 V196 H50Z M150 150 H240 V196 H150Z', w: 1.1 },
+    { d: 'M50 166 H140 M50 182 H140 M150 166 H240 M150 182 H240', w: .4, detail: true },
+    { d: [70, 88, 106, 79, 97].map((x, i) => kreis(x, i < 3 ? 132 : 120, 8)).join(' '), w: .7 },
+    { d: [170, 188, 206, 224, 179, 197, 215].map((x, i) => ellipse(x, i < 4 ? 133 : 122, 8, 6)).join(' '), w: .7 },
+    { d: 'M250 140 Q248 118 270 116 Q292 118 290 140 M260 124 q10 -6 20 0', w: .8 },
+    { d: 'M112 148 l10 -14 h14 v10Z M240 120 h20 v12 h-20Z', w: .7 },
+  ],
+};
+
+// 28 · Un problema in albergo – weißes Haus am Meer
+const MEERHAUS = {
+  bild: 'Una casa bianca sul mare',
+  teile: [
+    { d: 'M0 0 H340 V120 H274 V74 H262 V56 H220 V74 H146 V120 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 120 H150 V150 Q80 140 0 152Z M270 120 H340 V160 H270Z', farbe: '#7fb0c8', tupfer: true },
+    { d: 'M0 152 Q80 140 150 150 V170 H270 V160 H340 V220 H0Z', farbe: '#e4cb8e' },
+    { d: 'M150 80 H270 V170 H150Z M146 74 H274 V80 H146Z M220 74 V56 H262 V74Z', farbe: WEISS },
+    { d: 'M164 96 h18 v22 h-18Z M236 96 h18 v22 h-18Z M200 170 V138 Q209 128 218 138 V170Z M232 60 h12 v10 h-12Z', farbe: '#5f86b0', tupfer: true },
+    { d: 'M150 100 Q132 96 134 120 Q126 140 142 150 Q136 166 150 170 Z', farbe: '#c8508a', tupfer: true },
+    { d: 'M60 116 L60 92 L78 116Z', farbe: WEISS },
+    { d: 'M52 118 H84 L80 123 H56Z', farbe: TERRA, tupfer: true },
+    { d: 'M270 80 H282 V170 H270Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 120 H134 M270 120 H340', w: .9 },
+    { d: 'M0 152 Q80 140 150 150 M270 160 H340', w: 1.1 },
+    { d: 'M150 170 V80 H270 V170 M146 74 H274 V80 H146Z M220 74 V56 H262 V74', w: 1.2 },
+    { d: 'M164 96 h18 v22 h-18Z M236 96 h18 v22 h-18Z M200 170 V138 Q209 128 218 138 V170 M232 60 h12 v10 h-12Z', w: .9 },
+    { d: 'M150 100 Q132 96 134 120 Q126 140 142 150 Q136 166 150 170', w: .8 },
+    { d: 'M60 116 L60 92 L78 116Z M52 118 H84 L80 123 H56Z', w: .9 },
+    { d: 'M100 132 q6 -3 12 0 M20 140 q6 -3 12 0 M290 130 q6 -3 12 0 M120 146 q6 -3 12 0', w: .5, detail: true },
+    { d: 'M30 190 q14 -6 28 0 M280 196 q12 -6 24 0', w: .45, detail: true },
+    { d: 'M100 40 q4 -4 8 0 q4 -4 8 0 M300 30 q3 -3 6 0 q3 -3 6 0', w: .7, detail: true },
+  ],
+};
+
+// 3 · Di dove sei? – Italienkarte und Globus
+const STIEFEL = 'M92 34 L112 30 L128 44 L124 58 L140 74 L156 92 L172 100 L180 112 L170 116 L160 108 L150 116 L156 128 L146 134 L138 120 L130 104 L116 90 L104 72 L96 56Z';
+const KARTE = {
+  bild: "La carta d'Italia",
+  teile: [
+    { d: 'M0 0 H340 V150 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 150 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M30 20 H200 V140 H30Z', farbe: '#bcd5e2' },
+    { d: STIEFEL + ' M128 138 L148 132 L142 142Z ' + ellipse(72, 100, 7, 12), farbe: '#b8c47c', tupfer: true },
+    { d: kreis(260, 96, 36), farbe: HIMMEL, tupfer: true },
+    { d: 'M240 76 q10 -6 18 2 q4 10 -6 14 q-10 0 -12 -16Z M266 100 q12 -4 16 6 q-2 12 -12 10 q-6 -6 -4 -16Z', farbe: '#b8c47c', tupfer: true },
+    { d: ellipse(264, 154, 34, 5), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 150 H340', w: 1.2 },
+    { d: 'M30 20 H200 V140 H30Z', w: 1.1 },
+    { d: STIEFEL + ' M128 138 L148 132 L142 142Z ' + ellipse(72, 100, 7, 12), w: .9 },
+    { d: 'M100 46 L112 64 L126 84 L142 98 L158 108', w: .6, detail: true },
+    { d: kreis(100, 46, 2.5) + ' ' + kreis(126, 84, 2.5) + ' ' + kreis(158, 108, 2.5), w: 1 },
+    { d: kreis(260, 96, 36), w: 1.2 },
+    { d: 'M216 96 A44 44 0 0 0 304 96 M260 132 V146 ' + ellipse(260, 150, 22, 4), w: 1 },
+    { d: 'M240 76 q10 -6 18 2 q4 10 -6 14 q-10 0 -12 -16Z M266 100 q12 -4 16 6 q-2 12 -12 10 q-6 -6 -4 -16Z M226 96 Q260 104 294 96 M260 60 Q248 96 260 132', w: .5, detail: true },
+    { d: 'M36 26 l4 4 M194 26 l-4 4', w: .7 },
+  ],
+};
+
+// 6 · L'aperitivo – Spritz am Meer
+const SPRITZ = {
+  bild: 'Uno spritz al tramonto',
+  teile: [
+    { d: 'M0 0 H340 V90 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 90 H340 V140 H0Z', farbe: '#7fb0c8', tupfer: true },
+    { d: 'M0 140 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: 'M122 76 Q122 118 150 120 Q178 118 178 76Z', farbe: '#ee8a3c', tupfer: true },
+    { d: kreis(140, 98, 11), farbe: '#f2a45a', tupfer: true },
+    { d: ellipse(250, 170, 34, 9), farbe: WEISS },
+    { d: ellipse(238, 164, 7, 5) + ' ' + ellipse(253, 162, 7, 5) + ' ' + ellipse(266, 166, 7, 5), farbe: '#8a9a3a', tupfer: true },
+    { d: ellipse(156, 176, 34, 5) + ' ' + ellipse(256, 182, 38, 5), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 90 H340', w: .9 },
+    { d: 'M0 140 H340', w: 1.2 },
+    { d: 'M120 60 Q118 120 150 124 Q182 120 180 60', w: 1.2 },
+    { d: ellipse(150, 60, 30, 5), w: .9 },
+    { d: 'M122 76 Q150 82 178 76', w: .7 },
+    { d: 'M150 124 V168 ' + ellipse(150, 170, 24, 5), w: 1.1 },
+    { d: kreis(140, 98, 11) + ' M140 87 V109 M129 98 H151', w: .7 },
+    { d: 'M160 36 L168 104', w: 1.2 },
+    { d: 'M150 84 h10 v8 h-10Z M160 100 h9 v8 h-9Z', w: .5, detail: true },
+    { d: ellipse(250, 170, 34, 9) + ' ' + ellipse(238, 164, 7, 5) + ' ' + ellipse(253, 162, 7, 5) + ' ' + ellipse(266, 166, 7, 5), w: .8 },
+    { d: 'M30 104 q6 -3 12 0 M240 112 q6 -3 12 0 M300 98 q6 -3 12 0', w: .5, detail: true },
+  ],
+};
+
+// 7 · La merenda – Picknick unter dem Baum
+const decke = t => [80 + 170 * t, 150 - 10 * t, 110 + 190 * t, 206 - 16 * t];
+const KAROS = [.2, .4, .6, .8].map(t => { const [a, b, c, d] = decke(t); return `M${a} ${b} L${c} ${d}`; }).join(' ')
+  + ' ' + [1 / 3, 2 / 3].map(s => `M${80 + 30 * s} ${150 + 56 * s} L${250 + 50 * s} ${140 + 50 * s}`).join(' ');
+const PICKNICK = {
+  bild: 'Un picnic sul prato',
+  teile: [
+    { d: 'M0 0 H340 V112 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 110 Q170 96 340 110 V220 H0Z', farbe: '#b8c47c' },
+    { d: ellipse(50, 50, 40, 32), farbe: '#5b8a4c', tupfer: true },
+    { d: 'M80 150 L250 140 L300 190 L110 206Z', farbe: ROT, tupfer: true },
+    { d: 'M160 150 H220 L214 180 H166Z', farbe: HOLZ, tupfer: true },
+    { d: 'M120 176 Q140 166 160 176 Q140 186 120 176Z', farbe: GELB, tupfer: true },
+    { d: kreis(244, 176, 7), farbe: ROT, tupfer: true },
+    { d: 'M44 110 h12 v6 h-12Z M166 180 H214 L218 186 H170Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 110 Q170 96 340 110', w: 1 },
+    { d: 'M44 114 Q48 90 40 74 M52 114 Q50 92 58 76 M48 80 L60 70', w: 1.1 },
+    { d: ellipse(50, 50, 40, 32), w: 1 },
+    { d: 'M80 150 L250 140 L300 190 L110 206Z', w: 1.1 },
+    { d: KAROS, w: .4, detail: true },
+    { d: 'M160 150 H220 L214 180 H166Z M166 150 Q190 120 214 150 M163 160 H217', w: 1 },
+    { d: 'M120 176 Q140 166 160 176 Q140 186 120 176Z M130 172 l4 6 M140 170 l4 6 M150 172 l4 6', w: .8 },
+    { d: kreis(244, 176, 7) + ' M244 169 l2 -5', w: .8 },
+    { d: 'M20 140 l3 -6 l3 6 M300 130 l3 -6 l3 6 M60 190 l3 -6 l3 6 M320 200 l3 -6 l3 6', w: .5, detail: true },
+    { d: 'M200 40 q4 -4 8 0 q4 -4 8 0', w: .7, detail: true },
+  ],
+};
+
+// 8 · Alla cassa – alte Registrierkasse
+const TASTEN = Array.from({ length: 18 }, (_, i) => kreis(128 + (i % 6) * 17 - Math.floor(i / 6) * 2, 96 + Math.floor(i / 6) * 14, 3.5)).join(' ');
+const KASSE = {
+  bild: 'Il registratore di cassa',
+  teile: [
+    { d: 'M0 0 H340 V150 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 150 H340 V220 H0Z', farbe: HOLZ, tupfer: true },
+    { d: 'M100 150 L112 84 H228 L240 150Z M140 84 V58 H200 V84Z', farbe: GELB, tupfer: true },
+    { d: 'M148 62 H192 V76 H148Z M184 170 L196 192 L214 188 L204 166Z', farbe: WEISS },
+    { d: 'M96 150 H244 V166 H96Z', farbe: '#c9935e', tupfer: true },
+    { d: ellipse(66, 172, 9, 3) + ' ' + ellipse(80, 178, 9, 3), farbe: GELB, tupfer: true },
+    { d: 'M96 166 H244 L248 174 H100Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 150 H340', w: 1.2 },
+    { d: 'M100 150 L112 84 H228 L240 150 M140 84 V58 H200 V84', w: 1.2 },
+    { d: 'M148 62 H192 V76 H148Z', w: .8 },
+    { d: 'M156 66 v6 M164 66 l3 6 M174 66 h4 v6 M184 66 q4 0 3 3 q-1 3 -3 3', w: .5, detail: true },
+    { d: TASTEN, w: .6, detail: true },
+    { d: 'M96 150 H244 V166 H96Z M160 158 h20', w: 1 },
+    { d: 'M240 120 h14 v-12 ' + kreis(258, 104, 4), w: 1 },
+    { d: 'M184 170 L196 192 L214 188 L204 166', w: .8 },
+    { d: ellipse(66, 172, 9, 3) + ' ' + ellipse(80, 178, 9, 3), w: .7 },
+    { d: 'M20 40 H90 M30 40 V24 h12 v16 M56 40 V20 h10 v20 M260 46 H330 M270 46 V30 h14 v16 M300 46 V26 h12 v20', w: .7 },
+  ],
+};
+
+// 12 · Gli animali – Katze vor der grünen Tür
+const KATZE = {
+  bild: 'Il gatto davanti alla porta',
+  teile: [
+    { d: 'M0 0 H340 V200 H0Z', farbe: OCKER },
+    { d: 'M130 174 V80 Q170 40 210 80 V174Z', farbe: GRUEN, tupfer: true },
+    { d: 'M110 186 H230 V200 H110Z M120 174 H220 V186 H120Z', farbe: CREME },
+    { d: 'M0 200 H340 V220 H0Z', farbe: PFLASTER },
+    { d: 'M140 174 Q132 152 144 142 Q156 136 160 152 Q164 168 158 174Z ' + kreis(150, 133, 9), farbe: '#9a8f80', tupfer: true },
+    { d: 'M240 200 L244 176 H264 L268 200Z M74 200 L78 176 H98 L102 200Z', farbe: TERRA, tupfer: true },
+    { d: [248, 256, 262, 80, 88, 96].map((x, i) => kreis(x, 168 - (i % 2) * 6, 5)).join(' '), farbe: ROT, tupfer: true },
+    { d: 'M160 56 h20 v12 h-20Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M20 60 h10 v40 h-10Z M60 60 h10 v40 h-10Z M270 60 h10 v40 h-10Z M310 60 h10 v40 h-10Z', farbe: GRUEN, tupfer: true },
+  ],
+  linien: [
+    { d: 'M130 174 V80 Q170 40 210 80 V174 M170 60 V174', w: 1.2 },
+    { d: 'M140 90 h22 v30 h-22Z M178 90 h22 v30 h-22Z M140 130 h22 v36 h-22Z M178 130 h22 v36 h-22Z', w: .5, detail: true },
+    { d: 'M110 186 H230 V200 H110Z M120 174 H220 V186', w: 1 },
+    { d: 'M0 200 H340', w: 1.1 },
+    { d: 'M140 174 Q132 152 144 142 Q156 136 160 152 Q164 168 158 174Z ' + kreis(150, 133, 9), w: 1 },
+    { d: 'M143 128 L143 119 L148 125 M152 125 L157 119 L157 128 M158 172 Q178 174 172 160', w: .9 },
+    { d: 'M146 132 h1 M153 132 h1 M140 136 l-6 -1 M160 136 l6 -1', w: .5, detail: true },
+    { d: 'M240 200 L244 176 H264 L268 200 M74 200 L78 176 H98 L102 200', w: .9 },
+    { d: [248, 256, 262, 80, 88, 96].map((x, i) => kreis(x, 168 - (i % 2) * 6, 5)).join(' '), w: .6, detail: true },
+    { d: 'M160 56 h20 v12 h-20Z M168 59 v6 M172 59 q3 0 2 3 q-1 3 -3 3', w: .7 },
+    { d: 'M30 60 h30 v40 h-30Z M280 60 h30 v40 h-30Z', w: .9 },
+    { d: 'M20 60 h10 v40 h-10Z M60 60 h10 v40 h-10Z M270 60 h10 v40 h-10Z M310 60 h10 v40 h-10Z', w: .5, detail: true },
+  ],
+};
+
+// 18 · In metro o in motorino? – alte Straßenbahn
+const TRAM_FENSTER = [56, 92, 128, 164, 200].map(x => rechteck(x, 92, 28, 30)).join(' ');
+const TRAM = {
+  bild: 'Il tram',
+  teile: [
+    { d: 'M0 0 H340 V40 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 40 H340 V160 H0Z', farbe: '#e3d2b4' },
+    { d: 'M40 80 H300 Q310 80 310 92 V160 H40Z M44 80 L54 68 H290 L300 80Z', farbe: '#e9a35a', tupfer: true },
+    { d: TRAM_FENSTER + ' M250 92 H280 V156 H250Z', farbe: '#d7e1e6' },
+    { d: 'M40 134 H310 V140 H40Z', farbe: WEISS },
+    { d: 'M0 160 H340 V220 H0Z', farbe: PFLASTER },
+    { d: 'M40 160 H310 V168 H40Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 30 H340', w: .6 },
+    { d: 'M170 68 L160 52 L180 38 L200 52 L190 68', w: .9 },
+    { d: 'M40 160 V80 H300 Q310 80 310 92 V160 M44 80 L54 68 H290 L300 80', w: 1.2 },
+    { d: TRAM_FENSTER + ' M250 92 H280 V156 H250Z M265 92 V156', w: .9 },
+    { d: 'M40 134 H310 M40 140 H310', w: .7 },
+    { d: 'M70 160 A12 12 0 0 1 94 160 M250 160 A12 12 0 0 1 274 160', w: 1.1 },
+    { d: 'M0 168 H340 M0 176 H340 M0 196 H340 M0 204 H340', w: .8 },
+    { d: 'M16 50 h20 v28 h-20Z M310 50 h20 v28 h-20Z M60 44 h14 v18 h-14Z M230 44 h14 v18 h-14Z', w: .5, detail: true },
+    { d: 'M60 72 h40 v6 h-40Z', w: .6 },
+  ],
+};
+
+// 22 · Frutta e verdura – Kiste mit Zitronen
+const ZITRONEN = [[90, 112], [112, 108], [134, 112], [156, 106], [178, 112], [200, 108], [222, 112], [100, 98], [124, 96], [148, 94], [172, 96], [196, 94], [138, 84], [162, 84]];
+const OBSTKISTE = {
+  bild: 'Limoni di Sorrento',
+  teile: [
+    { d: 'M0 0 H340 V140 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 140 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: ZITRONEN.map(([x, y]) => ellipse(x, y, 12, 9)).join(' '), farbe: GELB, tupfer: true },
+    { d: 'M114 84 q-12 -10 -4 -20 q6 8 4 20 M194 86 q10 -12 20 -6 q-8 8 -20 6', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M60 118 H260 V196 H60Z', farbe: HOLZ, tupfer: true },
+    { d: ellipse(296, 186, 16, 11) + ' ' + kreis(270, 202, 10), farbe: GELB, tupfer: true },
+    { d: 'M214 60 H246 V76 H214Z', farbe: WEISS },
+    { d: 'M60 196 H260 L266 204 H66Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 140 H60 M260 140 H340', w: 1.1 },
+    { d: ZITRONEN.map(([x, y]) => ellipse(x, y, 12, 9)).join(' '), w: .8 },
+    { d: 'M114 84 q-12 -10 -4 -20 q6 8 4 20 M194 86 q10 -12 20 -6 q-8 8 -20 6', w: .7 },
+    { d: 'M60 118 H260 V196 H60Z', w: 1.2 },
+    { d: 'M60 144 H260 M60 170 H260 M70 118 V196 M250 118 V196', w: .5, detail: true },
+    { d: ellipse(296, 186, 16, 11) + ' ' + kreis(270, 202, 10) + ' ' + kreis(270, 202, 7), w: .9 },
+    { d: 'M270 202 l0 -7 M270 202 l6 4 M270 202 l-6 4', w: .4, detail: true },
+    { d: 'M228 110 L232 76 M214 60 H246 V76 H214Z M222 66 h16', w: .8 },
+  ],
+};
+
+// 30 · La mia giornata – Wecker auf dem Nachttisch
+const WECKER = {
+  bild: 'La sveglia sul comodino',
+  teile: [
+    { d: 'M0 0 H340 V210 H0Z', farbe: '#e8e2d6' },
+    { d: 'M260 20 H330 V100 H260Z', farbe: '#f0c48a', himmel: true },
+    { d: 'M84 134 H256 V140 H84Z M90 140 H250 V210 H90Z', farbe: HOLZ, tupfer: true },
+    { d: kreis(150, 104, 26), farbe: ROT, tupfer: true },
+    { d: kreis(150, 104, 20), farbe: WEISS },
+    { d: kreis(130, 78, 8) + ' ' + kreis(170, 78, 8), farbe: GELB, tupfer: true },
+    { d: 'M200 134 V108 H216 V134Z', farbe: HIMMEL },
+    { d: 'M190 134 L230 130 L232 134Z', farbe: GRUEN, tupfer: true },
+    { d: 'M0 210 H340 V220 H0Z', farbe: HOLZ },
+  ],
+  linien: [
+    { d: 'M84 134 H256 V140 H84Z M90 140 V210 M250 140 V210 M90 160 H250 M164 150 h12', w: 1.1 },
+    { d: kreis(150, 104, 26) + ' ' + kreis(150, 104, 20), w: 1.1 },
+    { d: kreis(130, 78, 8) + ' ' + kreis(170, 78, 8) + ' M150 78 V70 M146 70 h8', w: .9 },
+    { d: 'M136 126 L132 134 M164 126 L168 134', w: 1 },
+    { d: 'M150 104 V92 M150 104 L158 108', w: 1.3 },
+    { d: Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6; return `M${(150 + Math.sin(a) * 16).toFixed(1)} ${(104 - Math.cos(a) * 16).toFixed(1)} l${(Math.sin(a) * 3).toFixed(1)} ${(-Math.cos(a) * 3).toFixed(1)}`; }).join(' '), w: .6, detail: true },
+    { d: 'M200 134 V108 H216 V134 M200 116 H216 M188 134 L232 130', w: .9 },
+    { d: 'M260 20 H330 V100 H260Z M295 20 V100 M254 14 Q262 60 252 110 M336 14 Q328 60 338 110', w: .9 },
+    { d: 'M0 210 H340', w: 1.1 },
+  ],
+};
+
+// 34 · Una gita in campagna – Feldweg im Olivenhain
+const OLIVE = (x, b, s) => ({
+  stamm: `M${x - 4 * s} ${b} Q${x - 2 * s} ${b - 14 * s} ${x - 8 * s} ${b - 26 * s} M${x + 4 * s} ${b} Q${x + 6 * s} ${b - 16 * s} ${x + 2 * s} ${b - 28 * s} M${x - 2 * s} ${b - 18 * s} L${x + 8 * s} ${b - 30 * s}`,
+  krone: ellipse(x, b - 38 * s, 30 * s, 16 * s),
+});
+const OLIVEN = [[60, 160, 1.3], [280, 168, 1.4], [120, 128, .8], [236, 126, .75], [170, 112, .5]].map(o => OLIVE(...o));
+const OLIVENHAIN = {
+  bild: 'Tra gli ulivi',
+  teile: [
+    { d: 'M0 0 H340 V122 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 130 Q170 110 340 125 V220 H0Z', farbe: '#c9c47a' },
+    { d: 'M150 220 Q170 160 196 116 L204 116 Q196 160 214 220Z', farbe: CREME },
+    { d: OLIVEN.map(o => o.krone).join(' '), farbe: '#8fa07a', tupfer: true },
+    { d: ellipse(70, 166, 40, 5) + ' ' + ellipse(292, 174, 44, 5), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 130 Q170 110 340 125', w: 1 },
+    { d: 'M150 220 Q170 160 196 116 M214 220 Q196 160 204 116', w: 1 },
+    { d: OLIVEN.map(o => o.stamm).join(' '), w: 1 },
+    { d: OLIVEN.map(o => o.krone).join(' '), w: .9 },
+    { d: 'M0 180 Q60 172 130 182 M232 186 Q290 178 340 186', w: .7 },
+    { d: 'M10 178 q6 -5 12 0 M30 176 q6 -5 12 0 M50 175 q6 -5 12 0 M250 184 q6 -5 12 0 M270 182 q6 -5 12 0', w: .4, detail: true },
+    { d: 'M40 40 q4 -4 8 0 q4 -4 8 0 M240 30 q3 -3 6 0 q3 -3 6 0', w: .7, detail: true },
+  ],
+};
+
+// 35 · Una festa a sorpresa – Torte unter der Girlande
+const FAHNEN = [[30, 29], [70, 34], [110, 34], [230, 34], [270, 34], [310, 29]];
+const TORTE = {
+  bild: 'Una torta per la festa',
+  teile: [
+    { d: 'M0 0 H340 V140 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 140 H340 V220 H0Z', farbe: WEISS },
+    { d: FAHNEN.filter((_, i) => i % 2 === 0).map(([x, y]) => `M${x - 9} ${y} L${x + 9} ${y} L${x} ${y + 18}Z`).join(' '), farbe: ROT, tupfer: true },
+    { d: FAHNEN.filter((_, i) => i % 2 === 1).map(([x, y]) => `M${x - 9} ${y} L${x + 9} ${y} L${x} ${y + 18}Z`).join(' '), farbe: GELB, tupfer: true },
+    { d: 'M106 146 V104 H234 V146 Q170 156 106 146Z', farbe: '#e9c98d', tupfer: true },
+    { d: ellipse(170, 104, 64, 10), farbe: WEISS },
+    { d: kreis(140, 102, 5) + ' ' + kreis(170, 100, 5) + ' ' + kreis(200, 102, 5), farbe: ROT, tupfer: true },
+    { d: 'M148 94 V72 h4 V94Z M168 92 V66 h4 V92Z M188 94 V72 h4 V94Z', farbe: HIMMEL, tupfer: true },
+    { d: ellipse(150, 66, 3, 5) + ' ' + ellipse(170, 60, 3, 5) + ' ' + ellipse(190, 66, 3, 5), farbe: '#f2a45a', tupfer: true },
+    { d: ellipse(174, 178, 70, 6), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 20 Q85 50 170 20 Q255 50 340 20', w: .8 },
+    { d: FAHNEN.map(([x, y]) => `M${x - 9} ${y} L${x + 9} ${y} L${x} ${y + 18}Z`).join(' '), w: .7 },
+    { d: 'M0 140 H340', w: 1.1 },
+    { d: ellipse(170, 150, 80, 12) + ' M150 162 L140 178 H200 L190 162', w: 1.1 },
+    { d: 'M106 104 V146 Q170 156 234 146 V104', w: 1.2 },
+    { d: ellipse(170, 104, 64, 10), w: 1 },
+    { d: 'M106 126 Q170 134 234 126 M120 112 v8 M150 114 v10 M196 114 v8 M224 112 v10', w: .5, detail: true },
+    { d: kreis(140, 102, 5) + ' ' + kreis(170, 100, 5) + ' ' + kreis(200, 102, 5), w: .6 },
+    { d: 'M148 94 V72 h4 V94 M168 92 V66 h4 V92 M188 94 V72 h4 V94', w: .7 },
+    { d: ellipse(150, 66, 3, 5) + ' ' + ellipse(170, 60, 3, 5) + ' ' + ellipse(190, 66, 3, 5), w: .6 },
+  ],
+};
+
+// 38 · In campeggio – Zelt unter Pinien
+const ZELT = {
+  bild: 'La tenda sotto i pini',
+  teile: [
+    { d: 'M0 0 H340 V150 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 150 H340 V220 H0Z', farbe: '#d9c79a' },
+    { d: ellipse(80, 52, 62, 20) + ' ' + ellipse(262, 62, 56, 18), farbe: '#5b8a4c', tupfer: true },
+    { d: 'M120 162 L180 92 L250 162Z', farbe: '#e9a35a', tupfer: true },
+    { d: 'M180 100 L168 162 H194Z', farbe: '#7a5440', tupfer: true },
+    { d: 'M250 162 L180 92 L196 92 L266 162Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 150 H120 M250 150 H340', w: 1 },
+    { d: 'M76 152 Q84 100 70 66 M84 152 Q90 104 82 68 M78 90 L60 70 M260 152 Q256 98 270 76 M268 152 Q264 100 276 78', w: 1 },
+    { d: ellipse(80, 52, 62, 20) + ' ' + ellipse(262, 62, 56, 18), w: 1 },
+    { d: 'M40 50 q10 -6 20 0 M90 44 q10 -6 20 0 M240 60 q10 -6 20 0', w: .4, detail: true },
+    { d: 'M120 162 L180 92 L250 162Z M180 92 V86', w: 1.2 },
+    { d: 'M180 100 L168 162 M180 100 L194 162', w: .9 },
+    { d: 'M120 162 L100 170 M250 162 L272 170 M150 128 L128 150 M216 128 L240 150', w: .5, detail: true },
+    { d: 'M20 190 l3 -6 l3 6 M300 200 l3 -6 l3 6 M60 206 q6 -4 12 0', w: .5, detail: true },
+  ],
+};
+
+// 39 · Al mare – Sonnenschirme am Strand
+const schirm = (x, y, r) => `M${x - r} ${y} Q${x - r * .9} ${y - r * .7} ${x} ${y - r * .75} Q${x + r * .9} ${y - r * .7} ${x + r} ${y} Q${x + r * .5} ${y - r * .2} ${x} ${y} Q${x - r * .5} ${y - r * .2} ${x - r} ${y}Z`;
+const SCHIRME_H = [[40, 118, 22], [100, 118, 22], [160, 118, 22], [220, 118, 22], [280, 118, 22]];
+const SCHIRME_V = [[70, 156, 42], [190, 156, 42], [310, 156, 42]];
+const SCHIRMFARBEN = [ROT, GELB, HIMMEL, GRUEN, '#e9a35a'];
+const STRAND = {
+  bild: 'Ombrelloni in fila',
+  teile: [
+    { d: 'M0 0 H340 V90 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 90 H340 V128 H0Z', farbe: '#7fb0c8', tupfer: true },
+    { d: 'M0 128 H340 V220 H0Z', farbe: '#ecd8a6' },
+    ...[...SCHIRME_H, ...SCHIRME_V].map((s, i) => ({ d: schirm(...s), farbe: SCHIRMFARBEN[i % 5], tupfer: true })),
+    { d: 'M40 200 H100 V208 H40Z M160 200 H220 V208 H160Z M280 200 H340 V208 H280Z', farbe: WEISS },
+    { d: ellipse(80, 214, 40, 4) + ' ' + ellipse(200, 214, 40, 4) + ' ' + ellipse(320, 214, 40, 4), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 90 H340 M0 128 H340', w: .9 },
+    { d: [...SCHIRME_H, ...SCHIRME_V].map(s => schirm(...s)).join(' '), w: .9 },
+    { d: SCHIRME_H.map(([x, y]) => `M${x} ${y} V146`).join(' ') + ' ' + SCHIRME_V.map(([x, y]) => `M${x} ${y} V214`).join(' '), w: .9 },
+    { d: 'M40 200 H100 V208 H40Z M160 200 H220 V208 H160Z M280 200 H340 V208 H280Z M44 208 v6 M96 208 v6 M164 208 v6 M216 208 v6', w: .7 },
+    { d: 'M30 104 q6 -3 12 0 M150 110 q6 -3 12 0 M260 100 q6 -3 12 0', w: .5, detail: true },
+    { d: 'M200 40 q4 -4 8 0 q4 -4 8 0', w: .7, detail: true },
+  ],
+};
+
+// 40 · In montagna – Berge mit Hütte
+const TANNE = (x, b, h) => `M${x} ${b - h} L${x - h * .3} ${b} H${x + h * .3}Z`;
+const TANNEN = [[50, 172, 34], [74, 168, 26], [290, 176, 36], [314, 172, 28]].map(t => TANNE(...t)).join(' ');
+const BERG = {
+  bild: 'Il rifugio in montagna',
+  teile: [
+    { d: 'M0 0 H340 V150 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 150 L60 80 L100 110 L160 30 L220 100 L260 70 L340 140 V220 H0Z', farbe: '#a9b4c2' },
+    { d: 'M140 54 L160 30 L180 56 L170 52 L160 60 L150 52Z M248 82 L260 70 L274 84 L264 80Z', farbe: WEISS },
+    { d: 'M0 160 Q170 130 340 150 V220 H0Z', farbe: '#b8c47c', tupfer: true },
+    { d: 'M200 172 H250 V142 L225 122 L200 142Z', farbe: HOLZ, tupfer: true },
+    { d: 'M194 144 L225 116 L256 144 L250 144 L225 122 L200 144Z', farbe: TERRA, tupfer: true },
+    { d: TANNEN, farbe: '#5b8a4c', tupfer: true },
+    { d: 'M160 30 L220 100 L260 70 L240 100 L190 70Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 150 L60 80 L100 110 L160 30 L220 100 L260 70 L340 140', w: 1.1 },
+    { d: 'M140 54 L150 52 L160 60 L170 52 L180 56 M248 82 L264 80 L274 84', w: .7 },
+    { d: 'M0 160 Q170 130 340 150', w: 1 },
+    { d: 'M200 172 V142 L225 122 L250 142 V172 M194 144 L225 116 L256 144', w: 1.1 },
+    { d: 'M216 172 V154 h12 v18 M234 148 h10 v10 h-10Z', w: .8 },
+    { d: TANNEN, w: .9 },
+    { d: 'M222 172 Q190 190 170 220', w: .6, detail: true },
+    { d: 'M100 60 q4 -4 8 0 q4 -4 8 0', w: .7, detail: true },
+  ],
+};
+
+// 41 · Al lido e in città – Hafen mit bunten Häusern
+const HAEUSER = [50, 40, 56, 36, 48, 44, 58, 42].map((top, i) => ({ x: 10 + i * 40, top }));
+const HAUSFARBEN = [OCKER, TERRA, GELB, '#e3a487', CREME, '#e9a35a', OCKER, TERRA];
+const HAFEN = {
+  bild: 'Il porticciolo',
+  teile: [
+    { d: 'M0 0 H340 V130 H0Z', farbe: HIMMEL, himmel: true },
+    ...HAEUSER.map((h, i) => ({ d: `M${h.x} 130 V${h.top} H${h.x + 40} V130Z`, farbe: HAUSFARBEN[i], tupfer: i % 2 === 0 })),
+    { d: 'M0 130 H340 V220 H0Z', farbe: '#7fb0c8', tupfer: true },
+    { d: 'M60 170 Q90 184 130 170 L124 162 H66Z', farbe: WEISS },
+    { d: 'M200 186 Q236 200 280 186 L272 176 H208Z', farbe: ROT, tupfer: true },
+    { d: HAEUSER.map(h => `M${h.x + 8} ${h.top + 14} h4 v10 h-4Z M${h.x + 28} ${h.top + 14} h4 v10 h-4Z`).join(' '), farbe: GRUEN, tupfer: true },
+  ],
+  linien: [
+    { d: HAEUSER.map(h => `M${h.x} 130 V${h.top} H${h.x + 40} V130`).join(' '), w: 1 },
+    { d: HAEUSER.map(h => `M${h.x - 2} ${h.top} H${h.x + 42}`).join(' '), w: 1.1 },
+    { d: HAEUSER.map(h => `M${h.x + 12} ${h.top + 14} h16 v10 h-16Z M${h.x + 12} ${h.top + 40} h16 v10 h-16Z`).join(' '), w: .6, detail: true },
+    { d: 'M0 130 H340', w: 1.2 },
+    { d: 'M60 170 Q90 184 130 170 L124 162 H66Z M70 167 H120', w: 1 },
+    { d: 'M200 186 Q236 200 280 186 L272 176 H208Z M240 176 V136 M240 140 L262 172', w: 1 },
+    { d: 'M20 150 q8 -4 16 0 M150 146 q8 -4 16 0 M290 152 q8 -4 16 0 M70 196 q8 -4 16 0 M160 206 q8 -4 16 0 M300 204 q8 -4 16 0', w: .5, detail: true },
+    { d: 'M150 20 q4 -4 8 0 q4 -4 8 0', w: .7, detail: true },
+  ],
+};
+
+// 42 · Spaghetti aglio e olio – großer Topf auf dem Herd
+const TOPF = {
+  bild: 'La pentola sul fuoco',
+  teile: [
+    { d: 'M0 0 H340 V140 H0Z', farbe: '#efe1c2' },
+    { d: 'M0 100 H340 V140 H0Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M0 140 H340 V220 H0Z', farbe: '#cfd2d0' },
+    { d: 'M100 150 V86 H240 V150 Q170 160 100 150Z', farbe: STAHL, tupfer: true },
+    { d: ellipse(170, 88, 62, 7), farbe: ROT, tupfer: true },
+    { d: 'M196 82 L246 30 L252 34 L202 86Z', farbe: HOLZ, tupfer: true },
+    { d: 'M270 140 V90 H310 V140Z', farbe: WEISS },
+    { d: 'M276 90 V60 M282 90 V56 M288 90 V62 M294 90 V54 M300 90 V60', farbe: GELB },
+    { d: 'M200 90 H240 V150 Q220 156 200 154Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 140 H340', w: 1.2 },
+    { d: 'M0 100 H340 M0 120 H340 M20 100 V140 M60 100 V140 M100 100 V120 M260 100 V140 M300 100 V140 M330 100 V140', w: .4, detail: true },
+    { d: 'M100 86 V150 Q170 160 240 150 V86', w: 1.2 },
+    { d: ellipse(170, 86, 70, 10), w: 1.1 },
+    { d: 'M100 96 h-16 v10 h16 M240 96 h16 v10 h-16', w: 1 },
+    { d: 'M196 82 L246 30 L252 34 L202 86', w: .9 },
+    { d: ellipse(170, 166, 60, 8), w: .8 },
+    { d: 'M140 70 c-6 -10 6 -14 0 -24 c-6 -10 6 -14 0 -20 M170 66 c-5 -9 5 -12 0 -20', w: .7, detail: true },
+    { d: 'M270 140 V90 H310 V140 M268 90 H312 M276 90 V60 M282 90 V56 M288 90 V62 M294 90 V54 M300 90 V60', w: .8 },
+  ],
+};
+
+// 46 · Il risotto – Pfanne mit Holzlöffel
+const PFANNE = {
+  bild: 'La padella col risotto',
+  teile: [
+    { d: 'M0 0 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: ellipse(170, 130, 90, 40), farbe: STAHL },
+    { d: ellipse(170, 126, 78, 32), farbe: GELB, tupfer: true },
+    { d: 'M258 120 L330 96 L334 106 L262 132Z', farbe: '#3a3530' },
+    { d: 'M120 120 L50 60 L56 56 L126 116Z ' + ellipse(126, 122, 12, 7), farbe: HOLZ, tupfer: true },
+    { d: 'M30 180 L80 160 L86 186 L36 206Z', farbe: GELB, tupfer: true },
+    { d: ellipse(286, 40, 14, 10) + ' ' + ellipse(310, 52, 14, 10), farbe: WEISS },
+    { d: 'M150 110 q8 -6 14 0 q-6 6 -14 0 M190 136 q8 -6 14 0 q-6 6 -14 0 M200 112 q8 -6 14 0 q-6 6 -14 0', farbe: '#5b8a4c', tupfer: true },
+    { d: ellipse(176, 172, 86, 8), schatten: true },
+  ],
+  linien: [
+    { d: ellipse(170, 130, 90, 40) + ' ' + ellipse(170, 126, 78, 32), w: 1.2 },
+    { d: 'M258 120 L330 96 L334 106 L262 132', w: 1.1 },
+    { d: 'M120 120 L50 60 L56 56 L126 116 ' + ellipse(126, 122, 12, 7), w: .9 },
+    { d: Array.from({ length: 30 }, (_, i) => `M${120 + (i * 37) % 100} ${108 + (i * 23) % 40} l3 -1`).join(' '), w: .5, detail: true },
+    { d: 'M150 110 q8 -6 14 0 q-6 6 -14 0 M190 136 q8 -6 14 0 q-6 6 -14 0 M200 112 q8 -6 14 0 q-6 6 -14 0', w: .6 },
+    { d: 'M30 180 L80 160 L86 186 L36 206Z M80 160 L84 152 L34 172 L30 180', w: .9 },
+    { d: kreis(50, 186, 2) + ' ' + kreis(66, 178, 2), w: .5, detail: true },
+    { d: ellipse(286, 40, 14, 10) + ' ' + ellipse(310, 52, 14, 10), w: .9 },
+  ],
+};
+
+// 48 · I negozi del quartiere – Ladenzeile
+const LAEDEN = [[20, GRUEN], [125, ROT], [230, HIMMEL]];
+const LADEN = {
+  bild: 'Le botteghe del quartiere',
+  teile: [
+    { d: 'M0 0 H340 V20 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 20 H340 V180 H0Z', farbe: '#e3d2b4' },
+    ...LAEDEN.map(([x]) => ({ d: `M${x + 8} 180 V108 H${x + 82} V180Z`, farbe: '#d7e1e6' })),
+    ...LAEDEN.map(([x, f]) => ({ d: `M${x - 6} 84 H${x + 96} L${x + 104} 104 H${x - 14}Z`, farbe: f, tupfer: true })),
+    { d: ellipse(50, 140, 12, 7) + ' ' + ellipse(74, 140, 12, 7) + ' ' + ellipse(62, 130, 12, 7), farbe: GELB, tupfer: true },
+    { d: 'M150 160 V128 h8 V160Z M166 160 V122 h8 V160Z M182 160 V130 h8 V160Z', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M256 160 q10 -10 22 -2 h8 v4 h-30Z M276 140 q10 -10 22 -2 h8 v4 h-30Z', farbe: '#b9814b', tupfer: true },
+    { d: 'M0 180 H340 V220 H0Z', farbe: PFLASTER },
+    ...LAEDEN.map(([x]) => ({ d: `M${x + 8} 108 H${x + 82} V116 H${x + 8}Z`, schatten: true })),
+  ],
+  linien: [
+    { d: 'M0 20 H340 M0 180 H340', w: 1.2 },
+    { d: LAEDEN.map(([x]) => `M${x} 180 V84 M${x + 90} 180 V84 M${x + 8} 180 V108 H${x + 82} V180 M${x + 8} 160 H${x + 82}`).join(' '), w: 1 },
+    { d: LAEDEN.map(([x]) => `M${x - 6} 84 H${x + 96} L${x + 104} 104 H${x - 14}Z`).join(' '), w: 1 },
+    { d: LAEDEN.map(([x]) => [0, 1, 2, 3, 4, 5].map(i => `M${x + 10 + i * 16} 84 L${x + 4 + i * 18} 104`).join(' ')).join(' '), w: .4, detail: true },
+    { d: LAEDEN.map(([x]) => `M${x + 15} 50 h60 v20 h-60Z M${x + 25} 60 h40`).join(' '), w: .7 },
+    { d: ellipse(50, 140, 12, 7) + ' ' + ellipse(74, 140, 12, 7) + ' ' + ellipse(62, 130, 12, 7), w: .7 },
+    { d: 'M150 160 V128 h8 V160 M166 160 V122 h8 V160 M182 160 V130 h8 V160', w: .7 },
+    { d: 'M256 160 q10 -10 22 -2 h8 v4 h-30Z M276 140 q10 -10 22 -2 h8 v4 h-30Z', w: .7 },
+    { d: 'M30 220 L50 182 M170 220 V182 M310 220 L290 182', w: .4, detail: true },
+  ],
+};
+
+// 51 · Al ristorante – Wein und Gläser
+const weinglas = x => ({ glas: `M${x - 16} 96 Q${x - 16} 130 ${x} 132 Q${x + 16} 130 ${x + 16} 96Z M${x} 132 V150 ` + ellipse(x, 151, 12, 3), wein: `M${x - 15} 112 Q${x - 14} 128 ${x} 129 Q${x + 14} 128 ${x + 15} 112Z` });
+const GLAESER = [weinglas(100), weinglas(240)];
+const WEIN = {
+  bild: 'Un bicchiere di rosso',
+  teile: [
+    { d: 'M0 0 H340 V120 H0Z', farbe: '#efe1c2' },
+    { d: 'M30 20 H130 V100 H30Z', farbe: HIMMEL, himmel: true },
+    { d: 'M30 70 Q70 54 130 66 V100 H30Z', farbe: '#b8c47c', tupfer: true },
+    { d: 'M0 120 H340 V220 H0Z', farbe: WEISS },
+    { d: 'M150 150 V80 Q150 64 162 58 V30 H172 V58 Q184 64 184 80 V150Z', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M154 100 H180 V126 H154Z', farbe: WEISS },
+    { d: GLAESER.map(g => g.wein).join(' '), farbe: '#8e2f3b', tupfer: true },
+    { d: 'M200 176 L300 170 L304 188 L204 194Z', farbe: HOLZ, tupfer: true },
+    { d: 'M220 176 L250 172 L246 184 Z', farbe: GELB, tupfer: true },
+    { d: ellipse(170, 154, 22, 4) + ' ' + ellipse(254, 196, 52, 4), schatten: true },
+  ],
+  linien: [
+    { d: 'M0 120 H340', w: 1.2 },
+    { d: 'M30 20 H130 V100 H30Z M80 20 V100', w: .9 },
+    { d: 'M30 70 Q70 54 130 66', w: .6, detail: true },
+    { d: 'M150 150 V80 Q150 64 162 58 V30 H172 V58 Q184 64 184 80 V150Z M162 30 V24 H172 V30', w: 1.1 },
+    { d: 'M154 100 H180 V126 H154Z M158 110 h18 M160 116 h14', w: .6 },
+    { d: GLAESER.map(g => g.glas).join(' '), w: 1 },
+    { d: GLAESER.map(g => g.wein).join(' '), w: .5, detail: true },
+    { d: 'M200 176 L300 170 L304 188 L204 194Z M220 176 L250 172 L246 184Z', w: .9 },
+    { d: 'M0 206 H340 M0 212 H340', w: .4, detail: true },
+  ],
+};
+
+// 52 · In trattoria – Kreidetafel
+const TAFEL = {
+  bild: 'La lavagna della trattoria',
+  teile: [
+    { d: 'M0 0 H340 V200 H0Z', farbe: OCKER },
+    { d: 'M84 34 H256 V176 H84Z', farbe: HOLZ, tupfer: true },
+    { d: 'M92 42 H248 V168 H92Z', farbe: '#3e4a3f', tupfer: true },
+    { d: 'M0 200 H340 V220 H0Z', farbe: PFLASTER },
+    { d: ellipse(296, 168, 30, 6), farbe: WEISS },
+    { d: 'M24 200 L28 170 H52 L56 200Z', farbe: TERRA, tupfer: true },
+    { d: 'M40 170 q-14 -10 -8 -30 q8 6 8 30 q2 -26 14 -32 q4 16 -14 32', farbe: '#5b8a4c', tupfer: true },
+  ],
+  linien: [
+    { d: 'M84 34 H256 V176 H84Z M92 42 H248 V168 H92Z', w: 1.1 },
+    { d: 'M110 176 L96 214 M230 176 L244 214 M170 176 V210', w: 1.1 },
+    { d: 'M0 200 H340', w: 1.1 },
+    { d: ellipse(296, 168, 30, 6) + ' M296 174 V200 M284 200 H308', w: 1 },
+    { d: 'M24 200 L28 170 H52 L56 200 M40 170 q-14 -10 -8 -30 q8 6 8 30 q2 -26 14 -32 q4 16 -14 32', w: .9 },
+  ],
+  extra: `<g fill="none" stroke="#f4f1e8" stroke-width="1.3" stroke-linecap="round" opacity=".9">
+    <path d="M128 60 q6 -6 12 0 q6 6 12 0 q6 -6 12 0 q6 6 12 0 q6 -6 12 0 q6 6 12 0"/>
+    <path d="M104 84 h70 M104 100 h56 M104 116 h64 M104 132 h48 M104 148 h60" stroke-width=".9" stroke-dasharray="6 3 10 2"/>
+    <path d="M214 84 h18 M214 100 h18 M214 116 h18 M214 132 h18 M214 148 h18" stroke-width=".9"/>
+  </g>`,
+};
+
+// 60 · Che tempaccio! – Regenschirm auf nassem Pflaster
+const REGENSCHIRM = 'M110 110 Q170 50 230 110 Q215 104 200 110 Q185 104 170 110 Q155 104 140 110 Q125 104 110 110Z';
+const SCHIRM = {
+  bild: "L'ombrello sotto la pioggia",
+  teile: [
+    { d: 'M80 0 H260 V40 H80Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 0 L80 40 V180 L0 200Z', farbe: OCKER },
+    { d: 'M340 0 L260 40 V180 L340 200Z', farbe: TERRA },
+    { d: 'M80 40 H260 V180 H80Z', farbe: CREME },
+    { d: 'M0 200 L80 180 H260 L340 200 V220 H0Z', farbe: PFLASTER },
+    { d: REGENSCHIRM, farbe: ROT, tupfer: true },
+    { d: ellipse(170, 196, 74, 8), farbe: HIMMEL, tupfer: true },
+    { d: 'M140 196 Q170 208 200 196 Q170 202 140 196Z', farbe: ROT, tupfer: true },
+  ],
+  linien: [
+    { d: 'M0 0 L80 40 V180 L0 200 M340 0 L260 40 V180 L340 200 M80 180 H260', w: 1.1 },
+    { d: 'M24 40 L54 50 V96 L24 88Z M286 50 L316 40 V88 L286 96Z M150 180 V140 Q170 120 190 140 V180', w: .8 },
+    { d: REGENSCHIRM, w: 1.2 },
+    { d: 'M170 52 V46 M170 110 V64 M140 110 Q156 72 170 64 Q184 72 200 110', w: .5, detail: true },
+    { d: 'M170 110 V168 q0 8 -6 8 q-6 0 -6 -6', w: 1.1 },
+    { d: ellipse(170, 196, 74, 8), w: .8 },
+    { d: Array.from({ length: 40 }, (_, i) => `M${(i * 37) % 340} ${(i * 53) % 180} l-5 14`).join(' '), w: .45, detail: true },
+    { d: 'M120 204 q8 -3 16 0 M210 200 q8 -3 16 0', w: .5, detail: true },
+  ],
+};
+
+// 64 · Il corpo – Bild und Büste im Museum
+const MUSEUM = {
+  bild: 'Al museo',
+  teile: [
+    { d: 'M0 0 H340 V180 H0Z', farbe: '#d9a58f' },
+    { d: 'M0 180 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M30 30 H170 V140 H30Z', farbe: GELB, tupfer: true },
+    { d: 'M42 42 H158 V96 H42Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M42 96 Q90 76 158 92 V128 H42Z', farbe: '#b8c47c', tupfer: true },
+    { d: 'M230 180 V120 H290 V180Z M230 116 Q232 96 254 94 H266 Q288 96 290 116Z ' + kreis(260, 72, 14), farbe: WEISS },
+    { d: 'M20 154 Q105 172 190 154', farbe: ROT },
+  ],
+  linien: [
+    { d: 'M0 180 H340', w: 1.2 },
+    { d: 'M30 30 H170 V140 H30Z M42 42 H158 V128 H42Z', w: 1.1 },
+    { d: 'M42 96 Q90 76 158 92 M120 88 V70 M116 74 l4 -8 l4 8', w: .6, detail: true },
+    { d: 'M230 180 V120 H290 V180 M226 120 H294', w: 1.1 },
+    { d: 'M230 116 Q232 96 254 94 H266 Q288 96 290 116 M254 86 V94 M266 86 V94 ' + kreis(260, 72, 14), w: 1 },
+    { d: 'M248 64 q4 -6 8 0 q4 -6 8 0 q4 -6 8 0 M256 76 h1 M264 76 h1', w: .5, detail: true },
+    { d: 'M20 180 V150 M190 180 V150 ' + kreis(20, 148, 3) + ' ' + kreis(190, 148, 3) + ' M20 154 Q105 172 190 154', w: 1 },
+  ],
+};
+
+// 66 · In farmacia – grünes Apothekenkreuz
+const KREUZ = 'M228 40 H252 V56 H268 V80 H252 V96 H228 V80 H212 V56 H228Z';
+const APOTHEKE = {
+  bild: 'La farmacia',
+  teile: [
+    { d: 'M0 0 H340 V190 H0Z', farbe: OCKER },
+    { d: KREUZ, farbe: GRUEN, tupfer: true },
+    { d: 'M40 80 H200 V96 H40Z', farbe: GRUEN, tupfer: true },
+    { d: 'M40 100 H200 V190 H40Z', farbe: '#d7e1e6' },
+    { d: 'M60 140 V124 h12 V140Z M90 140 V120 h14 V140Z M124 140 V126 h12 V140Z M154 140 V118 h14 V140Z M70 172 V156 h14 V172Z M110 172 V160 h12 V172Z M146 172 V154 h14 V172Z', farbe: WEISS },
+    { d: 'M220 190 V110 H270 V190Z', farbe: '#7a5440', tupfer: true },
+    { d: 'M0 190 H340 V220 H0Z', farbe: PFLASTER },
+  ],
+  linien: [
+    { d: KREUZ + ' M268 68 H300 M300 60 V76', w: 1.1 },
+    { d: 'M40 80 H200 V96 H40Z', w: 1 },
+    { d: 'M60 88 h120', w: .5, detail: true },
+    { d: 'M40 100 H200 V190 H40Z M40 142 H200 M120 100 V190', w: 1 },
+    { d: 'M60 140 V124 h12 V140 M90 140 V120 h14 V140 M124 140 V126 h12 V140 M154 140 V118 h14 V140 M70 172 V156 h14 V172 M110 172 V160 h12 V172 M146 172 V154 h14 V172', w: .6, detail: true },
+    { d: 'M220 190 V110 H270 V190 M230 120 h30 v30 h-30Z M240 135 h10 M245 130 v10', w: .9 },
+    { d: 'M0 190 H340', w: 1.2 },
+    { d: 'M300 120 h20 v40 h-20Z', w: .8 },
+  ],
+};
+
+// 75 · Una sera a teatro – Bühne mit rotem Vorhang
+const VORHANG = {
+  bild: 'Il sipario',
+  teile: [
+    { d: 'M60 30 H280 V180 H60Z', farbe: '#e8d9b0' },
+    { d: 'M60 180 H280 L340 220 H0Z', farbe: HOLZ, tupfer: true },
+    { d: 'M0 0 H90 Q60 80 82 220 H0Z M340 0 H250 Q280 80 258 220 H340Z', farbe: ROT, tupfer: true },
+    { d: 'M0 0 H340 V30 Q300 46 255 30 Q210 46 170 30 Q130 46 85 30 Q40 46 0 30Z', farbe: ROT, tupfer: true },
+    { d: kreis(76, 112, 5) + ' ' + kreis(264, 112, 5) + ' ' + [100, 140, 180, 220].map(x => `M${x - 6} 180 A6 6 0 0 1 ${x + 6} 180Z`).join(' '), farbe: GELB, tupfer: true },
+    { d: 'M60 30 H280 V44 H60Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M60 30 V180 H280 V30 M0 220 L60 180 M340 220 L280 180', w: 1.1 },
+    { d: 'M90 0 Q60 80 82 220 M250 0 Q280 80 258 220', w: 1.2 },
+    { d: 'M30 0 Q20 100 34 220 M60 0 Q44 100 58 220 M310 0 Q320 100 306 220 M280 0 Q296 100 282 220', w: .5, detail: true },
+    { d: 'M0 30 Q40 46 85 30 Q130 46 170 30 Q210 46 255 30 Q300 46 340 30', w: 1.1 },
+    { d: 'M82 112 Q76 104 66 108 ' + kreis(76, 112, 5) + ' M258 112 Q264 104 274 108 ' + kreis(264, 112, 5), w: .8 },
+    { d: [100, 140, 180, 220].map(x => `M${x - 6} 180 A6 6 0 0 1 ${x + 6} 180`).join(' '), w: .7 },
+    { d: 'M0 196 H340 M40 220 L80 182 M120 220 L130 182 M220 220 L210 182 M300 220 L260 182', w: .4, detail: true },
+  ],
+};
+
+// 76 · Il computer di Sofia – Laptop mit Espresso
+const LAPTOP = {
+  bild: 'Il portatile e un caffè',
+  teile: [
+    { d: 'M0 0 H340 V130 H0Z', farbe: '#e9e2d0' },
+    { d: 'M0 130 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: 'M110 40 L230 40 L236 128 H104Z', farbe: '#5a5550' },
+    { d: 'M116 46 L224 46 L229 122 H111Z', farbe: HIMMEL, tupfer: true },
+    { d: 'M84 132 H256 L270 152 H70Z', farbe: STAHL, tupfer: true },
+    { d: 'M274 132 Q276 148 290 148 Q304 148 306 132Z ' + ellipse(290, 152, 26, 5), farbe: WEISS },
+    { d: 'M30 130 L34 100 H62 L66 130Z', farbe: TERRA, tupfer: true },
+    { d: 'M48 100 q-16 -10 -12 -34 q10 8 12 34 q2 -30 18 -38 q4 22 -18 38', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M70 152 H270 L262 160 H78Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 130 H84 M256 130 H340', w: 1.1 },
+    { d: 'M104 128 L110 40 H230 L236 128', w: 1.2 },
+    { d: 'M116 46 L224 46 L229 122 H111Z', w: .6 },
+    { d: 'M130 62 h60 M130 72 h44 M130 82 h70 M130 92 h36', w: .5, detail: true },
+    { d: 'M84 132 H256 L270 152 H70Z', w: 1.1 },
+    { d: 'M96 138 H246 M92 143 H250 M150 147 h40', w: .4, detail: true },
+    { d: 'M274 132 Q276 148 290 148 Q304 148 306 132 ' + ellipse(290, 132, 16, 3) + ' ' + ellipse(290, 152, 26, 5), w: 1 },
+    { d: 'M306 136 q8 0 6 6 q-2 4 -6 3', w: .8 },
+    { d: 'M30 130 L34 100 H62 L66 130 M48 100 q-16 -10 -12 -34 q10 8 12 34 q2 -30 18 -38 q4 22 -18 38', w: .9 },
+    { d: 'M260 10 H330 V90 H260Z M295 10 V90', w: .8 },
+  ],
+};
+
+// 83 · Mi farebbe un favore? – roter Briefkasten
+const BRIEFKASTEN = {
+  bild: 'La buca delle lettere',
+  teile: [
+    { d: 'M0 0 H340 V196 H0Z', farbe: '#d9cdb5' },
+    { d: 'M0 196 H340 V220 H0Z', farbe: PFLASTER },
+    { d: 'M140 170 V70 Q140 50 180 50 Q220 50 220 70 V170Z', farbe: ROT, tupfer: true },
+    { d: 'M150 110 H210 V130 H150Z', farbe: GELB, tupfer: true },
+    { d: 'M156 90 H204 V96 H156Z', farbe: '#3a3530' },
+    { d: 'M240 0 H340 Q330 30 300 26 Q280 44 256 30 Q244 38 240 26Z', farbe: '#5b8a4c', tupfer: true },
+    { d: 'M220 70 H230 V170 H220Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 40 H120 M60 40 V70 M0 70 H140 M100 70 V100 M0 100 H140 M40 100 V130 M0 130 H140 M90 130 V160 M0 160 H340 M30 160 V196 M250 160 V196 M220 40 H340 M280 40 V70 M220 70 H340 M240 100 H340 M300 70 V100 M260 130 H340 M290 100 V130', w: .4, detail: true },
+    { d: 'M140 170 V70 Q140 50 180 50 Q220 50 220 70 V170Z M136 70 H224', w: 1.2 },
+    { d: 'M156 90 H204 V96 H156Z M150 110 H210 V130 H150Z', w: .9 },
+    { d: 'M160 120 h40', w: .5, detail: true },
+    { d: 'M180 170 V196 M168 196 H192 M0 196 H340', w: 1.1 },
+    { d: 'M168 92 L186 80 L190 88', w: .7 },
+    { d: 'M240 0 H340 M340 0 Q330 30 300 26 Q280 44 256 30 Q244 38 240 26', w: .8 },
+  ],
+};
+
+// 85 · Al telefono – altes Telefon mit Wählscheibe
+const LOECHER = Array.from({ length: 10 }, (_, i) => { const a = -Math.PI * .1 + i * Math.PI * .16; return kreis(170 + Math.cos(a) * 12, 124 - Math.sin(a) * 12, 2.6); }).join(' ');
+const TELEFON = {
+  bild: 'Il telefono di una volta',
+  teile: [
+    { d: 'M0 0 H340 V150 H0Z', farbe: '#efe1c2' },
+    { d: 'M60 150 H280 V160 H60Z', farbe: HOLZ, tupfer: true },
+    { d: 'M0 160 H340 V220 H0Z', farbe: '#e6dccb' },
+    { d: 'M120 150 L134 104 H206 L220 150Z M120 88 Q120 76 132 78 H208 Q220 76 220 88 Q214 96 204 92 H136 Q126 96 120 88Z', farbe: '#c9614a', tupfer: true },
+    { d: kreis(170, 124, 18), farbe: WEISS },
+    { d: 'M240 150 L290 146 L292 156 L242 158Z', farbe: WEISS },
+    { d: 'M40 30 H100 V80 H40Z', farbe: HIMMEL, himmel: true },
+    { d: 'M60 160 H280 L276 170 H64Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M60 150 H280 V160 H60Z M76 160 V206 M264 160 V206', w: 1.1 },
+    { d: 'M120 150 L134 104 H206 L220 150Z', w: 1.2 },
+    { d: kreis(170, 124, 18) + ' ' + kreis(170, 124, 5), w: .9 },
+    { d: LOECHER, w: .5, detail: true },
+    { d: 'M136 104 V94 M204 104 V94 M120 88 Q120 76 132 78 H208 Q220 76 220 88 Q214 96 204 92 H136 Q126 96 120 88Z', w: 1.1 },
+    { d: 'M220 140 q10 4 6 10 q-6 6 0 10 q8 4 4 12 q-6 6 2 12', w: .8 },
+    { d: 'M240 150 L290 146 L292 156 L242 158Z M250 146 L282 120', w: .8 },
+    { d: 'M40 30 H100 V80 H40Z M40 64 Q70 54 100 60', w: .8 },
+    { d: 'M0 0 V150 M30 0 V150 M310 0 V150 M340 0 V150 M130 0 V60 M160 0 V60 M190 0 V60 M220 0 V60', w: .3, detail: true },
+  ],
+};
+
+// 89 · Una mail a Giulia – Brief mit Briefmarke
+const BRIEF = {
+  bild: 'Una lettera per te',
+  teile: [
+    { d: 'M0 0 H340 V220 H0Z', farbe: '#d7b98c' },
+    { d: 'M64 56 L284 44 L292 172 L72 184Z', farbe: WEISS },
+    { d: 'M240 58 L272 56 L274 92 L242 94Z', farbe: GRUEN, tupfer: true },
+    { d: 'M248 66 L266 65 L267 84 L249 85Z', farbe: ROT, tupfer: true },
+    { d: 'M80 206 L220 196 L222 202 L82 212Z', farbe: '#3a3530' },
+    { d: 'M72 184 L292 172 L296 180 L76 192Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M64 56 L284 44 L292 172 L72 184Z', w: 1.2 },
+    { d: 'M240 58 L272 56 L274 92 L242 94Z', w: .9 },
+    { d: 'M240 58 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2', w: .4, detail: true },
+    { d: kreis(234, 92, 16) + ' M212 84 q8 -4 16 0 q8 4 16 0 M212 92 q8 -4 16 0 q8 4 16 0 M212 100 q8 -4 16 0 q8 4 16 0', w: .5, detail: true },
+    { d: 'M120 112 q10 -6 20 0 q10 6 20 0 q10 -6 20 0 q10 6 20 0 M124 130 q8 -5 16 0 q8 5 16 0 q8 -5 16 0 q8 5 16 0 q8 -5 16 0 M128 148 q10 -6 20 0 q10 6 20 0 q10 -6 20 0', w: .8 },
+    { d: 'M80 206 L220 196 L222 202 L82 212Z M220 196 L232 198 L222 202', w: .9 },
+    { d: 'M0 30 H340 M0 120 H40 M300 140 H340', w: .35, detail: true },
+  ],
+};
+
+// 102 · Venezia: troppi turisti? – Gondel vor der Rialtobrücke
+const ARKADEN = [0, 1, 2, 3, 4, 5].map(i => `M${136 + i * 12} 70 V58 Q${142 + i * 12} 50 ${148 + i * 12} 58 V70`).join(' ');
+const GONDEL = {
+  bild: 'Gondola sotto il Rialto',
+  teile: [
+    { d: 'M0 0 H340 V130 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 30 H40 V130 H0Z', farbe: OCKER, tupfer: true },
+    { d: 'M300 40 H340 V130 H300Z', farbe: TERRA, tupfer: true },
+    { d: 'M30 122 L60 70 H280 L310 122 H270 Q170 60 70 122Z', farbe: '#e9dcc0', tupfer: true },
+    { d: 'M120 70 L130 44 H210 L220 70Z', farbe: TERRA, tupfer: true },
+    { d: 'M0 130 H340 V220 H0Z', farbe: '#7fb0c8', tupfer: true },
+    { d: 'M60 180 Q150 196 260 176 Q282 170 290 150 Q284 164 262 168 Q160 184 70 172 Q62 168 58 160 Q56 172 60 180Z', farbe: '#3a3530' },
+    { d: 'M28 130 h6 v14 h-6Z M28 158 h6 v14 h-6Z M44 130 h6 v14 h-6Z M44 158 h6 v14 h-6Z', farbe: ROT, tupfer: true },
+  ],
+  linien: [
+    { d: 'M0 30 H40 V130 M340 40 H300 V130', w: 1 },
+    { d: 'M10 50 h10 v14 h-10Z M10 84 h10 v14 h-10Z M314 60 h10 v14 h-10Z M314 94 h10 v14 h-10Z', w: .6, detail: true },
+    { d: 'M30 122 L60 70 H280 L310 122 M70 122 Q170 60 270 122', w: 1.2 },
+    { d: 'M120 70 L130 44 H210 L220 70', w: 1.1 },
+    { d: ARKADEN, w: .6, detail: true },
+    { d: 'M0 130 H340', w: 1 },
+    { d: 'M60 180 Q150 196 260 176 Q282 170 290 150 Q284 164 262 168 Q160 184 70 172 Q62 168 58 160', w: 1.1 },
+    { d: 'M286 156 l6 -4 M286 160 l6 -4 M286 164 l6 -4', w: .6 },
+    { d: 'M200 120 L232 190 M31 130 V200 M47 130 V196', w: 1 },
+    { d: 'M80 200 q10 -4 20 0 M180 206 q10 -4 20 0 M100 146 q10 -4 20 0 M220 140 q10 -4 20 0 M280 200 q10 -4 20 0', w: .5, detail: true },
+  ],
+};
+
+// 103 · Venezia – Steinbrücke am Fluss
+const BRUECKE = {
+  bild: 'Il ponte di pietra',
+  teile: [
+    { d: 'M0 0 H340 V130 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M0 96 Q100 70 200 90 Q270 76 340 92 V130 H0Z', farbe: '#aab8c4' },
+    { d: 'M0 130 Q170 120 340 130 V172 Q170 162 0 172Z', farbe: '#b8c47c' },
+    { d: 'M0 172 Q170 162 340 172 V220 H0Z', farbe: '#7fb0c8', tupfer: true },
+    { d: 'M20 110 H320 V122 H20Z M20 122 H320 V180 H290 Q260 130 230 180 H200 Q170 130 140 180 H110 Q80 130 50 180 H20Z', farbe: '#d9c7a0', tupfer: true },
+    { d: ellipse(300, 112, 26, 20) + ' ' + ellipse(36, 116, 22, 18), farbe: '#5b8a4c', tupfer: true },
+    { d: 'M50 180 Q80 132 110 180 M140 180 Q170 132 200 180 M230 180 Q260 132 290 180', schatten: true },
+  ],
+  linien: [
+    { d: 'M0 96 Q100 70 200 90 Q270 76 340 92', w: .7 },
+    { d: 'M20 110 H320 M20 122 H320 M20 110 V180 M320 110 V180', w: 1.2 },
+    { d: 'M50 180 Q80 130 110 180 M140 180 Q170 130 200 180 M230 180 Q260 130 290 180', w: 1.2 },
+    { d: 'M30 130 h14 M60 136 h12 M118 132 h14 M210 132 h14 M300 136 h12 M40 150 h10 M124 156 h10 M214 156 h10 M300 150 h12', w: .5, detail: true },
+    { d: ellipse(300, 112, 26, 20) + ' ' + ellipse(36, 116, 22, 18), w: .9 },
+    { d: 'M60 196 Q80 188 100 196 M150 196 Q170 188 190 196 M240 196 Q260 188 280 196 M20 206 h30 M300 210 h24', w: .5, detail: true },
+  ],
+};
+
+// 108 · Un po' di storia – Kolosseum
+const BOEGEN = [80, 112, 144].map((yb, r) => Array.from({ length: 10 }, (_, i) => 44 + i * 26).filter(x => x + 20 < (r === 0 ? 220 : 300)).map(x => `M${x} ${yb + 26} V${yb + 8} Q${x + 10} ${yb - 2} ${x + 20} ${yb + 8} V${yb + 26}`).join(' ')).join(' ');
+const KOLOSSEUM = {
+  bild: 'Il Colosseo',
+  teile: [
+    { d: 'M0 0 H340 V180 H0Z', farbe: HIMMEL, himmel: true },
+    { d: 'M30 180 V56 Q120 36 220 44 L250 70 L270 60 L290 90 L310 100 V180Z', farbe: '#e4c48e', tupfer: true },
+    { d: 'M0 180 H340 V220 H0Z', farbe: PFLASTER },
+    { d: ellipse(326, 124, 22, 10), farbe: '#5b8a4c', tupfer: true },
+    { d: 'M220 44 L250 70 L270 60 L290 90 L310 100 V180 H280Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M30 180 V56 Q120 36 220 44 L250 70 L270 60 L290 90 L310 100 V180', w: 1.2 },
+    { d: 'M30 80 Q120 64 230 70 M30 106 Q160 96 300 102 M30 138 H310 M30 170 H310', w: .8 },
+    { d: BOEGEN.replace(/V106/g, 'V106'), w: .6, detail: true },
+    { d: 'M0 180 H340', w: 1.1 },
+    { d: 'M326 180 V128 ' + ellipse(326, 124, 22, 10), w: .9 },
+    { d: 'M120 20 q4 -4 8 0 q4 -4 8 0', w: .7, detail: true },
+  ],
+};
+
+// 112 · Gli animali del bosco – Reh am Waldrand
+const WALDTANNEN = Array.from({ length: 14 }, (_, i) => TANNE(i * 26 + 6, 150, 60 + (i * 37) % 30)).join(' ');
+const WALD = {
+  bild: 'Un capriolo nel prato',
+  teile: [
+    { d: 'M0 0 H340 V150 H0Z', farbe: HIMMEL, himmel: true },
+    { d: WALDTANNEN, farbe: '#5b8a4c', tupfer: true },
+    { d: 'M0 150 Q170 140 340 150 V220 H0Z', farbe: '#b8c47c', tupfer: true },
+    { d: ellipse(200, 150, 26, 12) + ' M218 144 L228 120 L236 124 L228 148Z ' + ellipse(234, 116, 9, 5), farbe: '#b9814b', tupfer: true },
+    { d: [40, 70, 110, 280, 310].map((x, i) => kreis(x, 186 + (i % 2) * 10, 3)).join(' '), farbe: GELB, tupfer: true },
+    { d: ellipse(204, 188, 30, 3), schatten: true },
+  ],
+  linien: [
+    { d: WALDTANNEN, w: .7 },
+    { d: 'M0 150 Q170 140 340 150', w: 1 },
+    { d: ellipse(200, 150, 26, 12) + ' M218 144 L228 120 M236 124 L228 148 ' + ellipse(234, 116, 9, 5), w: 1 },
+    { d: 'M230 112 L226 104 M236 112 L238 104 M241 116 h1', w: .8 },
+    { d: 'M184 160 V186 M190 160 V186 M210 160 V186 M216 160 V186 M174 146 l-4 -4', w: 1 },
+    { d: [40, 70, 110, 280, 310].map((x, i) => `M${x} ${189 + (i % 2) * 10} v8`).join(' '), w: .5, detail: true },
+  ],
+};
+
+// 127 · La rapina – Tresor mit Drehrad
+const TRESOR = {
+  bild: 'La cassaforte',
+  teile: [
+    { d: 'M0 0 H340 V190 H0Z', farbe: '#d9cdb5' },
+    { d: 'M0 190 H340 V220 H0Z', farbe: HOLZ },
+    { d: 'M100 40 H240 V190 H100Z', farbe: '#7d8f84', tupfer: true },
+    { d: kreis(170, 96, 22), farbe: STAHL, tupfer: true },
+    { d: 'M140 40 V24 H200 V40Z', farbe: ROT, tupfer: true },
+    { d: 'M240 40 H250 V196 H240Z', schatten: true },
+  ],
+  linien: [
+    { d: 'M100 40 H240 V190 H100Z M112 52 H228 V178 H112Z', w: 1.2 },
+    { d: 'M104 70 h8 v14 h-8Z M104 146 h8 v14 h-8Z', w: .8 },
+    { d: kreis(170, 96, 22) + ' ' + kreis(170, 96, 6), w: 1 },
+    { d: Array.from({ length: 16 }, (_, i) => { const a = i * Math.PI / 8; return `M${(170 + Math.sin(a) * 18).toFixed(1)} ${(96 - Math.cos(a) * 18).toFixed(1)} l${(Math.sin(a) * 4).toFixed(1)} ${(-Math.cos(a) * 4).toFixed(1)}`; }).join(' '), w: .5, detail: true },
+    { d: kreis(170, 148, 14) + ' M170 134 V162 M156 148 H184 M160 138 L180 158 M180 138 L160 158', w: .9 },
+    { d: 'M110 190 V198 M230 190 V198 M0 190 H340', w: 1.1 },
+    { d: 'M140 40 V24 H200 V40 M140 30 H200 ' + kreis(170, 30, 2), w: .9 },
+  ],
+};
+
+// 130 · La pizza Margherita – Pizza am Holzofen
+const PIZZA = {
+  bild: 'Pizza dal forno a legna',
+  teile: [
+    { d: 'M0 0 H340 V160 H0Z', farbe: '#efe1c2' },
+    { d: 'M60 160 Q60 40 170 40 Q280 40 280 160Z', farbe: '#c98a6a', tupfer: true },
+    { d: 'M120 160 V120 Q170 80 220 120 V160Z', farbe: '#3a3530' },
+    { d: 'M140 160 Q150 130 160 150 Q168 120 180 150 Q190 126 200 160Z', farbe: '#f2a45a', tupfer: true },
+    { d: 'M210 46 V20 H230 V54Z', farbe: '#c98a6a' },
+    { d: 'M40 160 H300 V220 H40Z', farbe: CREME },
+    { d: kreis(150, 196, 26) + ' M176 196 L320 186 L320 192 L176 202Z', farbe: HOLZ, tupfer: true },
+    { d: kreis(150, 196, 18), farbe: ROT, tupfer: true },
+    { d: kreis(142, 190, 5) + ' ' + kreis(158, 202, 5) + ' ' + kreis(156, 186, 4), farbe: WEISS },
+    { d: 'M146 200 l6 -4 l2 6Z M160 192 l6 -4 l2 6Z', farbe: '#5b8a4c', tupfer: true },
+  ],
+  linien: [
+    { d: 'M60 160 Q60 40 170 40 Q280 40 280 160', w: 1.2 },
+    { d: 'M120 160 V120 Q170 80 220 120 V160 M112 160 V116 Q170 70 228 116 V160', w: 1 },
+    { d: 'M80 100 h20 M90 80 h20 M240 100 h20 M230 80 h20 M120 60 h20 M200 60 h20 M70 130 h18 M252 130 h18', w: .5, detail: true },
+    { d: 'M140 160 Q150 130 160 150 Q168 120 180 150 Q190 126 200 160', w: .8 },
+    { d: 'M210 46 V20 H230 V54 M206 20 H234', w: 1 },
+    { d: 'M40 160 H300 V220', w: 1.2 },
+    { d: kreis(150, 196, 26) + ' ' + kreis(150, 196, 22) + ' M176 196 L320 186 L320 192 L176 202', w: .9 },
+    { d: kreis(142, 190, 5) + ' ' + kreis(158, 202, 5) + ' ' + kreis(156, 186, 4), w: .5, detail: true },
+  ],
+};
+
+// ---------- Abwandlungen: dasselbe Motiv sieht beim nächsten Mal anders aus ----------
+const ABENDHIMMEL = '#f0b27a', REGENHIMMEL = '#aeb8c2';
+const TAUSCH = { [OCKER]: TERRA, [TERRA]: OCKER, [GRUEN]: '#5f86b0', [GELB]: '#e9a35a', [HIMMEL]: HIMMEL };
+const VARIANTEN = [
+  { name: 'wie gezeichnet' },
+  { name: 'gespiegelt, andere Farben', spiegeln: true, tausch: true },
+  { name: 'Abendlicht', himmel: ABENDHIMMEL, abend: true },
+  { name: 'Regen, gespiegelt', spiegeln: true, himmel: REGENHIMMEL, regen: true },
+];
+function abwandeln(m, v) {
+  const teile = m.teile.map(t => {
+    let farbe = t.farbe;
+    if (v.tausch && TAUSCH[farbe]) farbe = TAUSCH[farbe];
+    if (v.himmel && farbe === HIMMEL) farbe = v.himmel;
+    return { ...t, farbe };
+  });
+  if (v.abend) teile.push({ d: 'M0 0 H340 V220 H0Z', farbe: '#e8a066' });
+  const linien = [...m.linien];
+  if (v.regen) linien.push({ d: Array.from({ length: 34 }, (_, i) => `M${(i * 37) % 340} ${(i * 53) % 190} l-5 14`).join(' '), w: .45, detail: true });
+  const bild = skizze({ teile, linien, extra: m.extra });
+  return v.spiegeln ? `<g transform="translate(340 0) scale(-1 1)">${bild}</g>` : bild;
+}
+
+const MOTIV_NAMEN = {
+  piazza: 'Piazza mit Brunnen', espresso: 'Espresso an der Bar', gasse: 'Gasse mit Wäscheleine', vespa: 'Vespa vor dem Tor',
+  bahnhof: 'Bahnhofsuhr am Bahnsteig', bruschetta: 'Brett mit Bruschette', albergo: 'Hotel-Rezeption', moka: 'Moka auf dem Herd',
+  toskana: 'Toskana mit Villa', fenster: 'Offene Fensterläden mit Blumen', koffer: 'Koffer mit Strohhut', fahrrad: 'Fahrrad an der Mauer',
+  kirchturm: 'Kirchturm mit Uhr', buecher: 'Bücherstapel mit Lampe', tisch: 'Gedeckter Tisch',
+  kalender: 'Abreißkalender an der Wand', karte: 'Italienkarte mit Globus', spritz: 'Spritz mit Oliven', picknick: 'Picknickkorb im Gras',
+  kasse: 'Alte Registrierkasse', kommode: 'Kommode mit Fotos und Radio', kleider: 'Kleiderständer mit Kleid und Schal', katze: 'Katze vor grüner Tür',
+  stuhl: 'Sessel am Fenster', tram: 'Alte Straßenbahn', laterne: 'Laterne mit Straßenschild', zugfenster: 'Blick aus dem Zugfenster',
+  obstkiste: 'Kiste mit Zitronen', markt: 'Marktstand mit Markise', meerhaus: 'Weißes Haus am Meer', wecker: 'Wecker auf dem Nachttisch',
+  schreibtisch: 'Schreibtisch mit Lampe', olivenhain: 'Feldweg im Olivenhain', torte: 'Kuchen auf dem Tisch', zelt: 'Zelt unter Pinien',
+  strand: 'Sonnenschirme am Strand', berg: 'Berge mit Hütte', hafen: 'Hafen mit bunten Häusern', topf: 'Großer Topf auf dem Herd',
+  pfanne: 'Pfanne mit Holzlöffel', kraeuter: 'Basilikum auf der Fensterbank', laden: 'Ladenzeile mit Schaufenster', wein: 'Wein und Gläser',
+  tafel: 'Kreidetafel der Trattoria', schirm: 'Regenschirm auf Pflaster', museum: 'Bild und Büste im Museum', apotheke: 'Grünes Apothekenkreuz',
+  vorhang: 'Theaterloge mit Vorhang', laptop: 'Laptop mit Espressotasse', briefkasten: 'Roter Briefkasten', telefon: 'Altes Telefon',
+  brief: 'Brief mit Briefmarke', gondel: 'Gondel vor der Rialtobrücke', bruecke: 'Steinbrücke am Fluss', kolosseum: 'Kolosseum',
+  wald: 'Reh am Waldrand', tresor: 'Tresor mit Drehrad', pizza: 'Pizza am Holzofen',
+};
+
+const GEZEICHNET = { piazza: PIAZZA, espresso: ESPRESSO, gasse: GASSE, vespa: VESPA, bahnhof: BAHNHOF, bruschetta: BRUSCHETTA, albergo: ALBERGO,
+  moka: MOKA, toskana: TOSKANA, fenster: FENSTER, koffer: KOFFER, fahrrad: FAHRRAD, kirchturm: KIRCHTURM, buecher: BUECHER, tisch: TISCH,
+  kleider: KLEIDER, stuhl: STUHL, zugfenster: ZUGFENSTER, kraeuter: KRAEUTER, schreibtisch: SCHREIBTISCH, kommode: KOMMODE,
+  kalender: KALENDER, laterne: LATERNE, markt: MARKT, meerhaus: MEERHAUS,
+  karte: KARTE, spritz: SPRITZ, picknick: PICKNICK, kasse: KASSE, katze: KATZE, tram: TRAM, obstkiste: OBSTKISTE, wecker: WECKER,
+  olivenhain: OLIVENHAIN, torte: TORTE, zelt: ZELT, strand: STRAND, berg: BERG, hafen: HAFEN, topf: TOPF, pfanne: PFANNE, laden: LADEN,
+  wein: WEIN, tafel: TAFEL, schirm: SCHIRM, museum: MUSEUM, apotheke: APOTHEKE, vorhang: VORHANG, laptop: LAPTOP, briefkasten: BRIEFKASTEN,
+  telefon: TELEFON, brief: BRIEF, gondel: GONDEL, bruecke: BRUECKE, kolosseum: KOLOSSEUM, wald: WALD, tresor: TRESOR, pizza: PIZZA };
+
+  const STAND = 'v1';                       // erhöhen, wenn sich die Zeichnungen ändern (Zwischenspeicher)
+  const SPEICHER = 'italienisch-skizzen';   // eigener Schlüssel – nie im Lernstand
+  const GRENZE = 600000;                    // höchstens so viele Zeichen im Zwischenspeicher (Lernstand hat Vorrang)
+  const fertig = new Map();
+
+  const MOTIVE = Object.fromEntries(Object.entries(GEZEICHNET).map(([key, m]) => [key, { name: MOTIV_NAMEN[key], bild: m.bild }]));
+
+  // Motiv und Abwandlung einer Lektion; Wiederholungen nehmen die Lektion davor
+  function fuer(lektion) {
+    if (!lektion || typeof SKIZZEN_ZUORDNUNG === 'undefined') return null;
+    let l = lektion;
+    if (l.art === 'ripasso' && typeof Lektionen !== 'undefined') {
+      const alle = Lektionen.alle();
+      const i = alle.findIndex((x) => x.id === l.id);
+      l = alle.slice(0, Math.max(i, 0)).reverse().find((x) => x.art !== 'ripasso') || null;
+    }
+    const eintrag = l && SKIZZEN_ZUORDNUNG[l.id];
+    if (!eintrag || !GEZEICHNET[eintrag[0]]) return null;
+    return { key: eintrag[0], variante: eintrag[1], bild: GEZEICHNET[eintrag[0]].bild };
+  }
+
+  function speicherLesen() {
+    try { return JSON.parse(localStorage.getItem(SPEICHER) || '{}') || {}; } catch (e) { return {}; }
+  }
+  // wie viel im ganzen Gerätespeicher der App liegt (Zeichen) – ohne unsere Bilder
+  function belegtOhneBilder() {
+    let summe = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const name = localStorage.key(i);
+      if (name !== SPEICHER) summe += name.length + (localStorage.getItem(name) || '').length;
+    }
+    return summe;
+  }
+  // Zwischenspeicher: einmal lesen, dann im Arbeitsspeicher; geschrieben wird gesammelt (nicht bei jedem Bild)
+  let zwischen = null;
+  function zwischenHolen() {
+    if (!zwischen) {
+      const s = speicherLesen();
+      zwischen = s.stand === STAND && s.bilder && typeof s.bilder === 'object' ? s : { stand: STAND, bilder: {} };
+    }
+    return zwischen;
+  }
+  let schreibenGeplant = null;
+  function speicherSchreiben() {
+    schreibenGeplant = null;
+    try {
+      // Lernstand hat Vorrang: liegt schon viel im Speicher, keine Bilder dazulegen
+      if (belegtOhneBilder() > 1500000) { localStorage.removeItem(SPEICHER); return; }
+      const s = zwischenHolen();
+      const schluesselListe = Object.keys(s.bilder);
+      let text = JSON.stringify(s);
+      // zu groß? älteste Bilder zuerst weglassen
+      while (text.length > GRENZE && schluesselListe.length > 1) { delete s.bilder[schluesselListe.shift()]; text = JSON.stringify(s); }
+      if (text.length <= GRENZE) localStorage.setItem(SPEICHER, text);
+    } catch (e) { /* voll oder gesperrt: dann eben ohne Zwischenspeicher */ }
+  }
+  function spaeterSchreiben() {
+    if (schreibenGeplant || typeof setTimeout === 'undefined') return;
+    schreibenGeplant = setTimeout(speicherSchreiben, 2000);
+  }
+
+  // Filter für die Wasserfarbe – einmal pro Seite
+  function filterEinfuegen() {
+    if (document.getElementById('aquarell-voll')) return;
+    document.body.insertAdjacentHTML('beforeend', `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+      <filter id="aquarell-voll" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="5" result="r"/>
+        <feDisplacementMap in="SourceGraphic" in2="r" scale="15" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="1.4" result="b"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="7" result="w"/>
+        <feColorMatrix in="w" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.9 1.25" result="wa"/>
+        <feComposite in="b" in2="wa" operator="in"/>
+      </filter></defs></svg>`);
+  }
+
+  // fertiges <svg> (aus dem Zwischenspeicher oder neu gezeichnet)
+  function svg(key, variante = 0) {
+    const m = GEZEICHNET[key];
+    if (!m) return '';
+    const schluessel = key + ':' + variante;
+    if (fertig.has(schluessel)) return fertig.get(schluessel);
+    const z = zwischenHolen();
+    let bild = z.bilder[schluessel];
+    if (!bild) {
+      bild = `<svg class="skizze-bild" viewBox="0 0 340 220" role="img" aria-label="${m.bild}">${abwandeln(m, VARIANTEN[variante] || VARIANTEN[0])}</svg>`;
+      z.bilder[schluessel] = bild;
+      spaeterSchreiben();
+    }
+    fertig.set(schluessel, bild);
+    return bild;
+  }
+
+  // Skizze einer Lektion in ein Element zeichnen – erst, wenn es ins Bild kommt (optionen.sofort: gleich zeichnen)
+  let beobachter = null;
+  // eine Skizze pro Bildaufbau zeichnen, damit Scrollen flüssig bleibt; abgehängte Elemente überspringen
+  const warteschlange = [];
+  let laeuft = false;
+  function abarbeiten() {
+    if (laeuft) return;
+    laeuft = true;
+    const weiter = () => {
+      const ziel = warteschlange.shift();
+      if (!ziel) { laeuft = false; return; }
+      if (ziel.isConnected && ziel._malen) ziel._malen();
+      ziel._malen = null;
+      (typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (f) => setTimeout(f, 16))(() => setTimeout(weiter, 0));
+    };
+    weiter();
+  }
+  // alte Listen-Einträge nicht mehr beobachten (die Lektionsliste wird neu gebaut)
+  function vergessen(wurzel) {
+    if (!beobachter) return;
+    wurzel.querySelectorAll('.lektion-skizze').forEach((e) => { beobachter.unobserve(e); e._malen = null; });
+  }
+  function einhaengen(element, lektion, optionen = {}) {
+    const s = fuer(lektion);
+    element.hidden = !s;
+    if (!s) return null;
+    filterEinfuegen();
+    const malen = () => { element.innerHTML = svg(s.key, s.variante); };
+    if (optionen.sofort || typeof IntersectionObserver === 'undefined') { malen(); return s; }
+    if (!beobachter) {
+      beobachter = new IntersectionObserver((eintraege) => eintraege.forEach((e) => {
+        if (!e.isIntersecting) return;
+        beobachter.unobserve(e.target);
+        warteschlange.push(e.target);
+        abarbeiten();
+      }), { rootMargin: '300px 0px' });
+    }
+    element._malen = malen;
+    beobachter.observe(element);
+    return s;
+  }
+
+  return { MOTIVE, VARIANTEN, fuer, svg, einhaengen, vergessen };
+})();

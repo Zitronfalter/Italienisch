@@ -64,7 +64,19 @@ function oeffneReiter(reiter) {
 
 function zeigeEinstellungen() {
   fuelleStimmWahl();
+  fuelleAussehen();
   zeige('einstellungen');
+}
+
+// Aussehen: Hintergrund (Papier/Pappe) und die Regler für den gerade gezeigten Hintergrund
+function fuelleAussehen() {
+  const w = Hintergrund.wahl();
+  const art = Hintergrund.gezeigteArt();
+  el('einst-grund').value = w.art;
+  el('einst-hell').value = w[art].hell;
+  el('einst-waerme').value = w[art].waerme;
+  el('einst-grund-jetzt').textContent = (w.art === 'auto' ? 'iPhone hell = Papier, dunkel = Pappe. ' : '')
+    + 'Gerade: ' + (art === 'pappe' ? 'Pappe' : 'Papier') + ' – die Regler gelten dafür.';
 }
 
 // Gruß passend zur Tageszeit
@@ -115,6 +127,7 @@ dateiFeld.addEventListener('change', async () => {
   if (!ok) return;
   try {
     await Speicher.ausDateiLaden(datei);
+    Hintergrund.anwenden();          // Hintergrund aus der Sicherung übernehmen
     zeigeZuletztGesichert();
     Lektionen.uebergang();
     Vokabeln.duolingoUebernehmen();   // ältere Sicherung ohne Merker: Duolingo-Wörter noch einmal übernehmen
@@ -245,7 +258,7 @@ function wegZeile(l) {
   return zeile;
 }
 
-function lektionKnopf(l, art) {
+function lektionKnopf(l, art, mitSkizze = false) {
   const knopf = document.createElement('button');
   knopf.type = 'button';
   knopf.className = 'karte karte-knopf lektion-eintrag ' + art;
@@ -259,6 +272,13 @@ function lektionKnopf(l, art) {
   knopf.querySelector('.karte-titel').textContent = l.titel;
   knopf.querySelector('.karte-text').textContent = l.situation;
   if (art === 'jetzt') knopf.appendChild(wegZeile(l));
+  if (mitSkizze) {
+    const bild = document.createElement('span');
+    bild.className = 'lektion-skizze';
+    bild.setAttribute('aria-hidden', 'true');
+    knopf.appendChild(bild);
+    if (Skizzen.einhaengen(bild, l)) knopf.classList.add('mit-skizze');
+  }
   knopf.addEventListener('click', () => {
     if (art === 'spaeter' && !confirm(`Schon ${lektionName(l)} „${l.titel}“ anfangen?`)) return;
     oeffneLektion(l);
@@ -270,15 +290,17 @@ function zeigeLektionen() {
   const aktuelle = Lektionen.aktuelle();
   const liste = el('lektionen-liste');
   const erledigtListe = el('lektionen-erledigt-liste');
+  Skizzen.vergessen(liste);
+  Skizzen.vergessen(erledigtListe);
   liste.innerHTML = '';
   erledigtListe.innerHTML = '';
   let erledigt = 0;
   for (const l of Lektionen.alle()) {
     if (Lektionen.istErledigt(l)) {
-      erledigtListe.appendChild(lektionKnopf(l, 'erledigt'));
+      erledigtListe.appendChild(lektionKnopf(l, 'erledigt', true));
       erledigt += 1;
     } else {
-      liste.appendChild(lektionKnopf(l, aktuelle && l.id === aktuelle.id ? 'jetzt' : 'spaeter'));
+      liste.appendChild(lektionKnopf(l, aktuelle && l.id === aktuelle.id ? 'jetzt' : 'spaeter', true));
     }
   }
   if (!liste.children.length) {
@@ -633,6 +655,10 @@ function zeigeStart() {
   const jetztDran = el('jetzt-dran');
   jetztDran.innerHTML = '';
   if (jetzt) jetztDran.appendChild(lektionKnopf(jetzt, 'jetzt'));
+  // Reiseskizze zur aktuellen Lektion
+  const skizze = jetzt ? Skizzen.einhaengen(el('skizze-heute-bild'), jetzt, { sofort: true }) : null;
+  el('skizze-heute').hidden = !skizze;
+  el('skizze-heute-titel').textContent = skizze ? skizze.bild : '';
   if (!geschafftZeigen(el('begleiter-start'))) Begleiter.zeigen(el('begleiter-start'), Begleiter.startNachricht());
   lekt.offen = null;
   // Gemerkte Stelle: „Weitermachen“ statt „Los“
@@ -1836,6 +1862,27 @@ function fuelleStimmWahl() {
   // Stimmen-Auswahl nur zeigen, wenn es mehr als eine italienische Stimme gibt
   document.querySelectorAll('[data-stimmen-teil]').forEach((x) => { x.hidden = stimmen.length < 2; });
 }
+// Aussehen (Hintergrund, Regler)
+el('einst-grund').addEventListener('change', (e) => {
+  Hintergrund.setzen({ art: e.target.value });
+  fuelleAussehen();
+});
+// beim Ziehen nur anzeigen, beim Loslassen speichern (sonst wird bei jedem Schritt der ganze Lernstand geschrieben)
+const reglerWerte = () => ({ [Hintergrund.gezeigteArt()]: { hell: Number(el('einst-hell').value), waerme: Number(el('einst-waerme').value) } });
+['einst-hell', 'einst-waerme'].forEach((id) => {
+  el(id).addEventListener('input', () => Hintergrund.setzen(reglerWerte(), { speichern: false }));
+  el(id).addEventListener('change', () => Hintergrund.setzen(reglerWerte()));
+});
+el('knopf-grund-zurueck').addEventListener('click', () => {
+  Hintergrund.zuruecksetzen();
+  fuelleAussehen();
+});
+if (window.matchMedia) {
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const neu = () => { if (!el('screen-einstellungen').hidden) fuelleAussehen(); };
+  if (mq.addEventListener) mq.addEventListener('change', neu); else if (mq.addListener) mq.addListener(neu);
+}
+
 document.querySelectorAll('select[data-tempo]').forEach((t) => t.addEventListener('change', (e) => {
   Lesen.tempoWaehlen(e.target.value);
   fuelleStimmWahl();
@@ -3216,23 +3263,6 @@ document.querySelectorAll('[data-zurueck]').forEach((knopf) => {
   knopf.addEventListener('click', () => oeffneReiter(knopf.dataset.zurueck || 'heute'));
 });
 
-// Limo in den Übungen: sitzt in der Aufgaben-Karte (.frage-karte) und passt ihre Stimmung an,
-// sobald sich auf der Seite etwas zeigt/versteckt (neue Aufgabe, Hören, Rückmeldung).
-if (typeof MutationObserver !== 'undefined') {
-  const UEBUNGS_SEITEN = ['screen-runde', 'screen-uebung', 'screen-aufgaben', 'screen-hoeren'];
-  const limoAktualisieren = (seite) => {
-    if (seite.hidden) return;
-    const karte = seite.querySelector('.frage-karte');
-    if (karte) Begleiter.uebungLimo(karte, Begleiter.uebungStimmung(seite));
-  };
-  const limoBeobachter = new MutationObserver((aenderungen) => {
-    const seiten = new Set(aenderungen.map((a) => a.target.closest('.screen')).filter(Boolean));
-    seiten.forEach(limoAktualisieren);
-  });
-  for (const id of UEBUNGS_SEITEN) {
-    limoBeobachter.observe(el(id), { attributes: true, subtree: true, attributeFilter: ['hidden', 'class'] });
-  }
-}
 
 // „Prüfen“ geht erst, wenn etwas eingetippt oder mindestens eine Kachel gelegt ist.
 // „Weiß ich nicht“ bleibt immer möglich. Gilt nur, solange der Knopf „Prüfen“ heißt.

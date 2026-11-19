@@ -364,8 +364,7 @@ function wortStand(id) {
 }
 
 function oeffneLektion(l) {
-  lekt.offen = l;
-  Lektionen.beginnen(l.id);
+  lekt.offen = l;               // nur ansehen – aktuell wird die Lektion erst mit einem Schritt (Lektionen.beginnen)
   el('lektion-meta').textContent = `${lektionName(l)} · ${l.stufe}` + (Lektionen.istErledigt(l) ? ' · erledigt ✓' : '');
   el('lektion-titel').textContent = l.titel;
   el('lektion-situation').textContent = l.situation;

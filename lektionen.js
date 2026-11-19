@@ -196,9 +196,12 @@ const Lektionen = (() => {
 
   // ---------- Welche Lektion ist dran? ----------
 
-  // Zuletzt begonnene, nicht erledigte Lektion – sonst die erste nicht erledigte.
+  // Die Lektion, in der zuletzt ein Schritt gestartet wurde (fortschritt.aktuelleLektion), solange nicht erledigt.
+  // Ohne Merker (alter Lernstand): zuletzt begonnene, nicht erledigte – sonst die erste nicht erledigte.
   function aktuelle() {
     const offen = alle().filter((l) => !istErledigt(l));
+    const gemerkt = finde(Speicher.daten.fortschritt.aktuelleLektion);
+    if (gemerkt && !istErledigt(gemerkt)) return gemerkt;
     let beste = null;
     for (const l of offen) {
       const b = gespeichert(l.id).begonnen;
@@ -209,10 +212,14 @@ const Lektionen = (() => {
     return beste || offen[0] || null;
   }
 
+  // Ein Schritt (oder die Wiederholung) dieser Lektion wird gestartet: sie ist ab jetzt die aktuelle.
+  // Nur ansehen (Lektionsseite öffnen) ruft das nicht auf.
   function beginnen(id) {
     const s = stand(id);
-    if (!s.begonnen) {
-      s.begonnen = Vokabeln.heute();
+    const f = Speicher.daten.fortschritt;
+    if (!s.begonnen || f.aktuelleLektion !== id) {
+      s.begonnen = s.begonnen || Vokabeln.heute();
+      f.aktuelleLektion = id;
       Speicher.speichern();
     }
   }

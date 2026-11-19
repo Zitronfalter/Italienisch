@@ -81,6 +81,18 @@ test('aktuelle: zuletzt begonnene vor erster offener', () => {
   assert.strictEqual(k.Lektionen.aktuelle().id, 'l02');
 });
 
+test('aktuelle: Lektion mit zuletzt gestartetem Schritt, auch vor einer später begonnenen', () => {
+  const k = frisch();
+  // alter Lernstand: l03 nur angesehen (begonnen gesetzt), l02 wirklich in Arbeit
+  k.Speicher.daten.fortschritt.lektionen = { l02: { begonnen: '2026-11-01', schritt: 3 }, l03: { begonnen: '2026-11-10' } };
+  assert.strictEqual(k.Lektionen.aktuelle().id, 'l03');          // ohne Merker wie bisher
+  k.Lektionen.beginnen('l02');                                   // Schritt in l02 gestartet
+  assert.strictEqual(k.Lektionen.aktuelle().id, 'l02');
+  assert.strictEqual(k.Speicher.daten.fortschritt.lektionen.l02.begonnen, '2026-11-01');   // Datum bleibt
+  k.Speicher.daten.fortschritt.lektionen.l02.erledigt = '2026-11-19';
+  assert.strictEqual(k.Lektionen.aktuelle().id, 'l03');          // erledigt → wieder die übliche Regel
+});
+
 test('aktuelle: null, wenn alle erledigt; naechsterTeil dann null', () => {
   const k = frisch();
   k.Speicher.daten.fortschritt.lektionen = {

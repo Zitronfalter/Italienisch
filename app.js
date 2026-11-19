@@ -1902,7 +1902,7 @@ if (Lesen.kannSprechen) speechSynthesis.addEventListener('voiceschanged', fuelle
 function vorlesenStopp() {
   Lesen.stopp();
   lesen.liestVor = false;
-  el('knopf-vorlesen').textContent = '▶ Vorlesen';
+  el('knopf-vorlesen').textContent = 'Vorlesen';
 }
 el('knopf-vorlesen').addEventListener('click', () => {
   if (lesen.liestVor) { vorlesenStopp(); return; }
@@ -1911,7 +1911,7 @@ el('knopf-vorlesen').addEventListener('click', () => {
   if (!Lesen.hatItalienischeStimme()) zeigeVorleseHinweis();
   Lesen.sprich(Lesen.vorleseText(lesen.text.text), () => {
     lesen.liestVor = false;
-    el('knopf-vorlesen').textContent = '▶ Vorlesen';
+    el('knopf-vorlesen').textContent = 'Vorlesen';
   });
 });
 

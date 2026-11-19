@@ -80,10 +80,37 @@ function leiseUmschalten(an) {
 document.getElementById('knopf-leise').addEventListener('click', () => leiseUmschalten(!Lesen.leise()));
 document.getElementById('einst-leise').addEventListener('change', (e) => leiseUmschalten(e.target.checked));
 
+// Knopf-Farbe: Farbfelder (je ein Knopf in der Grundfarbe) und Regler
+function fuelleKnopfFarbe() {
+  const a = Hintergrund.akzentWahl();
+  const art = Hintergrund.gezeigteArt();
+  const box = el('einst-farben');
+  if (!box.children.length) {
+    Hintergrund.AKZENTE.forEach((f) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'farb-feld';
+      b.dataset.farbe = f.id;
+      b.setAttribute('aria-label', f.name);
+      b.addEventListener('click', () => { Hintergrund.akzentSetzen({ farbe: f.id }); fuelleKnopfFarbe(); });
+      box.appendChild(b);
+    });
+  }
+  box.querySelectorAll('.farb-feld').forEach((b) => {
+    // jedes Feld zeigt seine Farbe mit den eingestellten Reglern
+    b.style.background = Hintergrund.akzentFarben(art, { ...a, farbe: b.dataset.farbe }).akzent;
+    b.setAttribute('aria-pressed', String(b.dataset.farbe === a.farbe));
+  });
+  el('einst-farbe-name').textContent = 'Gewählt: ' + Hintergrund.AKZENTE.find((f) => f.id === a.farbe).name;
+  el('einst-farbe-hell').value = a.hell;
+  el('einst-farbe-saett').value = a.saettigung;
+}
+
 function zeigeEinstellungen() {
   zeigeLeise();
   fuelleStimmWahl();
   fuelleAussehen();
+  fuelleKnopfFarbe();
   zeige('einstellungen');
 }
 
@@ -1896,6 +1923,17 @@ const reglerWerte = () => ({ [Hintergrund.gezeigteArt()]: { hell: Number(el('ein
 el('knopf-grund-zurueck').addEventListener('click', () => {
   Hintergrund.zuruecksetzen();
   fuelleAussehen();
+  fuelleKnopfFarbe();
+});
+// Knopf-Farbe: beim Ziehen nur anzeigen, beim Loslassen speichern
+const farbRegler = () => ({ hell: Number(el('einst-farbe-hell').value), saettigung: Number(el('einst-farbe-saett').value) });
+['einst-farbe-hell', 'einst-farbe-saett'].forEach((id) => {
+  el(id).addEventListener('input', () => Hintergrund.akzentSetzen(farbRegler(), { speichern: false }));
+  el(id).addEventListener('change', () => { Hintergrund.akzentSetzen(farbRegler()); fuelleKnopfFarbe(); });
+});
+el('knopf-farbe-zurueck').addEventListener('click', () => {
+  Hintergrund.akzentZuruecksetzen();
+  fuelleKnopfFarbe();
 });
 if (window.matchMedia) {
   const mq = matchMedia('(prefers-color-scheme: dark)');

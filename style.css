@@ -6,7 +6,7 @@
   --flaeche: hsl(50 43% 99%);
   --text: #1f1c18;          /* Tusche */
   --text-leise: #6b6459;    /* wird von hintergrund.js gesetzt */
-  --akzent: #d6a24a;        /* Ocker: Hauptknöpfe, Fortschritt, aktiver Reiter – nie als Schriftfarbe */
+  --akzent: #d6a24a;        /* Ocker (in den Einstellungen wählbar, setzt hintergrund.js): Hauptknöpfe, Fortschritt, aktiver Reiter – nie als Schriftfarbe */
   --akzent-text: #1f1c18;   /* Schrift auf Ocker */
   --akzent-linie: #8a6220;  /* Rahmen und Schrift von Nebenknöpfen, Links – auf Pappe dunkler, setzt hintergrund.js */
   --richtig: #4f7a30;       /* Blattgrün: richtig, geschafft – wird von hintergrund.js gesetzt */
@@ -19,7 +19,7 @@
   --radius: 16px;
   --kasten-farbe: #d9822b;   /* Symbol „Vokabelkasten“ unter Üben */
   --reiter-strich: #1f1c18;  /* aktives Symbol unten: Ocker gefüllt mit Tuschelinie */
-  --reiter-fuellung: #d6a24a;
+  --reiter-fuellung: var(--akzent);
   /* feine Papierstruktur (Rauschen) */
   --struktur: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .25  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
@@ -102,6 +102,10 @@ html, body {
   background: var(--akzent);
 }
 .kopf-zeile h1::after { display: none; }
+/* Einstellungen: Farbfelder für die Knopf-Farbe (7 pro Zeile) */
+.farb-felder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 4px; }
+.farb-feld { aspect-ratio: 1; min-height: 36px; padding: 0; border: 1.5px solid; color: var(--text); font-size: 20px; line-height: 1; }
+.farb-feld[aria-pressed="true"]::before { content: '✓'; color: var(--text); text-shadow: 0 0 3px #fff, 0 0 3px #fff; }
 /* Heute: Gruß links, Knopf „Leise“ rechts */
 .kopf-mit-knopf { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .kopf-mit-knopf .knopf-klein { flex: none; margin-top: 6px; }
@@ -1335,23 +1339,25 @@ body.mit-oben .screen .knopf-zurueck { display: none; }
 .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel {
   --rahmen: var(--text-leise); --rahmen-bild: var(--rahmen-fein);
 }
+/* Farbfelder (Knopf-Farbe): Tuscherahmen wie ein Knopf */
+.farb-feld { --rahmen: var(--text); --rahmen-bild: var(--rahmen-knopf); }
 /* Eingabefelder können kein ::after zeichnen: echter Rand in Tusche-leise, beim Tippen Ocker-Linie */
 .eingabe-feld { --rahmen: var(--text-leise); border-color: var(--rahmen); border-radius: 3px; }
 
 :is(.karte, .tabelle-rahmen, .treffer-liste, .woerter-gruppe, .wortcheck-liste, .kasten-fach, .weg-schritt-knopf,
     .knopf-haupt, .knopf-los, .knopf-klein-voll, .knopf-zweit, .knopf-klein, .knopf-plus,
-    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel:not(.kachel-schwebt)) {
+    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel:not(.kachel-schwebt), .farb-feld) {
   position: relative;
 }
 :is(.karte, .tabelle-rahmen, .treffer-liste, .woerter-gruppe, .wortcheck-liste, .kasten-fach, .weg-schritt-knopf,
     .knopf-haupt, .knopf-los, .knopf-klein-voll, .knopf-zweit, .knopf-klein, .knopf-plus,
-    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel) {
+    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel, .farb-feld) {
   border-color: transparent !important;
   border-radius: 3px !important;
 }
 :is(.karte, .tabelle-rahmen, .treffer-liste, .woerter-gruppe, .wortcheck-liste, .kasten-fach, .weg-schritt-knopf,
     .knopf-haupt, .knopf-los, .knopf-klein-voll, .knopf-zweit, .knopf-klein, .knopf-plus,
-    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel)::after {
+    .knopf-zurueck, .antwort, .paar, .wortcheck-wahl button, .filter-knopf, .kachel, .farb-feld)::after {
   content: '';
   position: absolute;
   inset: -3px;

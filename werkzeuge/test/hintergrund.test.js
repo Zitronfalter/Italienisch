@@ -69,13 +69,59 @@ test('setzen speichert in den Einstellungen, andere bleiben', () => {
 test('Linkfarbe (Nebenknöpfe) und Ränder bleiben an den Regler-Grenzen sichtbar', () => {
   for (const art of ['papier', 'pappe']) for (const hell of [0, 50, 100]) for (const waerme of [0, 50, 100]) {
     const r = { hell, waerme }, bg = k.Hintergrund.farbe(art, r), fl = k.Hintergrund.flaeche(art, r);
-    const linie = k.Hintergrund.FARBEN[art].akzentLinie;
+    const linie = k.Hintergrund.akzentFarben(art, k.Hintergrund.AKZENT_STANDARD, r).linie;
     assert.ok(k.Hintergrund.kontrast(linie, bg) >= 4.5, `${art} ${hell}/${waerme} akzentLinie auf Grund`);
     assert.ok(k.Hintergrund.kontrast(linie, fl) >= 4.5, `${art} ${hell}/${waerme} akzentLinie auf Fläche`);
     for (const t of ['textLeise', 'richtig', 'fehler']) assert.ok(k.Hintergrund.kontrast(k.Hintergrund.FARBEN[art][t], fl) >= 4.5, `${art} ${hell}/${waerme} ${t} auf Fläche`);
     const rand = k.Hintergrund.rand(art, r);
     assert.ok(k.Hintergrund.kontrast(rand, bg) >= 1.25, `${art} ${hell}/${waerme} Rand: ${k.Hintergrund.kontrast(rand, bg).toFixed(2)}`);
   }
+});
+
+// ---------- Knopf-Farbe ----------
+
+test('Knopf-Farbe: Standard ist das bisherige Ocker', () => {
+  const p = k.Hintergrund.akzentFarben('papier', k.Hintergrund.AKZENT_STANDARD, k.Hintergrund.STANDARD.papier);
+  assert.strictEqual(p.akzent, 'hsl(38 63% 56%)');      // ≈ #d6a24a
+  assert.strictEqual(p.text, '#1f1c18');
+});
+
+test('Knopf-Farbe: Schrift und Linie bleiben bei allen Farben und Reglern lesbar', () => {
+  for (const f of k.Hintergrund.AKZENTE) for (const hell of [0, 25, 50, 75, 100]) for (const saettigung of [0, 50, 100]) {
+    for (const art of ['papier', 'pappe']) for (const gh of [0, 50, 100]) for (const gw of [0, 100]) {
+      const r = { hell: gh, waerme: gw };
+      const a = k.Hintergrund.akzentFarben(art, { farbe: f.id, hell, saettigung }, r);
+      const name = `${f.id} ${hell}/${saettigung} ${art} ${gh}/${gw}`;
+      assert.ok(k.Hintergrund.kontrast(a.text, a.akzent) >= 4.5, `${name} Schrift auf Farbe`);
+      assert.ok(k.Hintergrund.kontrast(a.linie, k.Hintergrund.farbe(art, r)) >= 4.5, `${name} Linie auf Grund`);
+      assert.ok(k.Hintergrund.kontrast(a.linie, k.Hintergrund.flaeche(art, r)) >= 4.5, `${name} Linie auf Fläche`);
+    }
+  }
+});
+
+test('Knopf-Farbe: sehr dunkel → helle Schrift', () => {
+  const a = k.Hintergrund.akzentFarben('papier', { farbe: 'petrol', hell: 0, saettigung: 50 }, k.Hintergrund.STANDARD.papier);
+  assert.strictEqual(a.text, '#fbfaf5');
+});
+
+test('Knopf-Farbe: Regler ändern die Farbe, unbekannte Farbe → Ocker', () => {
+  const F = (a) => k.Hintergrund.akzentFarben('papier', a, k.Hintergrund.STANDARD.papier).akzent;
+  assert.notStrictEqual(F({ farbe: 'salbei', hell: 20, saettigung: 50 }), F({ farbe: 'salbei', hell: 80, saettigung: 50 }));
+  assert.notStrictEqual(F({ farbe: 'salbei', hell: 50, saettigung: 0 }), F({ farbe: 'salbei', hell: 50, saettigung: 100 }));
+  const kk = laden(undefined, '', { gespeichert: '{"einstellungen":{"akzent":{"farbe":"neon","hell":"x"}}}' });
+  assert.deepStrictEqual(roh(kk.Hintergrund.akzentWahl()), { farbe: 'ocker', hell: 50, saettigung: 50 });
+});
+
+test('Knopf-Farbe setzen: Hintergrund und andere Einstellungen bleiben', () => {
+  const kk = laden(undefined, '', { gespeichert: '{"einstellungen":{"tempo":0.7,"hintergrund":{"art":"pappe"}}}' });
+  kk.Hintergrund.akzentSetzen({ farbe: 'lavendel', hell: 30 });
+  kk.Hintergrund.setzen({ pappe: { hell: 20 } });
+  const e = kk.Speicher.daten.einstellungen;
+  assert.strictEqual(e.tempo, 0.7);
+  assert.strictEqual(e.hintergrund.art, 'pappe');
+  assert.deepStrictEqual(roh(e.akzent), { farbe: 'lavendel', hell: 30, saettigung: 50 });
+  kk.Hintergrund.akzentZuruecksetzen();
+  assert.deepStrictEqual(roh(kk.Hintergrund.akzentWahl()), { farbe: 'ocker', hell: 50, saettigung: 50 });
 });
 
 test('setzen ohne Speichern (beim Ziehen der Regler) schreibt nichts', () => {

@@ -20,6 +20,33 @@ const Hintergrund = (() => {
     pappe: { textLeise: '#4a4239', richtig: '#2f4f1b', fehler: '#294b61', akzentLinie: '#553a0c' },
   };
 
+  // Knopf-Farbe (statt Ocker wählbar): Grundton je Farbe, Regler Helligkeit und Sättigung (0–100, Mitte = Grundton).
+  // Gespeichert in Speicher.daten.einstellungen.akzent = { farbe, hell, saettigung }.
+  // Schrift darauf: Tusche, bei dunkler Einstellung hell. Die Linie (Nebenknöpfe, Links) wird daraus abgeleitet.
+  // Die Reiseskizzen behalten ihre eigenen Farben.
+  const AKZENTE = [
+    { id: 'ocker', name: 'Ocker', h: 38, s: 63, l: 56 },
+    { id: 'honig', name: 'Honig', h: 46, s: 72, l: 60 },
+    { id: 'sand', name: 'Sand', h: 35, s: 32, l: 70 },
+    { id: 'olive', name: 'Olive', h: 68, s: 34, l: 54 },
+    { id: 'salbei', name: 'Salbei', h: 100, s: 20, l: 62 },
+    { id: 'minze', name: 'Minze', h: 155, s: 28, l: 66 },
+    { id: 'petrol', name: 'Petrol', h: 185, s: 34, l: 52 },
+    { id: 'himmel', name: 'Himmelblau', h: 200, s: 52, l: 70 },
+    { id: 'taube', name: 'Taubenblau', h: 215, s: 30, l: 64 },
+    { id: 'lavendel', name: 'Lavendel', h: 258, s: 36, l: 72 },
+    { id: 'flieder', name: 'Flieder', h: 290, s: 26, l: 68 },
+    { id: 'altrosa', name: 'Altrosa', h: 350, s: 40, l: 72 },
+    { id: 'beere', name: 'Beere', h: 335, s: 38, l: 58 },
+    { id: 'schiefer', name: 'Schiefer', h: 210, s: 10, l: 62 },
+  ];
+  const AKZENT_STANDARD = { farbe: 'ocker', hell: 50, saettigung: 50 };
+  const PRO_HELL_L = 0.8;          // Helligkeit ±40 Prozentpunkte (dunkel → helle Schrift)
+  const PRO_SAETTIGUNG_S = 0.6;    // Sättigung ±30 Prozentpunkte
+  const TUSCHE = '#1f1c18';
+  const HELL = '#fbfaf5';          // Schrift auf dunkler Knopf-Farbe
+  const LINIE_START = { papier: 33, pappe: 19 };   // so dunkel ist die Linie beim Ocker (wie bisher)
+
   const begrenzt = (wert, standard) => {
     const zahl = typeof wert === 'number' ? wert : NaN;
     return Number.isFinite(zahl) ? Math.min(100, Math.max(0, Math.round(zahl))) : standard;
@@ -29,15 +56,16 @@ const Hintergrund = (() => {
     waerme: begrenzt(r && r.waerme, standard.waerme),
   });
 
-  function gespeichert() {
+  function einstellungen() {
     try {
-      if (typeof Speicher !== 'undefined') return (Speicher.daten.einstellungen || {}).hintergrund;
+      if (typeof Speicher !== 'undefined') return Speicher.daten.einstellungen || {};
       const roh = localStorage.getItem('italienisch-daten');
-      return roh ? ((JSON.parse(roh) || {}).einstellungen || {}).hintergrund : undefined;
+      return (roh ? (JSON.parse(roh) || {}).einstellungen : null) || {};
     } catch (e) {
-      return undefined;
+      return {};
     }
   }
+  const gespeichert = () => einstellungen().hintergrund;
 
   function wahl() {
     const g = gespeichert() || {};
@@ -92,6 +120,54 @@ const Hintergrund = (() => {
     return (x + 0.05) / (y + 0.05);
   }
 
+  // ---------- Knopf-Farbe ----------
+
+  function akzentWahl() {
+    const g = einstellungen().akzent || {};
+    return {
+      farbe: AKZENTE.some((a) => a.id === g.farbe) ? g.farbe : AKZENT_STANDARD.farbe,
+      hell: begrenzt(g.hell, AKZENT_STANDARD.hell),
+      saettigung: begrenzt(g.saettigung, AKZENT_STANDARD.saettigung),
+    };
+  }
+
+  const grenzen = (x, min, max) => Math.round(Math.min(max, Math.max(min, x)));
+  const hslText = (h, s, l) => `hsl(${h} ${s}% ${l}%)`;
+
+  // Fläche (Hauptknöpfe …) und Linie (Nebenknöpfe, Links) für Art art und Hintergrund-Regler r
+  function akzentFarben(art, a = akzentWahl(), r = wahl()[art]) {
+    const wahlA = { ...AKZENT_STANDARD, ...(a || {}) };
+    const basis = AKZENTE.find((x) => x.id === wahlA.farbe) || AKZENTE[0];
+    const s = grenzen(basis.s + (begrenzt(wahlA.saettigung, 50) - 50) * PRO_SAETTIGUNG_S, 4, 95);
+    let l = grenzen(basis.l + (begrenzt(wahlA.hell, 50) - 50) * PRO_HELL_L, 18, 92);
+    // Schrift auf der Farbe: Tusche, bei dunkler Farbe hell. Reicht keins (mittlere Töne), etwas heller bzw. dunkler machen.
+    const passt = (schrift, ll) => kontrast(schrift, hslText(basis.h, s, ll)) >= 4.5;
+    let text = TUSCHE;
+    if (!passt(TUSCHE, l)) {
+      if (passt(HELL, l)) text = HELL;
+      else if (l >= 45) { while (l < 95 && !passt(TUSCHE, l)) l += 1; }
+      else { text = HELL; while (l > 5 && !passt(HELL, l)) l -= 1; }
+    }
+    const grund = farbe(art, r), fl = flaeche(art, r);
+    let ll = LINIE_START[art];
+    const linieS = Math.min(s + 10, 80);
+    while (ll > 5 && (kontrast(hslText(basis.h, linieS, ll), grund) < 4.5 || kontrast(hslText(basis.h, linieS, ll), fl) < 4.5)) ll -= 1;
+    return { akzent: hslText(basis.h, s, l), linie: hslText(basis.h, linieS, ll), text };
+  }
+
+  function akzentSetzen(teil, optionen = {}) {
+    const neu = { ...akzentWahl(), ...(teil || {}) };
+    const alt_ = Speicher.daten.einstellungen;
+    Speicher.daten.einstellungen = { ...(alt_ && typeof alt_ === 'object' ? alt_ : {}), akzent: neu };
+    Speicher.daten.einstellungen.akzent = akzentWahl();          // bereinigt (Grenzen, bekannte Farbe)
+    if (optionen.speichern !== false) Speicher.speichern();
+    anwenden();
+  }
+
+  function akzentZuruecksetzen() {
+    akzentSetzen({ ...AKZENT_STANDARD });
+  }
+
   function dunkelGewuenscht() {
     return typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
   }
@@ -123,13 +199,16 @@ const Hintergrund = (() => {
     const art = aktuelleArt(w, dunkelGewuenscht());
     const wurzel = document.documentElement;
     const f = FARBEN[art];
+    const ak = akzentFarben(art, akzentWahl(), w[art]);
     const werte = {
+      '--akzent': ak.akzent,
+      '--akzent-text': ak.text,
       '--hintergrund': farbe(art, w[art]),
       '--flaeche': flaeche(art, w[art]),
       '--text-leise': f.textLeise,
       '--richtig': f.richtig,
       '--fehler': f.fehler,
-      '--akzent-linie': f.akzentLinie,
+      '--akzent-linie': ak.linie,
       '--rand': rand(art, w[art]),
     };
     Object.entries(werte).forEach(([name, wert]) => wurzel.style.setProperty(name, wert));
@@ -146,5 +225,8 @@ const Hintergrund = (() => {
     else if (mq.addListener) mq.addListener(neu);
   }
 
-  return { STANDARD, FARBEN, wahl, aktuelleArt, farbe, flaeche, rand, kontrast, gezeigteArt, setzen, zuruecksetzen, anwenden };
+  return {
+    STANDARD, FARBEN, wahl, aktuelleArt, farbe, flaeche, rand, kontrast, gezeigteArt, setzen, zuruecksetzen, anwenden,
+    AKZENTE, AKZENT_STANDARD, akzentWahl, akzentFarben, akzentSetzen, akzentZuruecksetzen,
+  };
 })();

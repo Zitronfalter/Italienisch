@@ -1152,15 +1152,22 @@ function pruefenSatz(weissNicht) {
   el('rueck-titel').textContent = ergebnis.stufe === 'richtig' ? 'Richtig.'
     : ergebnis.stufe === 'fast' ? 'Fast richtig – zählt.'
       : weissNicht ? 'So heißt der Satz:' : 'Noch nicht.';
+  // Nichts wiederholen, was schon oben steht: richtig → nur Hinweis (beim Hören die Bedeutung),
+  // fast/falsch → nur die richtige Antwort in der gesuchten Sprache.
   const text = el('rueck-text');
   text.innerHTML = '';
   if (ergebnis.hinweis) text.append(ergebnis.hinweis, document.createElement('br'));
-  const it = document.createElement('strong');
-  it.lang = 'it';
-  it.textContent = a.satz.it;
-  text.append(it, document.createElement('br'), a.satz.de);
+  const antwortDeutsch = a.modus === 'kennen' || a.modus === 'de';
+  if (ergebnis.stufe !== 'richtig') {
+    const antwort = document.createElement('strong');
+    antwort.lang = antwortDeutsch ? 'de' : 'it';
+    antwort.textContent = antwortDeutsch ? a.satz.de : a.satz.it;
+    text.append(antwort);
+  } else if (a.modus === 'hoeren') {
+    text.append(a.satz.de);                        // gehört, nicht gelesen: die Bedeutung ist neu
+  }
   if (nochmal) text.append(document.createElement('br'), 'Kommt gleich noch einmal.');
-  text.hidden = false;
+  text.hidden = !text.textContent.trim();
   box.hidden = false;
 
   el('runde-ablage').classList.add('fertig');
@@ -1170,7 +1177,7 @@ function pruefenSatz(weissNicht) {
   el('knopf-pruefen').focus();
   abfrage.geprueft = true;
   if (a.modus !== 'hoeren' && a.modus !== 'kennen') sprichWort(a.satz.it, false, false);
-  if (gut) autoWeiter(3000);
+  if (gut) autoWeiter(text.hidden ? 2000 : 3000);
 }
 
 function pruefenDeutsch(weissNicht) {
@@ -2851,25 +2858,29 @@ function hoerPruefen() {
 
   el('hoeren-rueck').classList.toggle('falsch', !gut);
   el('hoeren-rueck-titel').textContent = gut ? (hinweis ? 'Fast richtig – zählt.' : 'Richtig.') : 'Noch nicht ganz.';
-  // Richtigen Satz zeigen, falsche Wörter markiert, dazu die deutsche Bedeutung
+  // Richtig: nur die Bedeutung (gehört, nicht gelesen – steht nirgends). Fast/falsch: der richtige Satz,
+  // falsche Wörter markiert. Bei „Leise“ steht der deutsche Satz schon oben.
   const text = el('hoeren-rueck-text');
   text.innerHTML = '';
   if (hinweis) text.append(hinweis + ' ');
-  const satz = document.createElement('strong');
-  satz.lang = 'it';
-  a.satz.it.split(' ').forEach((w, i) => {
-    if (i) satz.append(' ');
-    if (falscheStellen.includes(i)) {
-      const m = document.createElement('span');
-      m.className = 'wort-falsch';
-      m.textContent = w;
-      satz.append(m);
-    } else satz.append(w);
-  });
-  text.append(satz);
-  if (a.satz.de) text.append(document.createElement('br'), a.satz.de);
-  else if (a.satz.quelle) text.append(document.createElement('br'), `aus „${a.satz.quelle}“`);
-  text.hidden = false;
+  const exakt = gut && !hinweis;
+  if (!exakt) {
+    const satz = document.createElement('strong');
+    satz.lang = 'it';
+    a.satz.it.split(' ').forEach((w, i) => {
+      if (i) satz.append(' ');
+      if (falscheStellen.includes(i)) {
+        const m = document.createElement('span');
+        m.className = 'wort-falsch';
+        m.textContent = w;
+        satz.append(m);
+      } else satz.append(w);
+    });
+    text.append(satz);
+  } else if (Lesen.kannSprechen && a.satz.de) {
+    text.append(a.satz.de);
+  }
+  text.hidden = !text.textContent.trim();
   el('hoeren-rueck').hidden = false;
   el('knopf-hoeren').textContent = 'Weiter';
   el('knopf-hoeren').focus();
@@ -3027,7 +3038,7 @@ function aufgabePruefen() {
   } else {
     if (!gelegt.length) return;
     gut = Uebungen.pruefeKacheln(gelegt, a.satz.it);
-    loesung = a.satz.it + (a.satz.de ? ' – ' + a.satz.de : '');
+    loesung = a.satz.it;                                    // nur die Antwort, die Aufgabe steht oben
   }
   if (gut) aufg.richtig += 1;
   else if (a.art === 'grammatik') aufg.fehler[a.kapitel] = (aufg.fehler[a.kapitel] || 0) + 1;
@@ -3038,7 +3049,10 @@ function aufgabePruefen() {
   el('aufgabe-ablage').classList.add('fertig');
   el('aufgabe-rueck').classList.toggle('falsch', !gut);
   el('aufgabe-rueck-titel').textContent = gut ? 'Richtig.' : 'Noch nicht.';
-  el('aufgabe-rueck-text').textContent = gut ? (a.art === 'hoeren' && a.satz.de ? a.satz.de : '') : 'Richtig ist: ' + loesung;
+  // Richtig: beim Hören nur die Bedeutung (bei „Leise“ steht sie schon oben); falsch: nur die richtige Antwort
+  el('aufgabe-rueck-text').textContent = gut
+    ? (a.art === 'hoeren' && a.satz.de && Lesen.kannSprechen ? a.satz.de : '')
+    : 'Richtig ist: ' + loesung;
   el('aufgabe-rueck-text').hidden = !el('aufgabe-rueck-text').textContent;
   el('aufgabe-rueck').hidden = false;
   el('knopf-aufgabe').textContent = 'Weiter';

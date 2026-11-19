@@ -188,14 +188,16 @@ const Uebungen = (() => {
       ...mischen(liste.filter((x) => eigen.has(x.text))),
       ...mischen(liste.filter((x) => !eigen.has(x.text))),
     ];
-    const frisch = frischeSaetze(optionen);
+    // Leise (oder keine Sprachausgabe): nur Sätze mit deutscher Bedeutung, alle als Kacheln
+    const leise = optionen.leise !== undefined ? optionen.leise : !Lesen.kannSprechen;
+    const frisch = frischeSaetze(optionen).filter((x) => !leise || x.de);
     const auswahl = [
       ...reihe(frisch.filter((x) => !geloest.has(sauber(x.it)))),
       ...reihe(frisch.filter((x) => geloest.has(sauber(x.it)))),
     ].slice(0, 4);
     const aufgaben = [{ art: 'paare', paare: paarListe || paare() }];
     auswahl.forEach((satz, i) => {
-      aufgaben.push(i % 2 === 0
+      aufgaben.push(i % 2 === 0 && !leise
         ? { art: 'diktat', satz }
         : { art: 'kacheln', satz, kacheln: kacheln(satz.it, pool) });
     });

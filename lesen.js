@@ -178,8 +178,22 @@ const Lesen = (() => {
 
   // ---------- Vorlesen (Stimme des iPhones) ----------
 
-  const kannSprechen = 'speechSynthesis' in window;
+  // geraetKann: das Gerät hat eine Sprachausgabe.
+  // „Leise“ (Einstellung): Nicole will gerade niemanden stören – dann wird nichts vorgelesen,
+  // und Lesen.kannSprechen ist false. Alle Hörübungen kommen dann als Text.
+  let geraetKann = 'speechSynthesis' in window;
+  const kannSprechen = geraetKann;      // nur für die Stimmen-Suche beim Start
   let stimme = null;
+
+  function leise() {
+    return typeof Speicher !== 'undefined' && Boolean((Speicher.daten.einstellungen || {}).leise);
+  }
+
+  function leiseSetzen(an) {
+    Speicher.daten.einstellungen = { ...(Speicher.daten.einstellungen || {}), leise: Boolean(an) };
+    Speicher.speichern();
+    if (an) stopp();
+  }
 
   // Italienische Stimmen, die beste zuerst (Premium > Verbessert > Standard)
   function italienischeStimmen() {
@@ -303,7 +317,7 @@ const Lesen = (() => {
   // optionen.langsam: deutlich langsamer als eingestellt (Knopf „Langsam“)
   // optionen.wort: einzelnes Wort – Stimme nach Geschlecht (falls eingestellt)
   function sprich(text, fertig, optionen = {}) {
-    if (!kannSprechen) return;
+    if (!geraetKann || leise()) return;
     if (!stimme) stimmeSuchen();
     const dieseStimme = optionen.wort ? stimmeFuerWort(text) : stimme;
     const diesesTempo = optionen.langsam ? Math.max(0.4, tempo() * 0.7) : tempo();
@@ -359,7 +373,7 @@ const Lesen = (() => {
   function stopp() {
     lauf += 1;
     clearTimeout(pausenUhr);
-    if (kannSprechen) speechSynthesis.cancel();
+    if (geraetKann) speechSynthesis.cancel();
   }
 
   // Den Satz finden, in dem ein Wort steht (für „Satz anhören“)
@@ -397,7 +411,11 @@ const Lesen = (() => {
     stuecke, bloecke, vorleseText,
     nachschlagen, inKarteikarten, istInKarteikarten, bedeutungSpeichern,
     eigeneTexte, textSpeichern, textLoeschen,
-    kannSprechen, sprich, stopp, wennStill, hatItalienischeStimme, teile, satzMit,
+    // kannSprechen: Gerät kann sprechen UND „Leise“ ist aus (Tests setzen es direkt = Gerät)
+    get kannSprechen() { return geraetKann && !leise(); },
+    set kannSprechen(wert) { geraetKann = Boolean(wert); },
+    leise, leiseSetzen,
+    sprich, stopp, wennStill, hatItalienischeStimme, teile, satzMit,
     italienischeStimmen, stimmeWaehlen, stimmeName, tempo, tempoWaehlen, tempoStufe, geschlecht,
     stand, ergebnisSpeichern, anzahlVerstanden,
   };

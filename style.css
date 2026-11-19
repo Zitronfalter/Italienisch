@@ -102,6 +102,9 @@ html, body {
   background: var(--akzent);
 }
 .kopf-zeile h1::after { display: none; }
+/* Heute: Gruß links, Knopf „Leise“ rechts */
+.kopf-mit-knopf { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.kopf-mit-knopf .knopf-klein { flex: none; margin-top: 6px; }
 .kopf-klein,
 .abschnitt,
 .frage-wort,

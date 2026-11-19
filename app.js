@@ -62,7 +62,26 @@ function oeffneReiter(reiter) {
   else zeigeStart();
 }
 
+// „Leise“: Knopf auf Heute und Schalter in den Einstellungen zeigen denselben Stand
+function zeigeLeise() {
+  const an = Lesen.leise();
+  el('einst-leise').checked = an;
+  const knopf = el('knopf-leise');
+  knopf.setAttribute('aria-pressed', String(an));
+  knopf.classList.toggle('knopf-klein-voll', an);
+  knopf.textContent = an ? 'Leise ✓' : 'Leise';
+}
+
+function leiseUmschalten(an) {
+  Lesen.leiseSetzen(an);
+  zeigeLeise();
+}
+// (hier noch document.getElementById: el() ist erst weiter unten definiert)
+document.getElementById('knopf-leise').addEventListener('click', () => leiseUmschalten(!Lesen.leise()));
+document.getElementById('einst-leise').addEventListener('change', (e) => leiseUmschalten(e.target.checked));
+
 function zeigeEinstellungen() {
+  zeigeLeise();
   fuelleStimmWahl();
   fuelleAussehen();
   zeige('einstellungen');
@@ -635,6 +654,7 @@ function zeigeFestigenEnde() {
 // ---------- Startseite ----------
 
 function zeigeStart() {
+  zeigeLeise();
   const r = Vokabeln.rundeZusammenstellen();
   const { wiederholen } = r;
   // Mit offener Lektion kommen neue Wörter über die Schritte
@@ -1896,7 +1916,7 @@ document.querySelectorAll('select[data-stimme]').forEach((wahl) => wahl.addEvent
   vorlesenStopp();
   Lesen.sprich(HOERPROBE[art], null, { wort: Boolean(art) });
 }));
-if (Lesen.kannSprechen) speechSynthesis.addEventListener('voiceschanged', fuelleStimmWahl);
+if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', fuelleStimmWahl);
 
 // Ganzen Text vorlesen / anhalten
 function vorlesenStopp() {
@@ -2680,8 +2700,21 @@ function zeigeHoerAufgabe() {
   el('hoer-kacheln').hidden = a.art !== 'kacheln';
   el('paare').hidden = a.art !== 'paare';
   el('hoer-knoepfe').hidden = a.art === 'paare' || !Lesen.kannSprechen;
+  // Leise: statt zu hören den deutschen Satz zeigen
+  const alsText = !Lesen.kannSprechen && a.art !== 'paare' && Boolean(a.satz && a.satz.de);
+  el('hoeren-deutsch').hidden = !alsText;
+  el('hoeren-deutsch').textContent = alsText ? a.satz.de : '';
 
-  if (a.art === 'diktat') {
+  if (a.art === 'diktat' && alsText) {
+    el('hoeren-art').textContent = 'Schreib den Satz auf Italienisch.';
+    const feld = el('diktat-eingabe');
+    feld.value = '';
+    feld.readOnly = false;
+    feld.focus();
+  } else if (a.art === 'kacheln' && alsText) {
+    el('hoeren-art').textContent = 'Leg den Satz auf Italienisch.';
+    Kacheln.fuellen(el('hoer-vorrat'), el('hoer-ablage'), a.kacheln, () => hoer.geprueft);
+  } else if (a.art === 'diktat') {
     el('hoeren-art').textContent = 'Hör zu und schreib den Satz auf.';
     const feld = el('diktat-eingabe');
     feld.value = '';
@@ -2918,6 +2951,12 @@ function zeigeAufgabe() {
       el('aufgabe-art').textContent = 'Bau den Satz auf Italienisch.';
       aufgabeKacheln(mischen(Grammatik.kacheln(u)), 'it');
     }
+  } else if (!Lesen.kannSprechen) {
+    // Leise: deutschen Satz zeigen (fehlt er, den italienischen zum Nachlegen)
+    el('aufgabe-art').textContent = a.satz.de ? 'Leg den Satz auf Italienisch.' : 'Leg den Satz nach.';
+    el('aufgabe-text').textContent = a.satz.de || a.satz.it;
+    el('aufgabe-text').lang = a.satz.de ? 'de' : 'it';
+    aufgabeKacheln(Uebungen.kacheln(a.satz.it), 'it');
   } else {
     el('aufgabe-art').textContent = 'Hör zu und leg den Satz.';
     el('aufgabe-text').hidden = true;

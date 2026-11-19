@@ -26,8 +26,9 @@
 
     <!-- Startseite -->
     <section class="screen screen-heute" id="screen-start">
-      <header class="kopf">
+      <header class="kopf kopf-mit-knopf">
         <h1 id="gruss">Buongiorno!</h1>
+        <button class="knopf-klein" id="knopf-leise" type="button" aria-pressed="false">Leise</button>
       </header>
 
       <!-- Reiseskizze der aktuellen Lektion (skizzen.js) -->
@@ -541,6 +542,10 @@
       </div>
       <div class="karte">
         <p class="karte-titel">Vorlesen</p>
+        <label class="schalter-zeile">
+          <input type="checkbox" id="einst-leise">
+          <span>Leise – gerade nichts vorlesen. Hörübungen kommen dann als Text: deutscher Satz, auf Italienisch mit Kacheln legen.</span>
+        </label>
         <label class="feld-label" for="stand-tempo">Tempo</label>
         <select class="eingabe-feld eingabe-klein" id="stand-tempo" data-tempo>
           <option value="0.55">sehr langsam</option>
@@ -597,6 +602,7 @@
 
       <div class="karte frage-karte">
         <p class="frage-art" id="hoeren-art"></p>
+        <p class="frage-wort frage-satz" id="hoeren-deutsch" lang="de" hidden></p>
         <div class="hoer-knoepfe" id="hoer-knoepfe">
           <button class="knopf-klein knopf-klein-voll" id="knopf-hoeren-play" type="button">Anhören</button>
           <button class="knopf-klein" id="knopf-hoeren-langsam" type="button">Langsam</button>

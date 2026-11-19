@@ -283,24 +283,22 @@ function geschafftZeigen(element) {
   return true;
 }
 
-// „Schritt 3 von 10 · Grammatik“ und eine Reihe Punkte (gemacht / jetzt / später)
+// Fortschrittsbalken (Anteil gemachter Schritte) und darunter „Schritt 3 von 10 · Grammatik“
 function wegZeile(l) {
   const w = Lektionen.weg(l);
   const nr = Math.min(Lektionen.schrittNr(l), w.length - 1);
   const zeile = document.createElement('span');
   zeile.className = 'weg-zeile';
+  const balken = document.createElement('span');
+  balken.className = 'weg-balken';
+  balken.setAttribute('aria-hidden', 'true');
+  const fuellung = document.createElement('span');
+  fuellung.style.width = Math.round((nr / w.length) * 100) + '%';
+  balken.appendChild(fuellung);
   const text = document.createElement('span');
   text.className = 'weg-text';
   text.textContent = `Schritt ${nr + 1} von ${w.length} · ${w[nr].name}`;
-  const punkte = document.createElement('span');
-  punkte.className = 'weg-punkte';
-  punkte.setAttribute('aria-hidden', 'true');
-  w.forEach((s, i) => {
-    const p = document.createElement('span');
-    p.className = 'weg-punkt ' + (i < nr ? 'gemacht' : i === nr ? 'jetzt' : 'spaeter');
-    punkte.appendChild(p);
-  });
-  zeile.append(text, punkte);
+  zeile.append(balken, text);
   return zeile;
 }
 

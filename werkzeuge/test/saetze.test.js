@@ -216,15 +216,20 @@ test('stufeGeschafft: nur richtig, passende Stufe und mit Wertung', () => {
   assert.strictEqual(k.Speicher.daten.karten[id].kennen, 2);
 });
 
-test('pruefeLuecke: fast richtig mit Hinweis, pruefe bleibt true/false', () => {
-  const k = laden();
+test('pruefeLuecke: Akzent vergessen = fast, aber e statt è ist ein anderes Wort', async () => {
+  const k = laden(undefined, '', { woerterbuch: true });
+  await k.Woerterbuch.laden();
   const a = { art: 'satz', id: k.wortId('essere'), stufe: 3, modus: 'luecke', satz: { it: 'Lui è Marco.', de: 'Er ist Marco.', form: 'è' }, kacheln: [] };
   assert.strictEqual(k.Saetze.pruefeLuecke(a, 'è').stufe, 'richtig');
-  const fast = k.Saetze.pruefeLuecke(a, 'e');
-  assert.strictEqual(fast.stufe, 'fast');
-  assert.ok(fast.hinweis);
-  assert.strictEqual(k.Saetze.pruefe(a, 'e'), true);
+  const e = k.Saetze.pruefeLuecke(a, 'e');                    // e = „und“ (Tippfehler-Nachsicht, 19.11.)
+  assert.strictEqual(e.stufe, 'falsch');
+  assert.ok(e.hinweis.includes('anderes Wort'));
+  assert.strictEqual(k.Saetze.pruefe(a, 'e'), false);
   assert.strictEqual(k.Saetze.pruefe(a, 'sono'), false);
+  const b = { ...a, satz: { it: 'Vado in città.', de: 'Ich gehe in die Stadt.', form: 'città' } };
+  const fast = k.Saetze.pruefeLuecke(b, 'citta');
+  assert.strictEqual(fast.stufe, 'fast');
+  assert.strictEqual(k.Saetze.pruefe(b, 'citta'), true);
 });
 
 test('Hinweis: Nomen auf -are/-ere verraten nichts, reflexive Verben in Grundform', () => {

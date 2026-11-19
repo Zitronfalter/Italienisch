@@ -264,50 +264,45 @@ const Vokabeln = (() => {
     return { artikel: '', rest: text };
   }
 
-  // Unterschied zwischen zwei Wörtern in Buchstaben (für Tippfehler)
-  function abstand(a, b) {
-    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
-    for (let j = 1; j <= b.length; j++) d[0][j] = j;
-    for (let i = 1; i <= a.length; i++) {
-      for (let j = 1; j <= b.length; j++) {
-        d[i][j] = Math.min(
-          d[i - 1][j] + 1,
-          d[i][j - 1] + 1,
-          d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
-        );
-      }
-    }
-    return d[a.length][b.length];
-  }
-
   // Ergebnis: { stufe: 'richtig' | 'fast' | 'falsch', hinweis }
   // „fast“ zählt als gewusst, zeigt aber die genaue Schreibweise.
-  // streng: kein Tippfehler-Bonus und kein „Artikel vergessen“ (für Grammatik-Übungen)
+  // Tippfehler-Nachsicht (Nachbartaste, verdreht, Akzent …) über tippfehler.js – überall gleich.
+  // streng: kein „Artikel vergessen“ (für Grammatik-Übungen); Tippfehler gelten auch dort,
+  // Grammatikfehler (andere Form, andere Endung) bleiben falsch.
   function pruefeEine(eingabe, loesung, streng = false) {
     const e = sauber(eingabe);
     const l = sauber(loesung);
     if (!e) return { stufe: 'falsch', hinweis: '' };
     if (e === l) return { stufe: 'richtig', hinweis: '' };
 
-    const eo = ohneAkzente(e);
-    const lo = ohneAkzente(l);
-    if (eo === lo) return { stufe: 'fast', hinweis: 'Achte auf den Akzent.' };
-    if (streng) return { stufe: 'falsch', hinweis: '' };
+    let vergleichE = e;
+    let vergleichL = l;
+    let ohneArtikel = false;
+    if (!streng) {
+      const ez = zerlegen(ohneAkzente(e));
+      const lz = zerlegen(ohneAkzente(l));
+      if (lz.artikel && !ez.artikel && ez.rest === lz.rest) {
+        return { stufe: 'fast', hinweis: 'Lerne das Wort mit Artikel.' };
+      }
+      if (lz.artikel && ez.artikel && ez.artikel !== lz.artikel && ez.rest === lz.rest) {
+        return { stufe: 'falsch', hinweis: 'Das Wort stimmt, aber der Artikel nicht.' };
+      }
+      if (lz.artikel && !ez.artikel) {                // Artikel vergessen: nur das Wort vergleichen
+        vergleichL = zerlegen(l).rest;
+        ohneArtikel = true;
+      }
+    }
 
-    const ez = zerlegen(eo);
-    const lz = zerlegen(lo);
-    if (lz.artikel && !ez.artikel && ez.rest === lz.rest) {
-      return { stufe: 'fast', hinweis: 'Lerne das Wort mit Artikel.' };
+    const mehrteilig = vergleichL.includes(' ');
+    const r = mehrteilig ? Tippfehler.pruefeSatz(vergleichE, vergleichL) : Tippfehler.pruefeWort(vergleichE, vergleichL);
+    if (r.stufe === 'richtig') {
+      return ohneArtikel ? { stufe: 'fast', hinweis: 'Lerne das Wort mit Artikel.' } : { stufe: 'richtig', hinweis: '' };
     }
-    if (lz.artikel && ez.artikel && ez.artikel !== lz.artikel && ez.rest === lz.rest) {
-      return { stufe: 'falsch', hinweis: 'Das Wort stimmt, aber der Artikel nicht.' };
+    if (r.stufe === 'anderesWort') return { stufe: 'falsch', hinweis: Tippfehler.hinweisAnders(r) };
+    if (r.stufe === 'tippfehler') {
+      return { stufe: 'fast', hinweis: r.art === 'akzent' ? 'Achte auf den Akzent.' : 'Kleiner Tippfehler.' };
     }
-    const vergleichE = lz.artikel && !ez.artikel ? ez.rest : eo;
-    const vergleichL = lz.artikel && !ez.artikel ? lz.rest : lo;
-    // Tippfehler nur bei längeren Wörtern (ab 5 Buchstaben ohne Artikel) verzeihen
-    if (lz.rest.length >= 5 && abstand(vergleichE, vergleichL) === 1) {
-      return { stufe: 'fast', hinweis: 'Kleiner Tippfehler.' };
-    }
+    if (mehrteilig) return { stufe: r.stufe, hinweis: r.hinweis };   // 'fast' oder 'falsch' mit Hinweis
     return { stufe: 'falsch', hinweis: '' };
   }
 

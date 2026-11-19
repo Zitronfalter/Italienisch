@@ -58,6 +58,8 @@ const Woerterbuch = (() => {
       const stamm = form.replace(muster, '');
       if (stamm.length < 2) continue;
       for (const e of enden) liste.push(stamm + e);
+      // mangiamo → mangi-are (bei Verben auf -iare bleibt das i: mangiare, studiare)
+      if (String(muster) === String(/iamo$/)) for (const e of enden) liste.push(stamm + 'i' + e);
       // mangi-o → mangi-are; aber auch cerc-hi → cerc-are (cerchi → cercare)
       if (stamm.endsWith('h')) for (const e of enden) liste.push(stamm.slice(0, -1) + e);
     }

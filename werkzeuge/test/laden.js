@@ -9,19 +9,24 @@ const WURZEL = path.join(__dirname, '..', '..');
 
 // Reihenfolge wie in index.html (ohne app.js, das die Oberfläche braucht)
 const STANDARD = [
-  'speicher.js', 'hintergrund.js', 'wortschatz.js', 'vokabeln.js', 'texte.js', 'texte-b.js', 'texte-a1.js', 'texte-a2.js', 'texte-b1.js', 'texte-b2.js', 'lesen.js', 'grammatik.js', 'grammatik-b.js', 'zusatz.js', 'erzeuger.js', 'woerterbuch.js',
+  'speicher.js', 'hintergrund.js', 'wortschatz.js', 'tippfehler.js', 'vokabeln.js', 'texte.js', 'texte-b.js', 'texte-a1.js', 'texte-a2.js', 'texte-b1.js', 'texte-b2.js', 'lesen.js', 'grammatik.js', 'grammatik-b.js', 'zusatz.js', 'erzeuger.js', 'woerterbuch.js',
   'lektionen-inhalt.js', 'lektionen-a1.js', 'lektionen-a2.js', 'lektionen-b1.js', 'lektionen-b2.js', 'saetze-a1.js', 'saetze.js', 'schon-bekannt.js', 'lektionen.js', 'skizzen-zuordnung.js', 'skizzen.js', 'woerterliste.js', 'kacheln.js', 'uebungen.js', 'wiederholung.js',
 ];
 
 const NAMEN = [
   'Speicher', 'Hintergrund', 'Vokabeln', 'Lesen', 'Grammatik', 'Uebungen', 'Lektionen',
-  'LEKTIONEN', 'WORTSCHATZ', 'WORTSCHATZ_THEMEN', 'KAPITEL', 'LESETEXTE', 'GRUNDWOERTER', 'wortId', 'ZUSATZ', 'Erzeuger', 'Wiederholung', 'SAETZE', 'Woerterbuch', 'Saetze', 'SchonBekannt', 'Kacheln', 'Skizzen', 'SKIZZEN_ZUORDNUNG',
+  'Tippfehler', 'LEKTIONEN', 'WORTSCHATZ', 'WORTSCHATZ_THEMEN', 'KAPITEL', 'LESETEXTE', 'GRUNDWOERTER', 'wortId', 'ZUSATZ', 'Erzeuger', 'Wiederholung', 'SAETZE', 'Woerterbuch', 'Saetze', 'SchonBekannt', 'Kacheln', 'Skizzen', 'SKIZZEN_ZUORDNUNG',
 ];
 
-function platzhalter(gespeichert) {
+function platzhalter(gespeichert, mitWoerterbuch) {
   const speicher = new Map(gespeichert === undefined ? [] : [['italienisch-daten', gespeichert]]);
   const nichts = () => {};
+  // optionen.woerterbuch: fetch liefert woerterbuch.json (für await Woerterbuch.laden())
+  const fetch = mitWoerterbuch
+    ? () => Promise.resolve({ json: () => JSON.parse(fs.readFileSync(path.join(WURZEL, 'woerterbuch.json'), 'utf8')) })
+    : () => Promise.reject(new Error('kein fetch im Test'));
   return {
+    fetch,
     localStorage: {
       getItem: (k) => (speicher.has(k) ? speicher.get(k) : null),
       setItem: (k, v) => speicher.set(k, String(v)),
@@ -42,7 +47,7 @@ function platzhalter(gespeichert) {
 // extraCode: wird hinter die Dateien gehängt (z. B. um LEKTIONEN zu ersetzen)
 // optionen.gespeichert: Inhalt von localStorage['italienisch-daten'] (Text) beim Start
 function laden(dateien = STANDARD, extraCode = '', optionen = {}) {
-  const kontext = vm.createContext(platzhalter(optionen.gespeichert));
+  const kontext = vm.createContext(platzhalter(optionen.gespeichert, optionen.woerterbuch));
   const teile = dateien
     .map((d) => path.join(WURZEL, d))
     .filter((p) => fs.existsSync(p))

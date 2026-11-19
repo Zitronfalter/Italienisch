@@ -8,6 +8,8 @@
 
 ## 🟢 Jetzt
 
+- [ ] **Neues vom 19.11. auf dem iPhone ansehen** (App zweimal öffnen): (1) **Leise**-Knopf oben rechts auf Heute – Hörübungen kommen dann als Text. (2) Einstellungen → **Knopf-Farbe** ausprobieren, auch dunkel. (3) **Tippfehler:** Vertipper wie *mangaimo* oder *perche* zählen jetzt, *grazia* für *grazie* oder *e* statt *è* nicht. Passt die Strenge? Fällt dir ein Wort auf, das zu streng oder zu locker bewertet wird? Dann Claude sagen.
+
 - [x] **Lektion als Weg, Etappe 1 bauen lassen:** Erledigt am 16.11.2026.
 - [ ] **Verbesserungen nach deinem Test ansehen:** (1) Springt die Seite noch, wenn du „Weiter“ tippst? (2) Wortpaare: Kommen jetzt 5 Paare mit Wörtern, die du schon kennst – jedes Mal andere? (3) Bei „Wörter üben“ kommen jedes Mal 3 alte Wörter mit. Reicht dir das?
 - [x] **Übungen planen:** Erledigt am 16.11.2026 – „Neue Wörter in Sätzen“ ist geplant (erst Lektion 4–6 zum Testen).

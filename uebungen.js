@@ -66,21 +66,12 @@ const Uebungen = (() => {
       .replace(/\s+/g, ' ')
       .trim();
   }
-  function ohneAkzente(t) {
-    return t.normalize('NFD').replace(/[̀-ͯ]/g, '');
-  }
 
   // Diktat prüfen. Ergebnis: { stufe, falscheStellen: [Nummern der falschen Wörter im richtigen Satz] }
+  // Wort für Wort mit Tippfehler-Nachsicht (tippfehler.js): vertippte Wörter zählen und werden markiert,
+  // mehr als 2 vertippte Wörter oder ein echtes anderes Wort → falsch.
   function pruefeDiktat(eingabe, satz) {
-    const e = sauber(eingabe);
-    const r = sauber(satz);
-    if (!e) return { stufe: 'falsch', falscheStellen: [] };
-    if (e === r) return { stufe: 'richtig', falscheStellen: [] };
-    const ew = ohneAkzente(e).split(' ');
-    const rw = ohneAkzente(r).split(' ');
-    const falsch = rw.map((w, i) => (ew[i] === w ? -1 : i)).filter((i) => i >= 0);
-    if (ohneAkzente(e) === ohneAkzente(r)) return { stufe: 'fast', falscheStellen: [], hinweis: 'Achte auf die Akzente.' };
-    return { stufe: 'falsch', falscheStellen: falsch };
+    return Tippfehler.pruefeSatz(eingabe, satz);
   }
 
   // Kacheln: Wörter des Satzes + 2 falsche Wörter aus anderen Sätzen

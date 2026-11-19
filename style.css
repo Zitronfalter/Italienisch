@@ -169,6 +169,8 @@ button {
   gap: 12px;
 }
 .knopf-gruppe .knopf-zurueck { margin-top: 0; }
+/* „Weiß ich nicht“ ausgeblendet: Platz behalten, damit „Prüfen“ und „Weiter“ gleich hoch stehen */
+#knopf-weiss-nicht[hidden] { display: block; visibility: hidden; }
 
 .knopf-haupt,
 .knopf-zweit {
